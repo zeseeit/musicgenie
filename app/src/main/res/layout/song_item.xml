@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+     >
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <TextView
+            android:padding="5dp"
+            android:textAppearance="@android:style/TextAppearance.Large"
+            android:id="@+id/songTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sanam Re | Tu Meraa Sanam Hua Re.....| Ankit Kumar"/>
+        <TextView
+            android:padding="5dp"
+            android:id="@+id/artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="ankit Kumar"/>
+        <ProgressBar
+            android:id="@+id/progressbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:indeterminate="false"/>
+    </LinearLayout>
+
+<ImageView
+    android:padding="10dp"
+    android:background="@drawable/dwnld_bg"
+    android:id="@+id/dnld"
+    android:src="@android:drawable/stat_sys_download"
+    android:layout_weight="1"
+    android:layout_width="100dp"
+    android:layout_height="50dp" />
+</LinearLayout>
