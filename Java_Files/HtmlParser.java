@@ -33,10 +33,32 @@ public class HtmlParser {
 
 		System.out.println("Stage One Cleared-----------------");
 		
-		//String intermediate_URL="http://www.listentoyoutube.com/process.php?url=https://www.youtube.com";
+		String intermediate_URL="http://www.listentoyoutube.com/process.php?url=https://www.youtube.com";
+		
+		int i=in.nextInt();
+		// check if it is of valid range and isdigit()
+		String song_title=songs_title.get(i);
+		String song_link=songs_links.get(i);
+		System.out.println("Title : "+ song_title +"  Link : " + song_link);
+		 intermediate_URL+= song_link;
+		System.out.println(intermediate_URL);
 		
 		
-
+		 Document doc2 = Jsoup.connect(intermediate_URL).get(); 
+		 Elements links2 = doc2.select("a[href]");  
+		 for (Element link : links2) {  
+			 //  if(link.attr("href").matches("/watch/?(.*)") && !(link.text().matches("[0-9]*:[0-9]*")))
+			    {
+			    System.out.println("\nlink : " + link.attr("href"));  
+			    songs_links.add(link.attr("href"));
+			    System.out.println("text : " + link.text()); 
+			    songs_title.add(link.text());
+			  //  System.out.println("INdex : "+ counter);
+			 //   counter++;
+			    }
+		 }
+		 
+		
 		
 
 	}
