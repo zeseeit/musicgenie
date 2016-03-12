@@ -1,8 +1,10 @@
 import java.io.IOException;  
-import java.util.ArrayList;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.jsoup.Jsoup;  
+import org.jsoup.nodes.DataNode;
 import org.jsoup.nodes.Document;  
 import org.jsoup.nodes.Element;  
 import org.jsoup.select.Elements; 
@@ -44,19 +46,14 @@ public class HtmlParser {
 		System.out.println(intermediate_URL);
 		
 		
-		 Document doc2 = Jsoup.connect(intermediate_URL).get(); 
-		 Elements links2 = doc2.select("a[href]");  
-		 for (Element link : links2) {  
-			 //  if(link.attr("href").matches("/watch/?(.*)") && !(link.text().matches("[0-9]*:[0-9]*")))
-			    {
-			    System.out.println("\nlink : " + link.attr("href"));  
-			    songs_links.add(link.attr("href"));
-			    System.out.println("text : " + link.text()); 
-			    songs_title.add(link.text());
-			  //  System.out.println("INdex : "+ counter);
-			 //   counter++;
-			    }
+		Document doc2 = Jsoup.connect(intermediate_URL).get(); 
+		 Elements scriptTags = doc2.getElementsByTag("script");
+		 for (Element tag : scriptTags){                
+		        for (DataNode node : tag.dataNodes()) {
+		            System.out.println(node.getWholeData());
+		        }    
 		 }
+		  
 		 
 		
 		
