@@ -1,7 +1,9 @@
 package com.mathapp.saurabhjn76.musicgenie;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.util.Log;
 
 import java.io.BufferedInputStream;
@@ -19,15 +21,28 @@ import java.net.URLConnection;
  */
 public class DownLoadFile extends AsyncTask<String,Integer ,String > {
 
+    private HomeActivity mObj;
+    private  Context context;
+    private String songURL;
+    public DownLoadFile(){}
+
+    public DownLoadFile(String uri){
+        this.songURL=uri;
+    }
+    public DownLoadFile(HomeActivity obj, String uri){
+        this.mObj=obj;
+        this.songURL=uri;
+    }
+
     @Override
     protected String doInBackground(String... params) {
 
         Log.e("download","in doinBack");
         int count;
 
-        String songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
+        //songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
         try {
-            URL url=new URL(songPath);
+            URL url=new URL(songURL);
             URLConnection connection= url.openConnection();
 
             connection.setReadTimeout(10000);
@@ -76,11 +91,18 @@ public class DownLoadFile extends AsyncTask<String,Integer ,String > {
     @Override
     protected void onPostExecute(String result){
         Log.e("downloaad:","done !!!");
+
     }
 
     @Override
-    protected void onProgressUpdate(Integer... values) {
-        Log.e("downloaded",""+values.toString()+"%");
+    protected void onProgressUpdate(final Integer... values) {
+       // Log.e("downloaded", "" + values[0] + "%");
+            mObj=new HomeActivity();
+
+          //Log.e("hlp",""+mObj);
+            ((ProgressUpdataListener) mObj).update(values[0]);
+            ///Log.e("Dnled ",""+values[0]+ " %");
+
         super.onProgressUpdate(values);
     }
 

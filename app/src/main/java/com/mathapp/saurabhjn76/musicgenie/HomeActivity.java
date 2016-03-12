@@ -24,22 +24,26 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements ProgressUpdataListener {
     ProgressDialog progressBar;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_home);
-        progressBar= new ProgressDialog(this);
+      /*  progressBar= new ProgressDialog(this);
         progressBar.setIndeterminate(true);
-        progressBar.setCancelable(false);
+        progressBar.setCancelable(false);*/
         listView= (ListView) findViewById(R.id.songListView);
         MusicListAdapter adapter= new MusicListAdapter(this);
         listView.setAdapter(adapter);
+        String songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
 
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
 
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,20 +69,21 @@ public class HomeActivity extends AppCompatActivity {
 
     public void search(View view) {
         String searchTerm=((EditText)findViewById(R.id.searchBox)).getText().toString();
-      // progressBar.show();
-      //  Search(searchTerm);
+     //  progressBar.show();
+       // Search(searchTerm);
 
-        new DownLoadFile().execute("ankit");
+        new DownLoadFile().execute();
 
     }
 
     private void Search(final String term){
 
-       // String songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
+        //String testPath="http://www.listentoyoutube.com/process.php?url=https://www.youtube.com/watch?v=DS-raAyMxl4";
 
-        StringRequest request= new StringRequest(Request.Method.GET, AppConfig.URL_YOUTUBE_LINK_FETCH, new Response.Listener<String>() {
+        StringRequest request= new StringRequest(Request.Method.GET,AppConfig.URL_YOUTUBE_LINK_FETCH, new Response.Listener<String>() {
             @Override
             public void onResponse(String s) {
+                Log.e("Length >>",""+s.length());
                 Log.e("Home",">>"+s);
                 Toast.makeText(HomeActivity.this,""+s,Toast.LENGTH_LONG).show();
                 progressBar.dismiss();
@@ -105,5 +110,9 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
+    @Override
+    public void update(int value) {
+        Log.e("prog",""+value);
+//        new MusicListAdapter(this).setProgress(value);
+    }
 }
