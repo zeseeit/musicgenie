@@ -36,7 +36,7 @@ public class HtmlParser {
 		System.out.println("Stage One Cleared-----------------");
 		
 		String intermediate_URL="http://www.listentoyoutube.com/process.php?url=https://www.youtube.com";
-		String intermediate_URL2="http://www.listentoyoutube.com/middle.php?server=srv44&hash=4pWTcXFon2hnabWr2NmXbLVhnGdra21wm5mXtIWZ26aZoY2nv9LYrK6SzQ%253D%253D&file=SANAM%20RE%20Song%20(VIDEO)%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%2C%20Divya%20Khosla%20Kumar%20%7C%20T-Series.mp30";
+		String intermediate_URL2="http://www.listentoyoutube.com/middle.php?server=srv74&hash=4pWTcXFon2hnabWr2NmabLVhnGdra25wlpWYtIWZ26aZoY2nv9LYrK6SzQ%253D%253D&file=SANAM%20RE%20Song%20(VIDEO)%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%2C%20Divya%20Khosla%20Kumar%20%7C%20T-Series.mp3";
 		int i=in.nextInt();
 		// check if it is of valid range and isdigit()
 		String song_title=songs_title.get(i);
@@ -63,6 +63,7 @@ public class HtmlParser {
 			if(link.attr("href").matches("download.php?(.*)"))
 			{
 				download_link=new String(link.attr("href"));
+				if(download_link.charAt(download_link.length()-1)!='3')
 				download_link=download_link.substring(0,download_link.length()-1);
 			//	System.out.println(download_link);
 			//download_link=download_link.replace("download","middle");
