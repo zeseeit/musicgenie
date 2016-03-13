@@ -89,6 +89,16 @@ public class HtmlParser {
 		index_start = download_link.indexOf(hash_end) + hash_end.length();
 		String file=download_link.substring(index_start);
 		System.out.println("File : "+file);
+		String final_downloading_link="http://www.listentoyoutube.com/download/";
+		final_downloading_link=final_downloading_link.replace("www",server);	
+		final_downloading_link=final_downloading_link.concat(hash);
+		final_downloading_link=final_downloading_link.concat("==/");
+		final_downloading_link=final_downloading_link.concat(file);
+		System.out.println(final_downloading_link);
+		
+		
+		
+		
 		
 		
 		
