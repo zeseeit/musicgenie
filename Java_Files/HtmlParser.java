@@ -36,8 +36,7 @@ public class HtmlParser {
 		System.out.println("Stage One Cleared-----------------");
 		
 		String intermediate_URL="http://www.listentoyoutube.com/process.php?url=https://www.youtube.com";
-		String intermediate_URL2="http://www.listentoyoutube.com/middle.php?server=srv42&hash=4pWVbWtlnGRtY7Wr2NmXarVhnGdra2pwl5aWtIWZ26aZoY2nv9LYrK6SzQ%253D%253D&file=SANAM%20RE%20Title%20Song%20FULL%20VIDEO%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%20%7C%20Divya%20Khosla%20Kumar.mp3";
-		
+		String intermediate_URL2="http://www.listentoyoutube.com/middle.php?server=srv44&hash=4pWTcXFon2hnabWr2NmXbLVhnGdra21wm5mXtIWZ26aZoY2nv9LYrK6SzQ%253D%253D&file=SANAM%20RE%20Song%20(VIDEO)%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%2C%20Divya%20Khosla%20Kumar%20%7C%20T-Series.mp30";
 		int i=in.nextInt();
 		// check if it is of valid range and isdigit()
 		String song_title=songs_title.get(i);
@@ -64,27 +63,35 @@ public class HtmlParser {
 			if(link.attr("href").matches("download.php?(.*)"))
 			{
 				download_link=new String(link.attr("href"));
-				String prefix=new String("www.listentoyoutube.com/");
+				download_link=download_link.substring(0,download_link.length()-1);
+			//	System.out.println(download_link);
+			//download_link=download_link.replace("download","middle");
+				String prefix=new String("http://www.listentoyoutube.com/");
 				download_link=prefix.concat(download_link);
 				
 				break;
 			}
 		}
 		System.out.println(download_link);
-		String download_link2="http://www.listentoyoutube.com/download.php?server=srv42&hash=4pWVbWtlnGRtY7Wr2NmXarVhnGdra2pwl5aWtIWZ26aZoY2nv9LYrK6SzQ%3D%3D&file=SANAM%20RE%20Title%20Song%20FULL%20VIDEO%20|%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%20|%20Divya%20Khosla%20Kumar.mp3";
+		//String download_link2="http://www.listentoyoutube.com/middle.php?server=srv44&hash=4pWTcXFon2hnabWr2NmXbLVhnGdra21wm5mXtIWZ26aZoY2nv9LYrK6SzQ%253D%253D&file=SANAM%20RE%20Song%20(VIDEO)%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%2C%20Divya%20Khosla%20Kumar%20%7C%20T-Series.mp3";
 		
-		Document downloadpage=Jsoup.connect(download_link2).get();
-		System.out.println(downloadpage);
-		Elements downloadlink=downloadpage.select("href");
-		for(Element link: downloadlink)
-		{
-			if(link.attr("href").matches("http://srv(.*)listentoyoutube.com/download/(.*)"))
-			{
-				songdownloadLink=new String(link.attr("href"));
-				System.out.println(songdownloadLink);
-				break;
-			}
-		}
+		String server_start="server=";
+		String server_end="&hash=";
+		String hash_end="%3D%3D&file=";
+		int index_start = download_link.indexOf(server_start) + server_start.length();
+		int index_end = download_link.indexOf(server_end);
+		String server=download_link.substring(index_start, index_end);
+		System.out.println("Server : "+server);
+		index_start = download_link.indexOf(server_end) + server_end.length();
+		index_end = download_link.indexOf(hash_end);
+		String hash=download_link.substring(index_start, index_end);
+		System.out.println("Hash : "+hash);
+		index_start = download_link.indexOf(hash_end) + hash_end.length();
+		String file=download_link.substring(index_start);
+		System.out.println("File : "+file);
+		
+		
+		
 		
 		
 
