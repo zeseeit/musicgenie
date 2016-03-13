@@ -9,11 +9,13 @@ public class Song {
     public String Title;
     public String url;
     public String artist;
+    public int progress;
 
 
-    public Song(String title,String url,String artist){
+    public Song(String title,String url,String artist,int progress){
         this.Title=title;
         this.url=url;
         this.artist=artist;
+        this.progress=progress;
     }
 }

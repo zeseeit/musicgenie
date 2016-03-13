@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">MusicGenie</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Downloads</string>
     <string name="title_activity_downloads">Downloads</string>
 </resources>
