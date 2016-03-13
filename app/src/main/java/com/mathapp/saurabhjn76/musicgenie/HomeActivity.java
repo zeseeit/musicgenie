@@ -1,6 +1,8 @@
 package com.mathapp.saurabhjn76.musicgenie;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -24,21 +26,36 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeActivity extends AppCompatActivity implements ProgressUpdataListener {
+public class HomeActivity extends AppCompatActivity{
     ProgressDialog progressBar;
     ListView listView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_home);
-      /*  progressBar= new ProgressDialog(this);
-        progressBar.setIndeterminate(true);
-        progressBar.setCancelable(false);*/
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("MUSIC GENIE");
+        getSupportActionBar().setIcon(android.R.drawable.ic_menu_search);
+
+
+
         listView= (ListView) findViewById(R.id.songListView);
         MusicListAdapter adapter= new MusicListAdapter(this);
         listView.setAdapter(adapter);
         String songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
 
+        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit"));
+        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit"));
+        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit"));
+        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit"));
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
+        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit"));
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
+        adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
         adapter.addSongToList(new Song("Sanam Re",songPath,"ankit"));
 
     }
@@ -68,11 +85,18 @@ public class HomeActivity extends AppCompatActivity implements ProgressUpdataLis
     }
 
     public void search(View view) {
-        String searchTerm=((EditText)findViewById(R.id.searchBox)).getText().toString();
-     //  progressBar.show();
-       // Search(searchTerm);
+        if(isConnectedToNet())
+        refress();
+        else
+            Snackbar.make(listView,"No Connectivity !!! ",Snackbar.LENGTH_LONG).show();
+    }
 
-        new DownLoadFile().execute();
+    public void refress(){
+        String searchTerm=((EditText)findViewById(R.id.searchBox)).getText().toString();
+        //TODO: take the search term and format it
+        //show progressDialoge till it loads list
+        // after it gets list add all to adapter
+
 
     }
 
@@ -110,9 +134,19 @@ public class HomeActivity extends AppCompatActivity implements ProgressUpdataLis
     }
 
 
-    @Override
-    public void update(int value) {
-        Log.e("prog",""+value);
-//        new MusicListAdapter(this).setProgress(value);
+    public boolean isConnectedToNet() {
+
+        ConnectivityManager connectivityManager = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        final android.net.NetworkInfo mobileData = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+        final android.net.NetworkInfo wifi = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        if (mobileData.isConnected()) {
+            return true;
+        } else if (wifi.isConnected()) {
+            return true;
+        }
+        return false;
     }
+
+
+
 }

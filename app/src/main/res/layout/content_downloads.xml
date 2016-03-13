@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.mathapp.saurabhjn76.musicgenie.Downloads"
+    >
+<include layout="@layout/toolbar" android:id="@+id/toolbar"/>
+
+    <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:cardView="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/cardview"
+        android:layout_below="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:paddingBottom="10dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginLeft="5dp"
+        cardView:cardBackgroundColor="#ffffff"
+        cardView:cardCornerRadius="2dp"
+        android:elevation="10dp"
+        >
+    <include layout="@layout/card_top" android:id="@+id/top_desing"/>
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_gravity="center_vertical"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_weight="1"
+                android:layout_margin="8dp"
+                android:textAppearance="@android:style/TextAppearance.Large"
+                android:text="Sanam Re |"
+                android:id="@+id/title_dnld_pg"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <ImageButton
+                android:src="@android:drawable/ic_media_pause"
+                android:background="@drawable/dwnld_bg"
+                android:layout_margin="8dp"
+                android:padding="20dp"
+                android:id="@+id/pause"
+                android:layout_width="48dp"
+                android:layout_height="48dp" />
+        </LinearLayout>
+
+
+
+
+        <LinearLayout
+            android:layout_margin="4dp"
+            android:padding="4dp"
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ProgressBar
+                android:padding="8dp"
+                android:layout_weight="1"
+                android:max="100"
+                android:progress="0"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar" />
+
+            <TextView
+                android:padding="4dp"
+                android:text="0 %"
+                android:id="@+id/percentageProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+    </LinearLayout>
+
+    </android.support.v7.widget.CardView>
+
+
+
+</RelativeLayout>
