@@ -26,22 +26,41 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+import org.jsoup.select.Selector;
+import org.jsoup.nodes.Document;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 public class HomeActivity extends AppCompatActivity{
     ProgressDialog progressBar;
     ListView listView;
+    MusicListAdapter adapter;
+    ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,17 +69,15 @@ public class HomeActivity extends AppCompatActivity{
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("MUSIC GENIE");
         getSupportActionBar().setIcon(android.R.drawable.ic_menu_search);
-
+        progressDialog=new ProgressDialog(this);
+        progressDialog.setIndeterminate(true);
+        progressDialog.setMessage("Searching.....");
         // Search("Asdf");
 
         listView = (ListView) findViewById(R.id.songListView);
-        final MusicListAdapter adapter = new MusicListAdapter(this);
+        adapter = new MusicListAdapter(this);
         listView.setAdapter(adapter);
-        String songPath = "http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
-
-        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit",0));
-        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit",0));
-        adapter.addSongToList(new Song("Sanam Re", songPath, "ankit",0));
+        //String songPath = "http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
     }
 
     @Override
@@ -86,14 +103,17 @@ public class HomeActivity extends AppCompatActivity{
     }
 
     public void search(View view) {
-        if(isConnectedToNet())
-        refress();
+        if(isConnectedToNet()){
+            progressDialog.show();
+            refress();
+        }
         else
             Snackbar.make(listView,"No Connectivity !!! ",Snackbar.LENGTH_LONG).show();
     }
 
     public void refress(){
         String searchTerm=((EditText)findViewById(R.id.searchBox)).getText().toString();
+        Search(searchTerm.replace(' ','+'));
         //TODO: take the search term and format it
         //show progressDialoge till it loads list
         // after it gets list add all to adapter
@@ -101,35 +121,13 @@ public class HomeActivity extends AppCompatActivity{
 
     }
 
+    public void setListItems(ArrayList<YoutubeLink> list){
+        adapter.setSongList(list);
+    }
     private void Search(final String term){
 
-        String testPath="http://www.listentoyoutube.com/download.php?server=srv44&hash=4pWTcXFon2hnabWr2NmXb" +
-                "LVhnGdra21wm5mXtIWZ26aZoY2nv9LYrK6SzQ%3D%3D&file=SANAM%20RE%20Song%20%28VIDEO%29%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%2C%20Divya%20Khosla%20Kumar%20%7C%20T-Series.mp3";
-
-        StringRequest request= new StringRequest(Request.Method.GET,AppConfig.URL_YOUTUBE_LINK_FETCH, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String s) {
-                Toast.makeText(HomeActivity.this,""+s,Toast.LENGTH_LONG).show();
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                    Log.e("Home",""+volleyError);
-
-            }
-        }) {
-            @Override
-            protected Map<String, String> getParams() {
-                // Posting parameters to login url
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("search_query",term);
-               return params;
-            }
-
-        };
-
-        RequestManager.getInstance().addToRequestQueue(request, "ytd_req", this);
-
+        SongURL ins= new SongURL(AppConfig.URL_YOUTUBE_LINK_FETCH+"?search_query="+term);
+            ins.execute();
     }
 
 
@@ -220,8 +218,6 @@ public class HomeActivity extends AppCompatActivity{
         @Override
         protected void onProgressUpdate(final Integer... values) {
             Log.e("done..", "" + values[0] + " %");
-            MusicListAdapter adapter= MusicListAdapter.getInstance(context);
-            adapter.setProgress(values[0],0);
             super.onProgressUpdate(values);
         }
 
@@ -233,4 +229,87 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 
+    public class SongURL extends AsyncTask<Void,Void,Void>{
+
+        ArrayList<YoutubeLink> Ylinks;
+        String url=null;
+        Document doc= null;
+       public SongURL(String url){
+           this.url=url;
+       }
+
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            try {
+                Log.e("url",""+url);
+
+                URL url=new URL(this.url);
+
+
+
+                HttpURLConnection httpCon= (HttpURLConnection) url.openConnection();
+                httpCon.setRequestMethod("GET");
+                httpCon.addRequestProperty("Connection", "keep-alive");
+                httpCon.addRequestProperty("Cache-Control", "max-age=0");
+                httpCon.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                httpCon.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36");
+                httpCon.addRequestProperty("Accept-Encoding", "UTF-8");
+                httpCon.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+                //httpCon.addRequestProperty("Cookie", "JSESSIONID=EC0F373FCC023CD3B8B9C1E2E2F7606C; lang=tr; __utma=169322547.1217782332.1386173665.1386173665.1386173665.1; __utmb=169322547.1.10.1386173665; __utmc=169322547; __utmz=169322547.1386173665.1.1.utmcsr=stackoverflow.com|utmccn=(referral)|utmcmd=referral|utmcct=/questions/8616781/how-to-get-a-web-pages-source-code-from-java; __gads=ID=3ab4e50d8713e391:T=1386173664:S=ALNI_Mb8N_wW0xS_wRa68vhR0gTRl8MwFA; scrElm=body");
+                HttpURLConnection.setFollowRedirects(false);
+                httpCon.setInstanceFollowRedirects(false);
+                httpCon.setDoOutput(true);
+
+               // connection.setReadTimeout(10000);
+                //connection.setConnectTimeout(20000);
+                httpCon.connect();
+                BufferedReader buffer=new BufferedReader(new InputStreamReader(httpCon.getInputStream(),"UTF-8"));
+
+                String p="";
+                String response="";
+                while((p=buffer.readLine())!=null){
+                    response+=p;
+                    //Log.e("p",""+p.toString());
+                }
+                //Log.e("alt",""+connection.);
+
+                doc = Jsoup.parse(response);
+                Elements links = doc.select("a[href]");
+              //  Log.e("links", doc.html().toString() + "");
+              //  Log.e("getSONGURL","Pick One of the song to download");
+                int counter=0;
+                 Ylinks= new ArrayList<>();
+                for (Element link : links) {
+                   // Log.e("songURL",""+link);
+                    if(link.attr("href").matches("/watch/?(.*)") && !(link.text().matches("[0-9]*:[0-9]*")))
+                    {
+                        Ylinks.add(new YoutubeLink(link.text(), link.attr("href")));
+                        Log.e("link>",""+link.text()+" "+link.attr("href"));
+                        counter++;
+                    }
+                }
+              //  setListItems(Ylinks);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(result);
+            setListItems(Ylinks);
+            progressDialog.hide();
+            progressDialog.dismiss();
+            Log.e("result",""+result);
+
+        }
+
+//        return Ylinks;
+    }
 }

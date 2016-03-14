@@ -53,8 +53,8 @@
                 android:layout_margin="8dp"
                 android:paddingLeft="4dp"
                 android:id="@+id/play"
-                android:layout_width="48dp"
-                android:layout_height="48dp" />
+                android:layout_width="42dp"
+                android:layout_height="42dp" />
         </LinearLayout>
 
 

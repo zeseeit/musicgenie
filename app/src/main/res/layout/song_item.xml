@@ -27,42 +27,20 @@
         <TextView
             android:textColor="@color/colorPrimary"
             android:padding="8dp"
-            android:textAppearance="@android:style/TextAppearance.Large"
+            android:textSize="14dp"
             android:id="@+id/songTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Sanam Re | Ankit "/>
-        <TextView
+d        <TextView
             android:paddingBottom="8dp"
             android:paddingRight="8dp"
             android:paddingLeft="8dp"
             android:id="@+id/artist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ankit Kumar"/>
+            android:text=""/>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ProgressBar
-                android:padding="8dp"
-                android:layout_weight="1"
-                android:max="100"
-                android:progress="0"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/progressBar" />
-
-            <TextView
-                android:padding="4dp"
-                android:text="0 %"
-                android:id="@+id/percentageProgress"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
 
 
     </LinearLayout>

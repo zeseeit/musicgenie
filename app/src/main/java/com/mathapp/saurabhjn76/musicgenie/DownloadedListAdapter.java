@@ -75,28 +75,29 @@ public class DownloadedListAdapter extends ArrayAdapter<Song> {
 
         title.setText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
         artist.setText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
-        duration.setText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION));
+        int second=(MediaMetadataRetriever.METADATA_KEY_DURATION/1000)%60;
+        int minute =(MediaMetadataRetriever.METADATA_KEY_DURATION/1000)/60;
+        duration.setText(minute + ":" + second);
 
-        final MediaPlayer mp = new MediaPlayer();
 
+        final MediaPlayer mp= new MediaPlayer();
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               if(!mp.isPlaying()){
-                   try {
-                       mp.setDataSource(songs.get(pos));
-                       mp.prepare();
-                       mp.start();
+                if (!mp.isPlaying()) {
+                    try {
+                        mp.setDataSource(songs.get(pos));
+                        mp.prepare();
+                        mp.start();
 
-                       play.setImageResource(android.R.drawable.ic_media_pause);
-                       notifyDataSetInvalidated();
-                   } catch (IOException e) {
-                       e.printStackTrace();
-                   }
-               }else
-               {
-                   mp.pause();
-               }
+                        play.setImageResource(android.R.drawable.ic_media_pause);
+                        notifyDataSetInvalidated();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    mp.stop();
+                }
 
             }
         });

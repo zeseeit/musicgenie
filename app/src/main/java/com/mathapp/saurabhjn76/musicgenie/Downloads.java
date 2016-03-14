@@ -39,8 +39,6 @@ public class Downloads extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_downloads);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        progressBar= (ProgressBar) findViewById(R.id.progressBar);
-        percentage= (TextView) findViewById(R.id.percentageProgress);
         toolbar.setTitle("Downloads");
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

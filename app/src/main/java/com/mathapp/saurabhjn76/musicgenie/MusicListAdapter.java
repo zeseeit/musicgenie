@@ -19,24 +19,40 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
+
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by saurabh on 12/3/16.
  */
-public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpdataListener{
+public class MusicListAdapter extends ArrayAdapter<Song> {
     Context context;
-    ArrayList<Song> songList;
-    ArrayList<Integer> progressList;
+    ArrayList<YoutubeLink> songList;
+
     TextView title,artist,progressPercentage;
     ProgressBar progressBar;
     ImageView dnldBtn;
@@ -57,16 +73,8 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         return mInstance;
     }
 
-    public void addSongToList(Song song){
-        songList.add(0,song);
-        notifyDataSetChanged();
-    }
-
-    public void setProgress(int value,int pos){
-       Log.e("MA > to progressBr", "" + value);
-        Log.e("list size",""+songList.size());
-        if(getCount()>0)songList.get(pos).progress=value;
-
+    public void setSongList(ArrayList<YoutubeLink> list){
+        songList=list;
         notifyDataSetChanged();
     }
     @Override
@@ -80,15 +88,13 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         title= (TextView) tempV.findViewById(R.id.songTitle);
         artist = (TextView) tempV.findViewById(R.id.artist);
         dnldBtn= (ImageView) tempV.findViewById(R.id.dnld);
-        progressBar= (ProgressBar) tempV.findViewById(R.id.progressBar);
-        progressPercentage= (TextView) tempV.findViewById(R.id.percentageProgress);
 
-        title.setText(songList.get(pos).Title);
-        artist.setText(songList.get(pos).artist);
+        title.setText(songList.get(pos).title);
+        artist.setText("");
 
-            Log.e("MA","pro value"+songList.get(pos).progress);
-            progressBar.setProgress(songList.get(pos).progress);
-            progressPercentage.setText(songList.get(pos).progress+"");
+            //Log.e("MA","pro value"+songList.get(pos).progress);
+            //progressBar.setProgress(songList.get(pos).progress);
+           // progressPercentage.setText(songList.get(pos).progress+"");
 
       //  final DownLoadFile instance= new DownLoadFile(songList.get(pos).url);
 
@@ -98,14 +104,13 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
                 // instance.execute();
 
                 if (isConnectedToNet()) {
-                    /*Bundle bundle = new Bundle();
-                    bundle.putString("url", songList.get(pos).url);
-                    bundle.putString("title", songList.get(pos).Title);
-                    Intent dIntent = new Intent(context, Downloads.class);
-                    dIntent.putExtras(bundle);
-                    context.startActivity(dIntent);
-                    Toast.makeText(context, "Download Started", Toast.LENGTH_LONG).show();*/
-                    startDownload(songList.get(pos).url);
+                    songList.remove(pos);
+                    notifyDataSetChanged();
+                    Toast.makeText(context,"Downloading..........",Toast.LENGTH_LONG).show();
+                    //requestIntermediatePage(songList.get(pos).link);
+                    DownLoadFile i= new DownLoadFile("",context);
+                    i.execute();
+
                 } else
                     Snackbar.make(title, "No Connectivity !!! ", Snackbar.LENGTH_LONG).show();
 
@@ -120,9 +125,10 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         return songList.size();
     }
 
-    public void startDownload(String url){
-        DownLoadFile dnd= new DownLoadFile(url,context);
-        dnd.execute();
+    public void startDownload(Document document){
+
+       // DownLoadFile dnd= new DownLoadFile(getFinalURL(document),context);
+        //dnd.execute();
     }
 
     public boolean isConnectedToNet() {
@@ -138,10 +144,63 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         return false;
     }
 
+    public String getFinalURL(Document doc2){
+        //Elements scriptTags = doc2.getElementsByTag("script");
+        String download_link = null;
+        String songdownloadLink=null;
 
-    @Override
-    public void update(int value,int pos) {
-        setProgress(value,pos);
+        Elements linkss=doc2.select("a[href]");
+        for(Element link : linkss)
+        {
+            Log.e("attr",""+link.text());
+            if(link.attr("href").matches("download.php?(.*)"))
+            {
+                download_link=new String(link.attr("href"));
+                if(download_link.charAt(download_link.length()-1)!='3')
+                    download_link=download_link.substring(0,download_link.length()-1);
+                //	System.out.println(download_link);
+                //download_link=download_link.replace("download","middle");
+                String prefix=new String("http://www.listentoyoutube.com/");
+
+                download_link=prefix.concat(download_link);
+                Log.e("dnlink",""+download_link);
+                break;
+            }
+        }
+        System.out.println(download_link);
+        //String download_link2="http://www.listentoyoutube.com/middle.php?server=srv44&hash=4pWTcXFon2hnabWr2NmXbLVhnGdra21wm5mXtIWZ26aZoY2nv9LYrK6SzQ%253D%253D&file=SANAM%20RE%20Song%20(VIDEO)%20%7C%20Pulkit%20Samrat%2C%20Yami%20Gautam%2C%20Urvashi%20Rautela%2C%20Divya%20Khosla%20Kumar%20%7C%20T-Series.mp3";
+
+        String server_start="server=";
+        String server_end="&hash=";
+        String hash_end="%3D%3D&file=";
+        int index_start = download_link.indexOf(server_start) + server_start.length();
+        int index_end = download_link.indexOf(server_end);
+        String server=download_link.substring(index_start, index_end);
+        System.out.println("Server : "+server);
+        index_start = download_link.indexOf(server_end) + server_end.length();
+        index_end = download_link.indexOf(hash_end);
+        String hash=download_link.substring(index_start, index_end);
+        System.out.println("Hash : "+hash);
+        index_start = download_link.indexOf(hash_end) + hash_end.length();
+        String file=download_link.substring(index_start);
+        System.out.println("File : "+file);
+        String final_downloading_link="http://www.listentoyoutube.com/download/";
+        final_downloading_link=final_downloading_link.replace("www", server);
+        final_downloading_link=final_downloading_link.concat(hash);
+        final_downloading_link=final_downloading_link.concat("==/");
+        final_downloading_link=final_downloading_link.concat(file);
+        System.out.println(final_downloading_link);
+        Log.e("final ",""+final_downloading_link);
+        return final_downloading_link;
+    }
+
+    public void requestIntermediatePage(String watch_url){
+
+        String url="http://www.listentoyoutube.com/process.php?url=https://www.youtube.com"+watch_url;
+        //final String term="https://www.youtube.com"+watch_url;
+
+            InterURL ins= new InterURL(url);
+            ins.execute();
     }
 
     public class DownLoadFile extends AsyncTask<String,Integer ,String > {
@@ -149,6 +208,7 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         private Context context;
         private String songURL;
         public DownLoadFile(){}
+
 
         public DownLoadFile(String uri,Context con){
             this.songURL=uri;
@@ -158,12 +218,17 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         @Override
         protected String doInBackground(String... params) {
 
+            //TODO: get the final link
+
+            //end
+
             Log.e("download","in doinBack");
             int count;
 
-            //songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
+            String songPath="http://dl.101songs.com/files/convert/27175/128/01%20Tere%20Bin%20(Wazir)%20Sonu%20Nigam%20(SongsMp3.Com).mp3";
+            //"http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
             try {
-                URL url=new URL(songURL);
+                URL url=new URL(songPath);
                 URLConnection connection= url.openConnection();
 
                 connection.setReadTimeout(10000);
@@ -178,7 +243,7 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
                     dir.mkdirs();
                 }
                 //   Log.e("dir:::",""+dir);
-                File file=new File(dir,"song.mp3");
+                File file=new File(dir,"tere.mp3");
 
                 // download file
                 InputStream inputStream= new BufferedInputStream(url.openStream());
@@ -219,17 +284,7 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
         @Override
         protected void onProgressUpdate(final Integer... values) {
             super.onProgressUpdate(values);
-
             Log.e("done..", "" + values[0] + " %");
-            final MusicListAdapter adapter= MusicListAdapter.getInstance(context);
-         //  if(adapter!=null) adapter.setProgress(values[0],0);
-
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    if(adapter!=null) adapter.setProgress(values[0],0);
-                }
-            });
         }
 
         @Override
@@ -237,6 +292,82 @@ public class MusicListAdapter extends ArrayAdapter<Song> implements ProgressUpda
             Log.e("download:","downloading.................");
         }
 
+    }
+
+
+    public class InterURL extends AsyncTask<Void,Void,Void>{
+
+        String Ylink;
+        String url=null;
+        Document doc= null;
+        public InterURL(String url){
+            this.url=url;
+        }
+
+
+
+        @Override
+        protected Void doInBackground(Void... params) {
+
+
+            try {
+                Log.e("url",""+url);
+
+                URL url=new URL(this.url);
+
+
+
+                final HttpURLConnection httpCon= (HttpURLConnection) url.openConnection();
+                httpCon.setRequestMethod("GET");
+                httpCon.addRequestProperty("Connection", "keep-alive");
+                httpCon.addRequestProperty("Cache-Control", "max-age=0");
+                httpCon.addRequestProperty("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                httpCon.addRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/30.0.1599.101 Safari/537.36");
+                httpCon.addRequestProperty("Accept-Encoding", "UTF-8");
+                httpCon.addRequestProperty("Accept-Language", "en-US,en;q=0.8");
+                //httpCon.addRequestProperty("Cookie", "JSESSIONID=EC0F373FCC023CD3B8B9C1E2E2F7606C; lang=tr; __utma=169322547.1217782332.1386173665.1386173665.1386173665.1; __utmb=169322547.1.10.1386173665; __utmc=169322547; __utmz=169322547.1386173665.1.1.utmcsr=stackoverflow.com|utmccn=(referral)|utmcmd=referral|utmcct=/questions/8616781/how-to-get-a-web-pages-source-code-from-java; __gads=ID=3ab4e50d8713e391:T=1386173664:S=ALNI_Mb8N_wW0xS_wRa68vhR0gTRl8MwFA; scrElm=body");
+                HttpURLConnection.setFollowRedirects(true);
+                httpCon.setInstanceFollowRedirects(true);
+                httpCon.setDoOutput(true);
+
+                // connection.setReadTimeout(10000);
+                //connection.setConnectTimeout(20000);
+                httpCon.connect();
+
+                Log.e("test", "" + httpCon.getResponseCode());
+
+                BufferedReader buffer=new BufferedReader(new InputStreamReader(httpCon.getInputStream(),"UTF-8"));
+                Log.e("test1", "" + httpCon.getURL());
+
+                String p="";
+                InputStream te=httpCon.getInputStream();
+                Thread.sleep(2000);
+
+                Log.e("test2",""+httpCon.getURL());
+                String response="";
+                while((p=buffer.readLine())!=null){
+                    response+=p;
+                    //Log.e("p",""+p.toString());
+                }
+              doc=Jsoup.parse(response);
+                Ylink=getFinalURL(doc);
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result){
+            super.onPostExecute(result);
+            Log.e("result", "" + result);
+
+        }
+
+//        return Ylinks;
     }
 
 }
