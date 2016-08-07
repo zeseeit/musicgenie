@@ -7,4 +7,5 @@
     <string name="search_box_hint">Search Song...</string>
     <string name="action_downloads_title">Downloads</string>
     <string name="progress_dialog_msg">Retrieving Data....</string>
+    <string name="title_activity_downloads">Downloads</string>
 </resources>
