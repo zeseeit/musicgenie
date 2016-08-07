@@ -12,7 +12,6 @@
         android:layout_height="match_parent">
         
         <ListView
-            android:layout_marginTop="8dp"
             android:id="@+id/listView"
             android:dividerHeight="4dp"
             android:layout_width="match_parent"
