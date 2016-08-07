@@ -2,15 +2,15 @@ package musicgenie.com.musicgenie;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.support.v7.widget.SearchView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,11 +27,11 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     Toolbar toolbar;
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
-    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity {
     private void fireSearch(String term) {
         progressDialog.show();
 
-        String url = App_Config.SERVER_URL+"/search?q="+ URLEncoder.encode(term);
+        String url = App_Config.SERVER_URL + "/search?q=" + URLEncoder.encode(term);
         //log("url "+url);
-        StringRequest request = new StringRequest(Request.Method.GET,url , new Response.Listener<String>() {
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //log(" reponse rec "+response);
@@ -93,19 +93,19 @@ public class MainActivity extends AppCompatActivity {
             JSONArray results = new JSONArray(response);
             for (int i = 0; i < results.length(); i++) {
 
-                songs.add(new Song( results.getJSONObject(i).getString("title"),
-                                    results.getJSONObject(i).getString("length"),
-                                    results.getJSONObject(i).getString("uploader"),
-                                    results.getJSONObject(i).getString("thumb"),
-                                    results.getJSONObject(i).getString("id"),
-                                    results.getJSONObject(i).getString("time"),
-                                    results.getJSONObject(i).getString("views")
-                                    ));
+                songs.add(new Song(results.getJSONObject(i).getString("title"),
+                        results.getJSONObject(i).getString("length"),
+                        results.getJSONObject(i).getString("uploader"),
+                        results.getJSONObject(i).getString("thumb"),
+                        results.getJSONObject(i).getString("id"),
+                        results.getJSONObject(i).getString("time"),
+                        results.getJSONObject(i).getString("views")
+                ));
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-       // makeToast("loading "+songs.size()+" items");
+        // makeToast("loading "+songs.size()+" items");
         adapter.setSongs(songs);
         resultListView.setAdapter(adapter);
     }
