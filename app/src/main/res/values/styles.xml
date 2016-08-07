@@ -4,11 +4,10 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 
-    <style name="AppTheme" parent="AppTheme.Base">
+    <style name="AppTheme." parent="AppTheme.Base">
         <item name="colorPrimary">@color/PrimaryColor</item>
         <item name="colorPrimaryDark">@color/PrimaryColorDark</item>
     </style>
 
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
 </resources>

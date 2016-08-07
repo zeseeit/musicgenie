@@ -2,6 +2,7 @@ package musicgenie.com.musicgenie;
 
 import android.content.Context;
 import android.os.Environment;
+import android.util.Log;
 
 import java.io.File;
 
@@ -26,7 +27,7 @@ public class App_Config {
 
         if (savePref.equals(App_Config.PHONE)) {
             File root = Environment.getExternalStorageDirectory();
-            File dir = new File(root.getAbsolutePath() + "/Musicgenie/Audio");
+            File dir = new File(root+ "/Musicgenie/Audio");
 
             if (dir.exists() == false) {
                 dir.mkdirs();
