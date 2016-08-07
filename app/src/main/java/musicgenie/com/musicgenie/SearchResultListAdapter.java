@@ -38,6 +38,10 @@ import java.util.ArrayList;
 /**
  * Created by Ankit on 8/5/2016.
  */
+/*
+*  it 
+* */
+
 public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
     private static final String TAG = "ListAdapter";
