@@ -16,59 +16,62 @@ import com.android.volley.toolbox.Volley;
  */
 public class VolleyUtils extends Application {
 
-    public static final String TAG = VolleyUtils.class.getSimpleName();
-    private static VolleyUtils bInstance;
-    private static ImageLoader imageLoader;
-    Context baseContext;
+    public static final String TAG=VolleyUtils.class.getSimpleName();
     private RequestQueue bRequestQueue;
+    private static VolleyUtils bInstance;
+    Context baseContext;
+    private static ImageLoader imageLoader;
 
-    public static synchronized ImageLoader getImageLoader(Context context) {
+    @Override
+    public void onCreate()
+    {
+        super.onCreate();
+        bInstance = this;
 
-        if (imageLoader == null) {
-            imageLoader = new ImageLoader(Volley.newRequestQueue(context), new ImageLoader.ImageCache() {
-                LruCache<String, Bitmap> cache = new LruCache<>(4096);
+    }
 
+    public static synchronized ImageLoader getImageLoader(Context context){
+
+        if(imageLoader==null){
+            imageLoader= new ImageLoader(Volley.newRequestQueue(context),new ImageLoader.ImageCache(){
+                LruCache<String ,Bitmap> cache= new LruCache<>(4096);
                 @Override
-                public Bitmap getBitmap(String url) {
+                public Bitmap getBitmap(String url){
                     return cache.get(url);
                 }
 
                 @Override
                 public void putBitmap(String url, Bitmap bmp) {
-                    cache.put(url, bmp);
+                    cache.put(url,bmp);
                 }
             });
         }
         return imageLoader;
     }
 
-    public static synchronized VolleyUtils getInstance() {
+    public static synchronized VolleyUtils getInstance()
+    {
 
-        if (bInstance == null) {
+        if(bInstance==null){
 
-            bInstance = new VolleyUtils();
+            bInstance=new VolleyUtils();
         }
 
         return bInstance;
     }
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        bInstance = this;
-
-    }
-
-    public RequestQueue getRequestQueue(Context context) {
-        if (bRequestQueue == null) {
-            bRequestQueue = Volley.newRequestQueue(context);
+    public RequestQueue getRequestQueue(Context context)
+    {
+        if(bRequestQueue==null)
+        {
+            bRequestQueue= Volley.newRequestQueue(context);
         }
         return bRequestQueue;
     }
 
-    public <T> void addToRequestQueue(Request<T> req, String tag, Context context) {
-        req.setTag(TextUtils.isEmpty(tag) ? TAG : tag);
-        baseContext = context;
+    public <T> void addToRequestQueue(Request<T> req , String tag,Context context){
+        req.setTag(TextUtils.isEmpty(tag)?TAG:tag);
+        baseContext=context;
         getRequestQueue(context).add(req);
 
     }
@@ -83,6 +86,9 @@ public class VolleyUtils extends Application {
             bRequestQueue.cancelAll(tag);
         }
     }
+
+
+
 
 
 }
