@@ -4,11 +4,14 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -35,15 +38,23 @@ public class DowloadsActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.stat_sys_download));
         tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.stat_sys_download_done));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.AccentColor);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+        tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#ff4081"));
+        tabLayout.setSelectedTabIndicatorHeight((int) (4 * getResources().getDisplayMetrics().density));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
+                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.AccentColor);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-
+                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
+                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
             }
 
             @Override

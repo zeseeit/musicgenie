@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
+    SearchView searchView = null;
     private static final String TAG = "MainActivity";
 
     @Override
@@ -55,12 +56,19 @@ public class MainActivity extends AppCompatActivity {
     private SearchResultListAdapter.DownloadInitListener dnInitListener = new SearchResultListAdapter.DownloadInitListener() {
         @Override
         public void onInit() {
+            log("download init callback");
             startActivity(new Intent(MainActivity.this,DowloadsActivity.class));
         }
     };
 
     private void fireSearch(String term) {
         progressDialog.show();
+
+        if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+            makeSnake("No Internet Connection !! ");
+            SoftInputManager.getInstance(this).hideKeyboard(searchView);
+            return;
+        }
 
         String url = App_Config.SERVER_URL+"/search?q="+ URLEncoder.encode(term);
         //log("url "+url);
@@ -92,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void log(String _lg) {
-        Log.e(TAG, _lg);
+        Log.d(TAG, _lg);
     }
 
     private void parseSearchResults(String response) {
@@ -130,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) MainActivity.this.getSystemService(SEARCH_SERVICE);
 
-        SearchView searchView = null;
 
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
@@ -143,6 +150,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                SoftInputManager.getInstance(MainActivity.this).hideKeyboard(searchView);
                 fireSearch(s);
                 return true;
             }
@@ -166,6 +174,13 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if(id== R.id.action_downloads){
+            startActivity(new Intent(
+                    MainActivity.this,
+                    DowloadsActivity.class
+            ));
+        }
+
 
         return super.onOptionsItemSelected(item);
     }

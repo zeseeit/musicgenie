@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.support.annotation.MainThread;
 import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -110,10 +112,10 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         uploaded_by.setText(song.UploadedBy);
         extras.setText(song.TimeSinceUploaded + " . " + song.UserViews + " Views");
 
-//        Picasso.with(context)
-//                .load(song.Thumbnail_url)
-//                .into(thumbnail);
-        requestAndSetThumbnail(thumbnail, song.Thumbnail_url);
+        Picasso.with(context)
+                .load(song.Thumbnail_url)
+                .into(thumbnail);
+        //requestAndSetThumbnail(thumbnail, song.Thumbnail_url);
 
 
         final String v_id = song.Video_id;
@@ -164,9 +166,9 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
             if (obj.getInt("status") == 0) {
                 download_url += obj.getString("url");
                 log("downloading url > " + download_url);
+                progressDialog.hide();
                 sendForDownload(download_url, file_name);
 
-                progressDialog.dismiss();
             } else {
                 progressDialog.dismiss();
                 handleErrors();
@@ -262,13 +264,13 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
                 byte data[] = new byte[1024];
                 long total = 0;
-                //Log.e("dd",""+inputStream.read());
-                if(downloadInitListener != null)
-                     downloadInitListener.onInit();
-                log("download initiated ");
+
+                if(downloadInitListener != null){
+                    downloadInitListener.onInit();
+                    log("download initiated ");
+                }
 
                 progressDialog.dismiss();
-                makeSnake(context.getString(R.string.download_start_toast_msg));
 
                 while ((count = inputStream.read(data)) != -1) {
 
@@ -322,15 +324,6 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         Log.d(TAG, _lg);
     }
 
-
-    private void makeSnake(String msg) {
-        View tempView = LayoutInflater.from(context).inflate(R.layout.toolbar, null);
-        Snackbar.make(tempView, msg, Snackbar.LENGTH_LONG).show();
-    }
-
-    private void makeToast(String msg) {
-        Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
-    }
 
     public interface ProgressUpdateListener{
         void onProgressUpdate(String taskID, String progress);

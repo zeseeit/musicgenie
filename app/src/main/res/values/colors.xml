@@ -6,4 +6,5 @@
     <color name="AccentColor">#ff4081</color>
     <color name="TrackTitleColor">#167ac6</color>
     <color name="ExtraInfoTextColor">#767676</color>
+    <color name="TabUnselectionColor">#ffffff</color>
 </resources>

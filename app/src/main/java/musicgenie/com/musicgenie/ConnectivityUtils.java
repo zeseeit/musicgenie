@@ -7,13 +7,22 @@ import android.net.ConnectivityManager;
  * Created by Ankit on 8/5/2016.
  */
 public class ConnectivityUtils {
-    private Context context;
+
+    private static Context context;
+    private static ConnectivityUtils mInstance;
 
     public ConnectivityUtils(Context context) {
         this.context = context;
     }
 
-    public boolean isConnectedToNet() {
+    public static ConnectivityUtils getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new ConnectivityUtils(context);
+        }
+        return mInstance;
+    }
+
+    public static boolean isConnectedToNet() {
 
         ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         final android.net.NetworkInfo mobileData = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
