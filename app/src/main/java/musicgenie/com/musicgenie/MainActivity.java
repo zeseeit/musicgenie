@@ -2,6 +2,7 @@ package musicgenie.com.musicgenie;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -47,8 +48,16 @@ public class MainActivity extends AppCompatActivity {
 
         new App_Config(this).configureDevice();
 
+        SearchResultListAdapter.getInstance(this).setDownloadInitListener(dnInitListener);
 
     }
+
+    private SearchResultListAdapter.DownloadInitListener dnInitListener = new SearchResultListAdapter.DownloadInitListener() {
+        @Override
+        public void onInit() {
+            startActivity(new Intent(MainActivity.this,DowloadsActivity.class));
+        }
+    };
 
     private void fireSearch(String term) {
         progressDialog.show();
@@ -134,7 +143,6 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                //TODO: uncomment code here
                 fireSearch(s);
                 return true;
             }

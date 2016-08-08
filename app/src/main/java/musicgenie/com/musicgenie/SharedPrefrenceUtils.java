@@ -38,4 +38,13 @@ public class SharedPrefrenceUtils {
         return preferences.getString("saveLocation",App_Config.PHONE);
     }
 
+    public void setTasksSequence(String sequence){
+        editor.putString("task_seq",sequence);
+        editor.commit();
+    }
+
+    public String getTaskSequence(){
+        return preferences.getString("task_seq","");
+    }
+
 }

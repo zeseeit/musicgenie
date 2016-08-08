@@ -7,4 +7,12 @@
     <string name="search_box_hint">Search Song...</string>
     <string name="action_downloads_title">Downloads</string>
     <string name="progress_dialog_msg">Retrieving Data....</string>
+    <string name="download_request_progress_dialog_msg">Requesting Data..</string>
+    <string name="preparing_audio_dialog_msg">Preparing Audio For You.....</string>
+    <string name="download_start_toast_msg">Added to Download....</string>
+    <string name="title_activity_dowloads">Dowload</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
 </resources>

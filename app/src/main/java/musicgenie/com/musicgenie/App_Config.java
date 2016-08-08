@@ -10,10 +10,13 @@ import java.io.File;
  * Created by Ankit on 8/5/2016.
  */
 public class App_Config {
-    //TODO: add server url
+
     public static final String SERVER_URL = "http://ymp3.aavi.me";
     public static final String SDCARD = "sdcard";
     public static final String PHONE = "phone";
+    public static final String ACTION_PROGRESS_UPDATE_BROADCAST = "action_progress_update";
+    public static final String EXTRA_TASK_ID = "task_id";
+    public static final String EXTRA_PROGRESS = "progress";
     private Context context;
 
     public App_Config(Context context) {
