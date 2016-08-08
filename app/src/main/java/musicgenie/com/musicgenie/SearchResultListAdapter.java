@@ -296,7 +296,12 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
         @Override
         protected void onProgressUpdate(final Integer... values) {
-            log("done.."+ values[0] + " %");
+            log(taskID+" done.."+ values[0] + " %");
+            if(values[0]==100){
+                log("pre tasks seq "+SharedPrefrenceUtils.getInstance(context).getTaskSequence());
+                TaskHandler.getInstance(context).clearTask(taskID);
+                log("post tasks seq " + SharedPrefrenceUtils.getInstance(context).getTaskSequence());
+            }
             broadcastUpdate(String.valueOf(values[0]));
             super.onProgressUpdate(values);
         }

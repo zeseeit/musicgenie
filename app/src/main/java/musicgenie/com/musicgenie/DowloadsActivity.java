@@ -30,7 +30,6 @@ public class DowloadsActivity extends AppCompatActivity {
     TabLayout tabLayout;
     Toolbar toolbar;
 
-
     //TODO: make active download page and downloaded items page
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +69,7 @@ public class DowloadsActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
 
-
+        log("tasks >" + SharedPrefrenceUtils.getInstance(this).getTaskSequence());
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
