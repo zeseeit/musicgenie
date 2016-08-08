@@ -26,6 +26,8 @@ import org.json.JSONException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import static musicgenie.com.musicgenie.SearchResultListAdapter.*;
+
 public class MainActivity extends AppCompatActivity {
 
     Toolbar toolbar;
@@ -49,11 +51,10 @@ public class MainActivity extends AppCompatActivity {
 
         new App_Config(this).configureDevice();
 
-        SearchResultListAdapter.getInstance(this).setDownloadInitListener(dnInitListener);
 
     }
 
-    private SearchResultListAdapter.DownloadInitListener dnInitListener = new SearchResultListAdapter.DownloadInitListener() {
+    private DownloadInitListener dnInitListener = new DownloadInitListener() {
         @Override
         public void onInit() {
             log("download init callback");

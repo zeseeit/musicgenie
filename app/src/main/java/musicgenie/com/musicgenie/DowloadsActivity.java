@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -25,6 +26,7 @@ public class DowloadsActivity extends AppCompatActivity {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
+    ProgressUpdateBroadcastReceiver receiver;
     TabLayout tabLayout;
     Toolbar toolbar;
 
@@ -153,28 +155,41 @@ public class DowloadsActivity extends AppCompatActivity {
                 View rootView = inflater.inflate(R.layout.fragment_active_downloads, container, false);
                 //register
                 registerForBroadcastListen();
-
                 return rootView;
             }
         }
 
+    }
 
-        public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
+    @Override
+    protected void onPause() {
+        super.onPause();
+        unRegisterBroadcast();
+    }
 
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                    //TODO: get intent extras of progress and task id and update the list view accordingly
-            }
-        }
 
-        private void registerForBroadcastListen() {
-            ProgressUpdateBroadcastReceiver receiver = new ProgressUpdateBroadcastReceiver();
-            DowloadsActivity.this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST));
-        }
 
-        private void unRegisterBroadcast() {
-            DowloadsActivity.this.registerReceiver(null, null);
+    public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            log("update via br "+intent.getStringExtra(App_Config.EXTRA_PROGRESS));
+            //TODO: get intent extras of progress and task id and update the list view accordingly
         }
     }
+
+    private void registerForBroadcastListen() {
+        receiver = new ProgressUpdateBroadcastReceiver();
+        DowloadsActivity.this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST));
+    }
+
+    private void unRegisterBroadcast() {
+        DowloadsActivity.this.unregisterReceiver(receiver);
+    }
+
+    public void log(String msg){
+        Log.d("DownloadsActivity",msg);
+    }
+
 
 }

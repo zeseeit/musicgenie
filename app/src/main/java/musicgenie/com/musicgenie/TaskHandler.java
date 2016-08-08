@@ -31,7 +31,7 @@ public class TaskHandler {
     }
 
     public TaskHandler createNewTask(){
-        SearchResultListAdapter.getInstance(context).setOnProgressUpdateListener(listener);
+//        SearchResultListAdapter.getInstance(context).setOnProgressUpdateListener(listener);
         return mInstance;
     }
 

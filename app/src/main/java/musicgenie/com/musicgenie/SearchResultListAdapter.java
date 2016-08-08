@@ -2,6 +2,7 @@ package musicgenie.com.musicgenie;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Environment;
@@ -49,9 +50,7 @@ import java.util.ArrayList;
 public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
     ProgressDialog progressDialog;
-    public DownloadInitListener downloadInitListener;
-    public ErrorListener errorListener;
-    public ProgressUpdateListener progressUpdateListener;
+
     private static final String TAG = "ListAdapter";
     private static SearchResultListAdapter mInstance;
     private Context context;
@@ -70,17 +69,6 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         return mInstance;
     }
 
-    public void setErrorListener(ErrorListener listener){
-        this.errorListener = listener;
-    }
-
-    public void setOnProgressUpdateListener(ProgressUpdateListener listener){
-        this.progressUpdateListener = listener;
-    }
-
-    public void setDownloadInitListener(DownloadInitListener listener){
-        this.downloadInitListener = listener;
-    }
 
     public void setSongs(ArrayList<Song> songs) {
         this.songs = songs;
@@ -119,7 +107,8 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
 
         final String v_id = song.Video_id;
-        final String file_name = song.Title.substring(0, 15);
+        int limit = (song.Title.length()>15)?15:song.Title.length();
+        final String file_name = song.Title.substring(0,limit);
         tempView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -133,7 +122,6 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
         progressDialog.setMessage(context.getString(R.string.download_request_progress_dialog_msg));
         progressDialog.show();
-
         String url = App_Config.SERVER_URL + "/g/" + v_id;
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
@@ -214,24 +202,27 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
                         .createNewTask()
                         .addTask();
 
-        log("created Task: "+taskId);
-
+        log("created Task: " + taskId);
         progressDialog.setMessage(context.getString(R.string.preparing_audio_dialog_msg));
         progressDialog.show();
-        new DownLoadFile(taskId,download_url, file_name).execute();
+        new DownLoadFile(context,taskId,download_url, file_name).execute();
     }
 
-    public class DownLoadFile extends AsyncTask<String, Integer, String> {
+     class DownLoadFile extends AsyncTask<String, Integer, String> {
 
+        public DownloadInitListener downloadInitListener;
+        public ErrorListener errorListener;
+        public ProgressUpdateListener progressUpdateListener;
         private Context context;
         private String songURL;
         private String filename;
         private String taskID;
-
         public DownLoadFile() {
         }
 
-        public DownLoadFile(String taskID , String uri, String filename) {
+        public DownLoadFile(Context context,String taskID , String uri, String filename) {
+            log("dnd ctxt "+context);
+            this.context = context;
             this.songURL = uri;
             this.filename = filename;
             this.taskID = taskID;
@@ -278,9 +269,8 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
                     publishProgress((int) total * 100 / fileLength);
                     outputStream.write(data, 0, count);
                     int progress  = ((int)total/fileLength)*100;
-                    if(progressUpdateListener != null)
-                         progressUpdateListener.onProgressUpdate(taskID,String.valueOf(progress));
-                    log("downloaded:" + progress + " %");
+                    //if(progressUpdateListener != null)
+
                 }
 
                 outputStream.flush();
@@ -289,17 +279,14 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
 
             } catch (MalformedURLException e) {
-
-                if(errorListener!=null) errorListener.onError(e.toString());
                 log("URL exception " + e);
 
             } catch (IOException e) {
 
-                if(errorListener!=null) errorListener.onError(e.toString());
                 log("IO exception "+e);
             }
 
-            return "done";
+            return "";
         }
 
         @Override
@@ -310,6 +297,7 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         @Override
         protected void onProgressUpdate(final Integer... values) {
             log("done.."+ values[0] + " %");
+            broadcastUpdate(String.valueOf(values[0]));
             super.onProgressUpdate(values);
         }
 
@@ -317,6 +305,14 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         protected void onPreExecute() {
             log("starting download");
         }
+
+
+         public void broadcastUpdate(String progressPercentage){
+             Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
+             intent.putExtra(App_Config.EXTRA_TASK_ID,taskID);
+             intent.putExtra(App_Config.EXTRA_PROGRESS, progressPercentage);
+             context.sendBroadcast(intent);
+         }
 
     }
 
