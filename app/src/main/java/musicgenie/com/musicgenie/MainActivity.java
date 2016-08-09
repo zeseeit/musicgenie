@@ -54,13 +54,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private DownloadInitListener dnInitListener = new DownloadInitListener() {
-        @Override
-        public void onInit() {
-            log("download init callback");
-            startActivity(new Intent(MainActivity.this,DowloadsActivity.class));
-        }
-    };
 
     private void fireSearch(String term) {
         progressDialog.show();
@@ -68,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
         if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
             makeSnake("No Internet Connection !! ");
             SoftInputManager.getInstance(this).hideKeyboard(searchView);
+            progressDialog.dismiss();
             return;
         }
 

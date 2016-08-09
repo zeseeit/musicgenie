@@ -47,4 +47,24 @@ public class SharedPrefrenceUtils {
         return preferences.getString("task_seq","");
     }
 
+
+    public void setTaskUrl(String taskID ,String url){
+        // taskID : key and download_url : value
+        editor.putString(taskID+"_u",url);
+        editor.commit();
+    }
+
+    public String getTaskUrl(String taskID){
+        return preferences.getString(taskID+"_u","");
+    }
+
+    public void setTaskTitle(String taskId, String file_name){
+        editor.putString(taskId+"_t",file_name);
+        editor.commit();
+    }
+
+    public String getTaskTitle(String taskID){
+        return preferences.getString(taskID+"_t","");
+    }
+
 }
