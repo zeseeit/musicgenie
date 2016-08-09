@@ -1,14 +1,12 @@
 package musicgenie.com.musicgenie;
 
-import android.app.DownloadManager;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -21,12 +19,16 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import br.com.bemobi.medescope.Medescope;
+import br.com.bemobi.medescope.callback.DownloadStatusCallback;
+
 /**
  * Created by Ankit on 8/7/2016.
  */
 public class TaskHandler {
 
-
+    private static final int TYPE_TASK_DOWNLOAD = 0;
+    private static final int TYPE_TASK_DISPATCH = 1;
     private static final String TAG = "TaskHandler";
     private static Context context;
     private static TaskHandler mInstance;
@@ -49,26 +51,27 @@ public class TaskHandler {
     * */
     private void initiate(){
 
-        if(!isHandlerRunning){
-            isHandlerRunning = true;
 
-            
+        log("handler running "+isHandlerRunning);
+        if(!isHandlerRunning){
+            //isHandlerRunning = true;
+
             while (task_count > 0 && isConnected()){
                 log("=========================cur loop . task_count "+task_count);
-
-                    final  ArrayList<String> taskIDs = getTaskSequence();
-                    Thread t = new Thread(new Runnable() {
-                        @Override
-                        public void run() {
+                    final  ArrayList<String> taskIDs = getDispatchTaskSequence();
+//                    Thread t = new Thread(new Runnable() {
+//                        @Override
+//                        public void run() {
                             for (String taskID : taskIDs) {
                                 dispatch(taskID);
+                                removeDispatchTask(taskID);
+
                             }
                         }
-                    });
-                    t.start();
-
-                 }
-
+//                    });
+//                    t.start();
+              //   }
+            log("turning handler off");
             isHandlerRunning = false;
         }
     }
@@ -83,7 +86,8 @@ public class TaskHandler {
         String url = utils.getTaskUrl(taskID);
         log("dispatched : " + taskID);
         log("file ="+file_name);
-        new DownLoadFile(context,taskID,url,file_name).execute();
+        downloadViaLib(taskID,file_name,url);
+       // new DownLoadFile(context,taskID,url,file_name).execute();
         task_count--;
 
     }
@@ -95,10 +99,20 @@ public class TaskHandler {
     private ArrayList<String> getTaskSequence() {
         ArrayList<String> task;
         String _tasks = SharedPrefrenceUtils.getInstance(context).getTaskSequence();
-        log("pendings :: "+_tasks);
+        log("downloads pendings :: "+_tasks);
         task = new Segmentor().getParts(_tasks, '#');
         return task;
     }
+
+    private ArrayList<String> getDispatchTaskSequence() {
+        ArrayList<String> task;
+        String _tasks = SharedPrefrenceUtils.getInstance(context).getDispatchTaskSequence();
+        log(" dispatch pendings :: "+_tasks);
+        task = new Segmentor().getParts(_tasks, '#');
+        return task;
+    }
+
+
 
     private int getTaskCount(){
         return getTaskSequence().size();
@@ -115,40 +129,61 @@ public class TaskHandler {
         String taskID = "audTsk"+timeStamp;
         String tasks = utils.getTaskSequence();
         utils.setTasksSequence(tasks + taskID + "#");
-        log("after adding "+utils.getTaskSequence());
+        // task ready for dispatch
+        utils.setDispatchTasksSequence(tasks + taskID + "#");
+        //log("after adding " + utils.getTaskSequence());
         // save taskTitle:file_name
         utils.setTaskTitle(taskID, file_name);
         // save taskUrl  : _url
-        utils.setTaskUrl(taskID,_url);
-        log("initiating proc...");
+        utils.setTaskUrl(taskID, _url);
+        //log("initiating proc...");
         // notifies handler for new task arrival
-
                 initiate();
     }
     // removes taskID from sharedPreferences string queue
-    public void clearTask(String taskID){
+    public void removeTask(String taskID){
 
         ArrayList<String> tids =new Segmentor().getParts(SharedPrefrenceUtils.getInstance(context).getTaskSequence(), '#');
         for (int i =0;i<tids.size();i++) {
             String tid = tids.get(i);
                 if(tid.equals(taskID)){
-                    log("removing "+ taskID );
+                    log("removing download task "+ taskID );
                     tids.remove(i);
                 }
         }
         // write back to spref
-        writeToSharedPreferences(tids);
+        writeToSharedPreferences(tids,TYPE_TASK_DOWNLOAD);
         task_count--;
     }
 
-    public void writeToSharedPreferences(ArrayList<String> taskIDs){
+    //remove dispatch task
+    public void removeDispatchTask(String taskID){
+
+        ArrayList<String> tids =new Segmentor().getParts(SharedPrefrenceUtils.getInstance(context).getDispatchTaskSequence(), '#');
+        for (int i =0;i<tids.size();i++) {
+            String tid = tids.get(i);
+            if(tid.equals(taskID)){
+                log("removing dispatch task "+ taskID );
+                tids.remove(i);
+            }
+        }
+        // write back to spref
+        writeToSharedPreferences(tids,TYPE_TASK_DISPATCH);
+        task_count--;
+    }
+
+    public void writeToSharedPreferences(ArrayList<String> taskIDs,int type){
         String currStack="";
         for (String id : taskIDs) {
             currStack +=id+"#";
         }
         currStack = currStack.substring(0,currStack.length());
-        log("writing back the tasks :"+currStack);
+        log("writing back the tasks :" + currStack);
+
+        if(type==TYPE_TASK_DOWNLOAD)
         SharedPrefrenceUtils.getInstance(context).setTasksSequence(currStack);
+        else
+            SharedPrefrenceUtils.getInstance(context).setDispatchTasksSequence(currStack);
     }
 
     private boolean isConnected(){
@@ -156,8 +191,30 @@ public class TaskHandler {
     }
 
     public void log(String msg) {
-        Log.d(TAG,msg);
+        Log.d(TAG, msg);
     }
+
+    /*
+    *   lib--downloader
+    * */
+
+    private void downloadViaLib(final String taskID,String file_name,String url){
+
+        File root = Environment.getExternalStorageDirectory();
+        File dir = new File(root.getAbsolutePath() + "/Musicgenie/Audio");
+        File file = new File(dir, file_name.trim() + ".mp3");
+
+        Medescope
+                .getInstance(context)
+                .enqueue(taskID,
+                        url,
+                        file.toString(),
+                        file_name,
+                        "{some:'samplejson'}"
+                );
+
+    }
+
 
     /*
     *       Downloade Async
@@ -186,16 +243,15 @@ public class TaskHandler {
         protected String doInBackground(String... params) {
             log("in doinBack");
             int count;
+            int fileLength = 24;        // for debug purpo.
             //songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
             try {
                 URL url = new URL(songURL);
-                URLConnection connection = url.openConnection();
-
-                connection.setReadTimeout(20000);
-                connection.setConnectTimeout(20000);
-                connection.connect();
-
-                int fileLength = connection.getContentLength();
+                    URLConnection connection = url.openConnection();
+//                    connection.setReadTimeout(1000);
+//                    connection.setConnectTimeout(1000);
+                    connection.connect();
+                    fileLength = connection.getContentLength();
 
                 log("content len "+fileLength);
                 File root = Environment.getExternalStorageDirectory();
@@ -226,7 +282,7 @@ public class TaskHandler {
 
         @Override
         protected void onPostExecute(String result) {
-            log("all done !!!");
+            log("downloaded task "+taskID);
         }
 
         @Override
@@ -234,7 +290,7 @@ public class TaskHandler {
             if(values[0]%10==0)log(taskID+" done.."+ values[0] + " %");
             if(values[0] == 100){
                 log("pre tasks seq "+SharedPrefrenceUtils.getInstance(context).getTaskSequence());
-                clearTask(taskID);
+                removeTask(taskID);
                 log("post tasks seq " + SharedPrefrenceUtils.getInstance(context).getTaskSequence());
             }
             broadcastUpdate(String.valueOf(values[0]));

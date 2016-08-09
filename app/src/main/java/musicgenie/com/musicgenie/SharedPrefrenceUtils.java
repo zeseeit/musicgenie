@@ -48,6 +48,17 @@ public class SharedPrefrenceUtils {
     }
 
 
+    public void setDispatchTasksSequence(String sequence){
+        editor.putString("dis_task_seq",sequence);
+        editor.commit();
+    }
+
+    public String getDispatchTaskSequence(){
+        return preferences.getString("dis_task_seq","");
+    }
+
+
+
     public void setTaskUrl(String taskID ,String url){
         // taskID : key and download_url : value
         editor.putString(taskID+"_u",url);

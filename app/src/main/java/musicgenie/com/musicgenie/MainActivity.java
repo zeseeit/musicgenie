@@ -26,6 +26,9 @@ import org.json.JSONException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import br.com.bemobi.medescope.Medescope;
+import br.com.bemobi.medescope.callback.DownloadStatusCallback;
+
 import static musicgenie.com.musicgenie.SearchResultListAdapter.*;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,8 +54,43 @@ public class MainActivity extends AppCompatActivity {
 
         new App_Config(this).configureDevice();
 
+        Medescope.getInstance(this).subscribeStatus(this, "DOWNLOAD_ID", new DownloadStatusCallback() {
+            @Override
+            public void onDownloadNotEnqueued(String downloadId) {
+                //TODO DO SOMETHING
+            }
+
+            @Override
+            public void onDownloadPaused(String downloadId, int reason) {
+                //TODO DO SOMETHING
+            }
+
+            @Override
+            public void onDownloadInProgress(String downloadId, int progress) {
+                //TODO DO SOMETHING
+                makeToast("done "+ progress);
+                log("done " + progress + " %");
+            }
+
+            @Override
+            public void onDownloadOnFinishedWithError(String downloadId, int reason, String data) {
+                //TODO DO SOMETHING
+            }
+
+            @Override
+            public void onDownloadOnFinishedWithSuccess(String downloadId, String filePath, String data) {
+                //TODO DO SOMETHING);
+            }
+
+            @Override
+            public void onDownloadCancelled(String downloadId) {
+                //TODO DO SOMETHING
+            }
+        });
 
     }
+
+
 
 
     private void fireSearch(String term) {
