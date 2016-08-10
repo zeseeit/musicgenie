@@ -1,27 +1,16 @@
-08-10 05:39:02.563    4594-5683/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160810053754 done..100 %
-08-10 05:39:02.563    4594-5683/musicgenie.com.musicgenie D/TaskHandler﹕ removing download task audTsk20160810053754
-08-10 05:39:02.563    4594-5683/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :audTsk20160810053820#
-08-10 05:39:02.586    4594-5683/musicgenie.com.musicgenie D/TaskHandler﹕ downloaded task audTsk20160810053754
-08-10 05:39:02.589    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ dispatch pendings :: audTsk20160810053754#audTsk20160810053820#
-08-10 05:39:02.591    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ task_count 0
-08-10 05:39:02.591    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ dispatch pendings :: audTsk20160810053754#audTsk20160810053820#
-08-10 05:39:02.591    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ removing dispatch task audTsk20160810053754
-08-10 05:39:02.591    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :audTsk20160810053820#
-08-10 05:39:02.598    4594-6149/musicgenie.com.musicgenie D/TaskHandler﹕ dispatched : audTsk20160810053754
-08-10 05:39:02.598    4594-6149/musicgenie.com.musicgenie D/TaskHandler﹕ file =Mera Naam Mary
-08-10 05:39:02.601    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ removing dispatch task audTsk20160810053820
-08-10 05:39:02.601    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :
-08-10 05:39:02.607    4594-6149/musicgenie.com.musicgenie D/TaskHandler﹕ waiting thread to join
-08-10 05:39:02.608    4594-6150/musicgenie.com.musicgenie D/TaskHandler﹕ dispatched : audTsk20160810053820
-08-10 05:39:02.608    4594-6150/musicgenie.com.musicgenie D/TaskHandler﹕ file =JAANEMAN AAH Vi
-08-10 05:39:02.608    4594-6150/musicgenie.com.musicgenie D/TaskHandler﹕ waiting thread to join
-08-10 05:39:02.621    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ dispatch pendings ::
-08-10 05:39:02.621    4594-5682/musicgenie.com.musicgenie D/TaskHandler﹕ thread joined !
-08-10 05:39:22.694    4594-6152/musicgenie.com.musicgenie D/TaskHandler﹕ content len -1
-08-10 05:39:22.694    4594-6152/musicgenie.com.musicgenie D/TaskHandler﹕ writing to /storage/emulated/0/Musicgenie/Audio/JAANEMAN AAH Vi.mp3
-08-10 05:39:30.344    4594-6152/musicgenie.com.musicgenie D/TaskHandler﹕ IO exception java.io.FileNotFoundException: http://ymp3.aavi.me/d/eWFPYTtWL2FzTzIianZ2cnU8MTF0MzQvLy91cC9yN3NudXA4dTBpcXFpbmd4a2ZncTBlcW8xeGtmZ3FybmN7ZGNlbUFrcmRrdnU/Mihrcj83NjA6NjAyMDM6Oyh0Z3N3a3RndXVuP3tndShpa3Q/e2d1KGhnenI/OzYyNzs7OSc0RTs2MjgzOTYnNEU7NjM5NjQ1JzRFOzYzOzY3NCc0RTs2NDQ3OzgnNEU7NjQ6NTs6JzRFOzY1MzIzNCc0RTs2NTM4OTYnNEU7NjUzOjU6JzRFOzY1NTI7OCc0RTs2NTU0NDMnNEU7NjU1OzY4JzRFOzY1NzI1OCc0RTs2NTc3NDgnNEU7NjU4OjU3JzRFOzY1OTc3NSc0RTs2NToyODUnNEU7NjU6NTQ5JzRFOzY1Ojg4NCc0RTs2NTo5NTcnNEU7NjU6OTg6JzRFOzY1OjoyNyc0RTs2NTo7ODknNEU7NjU7NDU6JzRFOzY1Ozc6Mic0RTs2NjI3NzInNEU7NjYzMzYyJzRFOzY2MzU2NCc0RTs2NjQzOTsnNEU7NjY0NjQ2JzRFOzY2NDk5Oic0RTs2NjU1NzMnNEU7NjY1NjQyJzRFOzY2NTk7NCc0RTs2NjU6OjQoa2Y/cS9DUjV8VlV7TXhlZW1RZlNoVm9XOU9rc2xTOFR6cHRhTThjbHhucEtJS0VORih1eGd0PzUoaWV0P3d1KHBqP0tpcnllbEN6Tm9ualxGSzRNaW16T2xld09FNnlObEcobWd7P3t2OCh1cXd0ZWc/e3F3dndkZyhmd3Q/MzU5MDcyOihub3Y/MzY4Ojo3OjQ6NjY0ODI7Myhva29nP2N3ZmtxJzRIb3I2KHJuPzM3KGd6cmt0Zz8zNjkyOjY1Njs7KGVuZ3A/NDM6NjgzOyhvbz81MyhvcD91cC9yN3NudXA4dShtZ2dyY25reGc/e2d1KGdrP0VhY3NYL1FER2VaZDppVjc4ZFNTKHdycD9TYzJXaGc7WEpoTyh1cmN0Y291P2VuZ3AnNEVmd3QnNEVnayc0RWlldCc0RWlrdCc0RWtmJzRFa3BrdmV5cGZkcnUnNEVrcic0RWtyZGt2dSc0RWt2Y2knNEVtZ2dyY25reGcnNEVub3YnNEVva29nJzRFb28nNEVvcCc0RW91JzRFb3gnNEVwaic0RXJuJzRFdGdzd2t0Z3V1bic0RXVxd3RlZyc0RXdycCc0RWd6cmt0Zyhvdj8zNjkyOjQzNzY3KG94P28oa3BrdmV5cGZkcnU/OjQ3MjIyMihrdmNpPzM2MihvdT9jdyh1a2lwY3Z3dGc/Ojg1Rzg6MjU2NDhGODczRzI2RDZGNTozQzY1OjIzSEY7N0MyODU2NzA4MjJDOzU5Qzg5ODs3OzM6Qzc7NkVEMkdDOjNENDJENEU6Rzk5RDY7KHRjdmdke3JjdXU/e2d1
-08-10 05:39:30.346    4594-6150/musicgenie.com.musicgenie D/TaskHandler﹕ dispatch pendings ::
-08-10 05:39:30.346    4594-6150/musicgenie.com.musicgenie D/TaskHandler﹕ thread joined !
-08-10 05:39:30.858    4594-6151/musicgenie.com.musicgenie D/TaskHandler﹕ content len 24
-08-10 05:39:30.858    4594-6151/musicgenie.com.musicgenie D/TaskHandler﹕ writing to /storage/emulated/0/Musicgenie/Audio/Mera Naam Mary.mp3
-08-10 05:40:37.203    4594-6151/musicgenie.com.musicgenie D/TaskHandler﹕ download started
+08-10 11:07:45.489  16784-16784/musicgenie.com.musicgenie D/ListAdapter﹕ req for download देबू की ना हो -
+08-10 11:07:45.514  16784-16784/musicgenie.com.musicgenie D/TaskHandler﹕ initiating Handler
+08-10 11:07:45.516  16784-16784/musicgenie.com.musicgenie D/TaskHandler﹕ removing dispatch task audTsk20160810110446
+08-10 11:07:45.516  16784-16784/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :audTsk20160810110745#
+08-10 11:07:45.522  16784-17114/musicgenie.com.musicgenie D/TaskHandler﹕ waiting thread to join
+08-10 11:07:45.532  16784-17115/musicgenie.com.musicgenie D/TaskHandler﹕ download thread id 219
+08-10 11:07:45.532  16784-17115/musicgenie.com.musicgenie D/TaskHandler﹕ for dwnd url requesting on http://ymp3.aavi.me/g/fSRrZiQ8IiRDelBEOUNNRk5ceSQuIiR2a3ZuZyQ8IiTipqjip4nipq7ip4Qi4qaX4qeCIuKmquKmwCLiprvip40iLyJSY3ljcCJVa3BpaiIvIkpxdiJLdmdvIlVxcGl1Ii8iRmN0Y3QiLyJEanFscnd0ayJKcXYiVXFwaXUiNDIzOCJwZ3kkfw==
+08-10 11:07:45.553  16784-16784/musicgenie.com.musicgenie D/TaskHandler﹕ removing dispatch task audTsk20160810110745
+08-10 11:07:45.553  16784-16784/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :
+08-10 11:07:45.564  16784-17116/musicgenie.com.musicgenie D/TaskHandler﹕ waiting thread to join
+08-10 11:07:45.566  16784-17117/musicgenie.com.musicgenie D/TaskHandler﹕ download thread id 221
+08-10 11:07:45.566  16784-17117/musicgenie.com.musicgenie D/TaskHandler﹕ for dwnd url requesting on http://ymp3.aavi.me/g/fSRrZiQ8IiRDelBEOUNNRk5ceSQuIiR2a3ZuZyQ8IiTipqjip4nipq7ip4Qi4qaX4qeCIuKmquKmwCLiprvip40iLyJSY3ljcCJVa3BpaiIvIkpxdiJLdmdvIlVxcGl1Ii8iRmN0Y3QiLyJEanFscnd0ayJKcXYiVXFwaXUiNDIzOCJwZ3kkfw==
+08-10 11:07:48.746  16784-17114/musicgenie.com.musicgenie D/TaskHandler﹕ initiating Handler
+08-10 11:07:48.746  16784-17114/musicgenie.com.musicgenie D/TaskHandler﹕ thread joined !
+08-10 11:07:49.131  16784-17116/musicgenie.com.musicgenie D/TaskHandler﹕ initiating Handler
+08-10 11:07:49.131  16784-17116/musicgenie.com.musicgenie D/TaskHandler﹕ thread joined !

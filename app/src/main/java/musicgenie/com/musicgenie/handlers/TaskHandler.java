@@ -72,8 +72,7 @@ public class TaskHandler {
     * WID: loops over pending tasks and dipatches in one by one fashion
     * */
     public void initiate(){
-
-        log("dispatcher id "+Thread.currentThread().getId());
+        log("initiating Handler");
         if(!isHandlerRunning){
 
             while (getDispatchTaskCount() >0 && isConnected()){
@@ -87,8 +86,6 @@ public class TaskHandler {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-
-                                                    log("dispatched thread id "+Thread.currentThread().getId());
                                                     dispatch(taskID);
                                         }
                                     }).start();
@@ -114,7 +111,6 @@ public class TaskHandler {
         String v_id = SharedPrefrenceUtils.getInstance(context).getTaskVideoID(taskID);
         String file_name = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
 
-
         DownloadListener listener = new DownloadListener() {
             @Override
             public void onError(String error) {
@@ -134,8 +130,10 @@ public class TaskHandler {
                 SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
             }
         };
+
         DownloadThread thread = new DownloadThread(taskID,v_id,file_name,listener);
         thread.start();
+
         try {
             log("waiting thread to join");
             isHandlerRunning = true;
@@ -262,7 +260,7 @@ public class TaskHandler {
         utils.setTaskVideoID(taskID, v_id);
         //log("initiating proc...");
         // notifies handler for new task arrival
-                initiate();
+        initiate();
     }
     // removes taskID from sharedPreferences string queue
     public void removeTask(String taskID){
@@ -277,7 +275,7 @@ public class TaskHandler {
         }
         // write back to spref
         writeToSharedPreferences(tids,TYPE_TASK_DOWNLOAD);
-        task_count--;
+
     }
 
     //remove dispatch task
@@ -319,18 +317,6 @@ public class TaskHandler {
     }
 
     /*
-    *   lib--downloader
-    * */
-
-    private void downloadViaLib(final String taskID,String file_name,String url){
-
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root.getAbsolutePath() + "/Musicgenie/Audio");
-        File file = new File(dir, file_name.trim() + ".mp3");
-
-    }
-
-    /*
     *   Download Thread
     * */
 
@@ -366,6 +352,7 @@ public class TaskHandler {
             try {
 
                 String _url  = App_Config.SERVER_URL+"/g/"+t_v_id;
+                log("for dwnd url requesting on "+_url);
                 URL u = new URL(_url);
                 URLConnection dconnection = u.openConnection();
                 dconnection.setReadTimeout(20000);
@@ -381,7 +368,6 @@ public class TaskHandler {
                 while ((line = reader.readLine()) != null) {
                     result.append(line);
                 }
-                log("received "+result);
                 try {
                     JSONObject obj = new JSONObject(result.toString());
                     if(obj.getInt("status")==0){
@@ -389,6 +375,9 @@ public class TaskHandler {
                         t_url += obj.getString("url");
                         log("download url:" + t_url);
 
+                    }else{
+                            downloadListener.onError("server error");
+                            return;
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
