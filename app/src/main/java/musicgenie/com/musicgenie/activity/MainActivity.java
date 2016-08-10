@@ -1,4 +1,4 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.activity;
 
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -26,10 +26,13 @@ import org.json.JSONException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import br.com.bemobi.medescope.Medescope;
-import br.com.bemobi.medescope.callback.DownloadStatusCallback;
-
-import static musicgenie.com.musicgenie.SearchResultListAdapter.*;
+import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.interfaces.ConnectivityUtils;
+import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.adapters.SearchResultListAdapter;
+import musicgenie.com.musicgenie.utilities.SoftInputManager;
+import musicgenie.com.musicgenie.models.Song;
+import musicgenie.com.musicgenie.utilities.VolleyUtils;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -53,41 +56,6 @@ public class MainActivity extends AppCompatActivity {
         adapter = new SearchResultListAdapter(this);
 
         new App_Config(this).configureDevice();
-
-        Medescope.getInstance(this).subscribeStatus(this, "DOWNLOAD_ID", new DownloadStatusCallback() {
-            @Override
-            public void onDownloadNotEnqueued(String downloadId) {
-                //TODO DO SOMETHING
-            }
-
-            @Override
-            public void onDownloadPaused(String downloadId, int reason) {
-                //TODO DO SOMETHING
-            }
-
-            @Override
-            public void onDownloadInProgress(String downloadId, int progress) {
-                //TODO DO SOMETHING
-                makeToast("done "+ progress);
-                log("done " + progress + " %");
-            }
-
-            @Override
-            public void onDownloadOnFinishedWithError(String downloadId, int reason, String data) {
-                //TODO DO SOMETHING
-            }
-
-            @Override
-            public void onDownloadOnFinishedWithSuccess(String downloadId, String filePath, String data) {
-                //TODO DO SOMETHING);
-            }
-
-            @Override
-            public void onDownloadCancelled(String downloadId) {
-                //TODO DO SOMETHING
-            }
-        });
-
     }
 
 
@@ -143,11 +111,13 @@ public class MainActivity extends AppCompatActivity {
             JSONArray results = new JSONArray(response);
             for (int i = 0; i < results.length(); i++) {
 
+                String enc_v_id = results.getJSONObject(i).getString("get_url").substring(2);
+
                 songs.add(new Song( results.getJSONObject(i).getString("title"),
                                     results.getJSONObject(i).getString("length"),
                                     results.getJSONObject(i).getString("uploader"),
                                     results.getJSONObject(i).getString("thumb"),
-                                    results.getJSONObject(i).getString("id"),
+                                    enc_v_id,
                                     results.getJSONObject(i).getString("time"),
                                     results.getJSONObject(i).getString("views")
                                     ));

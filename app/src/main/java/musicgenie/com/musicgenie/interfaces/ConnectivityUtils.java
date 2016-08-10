@@ -1,4 +1,4 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.interfaces;
 
 import android.content.Context;
 import android.net.ConnectivityManager;

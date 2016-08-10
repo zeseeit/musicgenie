@@ -1,4 +1,4 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -35,7 +35,7 @@ public class SharedPrefrenceUtils {
     }
 
     public String getFileSavingLocation(){
-        return preferences.getString("saveLocation",App_Config.PHONE);
+        return preferences.getString("saveLocation", App_Config.PHONE);
     }
 
     public void setTasksSequence(String sequence){
@@ -59,13 +59,13 @@ public class SharedPrefrenceUtils {
 
 
 
-    public void setTaskUrl(String taskID ,String url){
+    public void setTaskVideoID(String taskID ,String v_id){
         // taskID : key and download_url : value
-        editor.putString(taskID+"_u",url);
+        editor.putString(taskID+"_u",v_id);
         editor.commit();
     }
 
-    public String getTaskUrl(String taskID){
+    public String getTaskVideoID(String taskID){
         return preferences.getString(taskID+"_u","");
     }
 
@@ -78,4 +78,12 @@ public class SharedPrefrenceUtils {
         return preferences.getString(taskID+"_t","");
     }
 
+    public int getCurrentDownloadsCount(){
+        return preferences.getInt("cur_dnd",0);
+    }
+
+    public void setCurrentDownloadCount(int count){
+        editor.putInt("cur_dnd",count);
+        editor.commit();
+    }
 }

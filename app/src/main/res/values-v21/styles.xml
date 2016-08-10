@@ -9,4 +9,5 @@
         <item name="android:colorPrimaryDark">@color/PrimaryColorDark</item>
         <item name="android:colorAccent">@color/AccentColor</item>
     </style>
+
 </resources>

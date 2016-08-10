@@ -1,11 +1,8 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.adapters;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,16 +23,13 @@ import com.squareup.picasso.Picasso;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
+
+import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.models.Song;
+import musicgenie.com.musicgenie.handlers.TaskHandler;
+import musicgenie.com.musicgenie.utilities.VolleyUtils;
 
 /**
  * Created by Ankit on 8/5/2016.
@@ -56,7 +50,6 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
     public SearchResultListAdapter(Context context) {
         super(context, 0);
         this.context = context;
-        progressDialog = new ProgressDialog(context);
     }
 
     public static SearchResultListAdapter getInstance(Context context) {
@@ -107,59 +100,12 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         tempView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                requestDownloadUrl(v_id, file_name);
+                log("req for download "+file_name);
+                addDownloadTask(v_id,file_name);
+                //requestDownloadUrl(v_id, file_name);
             }
         });
         return tempView;
-    }
-
-    private void requestDownloadUrl(final String v_id, final String file_name) {
-
-        progressDialog.setMessage(context.getString(R.string.download_request_progress_dialog_msg));
-        progressDialog.show();
-        String url = App_Config.SERVER_URL + "/g/" + v_id;
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                log("got url resp " + response);
-                handleResponse(response, file_name);
-            }
-        }, new Response.ErrorListener() {
-
-            @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                log("Error While searching :" + volleyError);
-            }
-        });
-
-        request.setRetryPolicy(new DefaultRetryPolicy(50000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        VolleyUtils.getInstance().addToRequestQueue(request, TAG, context);
-
-    }
-
-    private void handleResponse(String response, String file_name) {
-
-        String download_url = App_Config.SERVER_URL;
-        int status = -1;
-        try {
-            JSONObject obj = new JSONObject(response);
-            if (obj.getInt("status") == 0) {
-                download_url += obj.getString("url");
-                log("downloading url > " + download_url);
-                progressDialog.hide();
-                addDownloadTask(download_url, file_name);
-
-            } else {
-                progressDialog.dismiss();
-                handleErrors();
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
     }
 
     private void handleErrors() {
@@ -190,29 +136,11 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
         VolleyUtils.getInstance().addToRequestQueue(request, "_thumb_imgReq", context);
     }
 
-    private void addDownloadTask(final String download_url, final String file_name) {
-//// TODO: add the download task in well fashion then this adapters job is over once added
-                progressDialog.dismiss();
+    private void addDownloadTask(final String video_id, final String file_name) {
+
                 TaskHandler
                         .getInstance(context)
-                        .addTask(file_name,download_url);
-
-
-//
-//        progressDialog.setMessage(context.getString(R.string.preparing_audio_dialog_msg));
-//        progressDialog.show();
-//
-//        final String tid = taskId;
-//
-//        Thread t = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                new DownLoadFile(context,tid,download_url, file_name).execute();
-//            }
-//        });
-//
-//        log("starting thread "+t.getName());
-//        t.start();
+                        .addTask(file_name,video_id);
 
     }
 

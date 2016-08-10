@@ -1,12 +1,23 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.handlers;
 
-import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
 import android.text.format.DateFormat;
 import android.util.Log;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,8 +30,14 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import br.com.bemobi.medescope.Medescope;
-import br.com.bemobi.medescope.callback.DownloadStatusCallback;
+import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.interfaces.ConnectivityUtils;
+import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
+import musicgenie.com.musicgenie.interfaces.DownloadListener;
+import musicgenie.com.musicgenie.utilities.Segmentor;
+import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
+import musicgenie.com.musicgenie.utilities.VolleyUtils;
 
 /**
  * Created by Ankit on 8/7/2016.
@@ -34,6 +51,8 @@ public class TaskHandler {
     private static TaskHandler mInstance;
     private boolean isHandlerRunning = false;
     private int task_count = 0;
+    private ProgressDialog progressDialog;
+    private String dwnd_url;
 
     public TaskHandler(Context context) {
         this.context = context;
@@ -49,47 +68,125 @@ public class TaskHandler {
     /*
     * WID: loops over pending tasks and dipatches in one by one fashion
     * */
-    private void initiate(){
+    public void initiate(){
 
-
-        log("handler running "+isHandlerRunning);
         if(!isHandlerRunning){
-            //isHandlerRunning = true;
 
-            while (task_count > 0 && isConnected()){
-                log("=========================cur loop . task_count "+task_count);
+            while (getDispatchTaskCount() >0 && isConnected()){
+
+                isHandlerRunning = true;
                     final  ArrayList<String> taskIDs = getDispatchTaskSequence();
-//                    Thread t = new Thread(new Runnable() {
-//                        @Override
-//                        public void run() {
-                            for (String taskID : taskIDs) {
-                                dispatch(taskID);
-                                removeDispatchTask(taskID);
 
+                            for (final String taskID : taskIDs) {
+
+                                if(SharedPrefrenceUtils.getInstance(context).getCurrentDownloadsCount()<1) {
+                                    new Thread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            dispatch(taskID);
+                                        }
+                                    }).start();
+                                    removeDispatchTask(taskID);
+                                }
                             }
                         }
-//                    });
-//                    t.start();
-              //   }
-            log("turning handler off");
-            isHandlerRunning = false;
+        }else{
+            log("Handler Already running , Task is enqued ");
         }
     }
 
+    public void pauseHandler(){
+        //TODO: check how to cancel activities on thread
+    }
     /*
     * WID: get task details from s.pref. and start AsyncTask for download
     * */
-    private void dispatch(String taskID){
 
-        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
-        String file_name = utils.getTaskTitle(taskID);
-        String url = utils.getTaskUrl(taskID);
-        log("dispatched : " + taskID);
-        log("file ="+file_name);
-        downloadViaLib(taskID,file_name,url);
-       // new DownLoadFile(context,taskID,url,file_name).execute();
-        task_count--;
 
+    private void dispatch(final String taskID) {
+
+        String v_id = SharedPrefrenceUtils.getInstance(context).getTaskVideoID(taskID);
+
+        String url = App_Config.SERVER_URL + "/g/" + v_id;
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                log("got url resp " + response);
+                handleResponse(response,taskID);
+            }
+        }, new Response.ErrorListener() {
+
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                log("Error While searching :" + volleyError);
+            }
+        });
+
+        request.setRetryPolicy(new DefaultRetryPolicy(50000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        VolleyUtils.getInstance().addToRequestQueue(request, TAG, context);
+
+    }
+
+    private void handleResponse(String response,String taskID) {
+
+        String download_url = App_Config.SERVER_URL;
+        int status = -1;
+        try {
+            JSONObject obj = new JSONObject(response);
+            if (obj.getInt("status") == 0) {
+                download_url += obj.getString("url");
+                log("download url:" + download_url);
+
+
+                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
+                String file_name = utils.getTaskTitle(taskID);
+                log("dispatched : " + taskID+"["+file_name+"]");
+
+                DownloadListener listener = new DownloadListener() {
+                    @Override
+                    public void onError(String error) {
+                        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+                        //TODO: handle error during download
+                    }
+
+                    @Override
+                    public void onDownloadStart() {
+                        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(1);
+                        log("download started");
+//                    progressDialog.dismiss();
+                    }
+
+                    @Override
+                    public void onDownloadFinish() {
+                        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+                    }
+                };
+
+
+                DownloadThread thread = new DownloadThread(taskID,download_url,file_name,listener);
+                thread.start();
+                try {
+                    log("waiting thread to join");
+                    isHandlerRunning = true;
+                    thread.join();
+                    isHandlerRunning = false;
+                    //  last-round check up for any residue task taken-in in beetween
+                    initiate();
+                    log("thread joined !");
+
+                } catch (InterruptedException e) {
+                    log("thread join Interrupted");
+                }
+
+            } else {
+
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     /*
@@ -105,21 +202,25 @@ public class TaskHandler {
     }
 
     private ArrayList<String> getDispatchTaskSequence() {
+
         ArrayList<String> task;
         String _tasks = SharedPrefrenceUtils.getInstance(context).getDispatchTaskSequence();
-        log(" dispatch pendings :: "+_tasks);
+        //log(" dispatch pendings :: "+_tasks);
         task = new Segmentor().getParts(_tasks, '#');
         return task;
+
     }
 
-
-
-    private int getTaskCount(){
+    public int getTaskCount(){
         return getTaskSequence().size();
     }
 
+    public int getDispatchTaskCount(){
+        return getDispatchTaskSequence().size();
+    }
+
     // adds task to shared preferences task queue
-    public void addTask(String file_name, String _url){
+    public void addTask(String file_name, String v_id){
         task_count++;
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
         // create taskID
@@ -135,7 +236,7 @@ public class TaskHandler {
         // save taskTitle:file_name
         utils.setTaskTitle(taskID, file_name);
         // save taskUrl  : _url
-        utils.setTaskUrl(taskID, _url);
+        utils.setTaskVideoID(taskID, v_id);
         //log("initiating proc...");
         // notifies handler for new task arrival
                 initiate();
@@ -204,17 +305,105 @@ public class TaskHandler {
         File dir = new File(root.getAbsolutePath() + "/Musicgenie/Audio");
         File file = new File(dir, file_name.trim() + ".mp3");
 
-        Medescope
-                .getInstance(context)
-                .enqueue(taskID,
-                        url,
-                        file.toString(),
-                        file_name,
-                        "{some:'samplejson'}"
-                );
-
     }
 
+    /*
+    *   Download Thread
+    * */
+
+    //WID: takes taskID , file_name , url and  download it , removes task after 100% , publishes progress
+
+    private class DownloadThread extends Thread implements DownloadCancelListener {
+
+        private String taskID;
+        private String url;
+        private String file_name;
+        private DownloadListener downloadListener;
+        private boolean isCanceled = false;
+
+        //private Context context;
+
+        public DownloadThread(String taskID , String url , String file_name,DownloadListener listener) {
+            this.taskID = taskID;
+            this.url = url;
+            this.file_name = file_name;
+            this.downloadListener = listener;
+            //this.context = context;
+        }
+
+        @Override
+        public void run() {
+            int count;
+            int fileLength;
+            final String t_url = this.url;
+            final String t_file_name = this.file_name;
+
+            try {
+
+                URL url = new URL(t_url);
+                URLConnection connection = url.openConnection();
+                connection.setReadTimeout(20000);
+                connection.setConnectTimeout(20000);
+                connection.connect();
+                fileLength = connection.getContentLength();
+                log("content len "+fileLength);
+                File dir = new File(App_Config.FILES_DIR);
+                File file = new File(dir, t_file_name.trim() + ".mp3");
+                log("writing to "+file.getAbsolutePath().toString());
+
+                InputStream inputStream = new BufferedInputStream(url.openStream());
+                OutputStream outputStream = new FileOutputStream(file);
+                byte data[] = new byte[1024];
+                long total = 0;
+                while (!isCanceled && (count = inputStream.read(data)) != -1) {
+
+                    if(total==0)downloadListener.onDownloadStart();
+
+                    total += count;
+                    publishProgress((int) total * 100 / fileLength);
+                    outputStream.write(data, 0, count);
+                }
+
+                outputStream.flush();
+                outputStream.close();
+                inputStream.close();
+
+            } catch (MalformedURLException e) {
+                downloadListener.onError(e.toString());
+                log("URL exception " + e);
+            } catch (IOException e) {
+                downloadListener.onError(e.toString());
+                log("IO exception " + e);
+            }
+
+        }
+
+
+        private void publishProgress(int progress){
+            //  to reduce log lines
+            if(progress%10==0)log(taskID+" done.."+ progress + " %");
+
+            if(progress == 100){
+                removeTask(taskID);
+                downloadListener.onDownloadFinish();
+                log("downloaded task " + taskID);
+            }
+            broadcastUpdate(String.valueOf(progress));
+        }
+
+        public void broadcastUpdate(String progressPercentage){
+            Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
+            intent.putExtra(App_Config.EXTRA_TASK_ID,taskID);
+            intent.putExtra(App_Config.EXTRA_PROGRESS, progressPercentage);
+            context.sendBroadcast(intent);
+        }
+
+        @Override
+        public void onDownloadCancel(String taskID) {
+                this.isCanceled = true;
+                log("task "+taskID +" got canceled !!");
+        }
+    }
 
     /*
     *       Downloade Async

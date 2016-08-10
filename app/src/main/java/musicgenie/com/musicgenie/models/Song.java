@@ -1,4 +1,4 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.models;
 
 /**
  * Created by Ankit on 8/5/2016.

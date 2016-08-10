@@ -1,4 +1,4 @@
-package musicgenie.com.musicgenie;
+package musicgenie.com.musicgenie.utilities;
 
 import java.util.ArrayList;
 
