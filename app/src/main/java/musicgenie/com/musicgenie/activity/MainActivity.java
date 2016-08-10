@@ -111,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
             JSONArray results = new JSONArray(response);
             for (int i = 0; i < results.length(); i++) {
 
-                String enc_v_id = results.getJSONObject(i).getString("get_url").substring(2);
+                String enc_v_id = results.getJSONObject(i).getString("get_url").substring(3);
 
                 songs.add(new Song( results.getJSONObject(i).getString("title"),
                                     results.getJSONObject(i).getString("length"),

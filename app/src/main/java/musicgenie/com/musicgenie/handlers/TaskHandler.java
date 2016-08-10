@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Environment;
+import android.os.Handler;
 import android.text.format.DateFormat;
 import android.util.Log;
 
@@ -19,10 +20,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -70,6 +73,7 @@ public class TaskHandler {
     * */
     public void initiate(){
 
+        log("dispatcher id "+Thread.currentThread().getId());
         if(!isHandlerRunning){
 
             while (getDispatchTaskCount() >0 && isConnected()){
@@ -83,7 +87,9 @@ public class TaskHandler {
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
-                                            dispatch(taskID);
+
+                                                    log("dispatched thread id "+Thread.currentThread().getId());
+                                                    dispatch(taskID);
                                         }
                                     }).start();
                                     removeDispatchTask(taskID);
@@ -106,27 +112,43 @@ public class TaskHandler {
     private void dispatch(final String taskID) {
 
         String v_id = SharedPrefrenceUtils.getInstance(context).getTaskVideoID(taskID);
+        String file_name = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
 
-        String url = App_Config.SERVER_URL + "/g/" + v_id;
-        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+
+        DownloadListener listener = new DownloadListener() {
             @Override
-            public void onResponse(String response) {
-                log("got url resp " + response);
-                handleResponse(response,taskID);
+            public void onError(String error) {
+                SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+                //TODO: handle error during download
             }
-        }, new Response.ErrorListener() {
 
             @Override
-            public void onErrorResponse(VolleyError volleyError) {
-                log("Error While searching :" + volleyError);
+            public void onDownloadStart() {
+                SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(1);
+                log("download started");
+//                    progressDialog.dismiss();
             }
-        });
 
-        request.setRetryPolicy(new DefaultRetryPolicy(50000,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            @Override
+            public void onDownloadFinish() {
+                SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+            }
+        };
+        DownloadThread thread = new DownloadThread(taskID,v_id,file_name,listener);
+        thread.start();
+        try {
+            log("waiting thread to join");
+            isHandlerRunning = true;
+            thread.join();
+            isHandlerRunning = false;
+            //  last-round check up for any residue task taken-in in beetween
+            initiate();
+            log("thread joined !");
 
-        VolleyUtils.getInstance().addToRequestQueue(request, TAG, context);
+        } catch (InterruptedException e) {
+            log("thread join Interrupted");
+        }
+
 
     }
 
@@ -221,6 +243,7 @@ public class TaskHandler {
 
     // adds task to shared preferences task queue
     public void addTask(String file_name, String v_id){
+
         task_count++;
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
         // create taskID
@@ -316,16 +339,16 @@ public class TaskHandler {
     private class DownloadThread extends Thread implements DownloadCancelListener {
 
         private String taskID;
-        private String url;
+        private String v_id;
         private String file_name;
         private DownloadListener downloadListener;
         private boolean isCanceled = false;
 
         //private Context context;
 
-        public DownloadThread(String taskID , String url , String file_name,DownloadListener listener) {
+        public DownloadThread(String taskID , String v_id , String file_name,DownloadListener listener) {
             this.taskID = taskID;
-            this.url = url;
+            this.v_id = v_id;
             this.file_name = file_name;
             this.downloadListener = listener;
             //this.context = context;
@@ -335,10 +358,42 @@ public class TaskHandler {
         public void run() {
             int count;
             int fileLength;
-            final String t_url = this.url;
+            final String t_v_id = this.v_id;
             final String t_file_name = this.file_name;
+            String t_url = App_Config.SERVER_URL;
+            log("download thread id "+Thread.currentThread().getId());
 
             try {
+
+                String _url  = App_Config.SERVER_URL+"/g/"+t_v_id;
+                URL u = new URL(_url);
+                URLConnection dconnection = u.openConnection();
+                dconnection.setReadTimeout(20000);
+                dconnection.setConnectTimeout(20000);
+                dconnection.connect();
+
+                StringBuilder result = new StringBuilder();
+                InputStream in = new BufferedInputStream(dconnection.getInputStream());
+
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    result.append(line);
+                }
+                log("received "+result);
+                try {
+                    JSONObject obj = new JSONObject(result.toString());
+                    if(obj.getInt("status")==0){
+
+                        t_url += obj.getString("url");
+                        log("download url:" + t_url);
+
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
 
                 URL url = new URL(t_url);
                 URLConnection connection = url.openConnection();
