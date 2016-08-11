@@ -49,7 +49,7 @@ public class TaskHandler {
     private int task_count = 0;
     private ProgressDialog progressDialog;
     private String dwnd_url;
-    private Handler mHandler;
+    private static Handler mHandler;
 
     public TaskHandler(Context context) {
         this.context = context;
@@ -120,7 +120,6 @@ public class TaskHandler {
     /*
     * WID: get task details from s.pref. and start AsyncTask for download
     * */
-
 
     private void dispatch(final String taskID) {
 
@@ -217,6 +216,7 @@ public class TaskHandler {
         // notifies handler for new task arrival
         initiate();
     }
+
     // removes taskID from sharedPreferences string queue
     public void removeTask(String taskID){
 
@@ -249,6 +249,8 @@ public class TaskHandler {
 
     }
 
+    // write string task sequence to SF
+
     public void writeToSharedPreferences(ArrayList<String> taskIDs,int type){
         String currStack="";
         for (String id : taskIDs) {
@@ -266,11 +268,12 @@ public class TaskHandler {
         }
 
     }
-
+    // getConnectivity of Device
     private boolean isConnected(){
         return ConnectivityUtils.getInstance(context).isConnectedToNet();
     }
 
+    // logs
     public void log(String msg) {
         Log.d(TAG, msg);
     }
@@ -408,104 +411,8 @@ public class TaskHandler {
         @Override
         public void onDownloadCancel(String taskID) {
                 this.isCanceled = true;
-                log("task "+taskID +" got canceled !!");
+                log("task " + taskID + " got canceled !!");
         }
-    }
-
-    /*
-    *       Downloade Async
-    * */
-
-    class DownLoadFile extends AsyncTask<String, Integer, String> {
-
-        //// TODO: it needs some error broadcaster
-        private Context context;
-        private String songURL;
-        private String filename;
-        private String taskID;
-
-        public DownLoadFile() {
-        }
-
-        public DownLoadFile(Context context,String taskID , String uri, String filename) {
-            log("dnd ctxt "+context);
-            this.context = context;
-            this.songURL = uri;
-            this.filename = filename;
-            this.taskID = taskID;
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            log("in doinBack");
-            int count;
-            int fileLength;        // for debug purpo.
-            //songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
-            try {
-                URL url = new URL(songURL);
-                    URLConnection connection = url.openConnection();
-//                    connection.setReadTimeout(1000);
-//                    connection.setConnectTimeout(1000);
-                    connection.connect();
-                    fileLength = connection.getContentLength();
-
-                log("content len "+fileLength);
-                File root = Environment.getExternalStorageDirectory();
-                File dir = new File(root.getAbsolutePath() + "/Musicgenie/Audio");
-
-                File file = new File(dir, filename.trim() + ".mp3");
-                log("writing to " + file.toString());
-                // download file
-                InputStream inputStream = new BufferedInputStream(url.openStream());
-                OutputStream outputStream = new FileOutputStream(file);
-                byte data[] = new byte[1024];
-                long total = 0;
-                while ((count = inputStream.read(data)) != -1) {
-                    total += count;
-                    publishProgress((int) total * 100 / fileLength);
-                    outputStream.write(data, 0, count);
-                }
-                outputStream.flush();
-                outputStream.close();
-                inputStream.close();
-            } catch (MalformedURLException e) {
-                log("URL exception " + e);
-            } catch (IOException e) {
-                log("IO exception "+e);
-            }
-            return "";
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            log("downloaded task "+taskID);
-        }
-
-        @Override
-        protected void onProgressUpdate(final Integer... values) {
-            if(values[0]%10==0)log(taskID+" done.."+ values[0] + " %");
-            if(values[0] == 100){
-                log("pre tasks seq "+SharedPrefrenceUtils.getInstance(context).getTaskSequence());
-                removeTask(taskID);
-                log("post tasks seq " + SharedPrefrenceUtils.getInstance(context).getTaskSequence());
-            }
-            broadcastUpdate(String.valueOf(values[0]));
-            super.onProgressUpdate(values);
-        }
-
-        @Override
-        protected void onPreExecute() {
-            log("starting download");
-        }
-
-
-        public void broadcastUpdate(String progressPercentage){
-            Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
-            intent.putExtra(App_Config.EXTRA_TASK_ID,taskID);
-            intent.putExtra(App_Config.EXTRA_PROGRESS, progressPercentage);
-            context.sendBroadcast(intent);
-        }
-
     }
 
 }
