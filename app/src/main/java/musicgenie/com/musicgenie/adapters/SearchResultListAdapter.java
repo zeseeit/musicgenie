@@ -25,6 +25,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.models.Song;
@@ -46,6 +47,7 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
     private static SearchResultListAdapter mInstance;
     private Context context;
     private ArrayList<Song> songs;
+    private TaskAddListener taskAddListener;
 
     public SearchResultListAdapter(Context context) {
         super(context, 0);
@@ -57,6 +59,10 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
             mInstance = new SearchResultListAdapter(context);
         }
         return mInstance;
+    }
+
+    public void setOnTaskAddListener(TaskAddListener listener){
+        this.taskAddListener = listener;
     }
 
     public void setSongs(ArrayList<Song> songs) {
@@ -138,10 +144,18 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
     private void addDownloadTask(final String video_id, final String file_name) {
 
+        progressDialog = new ProgressDialog(context);
+        progressDialog.setMessage("Requesting Your Stuff...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
                 TaskHandler
                         .getInstance(context)
                         .addTask(file_name,video_id);
 
+        progressDialog.dismiss();
+                if(this.taskAddListener!=null)
+                    taskAddListener.onTaskAddToQueue(file_name);
     }
 
     public void log(String _lg) {

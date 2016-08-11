@@ -3,10 +3,9 @@ package musicgenie.com.musicgenie.receivers;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 
 import musicgenie.com.musicgenie.handlers.TaskHandler;
-import musicgenie.com.musicgenie.interfaces.ConnectivityUtils;
+import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 
 /**
  * Created by Ankit on 8/10/2016.

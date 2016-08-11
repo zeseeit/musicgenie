@@ -28,7 +28,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import musicgenie.com.musicgenie.interfaces.ConnectivityUtils;
+import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.interfaces.DownloadListener;
 import musicgenie.com.musicgenie.utilities.App_Config;
@@ -75,7 +75,6 @@ public class TaskHandler {
             }
         };
 
-        log("initiating Handler");
         if(!isHandlerRunning){
 
             if (getDispatchTaskCount() > 0 && isConnected()) {
@@ -164,69 +163,7 @@ public class TaskHandler {
         } catch (InterruptedException e) {
             log("thread join Interrupted");
         }
-
-
     }
-
-//    private void handleResponse(String response,String taskID) {
-//
-//        String download_url = App_Config.SERVER_URL;
-//        int status = -1;
-//        try {
-//            JSONObject obj = new JSONObject(response);
-//            if (obj.getInt("status") == 0) {
-//                download_url += obj.getString("url");
-//                log("download url:" + download_url);
-//
-//
-//                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
-//                String file_name = utils.getTaskTitle(taskID);
-//                log("dispatched : " + taskID+"["+file_name+"]");
-//
-//
-//                DownloadListener listener = new DownloadListener() {
-//                    @Override
-//                    public void onError(String error) {
-//                        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
-//                        //TODO: handle error during download
-//                    }
-//
-//                    @Override
-//                    public void onDownloadTaskProcessStart() {
-//                        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(1);
-//                        log("callback: download started");
-////                    progressDialog.dismiss();
-//                    }
-//
-//                    @Override
-//                    public void onDownloadFinish() {
-//                        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
-//                    }
-//                };
-//
-//
-//                DownloadThread thread = new DownloadThread(taskID,download_url,file_name,listener);
-//                thread.start();
-//                try {
-//                    log("waiting thread to join");
-//                    isHandlerRunning = true;
-//                    thread.join();
-//                    isHandlerRunning = false;
-//                    //  last-round check up for any residue task taken-in in beetween
-//                    initiate();
-//                    log("thread joined !");
-//
-//                } catch (InterruptedException e) {
-//                    log("thread join Interrupted");
-//                }
-//
-//            } else {
-//
-//            }
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     /*
     *                  Task Helpers
