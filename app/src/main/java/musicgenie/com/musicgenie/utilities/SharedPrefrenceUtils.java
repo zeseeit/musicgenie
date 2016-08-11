@@ -2,6 +2,7 @@ package musicgenie.com.musicgenie.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 /**
  * Created by Ankit on 8/5/2016.
@@ -44,6 +45,7 @@ public class SharedPrefrenceUtils {
     }
 
     public String getTaskSequence(){
+        Log.d("SF",preferences.getString("task_seq",""));
         return preferences.getString("task_seq","");
     }
 
@@ -54,6 +56,7 @@ public class SharedPrefrenceUtils {
     }
 
     public String getDispatchTaskSequence(){
+        Log.d("SF",preferences.getString("dis_task_seq",""));
         return preferences.getString("dis_task_seq","");
     }
 

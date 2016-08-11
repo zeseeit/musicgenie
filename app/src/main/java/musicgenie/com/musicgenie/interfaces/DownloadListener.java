@@ -5,6 +5,6 @@ package musicgenie.com.musicgenie.interfaces;
  */
 public interface DownloadListener {
     public void onError(String error);
-    public void onDownloadStart();
+    public void onDownloadTaskProcessStart();
     public void onDownloadFinish();
 }

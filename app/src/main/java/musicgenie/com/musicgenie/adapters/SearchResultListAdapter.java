@@ -149,3 +149,4 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
     }
 
 }
+
