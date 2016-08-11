@@ -1,6 +1,5 @@
 package musicgenie.com.musicgenie.handlers;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -29,10 +28,10 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
-import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.interfaces.ConnectivityUtils;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.interfaces.DownloadListener;
+import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.Segmentor;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 
@@ -79,7 +78,7 @@ public class TaskHandler {
         log("initiating Handler");
         if(!isHandlerRunning){
 
-            while (getDispatchTaskCount() >0 && isConnected()){
+            if (getDispatchTaskCount() > 0 && isConnected()) {
             log("tasks to dispatch = "+getDispatchTaskCount());
                 isHandlerRunning = true;
                     final  ArrayList<String> taskIDs = getDispatchTaskSequence();
@@ -93,6 +92,7 @@ public class TaskHandler {
                                 // it should be called to achieve purpose not for value purpose
                                 //
                                 if(SharedPrefrenceUtils.getInstance(context).getCurrentDownloadsCount()<1) {
+
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -105,6 +105,7 @@ public class TaskHandler {
 
                                         }
                                     }).start();
+
                                     removeDispatchTask(taskID);
                                 }
                             }
@@ -268,6 +269,7 @@ public class TaskHandler {
         String tasks = utils.getTaskSequence();
         utils.setTasksSequence(tasks + taskID + "#");
         log("add: Task["+taskID+"]");
+        tasks = utils.getDispatchTaskSequence();
         utils.setDispatchTasksSequence(tasks + taskID + "#");
         log("add: DispatchTask["+taskID+"]");
         //log("after adding " + utils.getTaskSequence());
@@ -290,7 +292,7 @@ public class TaskHandler {
                 }
         }
         // write back to spref
-        writeToSharedPreferences(tids,TYPE_TASK_DOWNLOAD);
+        writeToSharedPreferences(tids, TYPE_TASK_DOWNLOAD);
 
     }
 
@@ -306,7 +308,7 @@ public class TaskHandler {
             }
         }
         // write back to spref
-        writeToSharedPreferences(tids,TYPE_TASK_DISPATCH);
+        writeToSharedPreferences(tids, TYPE_TASK_DISPATCH);
 
     }
 
@@ -316,12 +318,16 @@ public class TaskHandler {
             currStack +=id+"#";
         }
         currStack = currStack.substring(0,currStack.length());
-        log("writing back the tasks :" + currStack);
 
-        if(type==TYPE_TASK_DOWNLOAD)
-        SharedPrefrenceUtils.getInstance(context).setTasksSequence(currStack);
-        else
+
+        if (type == TYPE_TASK_DOWNLOAD) {
+            log("writing back tasks :" + currStack);
+            SharedPrefrenceUtils.getInstance(context).setTasksSequence(currStack);
+        } else {
+            log("writing back the dispatch tasks :" + currStack);
             SharedPrefrenceUtils.getInstance(context).setDispatchTasksSequence(currStack);
+        }
+
     }
 
     private boolean isConnected(){
@@ -415,7 +421,7 @@ public class TaskHandler {
 
                 File dir = new File(App_Config.FILES_DIR);
                 File file = new File(dir, t_file_name.trim() + ".mp3");
-                log("writing to "+file.getAbsolutePath().toString());
+                log("writing to " + file.toString());
 
                 InputStream inputStream = new BufferedInputStream(url.openStream());
                 OutputStream outputStream = new FileOutputStream(file);
@@ -496,7 +502,7 @@ public class TaskHandler {
         protected String doInBackground(String... params) {
             log("in doinBack");
             int count;
-            int fileLength = 24;        // for debug purpo.
+            int fileLength;        // for debug purpo.
             //songPath="http://dl.enjoypur.vc/upload_file/5570/6757/PagalWorld%20-%20Bollywood%20Mp3%20Songs%202016/Sanam%20Re%20(2016)%20Mp3%20Songs/SANAM%20RE%20%28Official%20Remix%29%20DJ%20Chetas.mp3";
             try {
                 URL url = new URL(songURL);
@@ -511,7 +517,7 @@ public class TaskHandler {
                 File dir = new File(root.getAbsolutePath() + "/Musicgenie/Audio");
 
                 File file = new File(dir, filename.trim() + ".mp3");
-                log("writing to "+file.getAbsolutePath().toString());
+                log("writing to " + file.toString());
                 // download file
                 InputStream inputStream = new BufferedInputStream(url.openStream());
                 OutputStream outputStream = new FileOutputStream(file);

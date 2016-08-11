@@ -56,7 +56,7 @@ public class SharedPrefrenceUtils {
     }
 
     public String getDispatchTaskSequence(){
-        Log.d("SF",preferences.getString("dis_task_seq",""));
+        Log.d("SF-d", preferences.getString("dis_task_seq", ""));
         return preferences.getString("dis_task_seq","");
     }
 
