@@ -31,8 +31,8 @@ public class App_Config extends Application {
     public void configureDevice() {
 
         String savePref = SharedPrefrenceUtils.getInstance(context).getFileSavingLocation();
-
-       // LocalNotificationManager.getInstance(context).launchNotification("You Have "+ TaskHandler.getInstance(context).getTaskCount()+" Tasks Pending");
+        int tasks_pending = TaskHandler.getInstance(context).getTaskCount();
+         if(tasks_pending>0)LocalNotificationManager.getInstance(context).launchNotification("You Have "+ tasks_pending +" Tasks Pending");
 
         if (savePref.equals(App_Config.PHONE)) {
             File root = Environment.getExternalStorageDirectory();
@@ -44,7 +44,5 @@ public class App_Config extends Application {
         } else {
 
         }
-
-
     }
 }

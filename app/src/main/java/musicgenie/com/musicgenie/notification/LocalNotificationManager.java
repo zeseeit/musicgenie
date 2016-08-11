@@ -29,6 +29,8 @@ public class LocalNotificationManager {
 
     public void launchNotification(String msg){
 
+        //TODO: change icon and add pendingIntent , which navigates user to downloads activity
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.app_icon);
         mBuilder.setContentTitle("MusicGenie");
