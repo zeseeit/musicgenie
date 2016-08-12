@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="PrimaryColor">#2196F3</color>
-    <color name="PrimaryColorDark">#2196F3</color>
+    <color name="PrimaryColor">#f44336</color>
+    <color name="PrimaryColorDark">#f44336</color>
     <color name="White">#ffffff</color>
     <color name="AccentColor">#ff4081</color>
     <color name="TrackTitleColor">#167ac6</color>

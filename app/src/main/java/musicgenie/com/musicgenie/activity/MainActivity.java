@@ -11,14 +11,15 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.support.v7.widget.SearchView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.lapism.searchview.SearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +38,7 @@ import musicgenie.com.musicgenie.utilities.VolleyUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    Toolbar toolbar;
+    RelativeLayout searchViewHolder;
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
@@ -47,12 +48,15 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("MusicGenie");
+        setContentView(R.layout.activity_home);
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+
+
+//        toolbar.setTitle("MusicGenie");
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.progress_dialog_msg));
-        setSupportActionBar(toolbar);
+//        setSupportActionBar(toolbar);
         resultListView = (ListView) findViewById(R.id.listView);
         new App_Config(this).configureDevice();
         subscribeToTaskAddListener();
@@ -67,7 +71,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
@@ -103,6 +106,10 @@ public class MainActivity extends AppCompatActivity {
         if (id == R.id.action_settings) {
             return true;
         }
+        if(id == R.id.action_search){
+            return true;
+        }
+
         if(id== R.id.action_downloads){
             startActivity(new Intent(
                     MainActivity.this,
