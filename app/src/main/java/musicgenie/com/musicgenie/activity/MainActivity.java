@@ -1,5 +1,6 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
@@ -35,6 +36,7 @@ import org.json.JSONException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import musicgenie.com.musicgenie.fragments.NavigationFragment;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
@@ -65,11 +67,16 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         resultListView = (ListView) findViewById(R.id.listView);
         new App_Config(this).configureDevice();
 
-        //getToolbar();
+        setNavigationDrawer();
         setUpDrawer();
         setSearchView();
 
         subscribeToTaskAddListener();
+    }
+
+    private void setNavigationDrawer() {
+        NavigationFragment navigationFragment = (NavigationFragment) getFragmentManager().findFragmentById(R.id.fragmentNav);
+       // navigationFragment.prepareNavigation(this, mDrawerLayout);
     }
 
     @Override
