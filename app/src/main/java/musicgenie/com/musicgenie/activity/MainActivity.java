@@ -3,7 +3,14 @@ package musicgenie.com.musicgenie.activity;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
+import android.content.res.Configuration;
+import android.support.design.widget.NavigationView;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.Snackbar;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -11,6 +18,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -36,36 +44,58 @@ import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.utilities.VolleyUtils;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener{
 
     RelativeLayout searchViewHolder;
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
     SearchView searchView = null;
+    DrawerLayout mDrawerLayout;
     private static final String TAG = "MainActivity";
+    private ActionBarDrawerToggle toggle;
+    private Toolbar mToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-
-
-
-//        toolbar.setTitle("MusicGenie");
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage(getString(R.string.progress_dialog_msg));
-//        setSupportActionBar(toolbar);
         resultListView = (ListView) findViewById(R.id.listView);
         new App_Config(this).configureDevice();
+
+        //getToolbar();
+        setUpDrawer();
+        setNavigationView();
+        setSearchView();
+
         subscribeToTaskAddListener();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+            mDrawerLayout.closeDrawer(GravityCompat.START);
+        } else //noinspection StatementWithEmptyBody
+            if (searchView != null && searchView.isSearchOpen()) { // TODO
+                searchView.close(true);
+            } else {
+                super.onBackPressed();
+            }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         unsubscribeToTaskAddListener();
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+
+        mDrawerLayout.closeDrawer(GravityCompat.START); // mDrawer.closeDrawers();
+        return true;
     }
 
     @Override
@@ -121,6 +151,123 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    public void setUpDrawer() {
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+        if (mDrawerLayout != null) {
+            mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+                @Override
+                public void onDrawerSlide(View drawerView, float slideOffset) {
+
+                }
+
+                @Override
+                public void onDrawerOpened(View drawerView) {
+                    invalidateOptionsMenu();
+                    if (searchView != null && searchView.isSearchOpen()) {
+                        searchView.close(true);
+                    }
+
+                }
+
+                @Override
+                public void onDrawerClosed(View drawerView) {
+                    invalidateOptionsMenu();
+                }
+
+                @Override
+                public void onDrawerStateChanged(int newState) {
+
+                }
+            });
+        }
+
+        toggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+        toggle.setDrawerIndicatorEnabled(true);
+        mDrawerLayout.setDrawerListener(toggle);
+
+        mDrawerLayout.post(new Runnable() {
+            @Override
+            public void run() {
+                toggle.syncState();
+            }
+        });
+
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        if (toggle != null)
+            toggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (toggle != null)
+            toggle.onConfigurationChanged(newConfig);
+    }
+
+    private void getToolbar() {
+
+        if (mToolbar == null) {
+            mToolbar = (Toolbar) findViewById(R.id.toolbar);
+            if (mToolbar != null) {
+                mToolbar.setNavigationContentDescription(getResources().getString(R.string.app_name));
+                setSupportActionBar(mToolbar);
+            }
+        }
+    }
+
+    public void setSearchView() {
+
+        searchView = (SearchView) findViewById(R.id.searchView);
+        if (searchView != null) {
+            searchView.setVersion(SearchView.VERSION_TOOLBAR);
+            searchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
+            searchView.setTextSize(16);
+            searchView.setHint("Search");
+            searchView.setDivider(false);
+            searchView.setVoice(true);
+            searchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
+            //searchView.setShadowColor(ContextCompat.getColor(this, R.color.search_shadow_layout));
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    fireSearch(query);
+                    // mSearchView.close(false);
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+            searchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
+                @Override
+                public void onOpen() {
+
+                }
+
+                @Override
+                public void onClose() {
+
+                }
+            });
+
+        }
+    }
+
+    private void setNavigationView() {
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        if (navigationView != null) {
+            navigationView.setNavigationItemSelectedListener(this);
+//            if (getNavItem() > -1) {
+//                navigationView.getMenu().getItem(getNavItem()).setChecked(true);
+//            }
+        }
+    }
 
     private void fireSearch(String term) {
         progressDialog.show();
@@ -153,7 +300,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-
     private void parseSearchResults(String response) {
         ArrayList<Song> songs = new ArrayList<>();
         // parse youtube results
@@ -174,6 +320,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+        adapter = new SearchResultListAdapter(this);
         adapter.setSongs(songs);
         resultListView.setAdapter(adapter);
     }
@@ -203,6 +350,5 @@ public class MainActivity extends AppCompatActivity {
     public void log(String _lg) {
         Log.d(TAG, _lg);
     }
-
 
 }

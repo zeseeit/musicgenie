@@ -5,12 +5,18 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-<!--<include layout="@layout/toolbar" android:id="@+id/searchViewBar"/>-->
+    <FrameLayout
+        android:id="@+id/svBackground"
+        android:background="@color/PrimaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+
+    </FrameLayout>
 
     <RelativeLayout
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
-        android:layout_below="@+id/searchView"
+        android:layout_below="@+id/svBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         
