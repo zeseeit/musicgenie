@@ -34,7 +34,7 @@
             <Button
                 android:background="@android:drawable/ic_menu_close_clear_cancel"
                 android:id="@+id/cancelBtn"
-                android:layout_width="match_parent"
+                android:layout_width="25dp"
                 android:layout_height="match_parent" />
 
         </FrameLayout>

@@ -1,17 +1,13 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<?xml version="1.0" encoding="utf-8"?>
+<android:android.support.v7.widget.Toolbar
+    android:id="@+id/toolbar"
     android:layout_width="match_parent"
-    android:layout_height="72dp"
-    android:background="@color/PrimaryColor">
-
-    <com.lapism.searchview.SearchView
-        app:search_hint="Search Your Favorites"
-        app:search_hint_color="@color/PrimaryColor"
-        app:search_clear_on_open="true"
-        android:id="@+id/searchView"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        xmlns:android="http://schemas.android.com/apk/res/android" />
-
-</RelativeLayout>
+    android:background="@color/PrimaryColor"
+    android:layout_height="64dp"
+    android:minHeight="64dp"
+    android:elevation="4dp"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+    app:layout_scrollFlags="scroll|enterAlways|snap"
+    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto" />

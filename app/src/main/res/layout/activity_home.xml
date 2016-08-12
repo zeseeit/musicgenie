@@ -32,18 +32,21 @@
 
         <include layout="@layout/activity_main"/>
 
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_height="wrap_content"
+            android:id="@+id/fab"
+            android:layout_width="wrap_content"
+            android:layout_gravity="bottom|right"
+            android:layout_margin="16dp"
+            android:src="@android:drawable/stat_sys_download"
+            />
+
     </android.support.design.widget.CoordinatorLayout>
 
     <com.lapism.searchview.SearchView
         android:id="@+id/searchView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
-
-    <fragment
-        android:id="@+id/fragmentNav"
-        android:layout_width="280dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        tools:layout="@layout/fragment_navigation" />
 
 </android.support.v4.widget.DrawerLayout>

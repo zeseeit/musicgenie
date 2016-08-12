@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.Snackbar;
@@ -46,9 +47,8 @@ import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.utilities.VolleyUtils;
 
-public class MainActivity extends AppCompatActivity implements OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity {
 
-    RelativeLayout searchViewHolder;
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
@@ -57,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     private static final String TAG = "MainActivity";
     private ActionBarDrawerToggle toggle;
     private Toolbar mToolbar;
+    private FloatingActionButton fab;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,16 +68,24 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
         resultListView = (ListView) findViewById(R.id.listView);
         new App_Config(this).configureDevice();
 
-        setNavigationDrawer();
+
         setUpDrawer();
         setSearchView();
-
+        pinFAB();
         subscribeToTaskAddListener();
     }
 
-    private void setNavigationDrawer() {
-        NavigationFragment navigationFragment = (NavigationFragment) getFragmentManager().findFragmentById(R.id.fragmentNav);
-       // navigationFragment.prepareNavigation(this, mDrawerLayout);
+    private void pinFAB() {
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+                                   @Override
+                                   public void onClick(View view) {
+                                       Intent intent = new Intent(MainActivity.this,DowloadsActivity.class);
+                                       startActivity(intent);
+                                   }
+                               }
+        );
+
     }
 
     @Override
@@ -95,66 +104,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
     protected void onPause() {
         super.onPause();
         unsubscribeToTaskAddListener();
-    }
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-
-        mDrawerLayout.closeDrawer(GravityCompat.START); // mDrawer.closeDrawers();
-        return true;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_main, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                SoftInputManager.getInstance(MainActivity.this).hideKeyboard(searchView);
-                fireSearch(s);
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String s) {
-                //TODO: can be used to suggest auto-complete string
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if(id == R.id.action_search){
-            return true;
-        }
-
-        if(id== R.id.action_downloads){
-            startActivity(new Intent(
-                    MainActivity.this,
-                    DowloadsActivity.class
-            ));
-        }
-
-
-        return super.onOptionsItemSelected(item);
     }
 
     public void setUpDrawer() {
@@ -198,20 +147,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
             }
         });
 
-    }
-
-    @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-        if (toggle != null)
-            toggle.syncState();
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        if (toggle != null)
-            toggle.onConfigurationChanged(newConfig);
     }
 
     private void getToolbar() {
