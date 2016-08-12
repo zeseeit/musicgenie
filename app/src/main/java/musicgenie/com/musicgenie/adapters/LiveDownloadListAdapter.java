@@ -26,6 +26,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
     private static LiveDownloadListAdapter mInstance;
     private ArrayList<DownloadTaskModel> downloadingList;
     private DownloadCancelListener downloadCancelListener;
+
     public LiveDownloadListAdapter(Context context) {
         super(context,0);
         this.context = context;
@@ -43,15 +44,19 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         this.downloadCancelListener = listener;
     }
 
+    public void setDownloadingList(ArrayList<DownloadTaskModel> list){
+        this.downloadingList = list;
+        notifyDataSetChanged();
+    }
+
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
 
 
          ProgressBar progressBar;
          TextView progressText;
-         Button cancelBtn;
+         final Button cancelBtn;
          TextView taskTitle;
-
         View v  = convertView;
         if(v == null){
             v = LayoutInflater.from(context).inflate(R.layout.downloading_item,parent,false);
@@ -68,10 +73,9 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                cancelDownload(downloadingList.get(position).taskID);
             }
         });
-
 
         return v;
     }
@@ -81,20 +85,11 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         return downloadingList.size();
     }
 
-    private class DownloadingTaskViewHolder{
-
-        public DownloadingTaskViewHolder(View v) {
-
-        }
-
-    }
 
     private void cancelDownload(String taskID){
         if(this.downloadCancelListener!=null){
             downloadCancelListener.onDownloadCancel(taskID);
         }
-
-
 
     }
 

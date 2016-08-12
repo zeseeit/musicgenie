@@ -6,9 +6,11 @@ package musicgenie.com.musicgenie.models;
 public class DownloadTaskModel {
     public String Title;
     public int Progress;
+    public String taskID;
 
-    public DownloadTaskModel(String title, int progress) {
+    public DownloadTaskModel(String title, int progress,String taskID) {
         this.Title = title;
+        this.taskID= taskID;
         this.Progress = progress;
     }
 }

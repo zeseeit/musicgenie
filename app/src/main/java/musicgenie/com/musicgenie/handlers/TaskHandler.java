@@ -168,7 +168,7 @@ public class TaskHandler {
     *                  Task Helpers
     * */
 
-    private ArrayList<String> getTaskSequence() {
+    public ArrayList<String> getTaskSequence() {
         ArrayList<String> task;
         String _tasks = SharedPrefrenceUtils.getInstance(context).getTaskSequence();
         task = new Segmentor().getParts(_tasks, '#');
