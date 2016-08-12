@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
 
         //getToolbar();
         setUpDrawer();
-        setNavigationView();
         setSearchView();
 
         subscribeToTaskAddListener();
@@ -256,16 +255,6 @@ public class MainActivity extends AppCompatActivity implements OnNavigationItemS
                 }
             });
 
-        }
-    }
-
-    private void setNavigationView() {
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        if (navigationView != null) {
-            navigationView.setNavigationItemSelectedListener(this);
-//            if (getNavItem() > -1) {
-//                navigationView.getMenu().getItem(getNavItem()).setChecked(true);
-//            }
         }
     }
 
