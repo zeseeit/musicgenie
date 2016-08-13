@@ -28,6 +28,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import musicgenie.com.musicgenie.notification.LocalNotificationManager;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.interfaces.DownloadListener;
@@ -392,9 +393,12 @@ public class TaskHandler {
         private void publishProgress(int progress){
             //  to reduce log lines
             if(progress%10==0)log(taskID+" done.."+ progress + " %");
-
             if(progress == 100){
                 removeTask(taskID);
+                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
+                if(!utils.getActiveFragmentAttachedState()){
+                    LocalNotificationManager.getInstance(context).launchNotification(utils.getTaskTitle(taskID)+" is Dowloaded");
+                }
                 downloadListener.onDownloadFinish();
                 log("downloaded task " + taskID);
             }

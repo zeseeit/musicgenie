@@ -89,4 +89,14 @@ public class SharedPrefrenceUtils {
         editor.putInt("cur_dnd",count);
         editor.commit();
     }
+
+    public void setActiveFragmentAttachedState(boolean yesOrNo){
+        editor.putBoolean("isActive",yesOrNo);
+        editor.commit();
+    }
+
+    public boolean getActiveFragmentAttachedState(){
+        return preferences.getBoolean("isActive",false);
+    }
+
 }

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -47,7 +48,6 @@ public class ActiveTaskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView =inflater.inflate(R.layout.fragment_active_task, container, false);
         liveDownloadListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
-
         adapter = new LiveDownloadListAdapter(getActivity());
         adapter.setDownloadingList(getTasksList());
         liveDownloadListView.setAdapter(adapter);
@@ -58,12 +58,14 @@ public class ActiveTaskFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        SharedPrefrenceUtils.getInstance(activity).setActiveFragmentAttachedState(true);
         registerForBroadcastListen(activity);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        SharedPrefrenceUtils.getInstance(getActivity()).setActiveFragmentAttachedState(false);
         unRegisterBroadcast();
     }
 
@@ -94,6 +96,7 @@ public class ActiveTaskFragment extends Fragment {
 
     private void updateItem(int position,int progress){
 
+        if(position!=-1){
         ArrayList<DownloadTaskModel> old_list = getTasksList();
         for(int i=0;i<old_list.size();i++){
             if(i==position){
@@ -107,8 +110,15 @@ public class ActiveTaskFragment extends Fragment {
         int start = liveDownloadListView.getFirstVisiblePosition();
         int end = liveDownloadListView.getLastVisiblePosition();
 
-        if(start<=position && end>=position){
-            log("updating "+position+"with "+progress+" %");
+            if(start<=position && end>=position){
+                log("updating "+position+"with "+progress+" %");
+            }
+        }
+        else{
+            // refressing the tasks list
+            adapter.setDownloadingList(getTasksList());
+            liveDownloadListView.setAdapter(adapter);
+
         }
     }
 
@@ -117,10 +127,11 @@ public class ActiveTaskFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            log("update via br "+intent.getStringExtra(App_Config.EXTRA_PROGRESS));
+            log("update via br " + intent.getStringExtra(App_Config.EXTRA_PROGRESS));
 
             String taskID = intent.getStringExtra(App_Config.EXTRA_TASK_ID);
             String progress = intent.getStringExtra(App_Config.EXTRA_PROGRESS);
+
             updateItem(getPosition(taskID),Integer.valueOf(progress));
         }
     }
@@ -134,6 +145,11 @@ public class ActiveTaskFragment extends Fragment {
         getActivity().unregisterReceiver(receiver);
     }
 
+    public void makeToast(String msg){
+
+        Toast.makeText(getActivity(),msg,Toast.LENGTH_LONG).show();
+
+    }
     public void log(String msg){
         Log.d(TAG,msg);
     }
