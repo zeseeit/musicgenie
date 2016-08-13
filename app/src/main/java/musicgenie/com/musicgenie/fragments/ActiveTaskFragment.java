@@ -58,11 +58,13 @@ public class ActiveTaskFragment extends Fragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
+        registerForBroadcastListen(activity);
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
+        unRegisterBroadcast();
     }
 
     private ArrayList<DownloadTaskModel> getTasksList(){
@@ -77,10 +79,6 @@ public class ActiveTaskFragment extends Fragment {
         return list;
     }
 
-    private void resetDownloadingList(){
-        adapter.setDownloadingList(getTasksList());
-        liveDownloadListView.setAdapter(adapter);
-    }
 
     private int getPosition(String taskID){
         int pos=-1;
@@ -96,11 +94,21 @@ public class ActiveTaskFragment extends Fragment {
 
     private void updateItem(int position,int progress){
 
+        ArrayList<DownloadTaskModel> old_list = getTasksList();
+        for(int i=0;i<old_list.size();i++){
+            if(i==position){
+                old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID));
+            }
+        }
+
+        adapter.setDownloadingList(old_list);
+        liveDownloadListView.setAdapter(adapter);
+
         int start = liveDownloadListView.getFirstVisiblePosition();
         int end = liveDownloadListView.getLastVisiblePosition();
 
         if(start<=position && end>=position){
-            log("updating "+position);
+            log("updating "+position+"with "+progress+" %");
         }
     }
 
