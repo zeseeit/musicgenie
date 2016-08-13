@@ -144,18 +144,15 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
     private void addDownloadTask(final String video_id, final String file_name) {
 
-        progressDialog = new ProgressDialog(context);
-        progressDialog.setMessage("Requesting Your Stuff...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+        if(this.taskAddListener!=null)
+            taskAddListener.onTaskTapped();
 
-                TaskHandler
-                        .getInstance(context)
+        TaskHandler
+                .getInstance(context)
                         .addTask(file_name,video_id);
 
-        progressDialog.dismiss();
-                if(this.taskAddListener!=null)
-                    taskAddListener.onTaskAddToQueue(file_name);
+        if(this.taskAddListener!=null)
+                    taskAddListener.onTaskAddedToQueue(file_name);
     }
 
     public void log(String _lg) {

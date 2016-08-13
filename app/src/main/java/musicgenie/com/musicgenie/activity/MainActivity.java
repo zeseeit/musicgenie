@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         progressDialog = new ProgressDialog(this);
@@ -175,6 +176,8 @@ public class MainActivity extends AppCompatActivity {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    searchView.clearFocus();
+                    searchView.close(true);
                     fireSearch(query);
                     // mSearchView.close(false);
                     return true;
@@ -259,7 +262,18 @@ public class MainActivity extends AppCompatActivity {
     private void subscribeToTaskAddListener(){
         SearchResultListAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {
             @Override
-            public void onTaskAddToQueue(String task_info) {
+            public void onTaskTapped() {
+                log("callback: task tapped");
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setMessage("Requesting Your Stuff..");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+            }
+
+            @Override
+            public void onTaskAddedToQueue(String task_info) {
+                log("callback: task added to download queue");
+                progressDialog.dismiss();
                 makeToast(task_info + " Added To Download");
                 //TODO: navigate to DownloadsActivity
             }
