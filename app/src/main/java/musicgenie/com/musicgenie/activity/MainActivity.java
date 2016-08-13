@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -39,6 +42,7 @@ import java.net.URLEncoder;
 import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.fragments.NavigationFragment;
+import musicgenie.com.musicgenie.handlers.TaskHandler;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
@@ -59,22 +63,45 @@ public class MainActivity extends Activity {
     private ActionBarDrawerToggle toggle;
     private Toolbar mToolbar;
     private FloatingActionButton fab;
+    private ConnectivityBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage(getString(R.string.progress_dialog_msg));
-        resultListView = (ListView) findViewById(R.id.listView);
-        new App_Config(this).configureDevice();
+        registerReceiver();
 
+        if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+            setContentView(R.layout.conn_error_layout);
+            return;
+        }
+        else {
+            setContentView(R.layout.activity_home);
+            progressDialog = new ProgressDialog(this);
+            progressDialog.setMessage(getString(R.string.progress_dialog_msg));
+            resultListView = (ListView) findViewById(R.id.listView);
+            new App_Config(this).configureDevice();
+            setUpDrawer();
+            setSearchView();
+            pinFAB();
+            subscribeToTaskAddListener();
+        }
+    }
 
-        setUpDrawer();
-        setSearchView();
-        pinFAB();
-        subscribeToTaskAddListener();
+    public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent.getAction().equals(App_Config.ACTION_NETWORK_CONNECTED)) {
+                if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
+                    onCreate(null);
+                }
+            }
+        }
+    }
+
+    private void registerReceiver() {
+        receiver = new ConnectivityBroadcastReceiver();
+        this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_NETWORK_CONNECTED));
     }
 
     private void pinFAB() {

@@ -130,12 +130,15 @@ public class ActiveTaskFragment extends Fragment {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            log("update via br " + intent.getStringExtra(App_Config.EXTRA_PROGRESS));
 
-            String taskID = intent.getStringExtra(App_Config.EXTRA_TASK_ID);
-            String progress = intent.getStringExtra(App_Config.EXTRA_PROGRESS);
+            if(intent.getAction().equals(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST)){
 
-            updateItem(getPosition(taskID),Integer.valueOf(progress));
+                log("update via broadcast " + intent.getStringExtra(App_Config.EXTRA_PROGRESS));
+                String taskID = intent.getStringExtra(App_Config.EXTRA_TASK_ID);
+                String progress = intent.getStringExtra(App_Config.EXTRA_PROGRESS);
+                updateItem(getPosition(taskID),Integer.valueOf(progress));
+
+            }
         }
     }
 
