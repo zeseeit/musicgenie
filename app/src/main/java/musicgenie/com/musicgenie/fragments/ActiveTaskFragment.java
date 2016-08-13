@@ -1,6 +1,10 @@
 package musicgenie.com.musicgenie.fragments;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,9 +17,11 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.activity.DowloadsActivity;
 import musicgenie.com.musicgenie.adapters.LiveDownloadListAdapter;
 import musicgenie.com.musicgenie.handlers.TaskHandler;
 import musicgenie.com.musicgenie.models.DownloadTaskModel;
+import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 
 
@@ -25,6 +31,7 @@ public class ActiveTaskFragment extends Fragment {
     private static final String TAG = "ActiveTaskFragment";
     private ListView liveDownloadListView;
     private LiveDownloadListAdapter adapter;
+    private ProgressUpdateBroadcastReceiver receiver;
 
     public ActiveTaskFragment() {
         // Required empty public constructor
@@ -75,16 +82,48 @@ public class ActiveTaskFragment extends Fragment {
         liveDownloadListView.setAdapter(adapter);
     }
 
-    private void updateItem(int position){
+    private int getPosition(String taskID){
+        int pos=-1;
+        ArrayList<DownloadTaskModel> list = getTasksList();
+        for(int i=0;i<list.size();i++){
+            if(list.get(i).taskID.equals(taskID)){
+                pos=i;
+                return pos;
+            }
+        }
+        return pos;
+    }
+
+    private void updateItem(int position,int progress){
+
         int start = liveDownloadListView.getFirstVisiblePosition();
         int end = liveDownloadListView.getLastVisiblePosition();
 
-
         if(start<=position && end>=position){
             log("updating "+position);
-
         }
+    }
 
+
+    public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            log("update via br "+intent.getStringExtra(App_Config.EXTRA_PROGRESS));
+
+            String taskID = intent.getStringExtra(App_Config.EXTRA_TASK_ID);
+            String progress = intent.getStringExtra(App_Config.EXTRA_PROGRESS);
+            updateItem(getPosition(taskID),Integer.valueOf(progress));
+        }
+    }
+
+    private void registerForBroadcastListen(Activity activity) {
+        receiver = new ProgressUpdateBroadcastReceiver();
+        activity.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST));
+    }
+
+    private void unRegisterBroadcast() {
+        getActivity().unregisterReceiver(receiver);
     }
 
     public void log(String msg){

@@ -23,7 +23,6 @@ public class DowloadsActivity extends AppCompatActivity {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
-    ProgressUpdateBroadcastReceiver receiver;
     TabLayout tabLayout;
     Toolbar toolbar;
 
@@ -80,23 +79,6 @@ public class DowloadsActivity extends AppCompatActivity {
         //unRegisterBroadcast();
     }
 
-    public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            log("update via br "+intent.getStringExtra(App_Config.EXTRA_PROGRESS));
-            //TODO: get intent extras of progress and task id and update the list view accordingly
-        }
-    }
-
-    private void registerForBroadcastListen() {
-        receiver = new ProgressUpdateBroadcastReceiver();
-        DowloadsActivity.this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST));
-    }
-
-    private void unRegisterBroadcast() {
-        DowloadsActivity.this.unregisterReceiver(receiver);
-    }
 
     public void log(String msg){
         Log.d("DownloadsActivity",msg);
