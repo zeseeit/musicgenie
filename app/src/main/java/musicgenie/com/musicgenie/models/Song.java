@@ -3,6 +3,8 @@ package musicgenie.com.musicgenie.models;
 /**
  * Created by Ankit on 8/5/2016.
  */
+
+//todo: make it pacelable
 public class Song {
     public String Title;
     public String TrackDuration;
@@ -21,4 +23,5 @@ public class Song {
         this.TimeSinceUploaded = timeSinceUploaded;
         this.UserViews = userViews;
     }
+
 }

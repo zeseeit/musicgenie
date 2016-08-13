@@ -1,5 +1,6 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -35,15 +36,21 @@ public class DowloadsActivity extends AppCompatActivity {
         tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.stat_sys_download));
         tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.stat_sys_download_done));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-        int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
-        tabLayout.getTabAt(0).getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+
+        //color filter to tab 0
+        int leftTabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
+        tabLayout.getTabAt(0).getIcon().setColorFilter(leftTabIconColor, PorterDuff.Mode.SRC_IN);
+        // color filter to tab1
+        int rightTabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
+        tabLayout.getTabAt(1).getIcon().setColorFilter(rightTabIconColor, PorterDuff.Mode.SRC_IN);
+
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#ffffff"));
         tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
-                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.AccentColor);
+                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
                 tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
 
             }
@@ -61,6 +68,7 @@ public class DowloadsActivity extends AppCompatActivity {
         });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Downloads");
+        //TODO: handle diff sdk versions
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);

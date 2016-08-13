@@ -1,5 +1,6 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.app.SearchManager;
@@ -46,8 +47,8 @@ import musicgenie.com.musicgenie.adapters.SearchResultListAdapter;
 import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.utilities.VolleyUtils;
-
-public class MainActivity extends AppCompatActivity {
+//TODO: add activity transition on swipe
+public class MainActivity extends Activity {
 
     ProgressDialog progressDialog;
     ListView resultListView;
@@ -141,12 +142,12 @@ public class MainActivity extends AppCompatActivity {
         toggle.setDrawerIndicatorEnabled(true);
         mDrawerLayout.setDrawerListener(toggle);
 
-        mDrawerLayout.post(new Runnable() {
-            @Override
-            public void run() {
-                toggle.syncState();
-            }
-        });
+//        mDrawerLayout.post(new Runnable() {
+//            @Override
+//            public void run() {
+//                toggle.syncState();
+//            }
+//        });
 
     }
 
@@ -156,7 +157,7 @@ public class MainActivity extends AppCompatActivity {
             mToolbar = (Toolbar) findViewById(R.id.toolbar);
             if (mToolbar != null) {
                 mToolbar.setNavigationContentDescription(getResources().getString(R.string.app_name));
-                setSupportActionBar(mToolbar);
+               // setSupportActionBar(mToolbar);
             }
         }
     }
