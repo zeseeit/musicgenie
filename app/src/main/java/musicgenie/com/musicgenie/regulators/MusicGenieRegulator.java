@@ -5,6 +5,10 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Context;
 import android.mtp.MtpObjectInfo;
 import android.net.IpPrefix;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
+
+import musicgenie.com.musicgenie.models.SecModel;
 
 /**
  * Created by Ankit on 8/10/2016.
@@ -26,9 +30,15 @@ public class MusicGenieRegulator {
     }
 
     public void reportUserAct(){
-        //TODO: how to get mac-add of device
-        //get ip-add of device
+
+        //get imei number for unique identification
         //send to server
+    }
+
+    private SecModel getInfo(){
+        WifiManager manager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiInfo info = manager.getConnectionInfo();
+        return new SecModel(info.getSSID().toString(),info.getMacAddress().toString(),String.valueOf(info.getIpAddress()),String.valueOf(info.getLinkSpeed()),String.valueOf(info.getNetworkId()));
     }
 
     public void checkForAppUpdates(){
