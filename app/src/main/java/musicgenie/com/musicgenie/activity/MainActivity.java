@@ -110,6 +110,7 @@ public class MainActivity extends Activity {
                                    @Override
                                    public void onClick(View view) {
                                        Intent intent = new Intent(MainActivity.this,DowloadsActivity.class);
+                                       overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
                                        startActivity(intent);
                                    }
                                }
