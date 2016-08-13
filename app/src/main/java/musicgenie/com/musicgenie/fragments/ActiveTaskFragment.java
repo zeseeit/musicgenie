@@ -112,6 +112,9 @@ public class ActiveTaskFragment extends Fragment {
 
             if(start<=position && end>=position){
                 log("updating "+position+"with "+progress+" %");
+
+                View view = liveDownloadListView.getChildAt(position);
+                liveDownloadListView.getAdapter().getView(position,view,liveDownloadListView);
             }
         }
         else{
