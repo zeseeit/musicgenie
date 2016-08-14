@@ -63,12 +63,14 @@ public class MainActivity extends Activity {
     private ActionBarDrawerToggle toggle;
     private Toolbar mToolbar;
     private FloatingActionButton fab;
+    private boolean mReceiverRegistered;
     private ConnectivityBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        registerReceiver();
+//        if(!mReceiverRegistered)
+//            registerReceiver();
 
         if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
             setContentView(R.layout.conn_error_layout);
@@ -92,13 +94,15 @@ public class MainActivity extends Activity {
     }
 
     public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
+
         @Override
         public void onReceive(Context context, Intent intent) {
 
             if(intent.getAction().equals(App_Config.ACTION_NETWORK_CONNECTED)) {
                 if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
                     //TODO: this may be point of exception , we can pass empty Bundle object instead of null
-                    onCreate(null);
+                    log("network state changed");
+//                   new MainActivity();
                 }
             }
         }
@@ -107,6 +111,7 @@ public class MainActivity extends Activity {
     private void registerReceiver() {
         receiver = new ConnectivityBroadcastReceiver();
         this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_NETWORK_CONNECTED));
+        mReceiverRegistered = true;
     }
 
     private void pinFAB() {
@@ -138,7 +143,9 @@ public class MainActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-        unsubscribeToTaskAddListener();
+//        if(mReceiverRegistered) {
+//            unsubscribeToTaskAddListener();
+//        }
     }
 
     public void setUpDrawer() {
@@ -302,8 +309,6 @@ public class MainActivity extends Activity {
 
 
     }
-
-
 
     private void subscribeToTaskAddListener(){
         SearchResultListAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {

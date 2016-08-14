@@ -21,7 +21,7 @@ public class App_Config extends Application {
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_PROGRESS = "progress";
     public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Musicgenie/Audio";
-    public static final String ACTION_NETWORK_CONNECTED = "action_network_connected";
+    public static final String ACTION_NETWORK_CONNECTED = "android.net.conn.CONNECTIVITY_CHANGE";
     private Context context;
 
     public App_Config(Context context) {

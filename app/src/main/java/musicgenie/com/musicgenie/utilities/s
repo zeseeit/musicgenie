@@ -1,40 +1,47 @@
-08-11 03:54:31.095    8783-8783/musicgenie.com.musicgenie D/ListAdapter﹕ req for download Sukoon Mila ft
-08-11 03:54:31.135    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ add: Task[audTsk20160811035431]
-08-11 03:54:31.145    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ add: DispatchTask[audTsk20160811035431]
-08-11 03:54:31.158    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ initiating Handler
-
-08-11 03:54:31.160    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ removing dispatch task audTsk20160811035431
-08-11 03:54:31.160    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :
-
-08-11 03:54:31.165    8783-9021/musicgenie.com.musicgenie D/TaskHandler﹕ 205 waiting thread to join
-08-11 03:54:31.176    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ callback: download started
-08-11 03:54:31.177    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ for dwnd url requesting on http://ymp3.aavi.me/g/fSRrZiQ8IiRuT3ttdnZDeFJPMiQuIiR2a3ZuZyQ8IiRVd21xcXAiT2tuYyJodiJDdGtsa3YiVWtwaWoiSHdubiJYa2ZncSJVcXBpIkpGIk9jdHsiTXFvIjQyMzYifiJRaGhrZWtjbiR/
-08-11 03:54:33.786    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ download url:http://ymp3.aavi.me/d/fSR3dG4kPCIkanZ2cnU8MTF0OC8vL3VwL3I3c251cHU4MGlxcWluZ3hrZmdxMGVxbzF4a2ZncXJuY3tkY2VtQWt2Y2k/MzYyKHdycD9sOnZGVjp8Y1ZJSyh1eGd0PzUodXJjdGNvdT9lbmdwJzRFZnd0JzRFZ2snNEVpa3QnNEVrZic0RWtwa3ZleXBmZHJ1JzRFa3InNEVrcmRrdnUnNEVrdmNpJzRFbWdncmNua3hnJzRFbm92JzRFb2tvZyc0RW9vJzRFb3AnNEVvdSc0RW94JzRFcGonNEVybic0RXRnc3drdGd1dW4nNEV1cXd0ZWcnNEV3cnAnNEVnenJrdGcoa3BrdmV5cGZkcnU/OTs1NDcyMih0Z3N3a3RndXVuP3tndShoZ3pyPzs2MjoyOTMnNEU7NjM7NjczJzRFOzY0NDc7OCc0RTs2NDo1OzonNEU7NjUzMjM0JzRFOzY1NTI7OCc0RTs2NTU0NDMnNEU7NjU1OzY4JzRFOzY1NjQ3Mic0RTs2NTc3NDgnNEU7NjU5NDgzJzRFOzY1OTc3NCc0RTs2NTk4NDgnNEU7NjU5Ozo0JzRFOzY1OjU0OSc0RTs2NTo3NDUnNEU7NjU6ODg0JzRFOzY1OjoyNic0RTs2NTs3OjInNEU7NjYyMzg2JzRFOzY2Mjg2OSc0RTs2NjI6OTonNEU7NjYzMzQyJzRFOzY2MzU4OSc0RTs2NjQ2NDYnNEU7NjY0NjQ4JzRFOzY2NDszNSc0RTs2NjU1NDknNEU7NjY1OTg6JzRFOzY2NjI4OSc0RTs2NjY0NTIobWdncmNua3hnP3tndShwaj9LaXJ5ZWxDfE5vbmpcRks0TWkyNU9rNnpQRTZ7T0ZPd09WS3ooaWt0P3tndShva29nP2N3ZmtxJzRIb3I2KG1nez97djgob3Y/MzY5MjsyMzcyMihlbmdwPzY4MjY6NTcobm92PzM2NjUyOTY6MjcyMzM5OzYob3A/dXAvcjdzbnVwdTgoZnd0PzQ6OzA7MjMoa3Jka3Z1PzIob3g/byhybj8zNyhnaz9RRS91WDtFSVE2Tmg6aVVNc05JU0V5KG91P2N3KHVxd3RlZz97cXd2d2RnKGtyPzc2MDo2MDIwMzo7KG9vPzUzKGd6cmt0Zz8zNjkyOzQ1ODk1KGtmP3EvQ0lPVDhJY3hkblNRRWdFNHdtcWMzaVg6bEhuSk84YUc6VmVFd045TEtkNGYodWtpcGN2d3RnPzhHOjU5NUQ1OTNDOkUzRUc6MzpEMjk7NDNHM0VERDI1M0U6Rzo0O0gwO0QzMkg1ODtIQzJIOkNHRUU3MjZIMzlISDdHRTg0NkczR0VHOkUzMih0Y3ZnZHtyY3V1P3tndSQuIiRrZiQ8IiRuT3ttdnZDeFJPMiQuIiR2a3ZuZyQ8IiRVd21xcXAiT2tuYyJodiJDdGtsa3YiVWtwaWoiSHdubiJYa2ZncSJVcXBpIkpGIk9jdHsiTXFvIjQyMzYifiJRaGhrZWtjbiR/
-08-11 03:54:38.178    8783-8783/musicgenie.com.musicgenie D/ListAdapter﹕ req for download SUKOON MILA Lyr
-08-11 03:54:38.199    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ add: Task[audTsk20160811035438]
-08-11 03:54:38.207    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ add: DispatchTask[audTsk20160811035438]
-08-11 03:54:38.220    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ initiating Handler
-08-11 03:54:38.221    8783-8783/musicgenie.com.musicgenie D/TaskHandler﹕ Handler Already running , Task is enqued
+ <receiver android:name=".activity.MainActivity$ConnectivityBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+            </intent-filter>
+        </receiver>
 
 
-08-11 03:54:46.923    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ content len 4639484
-08-11 03:54:46.923    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ writing to /storage/emulated/0/Musicgenie/Audio/Sukoon Mila ft.mp3
-08-11 03:54:59.502    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160811035431 done..0 %
-08-11 03:55:37.302    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160811035431 done..100 %
-08-11 03:55:37.302    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ removing download task audTsk20160811035431
-08-11 03:55:37.302    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :audTsk20160811035438#
-08-11 03:55:37.326    8783-9022/musicgenie.com.musicgenie D/TaskHandler﹕ downloaded task audTsk20160811035431
 
-08-11 03:55:37.329    8783-9021/musicgenie.com.musicgenie D/TaskHandler﹕ initiating Handler
-08-11 03:55:37.334    8783-9021/musicgenie.com.musicgenie D/TaskHandler﹕ removing dispatch task audTsk20160811035431
-
-08-11 03:55:37.334    8783-9021/musicgenie.com.musicgenie D/TaskHandler﹕ writing back the tasks :audTsk20160811035438#
-08-11 03:55:37.337    8783-9486/musicgenie.com.musicgenie D/TaskHandler﹕ 208 waiting thread to join
-08-11 03:55:37.358    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ callback: download started
-08-11 03:55:37.358    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ for dwnd url requesting on http://ymp3.aavi.me/g/fSRrZiQ8IiRuT3ttdnZDeFJPMiQuIiR2a3ZuZyQ8IiRVd21xcXAiT2tuYyJodiJDdGtsa3YiVWtwaWoiSHdubiJYa2ZncSJVcXBpIkpGIk9jdHsiTXFvIjQyMzYifiJRaGhrZWtjbiR/
-08-11 03:55:39.731    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ download url:http://ymp3.aavi.me/d/fSR3dG4kPCIkanZ2cnU8MTF0OC8vL3VwL3I3c251cHU4MGlxcWluZ3hrZmdxMGVxbzF4a2ZncXJuY3tkY2VtQWt2Y2k/MzYyKGtyPzc2MDo2MDIwMzo7KHdycD9XbENQfFRnT2Y0Oih1eGd0PzUodXJjdGNvdT9lbmdwJzRFZnd0JzRFZ2snNEVpa3QnNEVrZic0RWtwa3ZleXBmZHJ1JzRFa3InNEVrcmRrdnUnNEVrdmNpJzRFbWdncmNua3hnJzRFbm92JzRFb2tvZyc0RW9vJzRFb3AnNEVvdSc0RW94JzRFcGonNEVybic0RXRnc3drdGd1dW4nNEV1cXd0ZWcnNEV3cnAnNEVnenJrdGcoa3BrdmV5cGZkcnU/OTs1NDcyMih0Z3N3a3RndXVuP3tndShwaj9LaXJ5ZWxDfE5vbmpcRks0TWkyNU9rNnpQRTZ7T0ZPd09WS3oobWd7P3t2OChva29nP2N3ZmtxJzRIb3I2KGlrdD97Z3Uob3A/dXAvcjdzbnVwdTgoZW5ncD82ODI2OjU3KG92PzM2OTI7MjM3MjIobWdncmNua3hnP3tndShub3Y/MzY2NTI5NjoyNzIzMzk7Nihmd3Q/NDo7MDsyMyhoZ3pyPzs2MjgyMjknNEU7NjM7Njc0JzRFOzY0NDc7OCc0RTs2NDo1OzonNEU7NjUzMjM0JzRFOzY1NTI7OCc0RTs2NTU0NDUnNEU7NjU1OzY4JzRFOzY1Nzc0OCc0RTs2NTk3NzQnNEU7NjU6NTQ5JzRFOzY1Ojg4NCc0RTs2NTo6MjcnNEU7NjU7NzoyJzRFOzY1Ozo6Myc0RTs2NTs6OjknNEU7NjYyNzU3JzRFOzY2Mjk7Oyc0RTs2NjMyMzMnNEU7NjYzMjY2JzRFOzY2MzgyNSc0RTs2NjQ2NDYnNEU7NjY0NjQ4JzRFOzY2NDs3OSc0RTs2NjU0ODUnNEU7NjY1NTQ5JzRFOzY2NTYyNCc0RTs2NjU4OzMocm4/Mzcob3g/byhrcmRrdnU/MihvdT9jdyhnaz9nay91WGFhOFE6UVM6aVY6Mk44W0VDKHVxd3RlZz97cXd2d2RnKGd6cmt0Zz8zNjkyOzQ1OTU7KG9vPzUzKGtmP3EvQ0lPcDs5e3NrNWREUENUY3lQVzJtOGE0e0d3RFZacntlUEhLZ3ZLelgyfGQodWtpcGN2d3RnPzg3N0UyMkU1NDhDNTlDOEdHNEc3Njc4RkRGNUVIN0hISDo6RTZGNTowNjk2Mzo0NTs2RUgyNjdERTU7REZERDk4Q0c1REUzOEM1Rzs5OTVFRCh0Y3ZnZHtyY3V1P3tndSQuIiRrZiQ8IiRuT3ttdnZDeFJPMiQuIiR2a3ZuZyQ8IiRVd21xcXAiT2tuYyJodiJDdGtsa3YiVWtwaWoiSHdubiJYa2ZncSJVcXBpIkpGIk9jdHsiTXFvIjQyMzYifiJRaGhrZWtjbiR/
-08-11 03:56:02.014    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ content len 24
-08-11 03:56:02.014    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ writing to /storage/emulated/0/Musicgenie/Audio/Sukoon Mila ft.mp3
-08-11 03:57:00.394    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160811035431 done..18250 %
-08-11 03:57:00.411    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160811035431 done..28600 %87/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160811035431 done..2706500 %
-08-11 03:57:05.853    8783-9487/musicgenie.com.musicgenie D/TaskHandler﹕ audTsk20160811035431 done..2714400 %
+Process: musicgenie.com.musicgenie, PID: 4795
+    java.lang.RuntimeException: Unable to instantiate receiver musicgenie.com.musicgenie.activity.MainActivity$ConnectivityBroadcastReceiver: java.lang.InstantiationException: class musicgenie.com.musicgenie.activity.MainActivity$ConnectivityBroadcastReceiver has no zero argument constructor
+            at android.app.ActivityThread.handleReceiver(ActivityThread.java:2620)
+            at android.app.ActivityThread.access$1700(ActivityThread.java:155)
+            at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1394)
+            at android.os.Handler.dispatchMessage(Handler.java:102)
+            at android.os.Looper.loop(Looper.java:135)
+            at android.app.ActivityThread.main(ActivityThread.java:5343)
+            at java.lang.reflect.Method.invoke(Native Method)
+            at java.lang.reflect.Method.invoke(Method.java:372)
+            at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
+            at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
+     Caused by: java.lang.InstantiationException: class musicgenie.com.musicgenie.activity.MainActivity$ConnectivityBroadcastReceiver has no zero argument constructor
+            at java.lang.Class.newInstance(Class.java:1597)
+            at android.app.ActivityThread.handleReceiver(ActivityThread.java:2615)
+            at android.app.ActivityThread.access$1700(ActivityThread.java:155)
+            at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1394)
+            at android.os.Handler.dispatchMessage(Handler.java:102)
+            at android.os.Looper.loop(Looper.java:135)
+            at android.app.ActivityThread.main(ActivityThread.java:5343)
+            at java.lang.reflect.Method.invoke(Native Method)
+            at java.lang.reflect.Method.invoke(Method.java:372)
+            at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
+            at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
+     Caused by: java.lang.NoSuchMethodException: <init> []
+            at java.lang.Class.getConstructor(Class.java:531)
+            at java.lang.Class.getDeclaredConstructor(Class.java:510)
+            at java.lang.Class.newInstance(Class.java:1595)
+            at android.app.ActivityThread.handleReceiver(ActivityThread.java:2615)
+            at android.app.ActivityThread.access$1700(ActivityThread.java:155)
+            at android.app.ActivityThread$H.handleMessage(ActivityThread.java:1394)
+            at android.os.Handler.dispatchMessage(Handler.java:102)
+            at android.os.Looper.loop(Looper.java:135)
+            at android.app.ActivityThread.main(ActivityThread.java:5343)
+            at java.lang.reflect.Method.invoke(Native Method)
+            at java.lang.reflect.Method.invoke(Method.java:372)
+            at com.android.internal.os.ZygoteInit$MethodAndArgsCaller.run(ZygoteInit.java:905)
+            at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:700)
+08-14 17:12:44.003    4795-4803/musicgenie.com.musicgenie W/art﹕ Suspending all threads took: 144.990ms
