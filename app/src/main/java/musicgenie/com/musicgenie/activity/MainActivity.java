@@ -75,15 +75,14 @@ public class MainActivity extends Activity {
             return;
         }
         else {
-            setContentView(R.layout.activity_home);
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage(getString(R.string.progress_dialog_msg));
-            resultListView = (ListView) findViewById(R.id.listView);
-            new App_Config(this).configureDevice();
-            setUpDrawer();
-            setSearchView();
-            pinFAB();
-            subscribeToTaskAddListener();
+                setContentView(R.layout.activity_home);
+                resultListView = (ListView) findViewById(R.id.listView);
+                new App_Config(this).configureDevice();
+                //load trending items and during load , show progress dialog
+                setUpDrawer();
+                setSearchView();
+                pinFAB();
+                subscribeToTaskAddListener();
         }
     }
 
@@ -109,8 +108,8 @@ public class MainActivity extends Activity {
         fab.setOnClickListener(new View.OnClickListener() {
                                    @Override
                                    public void onClick(View view) {
-                                       Intent intent = new Intent(MainActivity.this,DowloadsActivity.class);
-                                       overridePendingTransition(R.anim.slide_in_right,R.anim.slide_out_right);
+                                       Intent intent = new Intent(MainActivity.this, DowloadsActivity.class);
+                                       overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
                                        startActivity(intent);
                                    }
                                }
@@ -233,6 +232,9 @@ public class MainActivity extends Activity {
     }
 
     private void fireSearch(String term) {
+
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage(getString(R.string.progress_dialog_msg));
         progressDialog.show();
 
         if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
@@ -286,6 +288,10 @@ public class MainActivity extends Activity {
         adapter = new SearchResultListAdapter(this);
         adapter.setSongs(songs);
         resultListView.setAdapter(adapter);
+    }
+
+    private void loadTrending(){
+
     }
 
     private void subscribeToTaskAddListener(){
