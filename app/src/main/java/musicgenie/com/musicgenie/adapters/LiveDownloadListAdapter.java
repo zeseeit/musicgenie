@@ -60,7 +60,6 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         View v  = convertView;
         if(v == null){
             v = LayoutInflater.from(context).inflate(R.layout.downloading_item,parent,false);
-
         }
         progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
         progressText = (TextView) v.findViewById(R.id.progressText);

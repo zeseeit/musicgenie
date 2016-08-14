@@ -21,6 +21,7 @@ import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.activity.DowloadsActivity;
 import musicgenie.com.musicgenie.adapters.LiveDownloadListAdapter;
 import musicgenie.com.musicgenie.handlers.TaskHandler;
+import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.models.DownloadTaskModel;
 import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
@@ -41,7 +42,6 @@ public class ActiveTaskFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -62,6 +62,7 @@ public class ActiveTaskFragment extends Fragment {
         registerForBroadcastListen(activity);
     }
 
+
     @Override
     public void onDetach() {
         super.onDetach();
@@ -81,7 +82,6 @@ public class ActiveTaskFragment extends Fragment {
         return list;
     }
 
-
     private int getPosition(String taskID){
         int pos=-1;
         ArrayList<DownloadTaskModel> list = getTasksList();
@@ -97,25 +97,25 @@ public class ActiveTaskFragment extends Fragment {
     private void updateItem(int position,int progress){
 
         if(position!=-1){
-        ArrayList<DownloadTaskModel> old_list = getTasksList();
-        for(int i=0;i<old_list.size();i++){
-            if(i==position){
-                old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID));
+            ArrayList<DownloadTaskModel> old_list = getTasksList();
+            for(int i=0;i<old_list.size();i++){
+                if(i==position){
+                    old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID));
+                }
             }
-        }
 
-        adapter.setDownloadingList(old_list);
-        liveDownloadListView.setAdapter(adapter);
+            adapter.setDownloadingList(old_list);
+            liveDownloadListView.setAdapter(adapter);
 
-        int start = liveDownloadListView.getFirstVisiblePosition();
-        int end = liveDownloadListView.getLastVisiblePosition();
+            int start = liveDownloadListView.getFirstVisiblePosition();
+            int end = liveDownloadListView.getLastVisiblePosition();
 
-            if(start<=position && end>=position){
-                log("updating "+position+"with "+progress+" %");
+                if(start<=position && end>=position){
+                    log("updating "+position+"with "+progress+" %");
 
-                View view = liveDownloadListView.getChildAt(position);
-                liveDownloadListView.getAdapter().getView(position,view,liveDownloadListView);
-            }
+                    View view = liveDownloadListView.getChildAt(position);
+                    liveDownloadListView.getAdapter().getView(position,view,liveDownloadListView);
+                }
         }
         else{
             // refressing the tasks list
@@ -124,7 +124,6 @@ public class ActiveTaskFragment extends Fragment {
 
         }
     }
-
 
     public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
 

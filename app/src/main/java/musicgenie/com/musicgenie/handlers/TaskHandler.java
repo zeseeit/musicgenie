@@ -28,6 +28,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Date;
 
+import musicgenie.com.musicgenie.adapters.LiveDownloadListAdapter;
 import musicgenie.com.musicgenie.notification.LocalNotificationManager;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
@@ -285,14 +286,13 @@ public class TaskHandler {
 
     //WID: takes taskID , file_name , url and  download it , removes task after 100% , publishes progress
 
-    private class DownloadThread extends Thread implements DownloadCancelListener {
+    private class DownloadThread extends Thread{
 
         private String taskID;
         private String v_id;
         private String file_name;
         private DownloadListener downloadListener;
         private boolean isCanceled = false;
-
         //private Context context;
 
         public DownloadThread(String taskID , String v_id , String file_name,DownloadListener listener) {
@@ -300,7 +300,7 @@ public class TaskHandler {
             this.v_id = v_id;
             this.file_name = file_name;
             this.downloadListener = listener;
-            //this.context = context;
+          //  this.context = context;
         }
 
         @Override
@@ -311,6 +311,8 @@ public class TaskHandler {
             final String t_file_name = this.file_name;
             String t_url = App_Config.SERVER_URL;
 
+            subscribeDownloadCancelListener();
+            if(!isCanceled){
             try {
 
                 downloadListener.onDownloadTaskProcessStart();
@@ -346,7 +348,6 @@ public class TaskHandler {
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
                 URL url = new URL(t_url);
                 URLConnection connection = url.openConnection();
@@ -387,8 +388,8 @@ public class TaskHandler {
                 log("IO exception " + e);
             }
 
+            }
         }
-
 
         private void publishProgress(int progress){
             //  to reduce log lines
@@ -412,11 +413,20 @@ public class TaskHandler {
             context.sendBroadcast(intent);
         }
 
-        @Override
-        public void onDownloadCancel(String taskID) {
-                this.isCanceled = true;
-                log("task " + taskID + " got canceled !!");
+        private void subscribeDownloadCancelListener(){
+            LiveDownloadListAdapter.getInstance(context).setOnDownloadCancelListener(new DownloadCancelListener() {
+                @Override
+                public void onDownloadCancel(String tID) {
+                    if(taskID.equals(tID)){ // means current downloading task is canceled
+                        log("cancelling live download task");
+                        isCanceled = true;
+                    }
+                    removeTask(taskID);     // work in both circumstances (cancel live-download or pending download)
+                    log("task " + taskID + " got canceled !!");
+                }
+            });
         }
+
     }
 
 }
