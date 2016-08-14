@@ -34,6 +34,8 @@ public class ActiveTaskFragment extends Fragment {
     private ListView liveDownloadListView;
     private LiveDownloadListAdapter adapter;
     private ProgressUpdateBroadcastReceiver receiver;
+    private boolean mReceiverRegistered;
+
 
     public ActiveTaskFragment() {
         // Required empty public constructor
@@ -48,7 +50,7 @@ public class ActiveTaskFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View fragmentView =inflater.inflate(R.layout.fragment_active_task, container, false);
         liveDownloadListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
-        adapter = new LiveDownloadListAdapter(getActivity());
+        adapter = LiveDownloadListAdapter.getInstance(getActivity());
         adapter.setDownloadingList(getTasksList());
         liveDownloadListView.setAdapter(adapter);
 
@@ -59,7 +61,8 @@ public class ActiveTaskFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         SharedPrefrenceUtils.getInstance(activity).setActiveFragmentAttachedState(true);
-        registerForBroadcastListen(activity);
+        if(!mReceiverRegistered)
+            registerForBroadcastListen(activity);
     }
 
 
@@ -67,7 +70,8 @@ public class ActiveTaskFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         SharedPrefrenceUtils.getInstance(getActivity()).setActiveFragmentAttachedState(false);
-        unRegisterBroadcast();
+        if(mReceiverRegistered)
+            unRegisterBroadcast();
     }
 
     private ArrayList<DownloadTaskModel> getTasksList(){
@@ -144,10 +148,13 @@ public class ActiveTaskFragment extends Fragment {
     private void registerForBroadcastListen(Activity activity) {
         receiver = new ProgressUpdateBroadcastReceiver();
         activity.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST));
+        mReceiverRegistered = true;
+
     }
 
     private void unRegisterBroadcast() {
         getActivity().unregisterReceiver(receiver);
+        mReceiverRegistered = false;
     }
 
     public void makeToast(String msg){

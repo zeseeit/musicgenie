@@ -3,9 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="50dp"
+    android:layout_height="96dp"
     android:weightSum="2"
-    android:elevation="2dp">
+    android:padding="4dp"
+    android:elevation="4dp">
 
     <LinearLayout
         android:orientation="horizontal"
@@ -15,18 +16,20 @@
         android:layout_height="0dp">
 
         <TextView
+            android:textColor="@color/PrimaryColor"
             android:id="@+id/download_task_title"
             android:paddingLeft="4dp"
             android:paddingRight="4dp"
             android:gravity="center_vertical"
             android:text="Aaye ho meri jindgi me "
+            android:textSize="20sp"
             android:layout_width="0dp"
             android:layout_weight="7"
             android:maxLines="1"
             android:layout_height="match_parent" />
 
         <FrameLayout
-            android:padding="2dp"
+            android:padding="4dp"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent">
@@ -34,7 +37,7 @@
             <Button
                 android:background="@android:drawable/ic_menu_close_clear_cancel"
                 android:id="@+id/cancelBtn"
-                android:layout_width="25dp"
+                android:layout_width="wrap_content"
                 android:layout_height="match_parent" />
 
         </FrameLayout>
@@ -60,6 +63,7 @@
 
 
                 <ProgressBar
+                    android:padding="4dp"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

@@ -129,10 +129,16 @@ public class TaskHandler {
         String file_name = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
 
         DownloadListener listener = new DownloadListener() {
+
+            @Override
+            public void onInterruptted(String taskID) {
+
+            }
             @Override
             public void onError(String error) {
                 SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
                 log("callback: download error");
+                //delete file
                 //TODO: handle error during download
             }
 
@@ -310,7 +316,8 @@ public class TaskHandler {
             final String t_v_id = this.v_id;
             final String t_file_name = this.file_name;
             String t_url = App_Config.SERVER_URL;
-
+            File dest_file = null;
+            File dest_dir = null;
             subscribeDownloadCancelListener();
             if(!isCanceled){
             try {
@@ -361,12 +368,13 @@ public class TaskHandler {
                     return;
                 }
 
-                File dir = new File(App_Config.FILES_DIR);
-                File file = new File(dir, t_file_name.trim() + ".mp3");
-                log("writing to " + file.toString());
+                // file creation
+                 dest_dir = new File(App_Config.FILES_DIR);
+                 dest_file = new File(dest_dir, t_file_name.trim() + ".mp3");
+                log("writing to " + dest_file.toString());
 
                 InputStream inputStream = new BufferedInputStream(url.openStream());
-                OutputStream outputStream = new FileOutputStream(file);
+                OutputStream outputStream = new FileOutputStream(dest_file);
                 byte data[] = new byte[1024];
                 long total = 0;
                 while (!isCanceled && (count = inputStream.read(data)) != -1) {
@@ -385,6 +393,13 @@ public class TaskHandler {
                 log("URL exception " + e);
             } catch (IOException e) {
                 downloadListener.onError(e.toString());
+                if(dest_file.exists()){
+                  if(dest_file.delete()){
+                      log("Successfully Deleted File" +dest_file.getName());
+                  }else{
+                      log("Failed To Delete File "+dest_file.getName());
+                  }
+                }
                 log("IO exception " + e);
             }
 
