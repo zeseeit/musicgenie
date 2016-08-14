@@ -33,7 +33,7 @@
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name=".activity.ResponsiveDrawerTest"
+            android:name=".activity.SectionedListViewTest"
             android:label="@string/title_activity_responsive_drawer_test" >
         </activity>
         <activity
