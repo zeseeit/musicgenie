@@ -22,4 +22,5 @@
     <string name="drawer_close">dc</string>
     <string name="title_activity_responsive_drawer_test">ResponsiveDrawerTest</string>
     <string name="title_activity_error_splash">ErrorSplashActivity</string>
+    <string name="title_activity_user_preference_setting">UserPreferenceSetting</string>
 </resources>

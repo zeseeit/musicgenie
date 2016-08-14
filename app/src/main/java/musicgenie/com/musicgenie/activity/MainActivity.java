@@ -71,12 +71,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
 //        if(!mReceiverRegistered)
 //            registerReceiver();
-
-        if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
-            setContentView(R.layout.conn_error_layout);
-            return;
-        }
-        else {
+//
+//        if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+//            setContentView(R.layout.conn_error_layout);
+//            return;
+//        }
+//        else {
                 setContentView(R.layout.activity_home);
                 resultListView = (ListView) findViewById(R.id.listView);
                 new App_Config(this).configureDevice();
@@ -85,12 +85,12 @@ public class MainActivity extends Activity {
                 progressDialog.setMessage("Loading Trending Songs...");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
+        // todo: load trending and on users demand
                 loadTrendingSongs();
                 setUpDrawer();
                 setSearchView();
                 pinFAB();
 
-        }
     }
 
     public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
