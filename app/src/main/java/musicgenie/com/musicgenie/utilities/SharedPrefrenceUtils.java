@@ -82,7 +82,7 @@ public class SharedPrefrenceUtils {
     }
 
     public int getCurrentDownloadsCount(){
-        return preferences.getInt("cur_dnd",0);
+        return preferences.getInt("cur_dnd", 0);
     }
 
     public void setCurrentDownloadCount(int count){
@@ -91,12 +91,21 @@ public class SharedPrefrenceUtils {
     }
 
     public void setActiveFragmentAttachedState(boolean yesOrNo){
-        editor.putBoolean("isActive",yesOrNo);
+        editor.putBoolean("isActive", yesOrNo);
         editor.commit();
     }
 
     public boolean getActiveFragmentAttachedState(){
         return preferences.getBoolean("isActive",false);
+    }
+
+    public void setOptionsForTrendingAudio(boolean needTrending) {
+        editor.putBoolean("needTrending",needTrending);
+        editor.commit();
+    }
+
+    public boolean getOptionForTrendingAudio(){
+        return preferences.getBoolean("needTrending",true);
     }
 
 }

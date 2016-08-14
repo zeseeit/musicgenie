@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
@@ -20,6 +21,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -40,6 +42,7 @@ import org.json.JSONException;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.List;
 
 import musicgenie.com.musicgenie.fragments.NavigationFragment;
 import musicgenie.com.musicgenie.handlers.TaskHandler;
@@ -48,6 +51,7 @@ import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.SearchResultListAdapter;
+import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.utilities.VolleyUtils;
@@ -85,13 +89,32 @@ public class MainActivity extends Activity {
                 progressDialog.setMessage("Loading Trending Songs...");
                 progressDialog.setCancelable(false);
                 progressDialog.show();
-        // todo: load trending and on users demand
-                loadTrendingSongs();
+
+                if(SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio()) {
+                    loadTrendingSongs();
+                }
+
                 //setUpDrawer();
                 setSearchView();
                 pinFAB();
 
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
+            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+            if (results != null && results.size() > 0) {
+                String searchWrd = results.get(0);
+                if (!TextUtils.isEmpty(searchWrd)) {
+                    searchView.setQuery(searchWrd);
+                    fireSearch(searchWrd);
+                }
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
 
 //    public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
 //
@@ -202,7 +225,6 @@ public class MainActivity extends Activity {
 //            }
 //        }
 //    }
-
     public void setSearchView() {
 
         searchView = (SearchView) findViewById(R.id.searchView);

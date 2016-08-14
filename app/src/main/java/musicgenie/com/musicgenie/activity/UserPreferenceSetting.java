@@ -1,11 +1,17 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
+
+import org.w3c.dom.UserDataHandler;
 
 import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 
 public class UserPreferenceSetting extends AppCompatActivity {
 
@@ -13,6 +19,17 @@ public class UserPreferenceSetting extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_preference_setting);
+
+        CheckBox trendingChoice = (CheckBox) findViewById(R.id.trendingChoice);
+        trendingChoice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean needTrending) {
+                if(needTrending){
+                    SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this).setOptionsForTrendingAudio(needTrending);
+                }
+            }
+        });
+
     }
 
     @Override
@@ -30,8 +47,10 @@ public class UserPreferenceSetting extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_downloads) {
+            Intent i= new Intent(UserPreferenceSetting.this,DowloadsActivity.class);
+            startActivity(i);
+            finish();
         }
 
         return super.onOptionsItemSelected(item);
