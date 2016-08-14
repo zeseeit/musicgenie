@@ -64,7 +64,7 @@ public class MainActivity extends Activity {
     private Toolbar mToolbar;
     private FloatingActionButton fab;
     private boolean mReceiverRegistered;
-    private ConnectivityBroadcastReceiver receiver;
+   // private ConnectivityBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,32 +87,32 @@ public class MainActivity extends Activity {
                 progressDialog.show();
         // todo: load trending and on users demand
                 loadTrendingSongs();
-                setUpDrawer();
+                //setUpDrawer();
                 setSearchView();
                 pinFAB();
 
     }
 
-    public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if(intent.getAction().equals(App_Config.ACTION_NETWORK_CONNECTED)) {
-                if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
-                    //TODO: this may be point of exception , we can pass empty Bundle object instead of null
-                    log("network state changed");
-//                   new MainActivity();
-                }
-            }
-        }
-    }
-
-    private void registerReceiver() {
-        receiver = new ConnectivityBroadcastReceiver();
-        this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_NETWORK_CONNECTED));
-        mReceiverRegistered = true;
-    }
+//    public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
+//
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//
+//            if(intent.getAction().equals(App_Config.ACTION_NETWORK_CONNECTED)) {
+//                if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
+//                    //TODO: this may be point of exception , we can pass empty Bundle object instead of null
+//                    log("network state changed");
+////                   new MainActivity();
+//                }
+//            }
+//        }
+//    }
+//
+//    private void registerReceiver() {
+//        receiver = new ConnectivityBroadcastReceiver();
+//        this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_NETWORK_CONNECTED));
+//        mReceiverRegistered = true;
+//    }
 
     private void pinFAB() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -128,79 +128,80 @@ public class MainActivity extends Activity {
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-            mDrawerLayout.closeDrawer(GravityCompat.START);
-        } else //noinspection StatementWithEmptyBody
-            if (searchView != null && searchView.isSearchOpen()) { // TODO
-                searchView.close(true);
-            } else {
-                super.onBackPressed();
-            }
-    }
+//    @Override
+//    public void onBackPressed() {
+//        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
+//            mDrawerLayout.closeDrawer(GravityCompat.START);
+//        } else //noinspection StatementWithEmptyBody
+//            if (searchView != null && searchView.isSearchOpen()) { // TODO
+//                searchView.close(true);
+//            } else {
+//                super.onBackPressed();
+//            }
+//    }
 
     @Override
     protected void onPause() {
         super.onPause();
+        unsubscribeToTaskAddListener();
 //        if(mReceiverRegistered) {
 //            unsubscribeToTaskAddListener();
 //        }
     }
+//
+//    public void setUpDrawer() {
+//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
+//        if (mDrawerLayout != null) {
+//            mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
+//                @Override
+//                public void onDrawerSlide(View drawerView, float slideOffset) {
+//
+//                }
+//
+//                @Override
+//                public void onDrawerOpened(View drawerView) {
+//                    invalidateOptionsMenu();
+//                    if (searchView != null && searchView.isSearchOpen()) {
+//                        searchView.close(true);
+//                    }
+//
+//                }
+//
+//                @Override
+//                public void onDrawerClosed(View drawerView) {
+//                    invalidateOptionsMenu();
+//                }
+//
+//                @Override
+//                public void onDrawerStateChanged(int newState) {
+//
+//                }
+//            });
+//        }
+//
+//        toggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
+//        toggle.setDrawerIndicatorEnabled(true);
+//        mDrawerLayout.setDrawerListener(toggle);
+//
+////        mDrawerLayout.post(new Runnable() {
+////            @Override
+////            public void run() {
+////                toggle.syncState();
+////            }
+////        });
 
-    public void setUpDrawer() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-        if (mDrawerLayout != null) {
-            mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-                @Override
-                public void onDrawerSlide(View drawerView, float slideOffset) {
+//    }
 
-                }
-
-                @Override
-                public void onDrawerOpened(View drawerView) {
-                    invalidateOptionsMenu();
-                    if (searchView != null && searchView.isSearchOpen()) {
-                        searchView.close(true);
-                    }
-
-                }
-
-                @Override
-                public void onDrawerClosed(View drawerView) {
-                    invalidateOptionsMenu();
-                }
-
-                @Override
-                public void onDrawerStateChanged(int newState) {
-
-                }
-            });
-        }
-
-        toggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
-        toggle.setDrawerIndicatorEnabled(true);
-        mDrawerLayout.setDrawerListener(toggle);
-
-//        mDrawerLayout.post(new Runnable() {
-//            @Override
-//            public void run() {
-//                toggle.syncState();
+//    private void getToolbar() {
+//
+//        if (mToolbar == null) {
+//            mToolbar = (Toolbar) findViewById(R.id.toolbar);
+//            if (mToolbar != null) {
+//                mToolbar.setNavigationContentDescription(getResources().getString(R.string.app_name));
+//               // setSupportActionBar(mToolbar);
 //            }
-//        });
-
-    }
-
-    private void getToolbar() {
-
-        if (mToolbar == null) {
-            mToolbar = (Toolbar) findViewById(R.id.toolbar);
-            if (mToolbar != null) {
-                mToolbar.setNavigationContentDescription(getResources().getString(R.string.app_name));
-               // setSupportActionBar(mToolbar);
-            }
-        }
-    }
+//        }
+//    }
 
     public void setSearchView() {
 
