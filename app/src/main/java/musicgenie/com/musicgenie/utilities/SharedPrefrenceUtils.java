@@ -108,4 +108,12 @@ public class SharedPrefrenceUtils {
         return preferences.getBoolean("needTrending",true);
     }
 
+    public void setSuggestionsList(String currStack) {
+        editor.putString("sugg",currStack);
+        editor.commit();
+    }
+
+    public String getSuggestionList(){
+        return preferences.getString("sugg","");
+    }
 }

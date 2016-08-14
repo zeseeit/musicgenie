@@ -29,12 +29,15 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
+import com.lapism.searchview.SearchAdapter;
+import com.lapism.searchview.SearchItem;
 import com.lapism.searchview.SearchView;
 
 import org.json.JSONArray;
@@ -51,6 +54,7 @@ import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.SearchResultListAdapter;
+import musicgenie.com.musicgenie.utilities.Segmentor;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
@@ -264,7 +268,41 @@ public class MainActivity extends Activity {
                 }
             });
 
+            ArrayList<SearchItem> suggestionsList;
+            suggestionsList = getSuggestionList();
+            SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
+            searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
+                @Override
+                public void onItemClick(View view, int position) {
+                    TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
+                    String query = textView.getText().toString();
+                    fireSearch(query);
+                }
+            });
+            searchView.setAdapter(searchAdapter);
+
         }
+    }
+
+    public void AddSuggestionToSharedPreferences(String suggestion){
+
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+        String currStack = utils.getSuggestionList();
+        currStack +=suggestion+"#";
+        currStack = currStack.substring(0,currStack.length());
+        SharedPrefrenceUtils.getInstance(this).setSuggestionsList(currStack);
+
+    }
+
+    public ArrayList<SearchItem> getSuggestionList(){
+        ArrayList<String> suggs;
+        ArrayList<SearchItem> suggestionList = new ArrayList<>();
+        String _s = SharedPrefrenceUtils.getInstance(this).getSuggestionList();
+        suggs = new Segmentor().getParts(_s, '#');
+        for(String s: suggs){
+            suggestionList.add(new SearchItem(s));
+        }
+        return suggestionList;
     }
 
     private void fireSearch(String term) {
@@ -279,10 +317,9 @@ public class MainActivity extends Activity {
             SoftInputManager.getInstance(this).hideKeyboard(searchView);
             progressDialog.dismiss();
             makeSnake("No Internet Connection !! ");
-
             return;
         }
-
+        AddSuggestionToSharedPreferences(term);
         String url = App_Config.SERVER_URL+"/search?q="+ URLEncoder.encode(term);
         StringRequest request = new StringRequest(Request.Method.GET,url , new Response.Listener<String>() {
             @Override
