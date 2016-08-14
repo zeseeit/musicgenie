@@ -79,10 +79,15 @@ public class MainActivity extends Activity {
                 resultListView = (ListView) findViewById(R.id.listView);
                 new App_Config(this).configureDevice();
                 //load trending items and during load , show progress dialog
+                progressDialog = new ProgressDialog(this);
+                progressDialog.setMessage("Loading Trending Songs...");
+                progressDialog.setCancelable(false);
+                progressDialog.show();
+                loadTrendingSongs();
                 setUpDrawer();
                 setSearchView();
                 pinFAB();
-                subscribeToTaskAddListener();
+
         }
     }
 
@@ -92,6 +97,7 @@ public class MainActivity extends Activity {
 
             if(intent.getAction().equals(App_Config.ACTION_NETWORK_CONNECTED)) {
                 if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
+                    //TODO: this may be point of exception , we can pass empty Bundle object instead of null
                     onCreate(null);
                 }
             }
@@ -285,14 +291,19 @@ public class MainActivity extends Activity {
             e.printStackTrace();
         }
 
-        adapter = new SearchResultListAdapter(this);
+        adapter = SearchResultListAdapter.getInstance(this);
+        subscribeToTaskAddListener();
         adapter.setSongs(songs);
         resultListView.setAdapter(adapter);
     }
 
-    private void loadTrending(){
+    private void loadTrendingSongs(){
+    progressDialog.dismiss();
+
 
     }
+
+
 
     private void subscribeToTaskAddListener(){
         SearchResultListAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {

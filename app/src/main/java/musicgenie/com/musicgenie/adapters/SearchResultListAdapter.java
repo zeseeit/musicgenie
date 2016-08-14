@@ -145,14 +145,14 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
     private void addDownloadTask(final String video_id, final String file_name) {
 
         if(this.taskAddListener!=null)
-            taskAddListener.onTaskTapped();
+            this.taskAddListener.onTaskTapped();
 
         TaskHandler
                 .getInstance(context)
                         .addTask(file_name,video_id);
 
         if(this.taskAddListener!=null)
-                    taskAddListener.onTaskAddedToQueue(file_name);
+                    this.taskAddListener.onTaskAddedToQueue(file_name);
     }
 
     public void log(String _lg) {
