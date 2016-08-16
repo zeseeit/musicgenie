@@ -36,9 +36,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-import com.lapism.searchview.SearchAdapter;
-import com.lapism.searchview.SearchItem;
-import com.lapism.searchview.SearchView;
+import com.arlib.floatingsearchview.FloatingSearchView;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -60,12 +58,12 @@ import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.utilities.VolleyUtils;
 //TODO: add activity transition on swipe
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
 
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
-    SearchView searchView = null;
+    FloatingSearchView searchView = null;
     DrawerLayout mDrawerLayout;
     private static final String TAG = "MainActivity";
     private ActionBarDrawerToggle toggle;
@@ -107,23 +105,6 @@ public class MainActivity extends Activity {
                 setSearchView();
                 pinFAB();
 
-    }
-
-
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == SearchView.SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
-            if (results != null && results.size() > 0) {
-                String searchWrd = results.get(0);
-                if (!TextUtils.isEmpty(searchWrd)) {
-                    searchView.setQuery(searchWrd);
-                    fireSearch(searchWrd);
-                }
-            }
-        }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
 
@@ -237,58 +218,12 @@ public class MainActivity extends Activity {
 //        }
 //    }
     public void setSearchView() {
+        searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+            @Override
+            public void onSearchTextChanged(String s, String s1) {
 
-        searchView = (SearchView) findViewById(R.id.searchView);
-        if (searchView != null) {
-            searchView.setVersion(SearchView.VERSION_TOOLBAR);
-            searchView.setVersionMargins(SearchView.VERSION_MARGINS_TOOLBAR_BIG);
-            searchView.setTextSize(16);
-            searchView.setHint("Search");
-            searchView.setDivider(false);
-            searchView.setVoice(true);
-            searchView.setAnimationDuration(SearchView.ANIMATION_DURATION);
-            //searchView.setShadowColor(ContextCompat.getColor(this, R.color.search_shadow_layout));
-            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-                    searchView.clearFocus();
-                    searchView.close(true);
-                    fireSearch(query);
-                    // mSearchView.close(false);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    return false;
-                }
-            });
-            searchView.setOnOpenCloseListener(new SearchView.OnOpenCloseListener() {
-                @Override
-                public void onOpen() {
-
-                }
-
-                @Override
-                public void onClose() {
-
-                }
-            });
-
-            ArrayList<SearchItem> suggestionsList;
-            suggestionsList = getSuggestionList();
-            SearchAdapter searchAdapter = new SearchAdapter(this, suggestionsList);
-            searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
-                @Override
-                public void onItemClick(View view, int position) {
-//                    //TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
-//                    String query = textView.getText().toString();
-//                    fireSearch(query);
-                }
-            });
-            searchView.setAdapter(searchAdapter);
-
-        }
+            }
+        });
     }
 
     public void AddSuggestionToSharedPreferences(String suggestion){
@@ -301,16 +236,16 @@ public class MainActivity extends Activity {
 
     }
 
-    public ArrayList<SearchItem> getSuggestionList(){
-        ArrayList<String> suggs;
-        ArrayList<SearchItem> suggestionList = new ArrayList<>();
-        String _s = SharedPrefrenceUtils.getInstance(this).getSuggestionList();
-        suggs = new Segmentor().getParts(_s, '#');
-        for(String s: suggs){
-            suggestionList.add(new SearchItem(s));
-        }
-        return suggestionList;
-    }
+//    public ArrayList<SearchItem> getSuggestionList(){
+//        ArrayList<String> suggs;
+//        ArrayList<SearchItem> suggestionList = new ArrayList<>();
+//        String _s = SharedPrefrenceUtils.getInstance(this).getSuggestionList();
+//        suggs = new Segmentor().getParts(_s, '#');
+//        for(String s: suggs){
+//            suggestionList.add(new SearchItem(s));
+//        }
+//        return suggestionList;
+//    }
 
     private void fireSearch(String term) {
 

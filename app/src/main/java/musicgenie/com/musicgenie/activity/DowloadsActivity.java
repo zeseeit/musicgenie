@@ -66,12 +66,12 @@ public class DowloadsActivity extends AppCompatActivity {
 
             }
         });
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setTitle("Downloads");
-//        //TODO: handle diff sdk versions
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setHomeButtonEnabled(true);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Downloads");
+        //TODO: handle diff sdk versions
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
         log("tasks >" + SharedPrefrenceUtils.getInstance(this).getTaskSequence());
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
