@@ -77,6 +77,11 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        if(savedInstanceState!=null){
+            //TODO: getParcelable arrayList and populate the result list
+        }
+
 //        if(!mReceiverRegistered)
 //            registerReceiver();
 //
@@ -103,6 +108,8 @@ public class MainActivity extends Activity {
                 pinFAB();
 
     }
+
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -274,9 +281,9 @@ public class MainActivity extends Activity {
             searchAdapter.setOnItemClickListener(new SearchAdapter.OnItemClickListener() {
                 @Override
                 public void onItemClick(View view, int position) {
-                    TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
-                    String query = textView.getText().toString();
-                    fireSearch(query);
+//                    //TextView textView = (TextView) view.findViewById(R.id.textView_item_text);
+//                    String query = textView.getText().toString();
+//                    fireSearch(query);
                 }
             });
             searchView.setAdapter(searchAdapter);

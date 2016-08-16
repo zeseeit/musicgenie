@@ -11,6 +11,11 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
+    aaptOptions {
+        additionalParameters "--no-version-vectors"
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,7 +26,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:appcompat-v7:23.0.0'
+    compile 'com.android.support:appcompat-v7:24.1.1'
     compile 'com.android.support:design:24.1.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.lapism:searchview:3.4.1'
