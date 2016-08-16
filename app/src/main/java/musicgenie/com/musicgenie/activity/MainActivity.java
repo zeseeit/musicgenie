@@ -37,6 +37,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -57,6 +58,7 @@ import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 import musicgenie.com.musicgenie.utilities.SoftInputManager;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.utilities.VolleyUtils;
+
 //TODO: add activity transition on swipe
 public class MainActivity extends AppCompatActivity {
 
@@ -66,68 +68,31 @@ public class MainActivity extends AppCompatActivity {
     FloatingSearchView searchView = null;
     DrawerLayout mDrawerLayout;
     private static final String TAG = "MainActivity";
-    private ActionBarDrawerToggle toggle;
-    private Toolbar mToolbar;
+    private boolean mFloatingSearchViewSet;
     private FloatingActionButton fab;
-    private boolean mReceiverRegistered;
-   // private ConnectivityBroadcastReceiver receiver;
+    // private ConnectivityBroadcastReceiver receiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if(savedInstanceState!=null){
+        if (savedInstanceState != null) {
             //TODO: getParcelable arrayList and populate the result list
         }
-
-//        if(!mReceiverRegistered)
-//            registerReceiver();
-//
-//        if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
-//            setContentView(R.layout.conn_error_layout);
-//            return;
-//        }
-//        else {
-                setContentView(R.layout.activity_home);
-                resultListView = (ListView) findViewById(R.id.listView);
-                new App_Config(this).configureDevice();
-                //load trending items and during load , show progress dialog
-                progressDialog = new ProgressDialog(this);
-                progressDialog.setMessage("Loading Trending Songs...");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-
-                if(SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio()) {
-                    loadTrendingSongs();
-                }
-
-                //setUpDrawer();
-                setSearchView();
-                pinFAB();
-
+        setContentView(R.layout.activity_home);
+        resultListView = (ListView) findViewById(R.id.listView);
+        new App_Config(this).configureDevice();
+        //TODO:load trending items and during load , show progress dialog
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading Trending Songs...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        if (SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio()) {
+            loadTrendingSongs();
+        }
+        setSearchView();
+        pinFAB();
     }
-
-
-//    public class ConnectivityBroadcastReceiver extends BroadcastReceiver {
-//
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//
-//            if(intent.getAction().equals(App_Config.ACTION_NETWORK_CONNECTED)) {
-//                if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
-//                    //TODO: this may be point of exception , we can pass empty Bundle object instead of null
-//                    log("network state changed");
-////                   new MainActivity();
-//                }
-//            }
-//        }
-//    }
-//
-//    private void registerReceiver() {
-//        receiver = new ConnectivityBroadcastReceiver();
-//        this.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_NETWORK_CONNECTED));
-//        mReceiverRegistered = true;
-//    }
 
     private void pinFAB() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -143,109 +108,75 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-//    @Override
-//    public void onBackPressed() {
-//        if (mDrawerLayout != null && mDrawerLayout.isDrawerOpen(GravityCompat.START)) {
-//            mDrawerLayout.closeDrawer(GravityCompat.START);
-//        } else //noinspection StatementWithEmptyBody
-//            if (searchView != null && searchView.isSearchOpen()) { // TODO
-//                searchView.close(true);
-//            } else {
-//                super.onBackPressed();
-//            }
-//    }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if(!mFloatingSearchViewSet)setSearchView();
+    }
 
     @Override
     protected void onPause() {
         super.onPause();
         unsubscribeToTaskAddListener();
-//        if(mReceiverRegistered) {
-//            unsubscribeToTaskAddListener();
-//        }
     }
-//
-//    public void setUpDrawer() {
-//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawerLayout);
-//        if (mDrawerLayout != null) {
-//            mDrawerLayout.addDrawerListener(new DrawerLayout.DrawerListener() {
-//                @Override
-//                public void onDrawerSlide(View drawerView, float slideOffset) {
-//
-//                }
-//
-//                @Override
-//                public void onDrawerOpened(View drawerView) {
-//                    invalidateOptionsMenu();
-//                    if (searchView != null && searchView.isSearchOpen()) {
-//                        searchView.close(true);
-//                    }
-//
-//                }
-//
-//                @Override
-//                public void onDrawerClosed(View drawerView) {
-//                    invalidateOptionsMenu();
-//                }
-//
-//                @Override
-//                public void onDrawerStateChanged(int newState) {
-//
-//                }
-//            });
-//        }
-//
-//        toggle = new ActionBarDrawerToggle(this, mDrawerLayout, R.string.drawer_open, R.string.drawer_close);
-//        toggle.setDrawerIndicatorEnabled(true);
-//        mDrawerLayout.setDrawerListener(toggle);
-//
-////        mDrawerLayout.post(new Runnable() {
-////            @Override
-////            public void run() {
-////                toggle.syncState();
-////            }
-////        });
 
-//    }
-
-//    private void getToolbar() {
-//
-//        if (mToolbar == null) {
-//            mToolbar = (Toolbar) findViewById(R.id.toolbar);
-//            if (mToolbar != null) {
-//                mToolbar.setNavigationContentDescription(getResources().getString(R.string.app_name));
-//               // setSupportActionBar(mToolbar);
-//            }
-//        }
-//    }
     public void setSearchView() {
+        mFloatingSearchViewSet = true;
+        searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String s, String s1) {
-
+                log("query changed from "+s+" to "+s1);
             }
         });
+
+
+        searchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
+            @Override
+            public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
+                log("suggestion clicked");
+            }
+
+            @Override
+            public void onSearchAction(String s) {
+                log("search action clicked");
+                fireSearch(s);
+            }
+        });
+
+        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View view, boolean b) {
+                log("onFocusChange()");
+            }
+        });
+
+        searchView.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
+            @Override
+            public void onActionMenuItemSelected(MenuItem menuItem) {
+                //TODO: handle the menu clicks
+            }
+        });
+
+
     }
 
-    public void AddSuggestionToSharedPreferences(String suggestion){
+    public void AddSuggestionToSharedPreferences(String suggestion) {
 
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
         String currStack = utils.getSuggestionList();
-        currStack +=suggestion+"#";
-        currStack = currStack.substring(0,currStack.length());
+        currStack += suggestion + "#";
+        currStack = currStack.substring(0, currStack.length());
         SharedPrefrenceUtils.getInstance(this).setSuggestionsList(currStack);
 
     }
 
-//    public ArrayList<SearchItem> getSuggestionList(){
-//        ArrayList<String> suggs;
-//        ArrayList<SearchItem> suggestionList = new ArrayList<>();
-//        String _s = SharedPrefrenceUtils.getInstance(this).getSuggestionList();
-//        suggs = new Segmentor().getParts(_s, '#');
-//        for(String s: suggs){
-//            suggestionList.add(new SearchItem(s));
-//        }
-//        return suggestionList;
-//    }
+    public ArrayList<String> getSuggestionList(){
+        ArrayList<String> suggs;
+        String _s = SharedPrefrenceUtils.getInstance(this).getSuggestionList();
+        suggs = new Segmentor().getParts(_s, '#');
+        return suggs;
+    }
 
     private void fireSearch(String term) {
 
@@ -253,7 +184,7 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.setMessage(getString(R.string.progress_dialog_msg));
         progressDialog.show();
 
-        if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+        if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
 
             getCurrentFocus().clearFocus();
             SoftInputManager.getInstance(this).hideKeyboard(searchView);
@@ -262,10 +193,11 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         AddSuggestionToSharedPreferences(term);
-        String url = App_Config.SERVER_URL+"/search?q="+ URLEncoder.encode(term);
-        StringRequest request = new StringRequest(Request.Method.GET,url , new Response.Listener<String>() {
+        String url = App_Config.SERVER_URL + "/search?q=" + URLEncoder.encode(term);
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
-            public void onResponse(String response) {;
+            public void onResponse(String response) {
+                ;
                 parseSearchResults(response);
                 progressDialog.dismiss();
             }
@@ -287,7 +219,7 @@ public class MainActivity extends AppCompatActivity {
             JSONArray results = new JSONArray(response);
             for (int i = 0; i < results.length(); i++) {
                 String enc_v_id = results.getJSONObject(i).getString("get_url").substring(3);
-                songs.add(new Song( results.getJSONObject(i).getString("title"),
+                songs.add(new Song(results.getJSONObject(i).getString("title"),
                         results.getJSONObject(i).getString("length"),
                         results.getJSONObject(i).getString("uploader"),
                         results.getJSONObject(i).getString("thumb"),
@@ -306,13 +238,13 @@ public class MainActivity extends AppCompatActivity {
         resultListView.setAdapter(adapter);
     }
 
-    private void loadTrendingSongs(){
-    progressDialog.dismiss();
+    private void loadTrendingSongs() {
+        progressDialog.dismiss();
 
 
     }
 
-    private void subscribeToTaskAddListener(){
+    private void subscribeToTaskAddListener() {
         SearchResultListAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {
             @Override
             public void onTaskTapped() {
@@ -333,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void unsubscribeToTaskAddListener(){
+    private void unsubscribeToTaskAddListener() {
         SearchResultListAdapter.getInstance(this).setOnTaskAddListener(null);
     }
 
