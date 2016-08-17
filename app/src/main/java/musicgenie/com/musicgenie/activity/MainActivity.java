@@ -166,7 +166,16 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
             @Override
             public void onActionMenuItemSelected(MenuItem menuItem) {
-                //TODO: handle the menu clicks
+                int id = menuItem.getItemId();
+                if(id==R.id.action_settings){
+                    Intent i = new Intent(MainActivity.this,UserPreferenceSetting.class);
+                    startActivity(i);
+                }
+                if(id==R.id.action_downloads){
+                    Intent i = new Intent(MainActivity.this,UserPreferenceSetting.class);
+                    startActivity(i);
+                }
+
             }
         });
 

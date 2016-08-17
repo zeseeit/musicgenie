@@ -20,15 +20,6 @@ public class UserPreferenceSetting extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user_preference_setting);
 
-        CheckBox trendingChoice = (CheckBox) findViewById(R.id.trendingChoice);
-        trendingChoice.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean needTrending) {
-                if(needTrending){
-                    SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this).setOptionsForTrendingAudio(needTrending);
-                }
-            }
-        });
 
     }
 

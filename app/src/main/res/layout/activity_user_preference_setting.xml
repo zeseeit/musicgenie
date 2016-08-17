@@ -1,24 +1,83 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:layout_height="match_parent"
     tools:context="musicgenie.com.musicgenie.activity.UserPreferenceSetting">
 
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <include layout="@layout/toolbar" android:id="@+id/toolbar"/>
 
-        <CheckBox
-            android:id="@+id/trendingChoice"
-            android:checked="true"
-            android:textSize="20dp"
-            android:text="Load Trending Audio"
-            android:layout_width="match_parent"
+    <FrameLayout
+        android:background="#009988"
+        android:padding="10dp"
+        android:layout_below="@+id/toolbar"
+        android:id="@+id/trendingChoiceFrame"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+
+        <TextView
+            android:id="@+id/loadTrendingTextMessage"
+            android:layout_gravity="center_vertical"
+            android:text="Load Trending At StartUp"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loadTrendingSwitch"
+            android:layout_gravity="right|center_vertical" />
+
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:background="#009222"
+        android:padding="10dp"
+        android:layout_below="@+id/trendingChoiceFrame"
+        android:id="@+id/thumbnailChoiceFrame"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+
+        <TextView
+            android:id="@+id/loadThumbnailTextMessage"
+            android:layout_gravity="center_vertical"
+            android:text="Load Thumbnail\n(Slow Internet Connection)"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+        <Switch
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/loadThumbnailSwitch"
+            android:layout_gravity="right|center_vertical" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:background="#a0a0a0"
+        android:padding="10dp"
+        android:layout_below="@+id/thumbnailChoiceFrame"
+        android:id="@+id/IssuesTextFrame"
+        android:layout_width="match_parent"
+        android:layout_height="72dp">
+
+        <TextView
+            android:id="@+id/IssuesTextMessage"
+            android:layout_gravity="center_vertical"
+            android:text="Have Issues With App ? "
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_gravity="right|center_vertical"
+            android:id="@+id/issueBtn"
+            android:text=""
+            android:textSize="25sp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
     </FrameLayout>
+
 
 
 </RelativeLayout>
