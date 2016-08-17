@@ -389,7 +389,6 @@ public class TaskHandler {
                 byte data[] = new byte[1024];
                 long total = 0;
                 while (!isCanceled && (count = inputStream.read(data)) != -1) {
-
                     total += count;
                     publishProgress((int) total * 100 / fileLength);
                     outputStream.write(data, 0, count);
@@ -433,9 +432,9 @@ public class TaskHandler {
 
                 downloadListener.onDownloadFinish();
                 log("downloaded task " + taskID);
-
-                broadcastUpdate(String.valueOf(progress));
             }
+                broadcastUpdate(String.valueOf(progress));
+                LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress,file_name);
         }
         public void broadcastUpdate(String progressPercentage){
             Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
@@ -448,7 +447,7 @@ public class TaskHandler {
             LiveDownloadListAdapter.getInstance(context).setOnDownloadCancelListener(new DownloadCancelListener() {
                 @Override
                 public void onDownloadCancel(String tID) {
-                    if(taskID.equals(tID)){ // means current downloading task is canceled
+                    if (taskID.equals(tID)) { // means current downloading task is canceled
                         log("cancelling live download task");
                         isCanceled = true;
                     }

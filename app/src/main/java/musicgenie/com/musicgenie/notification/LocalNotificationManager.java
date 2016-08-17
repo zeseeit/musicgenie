@@ -50,6 +50,32 @@ public class LocalNotificationManager {
         manager.notify(mNotificationId , mBuilder.build());
     }
 
+    public void publishProgressOnNotification(final int progress,String item_name){
+
+       final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
+        mBuilder.setSmallIcon(R.drawable.app_icon);
+        mBuilder.setContentTitle("MusicGenie");
+        mBuilder.setContentText(item_name);
+        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+        mNotificationId = 0; // single notificationId is enough as there is single downoad at a time
+
+        final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(progress==0){
+                    mBuilder.setProgress(100,progress,true);
+                }
+                mBuilder.setProgress(100,progress,false);
+                manager.notify(mNotificationId , mBuilder.build());
+            }
+        }).start();
+
+
+    }
+
+
 
 
 }
