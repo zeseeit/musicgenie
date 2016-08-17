@@ -241,6 +241,12 @@ public class TaskHandler {
 
     }
 
+    // remove all tasks
+    public void removeAllTasks(){
+        log("removing all tasks");
+        SharedPrefrenceUtils.getInstance(context).setTasksSequence("");
+    }
+
     //remove dispatch task
     public void removeDispatchTask(String taskID){
 
@@ -368,6 +374,11 @@ public class TaskHandler {
                     return;
                 }
 
+                if(fileLength==-1){
+                    downloadListener.onError("No Data Available");
+                    return;
+                }
+
                 // file creation
                  dest_dir = new File(App_Config.FILES_DIR);
                  dest_file = new File(dest_dir, t_file_name.trim() + ".mp3");
@@ -382,6 +393,13 @@ public class TaskHandler {
                     total += count;
                     publishProgress((int) total * 100 / fileLength);
                     outputStream.write(data, 0, count);
+                }
+                //check inturruption
+                if(total<fileLength){
+                    if(downloadListener!=null){
+                        downloadListener.onInterruptted(taskID);
+                        log("Download Interrupted :" +taskID);
+                    }
                 }
 
                 outputStream.flush();
@@ -406,21 +424,19 @@ public class TaskHandler {
             }
         }
 
-        private void publishProgress(int progress){
+        private void publishProgress(int progress) {
             //  to reduce log lines
-            if(progress%10==0)log(taskID+" done.."+ progress + " %");
-            if(progress == 100){
+            //if(progress%10==0)log(taskID+" done.."+ progress + " %");
+            if (progress == 100) {
                 removeTask(taskID);
                 SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
-                if(!utils.getActiveFragmentAttachedState()){
-                    LocalNotificationManager.getInstance(context).launchNotification(utils.getTaskTitle(taskID)+" is Dowloaded");
-                }
+
                 downloadListener.onDownloadFinish();
                 log("downloaded task " + taskID);
-            }
-            broadcastUpdate(String.valueOf(progress));
-        }
 
+                broadcastUpdate(String.valueOf(progress));
+            }
+        }
         public void broadcastUpdate(String progressPercentage){
             Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(App_Config.EXTRA_TASK_ID,taskID);

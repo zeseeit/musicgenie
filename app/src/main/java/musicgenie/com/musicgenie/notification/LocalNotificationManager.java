@@ -1,10 +1,14 @@
 package musicgenie.com.musicgenie.notification;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.media.RingtoneManager;
 import android.support.v7.app.NotificationCompat;
 
 import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.activity.DowloadsActivity;
 
 /**
  * Created by Ankit on 8/10/2016.
@@ -31,11 +35,15 @@ public class LocalNotificationManager {
 
         //TODO: change icon and add pendingIntent , which navigates user to downloads activity
 
+        Intent intent = new Intent(context, DowloadsActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setSmallIcon(R.drawable.app_icon);
         mBuilder.setContentTitle("MusicGenie");
         mBuilder.setContentText(msg);
-
+        mBuilder.setContentIntent(pendingIntent);
+        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         this.mNotificationId +=1;
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

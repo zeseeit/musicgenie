@@ -49,6 +49,7 @@ import java.util.List;
 import musicgenie.com.musicgenie.fragments.NavigationFragment;
 import musicgenie.com.musicgenie.handlers.TaskHandler;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
+import musicgenie.com.musicgenie.notification.AlertDialogManager;
 import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.R;
@@ -94,6 +95,8 @@ public class MainActivity extends AppCompatActivity {
         pinFAB();
     }
 
+
+
     private void pinFAB() {
         fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -120,14 +123,23 @@ public class MainActivity extends AppCompatActivity {
         unsubscribeToTaskAddListener();
     }
 
+    public void checkPendings(){
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+        if(utils.getCurrentDownloadsCount()==0){ // check for on-going download process
+            int pendingCount = new Segmentor().getParts(utils.getTaskSequence(),'#').size();
+            if(pendingCount>0){
+                AlertDialogManager.getInstance(this).popAlertForPendings(pendingCount);
+            }
+        }
+    }
+
     public void setSearchView() {
         mFloatingSearchViewSet = true;
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
-        searchView.setHintTextColor(R.color.PrimaryColor);
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String s, String s1) {
-                log("query changed from "+s+" to "+s1);
+                log("query changed from " + s + " to " + s1);
             }
         });
 

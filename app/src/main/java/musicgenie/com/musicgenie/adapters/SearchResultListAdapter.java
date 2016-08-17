@@ -101,8 +101,8 @@ public class SearchResultListAdapter extends ArrayAdapter<Song> {
 
 
         final String v_id = song.Video_id;
-        int limit = (song.Title.length()>15)?15:song.Title.length();
-        final String file_name = song.Title.substring(0,limit);
+        //int limit = (song.Title.length()>15)?15:song.Title.length();
+        final String file_name = song.Title;//.substring(0,limit);
         tempView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

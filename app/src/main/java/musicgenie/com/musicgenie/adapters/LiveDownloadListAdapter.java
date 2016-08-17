@@ -54,6 +54,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
+
          ProgressBar progressBar;
          TextView progressText;
          final Button cancelBtn;
