@@ -30,12 +30,19 @@ public class ErrorSplashActivity extends Activity {
         }
 
         setContentView(R.layout.conn_error_layout);
-        TextView tv = (TextView) findViewById(R.id.con_text);
+
+        TextView tv = (TextView) findViewById(R.id.no_con_text);
         tv.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
-        TextView conError = (TextView) findViewById(R.id.no_connection_wifi);
-        conError.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FLATICON));
+
+        TextView conError = (TextView) findViewById(R.id.no_connection_wifi_icon);
+        conError.setTextColor(getResources().getColor(R.color.NoWifiColor));
+        conError.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL));
+
         TextView contBtn = (TextView) findViewById(R.id.continueBtn);
         contBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
+
+        TextView poweredBy = (TextView) findViewById(R.id.poweredBy);
+        poweredBy.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
 
         contBtn.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -132,21 +132,23 @@ public class TaskHandler {
 
             @Override
             public void onInterruptted(String taskID) {
-
+                // retrieve the file and delete it
+                deleteFile(taskID);
+                String flnm = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
+                LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - "+flnm);
             }
             @Override
-            public void onError(String error) {
-                SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
-                log("callback: download error");
-                //delete file
-                //TODO: handle error during download
+            public void onError(String taskID) {
+                deleteFile(taskID);
+                String flnm = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
+                LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - "+flnm);
             }
 
             @Override
             public void onDownloadTaskProcessStart() {
                 SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(1);
                 log("callback: download started");
-//                    progressDialog.dismiss();
+
             }
 
             @Override
@@ -169,6 +171,22 @@ public class TaskHandler {
 
         } catch (InterruptedException e) {
             log("thread join Interrupted");
+        }
+    }
+
+    private void deleteFile(String taskID) {
+
+        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+        log("callback: download error");
+
+        String fn = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
+        File dest_file = new File(App_Config.FILES_DIR+"/"+fn+".mp3");
+        if(dest_file.exists()){
+            if(dest_file.delete()){
+                log("Successfully Deleted File" +dest_file.getName());
+            }else{
+                log("Failed To Delete File "+dest_file.getName());
+            }
         }
     }
 
@@ -355,7 +373,7 @@ public class TaskHandler {
                         log("download url:" + t_url);
 
                     }else{
-                            downloadListener.onError("server error");
+                            downloadListener.onError(taskID);
                             return;
                     }
                 } catch (JSONException e) {
@@ -369,13 +387,9 @@ public class TaskHandler {
                 connection.connect();
                 fileLength = connection.getContentLength();
                 log("content len "+fileLength);
-                if(fileLength==24){
-                    downloadListener.onError("wrong contentLength");
-                    return;
-                }
 
-                if(fileLength==-1){
-                    downloadListener.onError("No Data Available");
+                if(fileLength==-1 || fileLength==24){
+                    downloadListener.onError(taskID);
                     return;
                 }
 
@@ -406,17 +420,10 @@ public class TaskHandler {
                 inputStream.close();
 
             } catch (MalformedURLException e) {
-                downloadListener.onError(e.toString());
+                downloadListener.onError(taskID);
                 log("URL exception " + e);
             } catch (IOException e) {
-                downloadListener.onError(e.toString());
-                if(dest_file.exists()){
-                  if(dest_file.delete()){
-                      log("Successfully Deleted File" +dest_file.getName());
-                  }else{
-                      log("Failed To Delete File "+dest_file.getName());
-                  }
-                }
+                downloadListener.onError(taskID);
                 log("IO exception " + e);
             }
 
@@ -424,17 +431,15 @@ public class TaskHandler {
         }
 
         private void publishProgress(int progress) {
-            //  to reduce log lines
-            //if(progress%10==0)log(taskID+" done.."+ progress + " %");
+
             if (progress == 100) {
                 removeTask(taskID);
                 SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
-
                 downloadListener.onDownloadFinish();
                 log("downloaded task " + taskID);
             }
-                broadcastUpdate(String.valueOf(progress));
-                LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress,file_name);
+            broadcastUpdate(String.valueOf(progress));
+            LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress,file_name);
         }
         public void broadcastUpdate(String progressPercentage){
             Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
@@ -442,7 +447,6 @@ public class TaskHandler {
             intent.putExtra(App_Config.EXTRA_PROGRESS, progressPercentage);
             context.sendBroadcast(intent);
         }
-
         private void subscribeDownloadCancelListener(){
             LiveDownloadListAdapter.getInstance(context).setOnDownloadCancelListener(new DownloadCancelListener() {
                 @Override

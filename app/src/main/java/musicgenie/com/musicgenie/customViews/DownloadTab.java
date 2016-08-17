@@ -38,7 +38,7 @@ public class DownloadTab extends TabLayout{
     }
 
     private void init() {
-        mTypeface = FontManager.getInstance(context).getTypeFace(FontManager.FLATICON);
+        mTypeface = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
     }
 
     @Override
@@ -60,8 +60,8 @@ public class DownloadTab extends TabLayout{
     }
 
     public void setUpTab(DownloadTab tab){
-        String downloadingTab = " \uF253 ";
-        String downloadedTab =" \uF245 ";
+        String downloadingTab = " \uE2C4 ";
+        String downloadedTab =" \uE149 ";
         addTab(tab.newTab().setText(downloadingTab));
         addTab(tab.newTab().setText(downloadedTab));
 

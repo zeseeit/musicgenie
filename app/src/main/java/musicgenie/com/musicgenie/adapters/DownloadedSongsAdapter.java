@@ -23,6 +23,7 @@ import musicgenie.com.musicgenie.R;
  */
 public class DownloadedSongsAdapter extends ArrayAdapter<String> {
 
+    private static final String TAG = "DownloadedSongsAdapter";
     private static Context context;
     private static DownloadedSongsAdapter mInstance;
     private ArrayList<String> fileList;
@@ -61,7 +62,7 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
         if(tempView == null){
             tempView = LayoutInflater.from(context).inflate(R.layout.downloaded_item,parent,false);
         }
-        bind(tempView,position);
+        bind(tempView, position);
         return tempView;
     }
 
@@ -73,6 +74,7 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
         albumArt = (ImageView) view.findViewById(R.id.albumArt);
         artist = (TextView) view.findViewById(R.id.artist);
         final android.media.MediaMetadataRetriever mmr= new MediaMetadataRetriever();
+        log(fileList.get(position).toString());
         mmr.setDataSource(fileList.get(position));
         byte[] data= mmr.getEmbeddedPicture();
         if(data!=null){
@@ -98,5 +100,9 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
     @Override
     public int getCount() {
         return fileList.size();
+    }
+
+    private void log(String msg){
+        Log.d(TAG, "log "+msg);
     }
 }

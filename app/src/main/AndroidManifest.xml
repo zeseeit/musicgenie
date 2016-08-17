@@ -32,6 +32,7 @@
             android:label="@string/title_activity_responsive_drawer_test" >
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:name=".activity.ErrorSplashActivity"
             android:label="@string/title_activity_error_splash" >
 
