@@ -6,7 +6,6 @@
     <include layout="@layout/toolbar" android:id="@+id/toolbar"/>
 
     <FrameLayout
-        android:background="#009988"
         android:padding="10dp"
         android:layout_below="@+id/toolbar"
         android:id="@+id/trendingChoiceFrame"
@@ -30,7 +29,6 @@
     </FrameLayout>
 
     <FrameLayout
-        android:background="#009222"
         android:padding="10dp"
         android:layout_below="@+id/trendingChoiceFrame"
         android:id="@+id/thumbnailChoiceFrame"
@@ -53,7 +51,6 @@
     </FrameLayout>
 
     <FrameLayout
-        android:background="#a0a0a0"
         android:padding="10dp"
         android:layout_below="@+id/thumbnailChoiceFrame"
         android:id="@+id/IssuesTextFrame"
@@ -61,7 +58,7 @@
         android:layout_height="72dp">
 
         <TextView
-            android:id="@+id/IssuesTextMessage"
+            android:id="@+id/issuesTextMessage"
             android:layout_gravity="center_vertical"
             android:text="Have Issues With App ? "
             android:textSize="16sp"

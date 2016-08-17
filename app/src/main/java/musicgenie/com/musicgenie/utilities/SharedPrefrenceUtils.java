@@ -116,4 +116,12 @@ public class SharedPrefrenceUtils {
     public String getSuggestionList(){
         return preferences.getString("sugg","");
     }
+
+    public void setOptionsForThumbnailLoad(boolean needLoading) {
+        editor.putBoolean("needThumb",needLoading);
+        editor.commit();
+    }
+    public boolean getOptionsForThumbnailLoad(){
+        return preferences.getBoolean("needThumb",true);
+    }
 }

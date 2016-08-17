@@ -83,14 +83,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         resultListView = (ListView) findViewById(R.id.listView);
         new App_Config(this).configureDevice();
-        //TODO:load trending items and during load , show progress dialog
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setMessage("Loading Trending Songs...");
-        progressDialog.setCancelable(false);
-        progressDialog.show();
-        if (SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio()) {
-            loadTrendingSongs();
-        }
+        loadTrendingSongs();
         setSearchView();
         pinFAB();
     }
@@ -167,12 +160,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onActionMenuItemSelected(MenuItem menuItem) {
                 int id = menuItem.getItemId();
-                if(id==R.id.action_settings){
-                    Intent i = new Intent(MainActivity.this,UserPreferenceSetting.class);
+                if (id == R.id.action_settings) {
+                    Intent i = new Intent(MainActivity.this, UserPreferenceSetting.class);
                     startActivity(i);
                 }
-                if(id==R.id.action_downloads){
-                    Intent i = new Intent(MainActivity.this,UserPreferenceSetting.class);
+                if (id == R.id.action_downloads) {
+                    Intent i = new Intent(MainActivity.this, UserPreferenceSetting.class);
                     startActivity(i);
                 }
 
@@ -261,8 +254,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void loadTrendingSongs() {
-        progressDialog.dismiss();
+        if (!SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio())return;
 
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Loading Trending Songs...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+        //load trending items
+        // then dismiss progressDialog
+        progressDialog.dismiss();
 
     }
 
