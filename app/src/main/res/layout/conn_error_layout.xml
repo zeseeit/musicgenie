@@ -21,13 +21,19 @@
     android:layout_weight="3"
     >
 
-    <TextView
-        android:id="@+id/no_connection_wifi"
+    <FrameLayout
         android:layout_gravity="center_horizontal"
-        android:text=""
-        android:textSize="25sp"
         android:layout_width="120dp"
-        android:layout_height="120dp" />
+        android:layout_height="120dp">
+        <TextView
+            android:id="@+id/no_connection_wifi"
+            android:text=""
+            android:gravity="center"
+            android:textSize="100sp"
+            android:layout_width="120dp"
+            android:layout_height="120dp" />
+    </FrameLayout>
+
 
     <TextView
         android:layout_gravity="center_horizontal"

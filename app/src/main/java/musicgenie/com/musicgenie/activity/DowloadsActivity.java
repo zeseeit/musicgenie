@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 
+import musicgenie.com.musicgenie.customViews.DownloadTab;
 import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.SectionsPagerAdapter;
@@ -24,7 +25,7 @@ public class DowloadsActivity extends AppCompatActivity {
 
     SectionsPagerAdapter mSectionsPagerAdapter;
     ViewPager mViewPager;
-    TabLayout tabLayout;
+    DownloadTab tabLayout;
     Toolbar toolbar;
 
     //TODO: make active download page and downloaded items page
@@ -32,33 +33,32 @@ public class DowloadsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dowload);
-        tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setText("")
-        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.downloaded));
+        tabLayout = (DownloadTab) findViewById(R.id.tab_layout);
+        tabLayout.setUpTab(tabLayout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-
         //color filter to tab 0
-        int leftTabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
-        tabLayout.getTabAt(0).getIcon().setColorFilter(leftTabIconColor, PorterDuff.Mode.SRC_IN);
-        // color filter to tab1
-        int rightTabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
-        tabLayout.getTabAt(1).getIcon().setColorFilter(rightTabIconColor, PorterDuff.Mode.SRC_IN);
+//        int leftTabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
+//        tabLayout.getTabAt(0).getIcon().setColorFilter(leftTabIconColor, PorterDuff.Mode.SRC_IN);
+//        // color filter to tab1
+//        int rightTabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
+//        tabLayout.getTabAt(1).getText().set
+//        tabLayout.getTabAt(1).getIcon().setColorFilter(rightTabIconColor, PorterDuff.Mode.SRC_IN);
 
         tabLayout.setSelectedTabIndicatorColor(Color.parseColor("#ffffff"));
-        tabLayout.setSelectedTabIndicatorHeight((int) (3 * getResources().getDisplayMetrics().density));
+        tabLayout.setSelectedTabIndicatorHeight((int) (2 * getResources().getDisplayMetrics().density));
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
-                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
-                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+//                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.White);
+//                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
 
             }
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
-                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
+//                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
+//                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
             }
 
             @Override
