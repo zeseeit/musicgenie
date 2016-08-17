@@ -12,21 +12,14 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.squareup.picasso.Picasso;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
-import musicgenie.com.musicgenie.utilities.App_Config;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.handlers.TaskHandler;

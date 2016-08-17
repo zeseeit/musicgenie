@@ -1,35 +1,16 @@
 package musicgenie.com.musicgenie.activity;
 
-import android.app.Activity;
-import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.app.SearchManager;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.content.res.Configuration;
-import android.speech.RecognizerIntent;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.NavigationView;
-import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.text.TextUtils;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -44,13 +25,10 @@ import org.json.JSONException;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
-import java.util.List;
 
-import musicgenie.com.musicgenie.fragments.NavigationFragment;
-import musicgenie.com.musicgenie.handlers.TaskHandler;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.notification.AlertDialogManager;
-import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.SearchResultListAdapter;
@@ -76,18 +54,36 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (savedInstanceState != null) {
-            //TODO: getParcelable arrayList and populate the result list
-        }
         setContentView(R.layout.activity_home);
-        resultListView = (ListView) findViewById(R.id.listView);
-        new App_Config(this).configureDevice();
-        loadTrendingSongs();
+        // inits views
+        init();
+        // make dirs
+        configure();
+        // load trending on preferences
+        loadTrendingSongs(savedInstanceState);
+        // reload previous loaded
+        reload(savedInstanceState);
+        // generate alert for pending downloads , options for re-download or remove them at all
+        checkPendings();
+        // sets SearchView in action with event-listeners
         setSearchView();
+        // floating action button
+        //TODO: FAB can be removed
         pinFAB();
+
     }
 
+    private void reload(Bundle savedInstanceState) {
+        //TODO: reload data from parcelable source - If Available
+    }
+
+    private void init() {
+        resultListView = (ListView) findViewById(R.id.listView);
+    }
+
+    private void configure() {
+        AppConfig.getInstance(this).configureDevice();
+    }
 
 
     private void pinFAB() {
@@ -208,7 +204,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         AddSuggestionToSharedPreferences(term);
-        String url = App_Config.SERVER_URL + "/search?q=" + URLEncoder.encode(term);
+        String url = AppConfig.SERVER_URL + "/search?q=" + URLEncoder.encode(term);
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -253,8 +249,9 @@ public class MainActivity extends AppCompatActivity {
         resultListView.setAdapter(adapter);
     }
 
-    private void loadTrendingSongs() {
-        if (!SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio())return;
+    private void loadTrendingSongs(Bundle saved) {
+        if (!SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio() || saved!=null)return; // user denied for trending load
+        // saved!=null  means it is back-navigation from another activity and its not the first time.
 
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading Trending Songs...");

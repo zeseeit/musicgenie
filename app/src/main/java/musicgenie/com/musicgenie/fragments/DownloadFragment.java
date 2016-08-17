@@ -2,24 +2,19 @@ package musicgenie.com.musicgenie.fragments;
 
 import android.app.Activity;
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.io.File;
 import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.R;
-import musicgenie.com.musicgenie.activity.DowloadsActivity;
 import musicgenie.com.musicgenie.adapters.DownloadedSongsAdapter;
-import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.utilities.AppConfig;
 
 
 public class DownloadFragment extends Fragment {
@@ -49,7 +44,7 @@ public class DownloadFragment extends Fragment {
 
     private static void setUpAdapter(){
         ArrayList<String> files = new ArrayList<>();
-        File dir = new File(App_Config.FILES_DIR);
+        File dir = new File(AppConfig.FILES_DIR);
         File[] _files = dir.listFiles();
         for (File f:_files) {
             //Log.d(TAG, "setUpAdapter f-size"+f.getTotalSpace());

@@ -3,8 +3,6 @@ package musicgenie.com.musicgenie.handlers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -33,7 +31,7 @@ import musicgenie.com.musicgenie.notification.LocalNotificationManager;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.interfaces.DownloadListener;
-import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.Segmentor;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 
@@ -180,7 +178,7 @@ public class TaskHandler {
         log("callback: download error");
 
         String fn = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
-        File dest_file = new File(App_Config.FILES_DIR+"/"+fn+".mp3");
+        File dest_file = new File(AppConfig.FILES_DIR+"/"+fn+".mp3");
         if(dest_file.exists()){
             if(dest_file.delete()){
                 log("Successfully Deleted File" +dest_file.getName());
@@ -339,7 +337,7 @@ public class TaskHandler {
             int fileLength;
             final String t_v_id = this.v_id;
             final String t_file_name = this.file_name;
-            String t_url = App_Config.SERVER_URL;
+            String t_url = AppConfig.SERVER_URL;
             File dest_file = null;
             File dest_dir = null;
             subscribeDownloadCancelListener();
@@ -348,7 +346,7 @@ public class TaskHandler {
 
                 downloadListener.onDownloadTaskProcessStart();
 
-                String _url  = App_Config.SERVER_URL+"/g/"+t_v_id;
+                String _url  = AppConfig.SERVER_URL+"/g/"+t_v_id;
                 log("for dwnd url requesting on "+_url);
                 URL u = new URL(_url);
                 URLConnection dconnection = u.openConnection();
@@ -394,7 +392,7 @@ public class TaskHandler {
                 }
 
                 // file creation
-                 dest_dir = new File(App_Config.FILES_DIR);
+                 dest_dir = new File(AppConfig.FILES_DIR);
                  dest_file = new File(dest_dir, t_file_name.trim() + ".mp3");
                 log("writing to " + dest_file.toString());
 
@@ -442,9 +440,9 @@ public class TaskHandler {
             LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress,file_name);
         }
         public void broadcastUpdate(String progressPercentage){
-            Intent intent = new Intent(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST);
-            intent.putExtra(App_Config.EXTRA_TASK_ID,taskID);
-            intent.putExtra(App_Config.EXTRA_PROGRESS, progressPercentage);
+            Intent intent = new Intent(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST);
+            intent.putExtra(AppConfig.EXTRA_TASK_ID,taskID);
+            intent.putExtra(AppConfig.EXTRA_PROGRESS, progressPercentage);
             context.sendBroadcast(intent);
         }
         private void subscribeDownloadCancelListener(){

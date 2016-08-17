@@ -12,7 +12,7 @@ import musicgenie.com.musicgenie.notification.LocalNotificationManager;
 /**
  * Created by Ankit on 8/5/2016.
  */
-public class App_Config extends Application {
+public class AppConfig extends Application {
 
     public static final String SERVER_URL = "http://ymp3.aavi.me";
     public static final String SDCARD = "sdcard";
@@ -22,20 +22,30 @@ public class App_Config extends Application {
     public static final String EXTRA_PROGRESS = "progress";
     public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Musicgenie/Audio";
     public static final String ACTION_NETWORK_CONNECTED = "android.net.conn.CONNECTIVITY_CHANGE";
-    private Context context;
 
-    public App_Config(Context context) {
+    private static Context context;
+    private static AppConfig mInstance;
+
+    public AppConfig(Context context) {
         this.context = context;
     }
 
+    public static AppConfig getInstance(Context context) {
+        if (mInstance == null) {
+            mInstance = new AppConfig(context);
+        }
+        return mInstance;
+    }
+
+
     //create dirs
-    public void configureDevice() {
+    public static void configureDevice() {
 
         String savePref = SharedPrefrenceUtils.getInstance(context).getFileSavingLocation();
         int tasks_pending = TaskHandler.getInstance(context).getTaskCount();
          if(tasks_pending>0)LocalNotificationManager.getInstance(context).launchNotification("You Have "+ tasks_pending +" Tasks Pending");
 
-        if (savePref.equals(App_Config.PHONE)) {
+        if (savePref.equals(AppConfig.PHONE)) {
             File root = Environment.getExternalStorageDirectory();
             File dir = new File(root+ "/Musicgenie/Audio");
 

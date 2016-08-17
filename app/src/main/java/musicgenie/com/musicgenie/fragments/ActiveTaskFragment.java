@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -18,12 +17,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.R;
-import musicgenie.com.musicgenie.activity.DowloadsActivity;
 import musicgenie.com.musicgenie.adapters.LiveDownloadListAdapter;
 import musicgenie.com.musicgenie.handlers.TaskHandler;
-import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.models.DownloadTaskModel;
-import musicgenie.com.musicgenie.utilities.App_Config;
+import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 
 
@@ -134,11 +131,11 @@ public class ActiveTaskFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if(intent.getAction().equals(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST)){
+            if(intent.getAction().equals(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST)){
 
-                log("update via broadcast " + intent.getStringExtra(App_Config.EXTRA_PROGRESS));
-                String taskID = intent.getStringExtra(App_Config.EXTRA_TASK_ID);
-                String progress = intent.getStringExtra(App_Config.EXTRA_PROGRESS);
+                log("update via broadcast " + intent.getStringExtra(AppConfig.EXTRA_PROGRESS));
+                String taskID = intent.getStringExtra(AppConfig.EXTRA_TASK_ID);
+                String progress = intent.getStringExtra(AppConfig.EXTRA_PROGRESS);
                 updateItem(getPosition(taskID),Integer.valueOf(progress));
 
             }
@@ -147,7 +144,7 @@ public class ActiveTaskFragment extends Fragment {
 
     private void registerForBroadcastListen(Activity activity) {
         receiver = new ProgressUpdateBroadcastReceiver();
-        activity.registerReceiver(receiver, new IntentFilter(App_Config.ACTION_PROGRESS_UPDATE_BROADCAST));
+        activity.registerReceiver(receiver, new IntentFilter(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST));
         mReceiverRegistered = true;
 
     }

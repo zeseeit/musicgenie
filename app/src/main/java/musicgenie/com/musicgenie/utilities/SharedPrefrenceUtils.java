@@ -2,7 +2,6 @@ package musicgenie.com.musicgenie.utilities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.util.Log;
 
 /**
  * Created by Ankit on 8/5/2016.
@@ -36,7 +35,7 @@ public class SharedPrefrenceUtils {
     }
 
     public String getFileSavingLocation(){
-        return preferences.getString("saveLocation", App_Config.PHONE);
+        return preferences.getString("saveLocation", AppConfig.PHONE);
     }
 
     public void setTasksSequence(String sequence){
@@ -105,7 +104,7 @@ public class SharedPrefrenceUtils {
     }
 
     public boolean getOptionForTrendingAudio(){
-        return preferences.getBoolean("needTrending",true);
+        return preferences.getBoolean("needTrending",false);
     }
 
     public void setSuggestionsList(String currStack) {
