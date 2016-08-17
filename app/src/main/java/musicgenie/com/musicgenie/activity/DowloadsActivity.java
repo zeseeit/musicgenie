@@ -33,8 +33,8 @@ public class DowloadsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dowload);
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.stat_sys_download));
-        tabLayout.addTab(tabLayout.newTab().setIcon(android.R.drawable.stat_sys_download_done));
+        tabLayout.addTab(tabLayout.newTab().setText("")
+        tabLayout.addTab(tabLayout.newTab().setIcon(R.drawable.downloaded));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         //color filter to tab 0

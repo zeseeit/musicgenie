@@ -22,7 +22,7 @@
             android:paddingRight="4dp"
             android:gravity="center_vertical"
             android:text="Aaye ho meri jindgi me "
-            android:textSize="20sp"
+            android:textSize="15sp"
             android:layout_width="0dp"
             android:layout_weight="7"
             android:maxLines="1"
@@ -35,7 +35,7 @@
             android:layout_height="match_parent">
 
             <Button
-                android:background="@android:drawable/ic_menu_close_clear_cancel"
+
                 android:id="@+id/cancelBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent" />

@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
     public void setSearchView() {
         mFloatingSearchViewSet = true;
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
+        searchView.setHintTextColor(R.color.PrimaryColor);
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String s, String s1) {

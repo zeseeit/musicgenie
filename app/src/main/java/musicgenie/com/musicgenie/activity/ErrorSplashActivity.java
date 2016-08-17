@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
+import musicgenie.com.musicgenie.utilities.FontManager;
 
 public class ErrorSplashActivity extends Activity {
 
@@ -29,19 +30,12 @@ public class ErrorSplashActivity extends Activity {
         }
 
         setContentView(R.layout.conn_error_layout);
-
-        Typeface ralewayFace = Typeface.createFromAsset(this.getAssets(), "rl.ttf");
-        Typeface bold = Typeface.createFromAsset(this.getAssets(),"Raleway-Bold.ttf");
-        Typeface ebold = Typeface.createFromAsset(this.getAssets(),"Raleway-ExtraBold.ttf");
-        Typeface heavy = Typeface.createFromAsset(this.getAssets(),"Raleway-Heavy.ttf");
-        Typeface regular = Typeface.createFromAsset(this.getAssets(),"Raleway-Regular.ttf");
-        Typeface sbold = Typeface.createFromAsset(this.getAssets(),"Raleway-SemiBold.ttf");
-
         TextView tv = (TextView) findViewById(R.id.con_text);
-        tv.setTypeface(regular);
-
+        tv.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
+        TextView conError = (TextView) findViewById(R.id.no_connection_wifi);
+        conError.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FLATICON));
         TextView contBtn = (TextView) findViewById(R.id.continueBtn);
-        contBtn.setTypeface(regular);
+        contBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
 
         contBtn.setOnClickListener(new View.OnClickListener() {
             @Override

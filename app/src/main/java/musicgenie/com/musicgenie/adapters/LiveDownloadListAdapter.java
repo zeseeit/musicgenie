@@ -1,6 +1,7 @@
 package musicgenie.com.musicgenie.adapters;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.models.DownloadTaskModel;
+import musicgenie.com.musicgenie.utilities.FontManager;
 
 /**
  * Created by Ankit on 8/10/2016.
@@ -67,7 +69,9 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
 
         progressBar.setProgress(downloadingList.get(position).Progress);
         progressText.setText(downloadingList.get(position).Progress + " %");
+        progressText.setTypeface(FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
         taskTitle.setText(downloadingList.get(position).Title);
+        taskTitle.setTypeface(FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,11 +89,15 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
 
 
     private void cancelDownload(String taskID){
+        log("cancelled task "+taskID+" li"+downloadCancelListener);
         if(this.downloadCancelListener!=null){
             downloadCancelListener.onDownloadCancel(taskID);
         }
 
     }
 
+    private void log(String msg){
+        Log.d("LiveDownloadAdapter",msg);
+    }
 
 }
