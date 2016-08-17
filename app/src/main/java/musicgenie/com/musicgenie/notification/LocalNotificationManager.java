@@ -71,11 +71,6 @@ public class LocalNotificationManager {
                 manager.notify(mNotificationId , mBuilder.build());
             }
         }).start();
-
-
     }
-
-
-
 
 }

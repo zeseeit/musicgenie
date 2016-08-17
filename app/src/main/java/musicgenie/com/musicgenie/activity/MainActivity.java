@@ -163,13 +163,13 @@ public class MainActivity extends AppCompatActivity {
                 log("onFocusChange()");
             }
         });
-
         searchView.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
             @Override
             public void onActionMenuItemSelected(MenuItem menuItem) {
                 //TODO: handle the menu clicks
             }
         });
+
 
 
     }
