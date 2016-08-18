@@ -82,32 +82,35 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         title.setText(song.Title);
         uploader.setText(song.UploadedBy);
         views.setText(song.UserViews);
+        popMenuBtn.setText("\uF142");
     }
 
 
     private void init(View v) {
 
         Typeface fontawesome = FontManager.getInstance(context).getTypeFace(FontManager.FONT_AWESOME);
-        Typeface ralewayTf = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        Typeface ralewayTfRegular = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        Typeface ralewayTfBold = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_BOLD);
         // material
         downloadBtn = (TextView) v.findViewById(R.id.download_btn_card);
         uploader_icon = (TextView) v.findViewById(R.id.uploader_icon);
         views_icon = (TextView) v.findViewById(R.id.views_icon);
+        popMenuBtn = (TextView) v.findViewById(R.id.popUpMenuIcon);
         downloadBtn.setTypeface(fontawesome);
         uploader_icon.setTypeface(fontawesome);
         views_icon.setTypeface(fontawesome);
-
+        popMenuBtn.setTypeface(fontawesome);
         // regular raleway
         content_length = (TextView) v.findViewById(R.id.song_time_length);
         uploader = (TextView) v.findViewById(R.id.uploader_name);
         views = (TextView) v.findViewById(R.id.views_text);
         title = (TextView) v.findViewById(R.id.song_title);
-        title.setTypeface(ralewayTf);
-        content_length.setTypeface(ralewayTf);
-        uploader.setTypeface(ralewayTf);
-        views.setTypeface(ralewayTf);
+        title.setTypeface(ralewayTfBold);
+        content_length.setTypeface(ralewayTfRegular);
+        uploader.setTypeface(ralewayTfRegular);
+        views.setTypeface(ralewayTfRegular);
         // plain text
-        popMenuBtn = (TextView) v.findViewById(R.id.popUpMenuIcon);
+
 
     }
 }

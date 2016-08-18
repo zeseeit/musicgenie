@@ -33,6 +33,15 @@ public class SectionedListViewTest extends AppCompatActivity {
         list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
         list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
         list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
 
         GridView trendingGrid = (GridView) findViewById(R.id.gridView);
         TrendingItemsGridAdapter adapter = TrendingItemsGridAdapter.getInstance(this);

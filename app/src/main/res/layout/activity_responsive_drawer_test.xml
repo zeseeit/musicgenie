@@ -1,33 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/drawerLayout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:fitsSystemWindows="true">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:gravity="center_horizontal"
+    android:padding="0dp"
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.CoordinatorLayout
+    <GridView
+        android:scrollbars="none"
+        android:columnWidth="120dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="12dp"
+        android:stretchMode="spacingWidthUniform"
+        android:gravity="center"
+        android:id="@+id/gridView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <android.support.design.widget.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+    </GridView>
 
-        </android.support.design.widget.AppBarLayout>
-
-        <include layout="@layout/content_responsive_drawer_test"/>
-
-    </android.support.design.widget.CoordinatorLayout>
-
-
-    <fragment
-        android:id="@+id/fragmentNav"
-        android:layout_width="80dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        tools:layout="@layout/fragment_navigation" />
-
-
-</android.support.v4.widget.DrawerLayout>
+</LinearLayout>
