@@ -69,7 +69,7 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         View tempView = view;
 
         if(tempView==null){
-            tempView = LayoutInflater.from(context).inflate(R.layout.song_item_card,viewGroup,false);
+            tempView = LayoutInflater.from(context).inflate(R.layout.song_card_sw600,viewGroup,false);
         }
         init(tempView);
         bind(position);
