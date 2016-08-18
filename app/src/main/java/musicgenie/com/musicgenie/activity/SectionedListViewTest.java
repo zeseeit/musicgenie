@@ -1,8 +1,12 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.Display;
+import android.view.OrientationEventListener;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -13,7 +17,11 @@ import musicgenie.com.musicgenie.adapters.TrendingItemsGridAdapter;
 import musicgenie.com.musicgenie.models.TrendingSongModel;
 import musicgenie.com.musicgenie.utilities.FontManager;
 
-public class SectionedListViewTest extends AppCompatActivity {
+public class SectionedListViewTest extends AppCompatActivity{
+
+    private static final String TAG = "SectionedListView";
+    private TrendingItemsGridAdapter adapter;
+    private GridView trendingGrid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,12 +49,26 @@ public class SectionedListViewTest extends AppCompatActivity {
         list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
         list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
 
-        GridView trendingGrid = (GridView) findViewById(R.id.gridView);
-        TrendingItemsGridAdapter adapter = TrendingItemsGridAdapter.getInstance(this);
+        trendingGrid = (GridView) findViewById(R.id.gridView);
+        adapter = TrendingItemsGridAdapter.getInstance(this);
+        Display display =  getWindowManager().getDefaultDisplay();
+        int orientation = display.getOrientation();
         adapter.setTrendingItems(list);
+        adapter.setOrientation(orientation);
         trendingGrid.setAdapter(adapter);
 
     }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        setContentView(R.layout.trending_layout);
+        adapter.setOrientation(newConfig.orientation);
+        Log.d(TAG, "onConfigurationChanged to" + newConfig.orientation);
+        trendingGrid.setAdapter(adapter);
+    }
+
+
 
     private void init() {
 
@@ -73,6 +95,5 @@ public class SectionedListViewTest extends AppCompatActivity {
 
 
     }
-
 
 }

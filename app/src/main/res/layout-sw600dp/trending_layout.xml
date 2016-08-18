@@ -7,14 +7,13 @@
     android:layout_height="match_parent">
 
     <GridView
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
         android:scrollbarStyle="insideOverlay"
         android:columnWidth="172dp"
         android:numColumns="3"
         android:stretchMode="spacingWidth"
-        android:verticalSpacing="12dp"
-        android:horizontalSpacing="12dp"
+        android:verticalSpacing="10dp"
         android:gravity="center"
         android:id="@+id/gridView"
         android:layout_width="wrap_content"

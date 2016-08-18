@@ -2,7 +2,7 @@
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardView="http://schemas.android.com/apk/res-auto"
     android:id="@+id/song_card"
-    android:layout_width="172dp"
+    android:layout_width="180dp"
     android:background="@color/PrimaryColor"
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
@@ -18,8 +18,8 @@
         <RelativeLayout
             android:id="@+id/thumbnailFrame"
             android:background="#009988"
-            android:layout_width="172dp"
-            android:layout_height="172dp">
+            android:layout_width="180dp"
+            android:layout_height="180dp">
 
             <ImageView
                 android:background="@drawable/hqdefault"
@@ -63,7 +63,7 @@
 
         <LinearLayout
             android:layout_below="@+id/thumbnailFrame"
-            android:padding="8dp"
+            android:padding="10dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">

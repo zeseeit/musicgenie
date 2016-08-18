@@ -1,7 +1,9 @@
 package musicgenie.com.musicgenie.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +33,7 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
     private TextView views;
     private TextView popMenuBtn;
     private TextView title;
-
+    private int orientation;
     public TrendingItemsGridAdapter(Context context) {
         this.context = context;
     }
@@ -46,6 +48,10 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
     public void setTrendingItems(ArrayList<TrendingSongModel> list){
         this.list = list;
         notifyDataSetChanged();
+    }
+
+    public void setOrientation(int orientation){
+        this.orientation = orientation;
     }
 
     @Override
@@ -69,7 +75,12 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         View tempView = view;
 
         if(tempView==null){
-            tempView = LayoutInflater.from(context).inflate(R.layout.song_card_sw600,viewGroup,false);
+
+            if(orientation==Configuration.ORIENTATION_LANDSCAPE){
+                tempView = LayoutInflater.from(context).inflate(R.layout.song_card_land_sw600, viewGroup, false);
+            }else {
+                tempView = LayoutInflater.from(context).inflate(R.layout.song_card_sw600, viewGroup, false);
+            }
         }
         init(tempView);
         bind(position);
