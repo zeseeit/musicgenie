@@ -25,7 +25,7 @@
 
             <ImageView
                 android:background="@drawable/hqdefault"
-                android:src=""
+                android:src="#00000000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
@@ -37,14 +37,14 @@
                     android:id="@+id/download_btn_card"
                     android:textColor="#ffffff"
                     android:gravity="center"
-                    android:text="D"
+                    android:text=""
                     android:layout_gravity="center"
                     android:background="@drawable/download_btn_on_card"
                     android:layout_width="40dp"
                     android:layout_height="40dp" />
 
                 <TextView
-                    android:id="@+id/sont_time_length"
+                    android:id="@+id/song_time_length"
                     android:textColor="@color/White"
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
@@ -81,7 +81,8 @@
                     android:textSize="12sp"
                     android:text="Set Fire To Rain - Adele"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
+                    android:layout_height="match_parent"
+                    android:id="@+id/song_title" />
 
             </FrameLayout>
 
@@ -101,13 +102,13 @@
 
                   <RelativeLayout
                       android:layout_width="match_parent"
-                      android:layout_height="0d"
+                      android:layout_height="0dp"
                       android:layout_weight="1">
 
                       <TextView
                           android:id="@+id/uploader_icon"
                           android:textSize="10sp"
-                          android:text="A"
+                          android:text=""
                           android:layout_width="10sp"
                           android:layout_height="10sp" />
 
@@ -123,13 +124,13 @@
 
                     <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="0d"
+                        android:layout_height="0dp"
                         android:layout_weight="1">
 
                         <TextView
                             android:id="@+id/views_icon"
                             android:textSize="10sp"
-                            android:text="A"
+                            android:text=""
                             android:layout_width="10sp"
                             android:layout_height="10sp" />
 

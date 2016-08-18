@@ -165,6 +165,11 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(i);
                 }
 
+                if(id==R.id.testPage){
+                    Intent i = new Intent(MainActivity.this,SectionedListViewTest.class);
+                    startActivity(i);
+                }
+
             }
         });
 

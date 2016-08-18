@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +27,7 @@ public class UserPreferenceSetting extends AppCompatActivity {
     TextView issueBtnTxt;
     Switch trendingSwitch;
     Switch thumbnailSwitch;
+    Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,10 +35,19 @@ public class UserPreferenceSetting extends AppCompatActivity {
         setContentView(R.layout.activity_user_preference_setting);
         // initializes all view components
         init();
+        // setsToolbar
+        setUpToolbar();
         // loads settings
         loadSettings();
         // attach listeners to setting widgets
         attachListeners();
+    }
+
+    private void setUpToolbar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
     }
 
     private void attachListeners() {
