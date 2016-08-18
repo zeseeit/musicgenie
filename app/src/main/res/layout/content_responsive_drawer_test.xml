@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:gravity="center_horizontal"
     android:layout_height="match_parent">
 
+    <GridView
+        android:columnWidth="120dp"
+        android:numColumns="auto_fit"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:id="@+id/gridView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
-    <include layout="@layout/song_item_card"/>
-
-
+    </GridView>
 
 </LinearLayout>

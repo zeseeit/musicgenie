@@ -15,7 +15,7 @@ public class SectionedListViewTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_responsive_drawer_test);
+        setContentView(R.layout.content_responsive_drawer_test);
         init();
     }
 

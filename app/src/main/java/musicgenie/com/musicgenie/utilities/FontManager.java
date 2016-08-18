@@ -9,7 +9,7 @@ import android.graphics.Typeface;
 public class FontManager {
     public static final String FONT_MATERIAL = "MaterialFont.ttf";
     public static final String FONT_RALEWAY_REGULAR = "Raleway-Regular.ttf";
-    public static final String FONT_AWESOME = "fontawesomw.ttf";
+    public static final String FONT_AWESOME = "fontawesome.ttf";
 
     private static Context context;
     private static FontManager mInstance;
