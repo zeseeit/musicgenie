@@ -3,8 +3,6 @@ package musicgenie.com.musicgenie.activity;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -20,7 +18,7 @@ public class SectionedListViewTest extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.content_responsive_drawer_test);
+        setContentView(R.layout.trending_layout);
 
         // test data
         ArrayList<TrendingSongModel> list = new ArrayList<>();
