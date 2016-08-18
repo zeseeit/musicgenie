@@ -5,9 +5,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.GridView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.adapters.TrendingItemsGridAdapter;
+import musicgenie.com.musicgenie.models.TrendingSongModel;
 import musicgenie.com.musicgenie.utilities.FontManager;
 
 public class SectionedListViewTest extends AppCompatActivity {
@@ -16,7 +21,24 @@ public class SectionedListViewTest extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_responsive_drawer_test);
-        init();
+
+        // test data
+        ArrayList<TrendingSongModel> list = new ArrayList<>();
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+
+        GridView trendingGrid = (GridView) findViewById(R.id.gridView);
+        TrendingItemsGridAdapter adapter = TrendingItemsGridAdapter.getInstance(this);
+        adapter.setTrendingItems(list);
+        trendingGrid.setAdapter(adapter);
+
     }
 
     private void init() {
