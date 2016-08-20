@@ -22,7 +22,8 @@ public class AppConfig extends Application {
     public static final String EXTRA_PROGRESS = "progress";
     public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Musicgenie/Audio";
     public static final String ACTION_NETWORK_CONNECTED = "android.net.conn.CONNECTIVITY_CHANGE";
-
+    public static final int SCREEN_ORIENTATION_PORTRAIT = 0;
+    public static final int SCREEN_ORIENTATION_LANDSCAPE = 1;
     private static Context context;
     private static AppConfig mInstance;
 

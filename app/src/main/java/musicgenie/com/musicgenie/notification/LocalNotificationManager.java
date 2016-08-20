@@ -56,7 +56,6 @@ public class LocalNotificationManager {
         mBuilder.setSmallIcon(R.drawable.app_icon);
         mBuilder.setContentTitle("MusicGenie");
         mBuilder.setContentText(item_name);
-        mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         mNotificationId = 0; // single notificationId is enough as there is single downoad at a time
 
         final NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);

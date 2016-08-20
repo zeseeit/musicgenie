@@ -7,10 +7,7 @@
     android:layout_height="wrap_content"
     android:layout_margin="4dp"
     android:elevation="1dp"
-    cardView:cardBackgroundColor="#ffff00"
     cardView:cardCornerRadius="2dp">
-
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

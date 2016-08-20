@@ -2,6 +2,8 @@ package musicgenie.com.musicgenie.adapters;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -24,6 +26,7 @@ public class SectionedListViewAdapter extends ArrayAdapter<String> {
 
     private static final int TYPE_SONG = 0;
     private static final int TYPE_SECTION_TITLE =1;
+    private static final String TAG = "SectionedListAdapter";
     private static Context context;
     private static SectionedListViewAdapter mInstance;
     private ArrayList<ViewTypeModel> typeViewList;
@@ -45,6 +48,8 @@ public class SectionedListViewAdapter extends ArrayAdapter<String> {
 
     public void setTrendingList(ArrayList<TrendingSongModel> list){
         this.trendingSongList = list;
+        assimilate();
+        notifyDataSetChanged();
     }
 
     private void createMaps(){
@@ -60,10 +65,21 @@ public class SectionedListViewAdapter extends ArrayAdapter<String> {
         Iterator iterator = map.entrySet().iterator();
         while(iterator.hasNext()){
             Map.Entry pair = (Map.Entry) iterator.next();
+
             // get each type and loop through songList and call addItem
         }
 
     }
+
+    private void assimilate(){
+        // loops through each trendinglist and calls addItem depending on type of songs
+        for(TrendingSongModel song: trendingSongList) {
+            addItem((Song)song,song.type);
+        }
+
+    }
+
+
 
     public void addItem(Song song , String section){
         // if section is "" then it is song
@@ -73,7 +89,7 @@ public class SectionedListViewAdapter extends ArrayAdapter<String> {
             songs.add(song);
             typeViewList.add(new ViewTypeModel(TYPE_SONG,"",index));
         }
-        else{ // means it is Section Title
+        else{ //means it is Section Title
             typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
         }
 
@@ -81,16 +97,31 @@ public class SectionedListViewAdapter extends ArrayAdapter<String> {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        return super.getView(position, convertView, parent);
+        View view = convertView;
+
+        if(getItemViewType(position)==TYPE_SECTION_TITLE){
+            //
+            log("section");
+        }else{
+            log("song");
+        }
+
+        return view;
+
     }
 
     @Override
     public int getItemViewType(int position) {
-        return super.getItemViewType(position);
+        return typeViewList.get(position).viewType;
     }
 
     @Override
     public int getCount() {
-        return super.getCount();
+        return trendingSongList.size();
     }
+
+    public void log(String msg){
+        Log.d(TAG, "log "+msg);
+    }
+
 }

@@ -2,26 +2,24 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#aaccaa"
+    android:gravity="center"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
 
-
-
     <GridView
-        android:layout_marginLeft="48dp"
-        android:layout_marginRight="48dp"
+        android:layout_marginLeft="64dp"
+        android:layout_marginRight="64dp"
         android:scrollbars="none"
         android:columnWidth="200dp"
         android:numColumns="4"
-        android:verticalSpacing="16dp"
-        android:horizontalSpacing="16dp"
-        android:stretchMode="none"
+        android:verticalSpacing="10dp"
+        android:horizontalSpacing="10dp"
+        android:stretchMode="spacingWidth"
         android:gravity="center_horizontal"
         android:id="@+id/gridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
 
 </LinearLayout>

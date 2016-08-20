@@ -3,6 +3,7 @@ package musicgenie.com.musicgenie.adapters;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.models.TrendingSongModel;
+import musicgenie.com.musicgenie.models.ViewTypeModel;
 import musicgenie.com.musicgenie.utilities.FontManager;
 
 /**
@@ -22,6 +24,14 @@ import musicgenie.com.musicgenie.utilities.FontManager;
  */
 public class TrendingItemsGridAdapter extends BaseAdapter {
 
+
+    private static final int TYPE_SONG = 0;
+    private static final int TYPE_SECTION_TITLE =1;
+    private ArrayList<ViewTypeModel> typeViewList;
+    private ArrayList<TrendingSongModel> trendingSongList;
+    private ArrayList<Song> songs;
+    // part  2
+    private static final String TAG = "TRENDING_ADAPTER";
     private static Context context;
     private static TrendingItemsGridAdapter mInstance;
     private ArrayList<TrendingSongModel> list;
@@ -50,15 +60,43 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    public void setTrendingList(ArrayList<TrendingSongModel> list){
+        this.trendingSongList = list;
+        assimilate();
+        notifyDataSetChanged();
+    }
+
+
+    private void assimilate(){
+        // loops through each trendinglist and calls addItem depending on type of songs
+        for(TrendingSongModel song: trendingSongList) {
+            addItem((Song)song,song.type);
+        }
+
+    }
+
+    public void addItem(Song song , String section){
+        // if section is "" then it is song
+        // else it is sectionType
+        if(section.equals("")){ // means it is song
+            int index = songs.size();
+            songs.add(song);
+            typeViewList.add(new ViewTypeModel(TYPE_SONG,"",index));
+        }
+        else{ //means it is Section Title
+            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
+        }
+
+    }
+
+
+
+
     public void setOrientation(int orientation){
         this.orientation = orientation;
+        Log.d(TAG, "setOrientation " + orientation);
     }
-
-    @Override
-    public int getCount() {
-        return list.size();
-    }
-
+    
     @Override
     public Object getItem(int i) {
         return null;
@@ -75,8 +113,10 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         View tempView = view;
 
         if(tempView==null){
+            // handle type seperation
 
-            if(orientation==Configuration.ORIENTATION_LANDSCAPE){
+
+            if(!isLandscape(orientation)){
                 tempView = LayoutInflater.from(context).inflate(R.layout.song_card_land_sw600, viewGroup, false);
             }else {
                 tempView = LayoutInflater.from(context).inflate(R.layout.song_card_sw600, viewGroup, false);
@@ -86,6 +126,10 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         bind(position);
 
         return tempView;
+    }
+
+    private boolean isLandscape(int orientation) {
+        return orientation%2==0;
     }
 
     private void bind(int pos) {
@@ -124,4 +168,17 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
 
 
     }
+
+
+    @Override
+    public int getItemViewType(int position) {
+        return typeViewList.get(position).viewType;
+    }
+
+    @Override
+    public int getCount() {
+        return trendingSongList.size();
+    }
+
+
 }

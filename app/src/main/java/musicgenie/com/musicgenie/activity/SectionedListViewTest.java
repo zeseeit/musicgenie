@@ -61,11 +61,12 @@ public class SectionedListViewTest extends AppCompatActivity{
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
+
         setContentView(R.layout.trending_layout);
         adapter.setOrientation(newConfig.orientation);
-        Log.d(TAG, "onConfigurationChanged to" + newConfig.orientation);
+        Log.e(TAG, " nConfigurationChanged to" + newConfig.orientation);
         trendingGrid.setAdapter(adapter);
+        super.onConfigurationChanged(newConfig);
     }
 
 

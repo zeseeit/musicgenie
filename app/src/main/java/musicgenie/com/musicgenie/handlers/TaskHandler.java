@@ -321,6 +321,7 @@ public class TaskHandler {
         private String file_name;
         private DownloadListener downloadListener;
         private boolean isCanceled = false;
+        private int currentProgress;
         //private Context context;
 
         public DownloadThread(String taskID , String v_id , String file_name,DownloadListener listener) {
@@ -328,6 +329,7 @@ public class TaskHandler {
             this.v_id = v_id;
             this.file_name = file_name;
             this.downloadListener = listener;
+            this.currentProgress = 0;
           //  this.context = context;
         }
 
@@ -437,7 +439,10 @@ public class TaskHandler {
                 log("downloaded task " + taskID);
             }
             broadcastUpdate(String.valueOf(progress));
-            LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress,file_name);
+            if(currentProgress<progress) {
+                LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);
+            }
+            this.currentProgress = progress;
         }
         public void broadcastUpdate(String progressPercentage){
             Intent intent = new Intent(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST);

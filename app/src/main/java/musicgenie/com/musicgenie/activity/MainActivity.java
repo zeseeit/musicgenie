@@ -161,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(i);
                 }
                 if (id == R.id.action_downloads) {
-                    Intent i = new Intent(MainActivity.this, UserPreferenceSetting.class);
+                    Intent i = new Intent(MainActivity.this, DowloadsActivity.class);
                     startActivity(i);
                 }
 
