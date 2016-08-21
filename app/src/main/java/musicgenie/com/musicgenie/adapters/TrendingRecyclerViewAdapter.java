@@ -26,6 +26,8 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private static final int TYPE_SONG = 0;
     private static final int TYPE_SECTION_TITLE =1;
     private static final String TAG = "TrendingRecylerAdapter";
+    private static final int SCREEN_MODE_TABLET = 0 ;
+    private static final int SCREEN_MODE_MOBILE = 1;
     private ArrayList<ViewTypeModel> typeViewList;
     private ArrayList<TrendingSongModel> trendingSongList;
     private ArrayList<Song> songs;
@@ -33,6 +35,8 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     private static Context context;
     private static TrendingRecyclerViewAdapter mInstance;
+    private int screenMode;
+    private int viewToInflate;
 
     public TrendingRecyclerViewAdapter(Context context) {
         this.context = context;
@@ -64,24 +68,24 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         // if section is "" then it is song
         // else it is sectionType
         if(section.equals("")){ // means it is song
-            log("add song:");
+      //      log("add song:");
             int index = songs.size();
             songs.add(song);
             typeViewList.add(new ViewTypeModel(TYPE_SONG,"",index));
         }
         else{ //means it is Section Title
-            log("section:");
+    //        log("section:");
             typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
         }
 
-        log("now typeViewList: \n\n");
+        //log("now typeViewList: \n\n");
         for(ViewTypeModel t: typeViewList){
             log(t.viewType + " \t " + t.sectionTitle + " \t " + t.index);
         }
-        log("===================");
-        for(Song s: songs){
-            log("song "+s.Title+ " ");
-        }
+        //log("===================");
+//        for(Song s: songs){
+//            //log("song "+s.Title+ " ");
+//        }
 
     }
 
@@ -95,7 +99,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         Log.d(TAG, "setOrientation " + orientation);
     }
 
-    private boolean isLandscape(int orientation) {
+    private boolean isPortrait(int orientation) {
         return orientation%2==0;
     }
 
@@ -103,19 +107,75 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view;
-        log("VH "+" rec = "+viewType);
+        //log("VH "+" rec = "+viewType);
         if(viewType==TYPE_SECTION_TITLE){
             view = LayoutInflater.from(context).inflate(R.layout.section_header_layout, parent, false);
             return new SectionTitleViewHolder(view);
         }else{
-            //TODO: handle mobile version
-            if (!isLandscape(orientation)) {
-                view = LayoutInflater.from(context).inflate(R.layout.song_card_land_sw600, parent, false);
-            } else {
-                view = LayoutInflater.from(context).inflate(R.layout.song_card_sw600, parent, false);
-            }
+                int vti = getViewToInflate();
+            view = LayoutInflater.from(context).inflate(vti,parent,false);
             return new SongViewHolder(view);
         }
+    }
+
+    private int getViewToInflate() {
+
+        if (isPortrait(orientation)) {
+            // check mode
+            if(this.screenMode==SCREEN_MODE_TABLET){
+                // means it is tablet with portrait
+                log("inflating portrait tablet");
+                viewToInflate = R.layout.song_card_sw600;
+            }else{
+                // mobile with portrait
+                log("inflating portrait mobile");
+                viewToInflate = R.layout.song_card_normal;
+            }
+        }else{
+            if(this.screenMode==SCREEN_MODE_TABLET){
+                // means it is tablet with landscape
+                log("inflating landscape tablet");
+                viewToInflate = R.layout.song_card_land_sw600;
+            }else{
+                // mobile with landscape
+                log("inflating landscape mobile");
+                viewToInflate = R.layout.song_card_normal_land;
+            }
+
+        }
+        return viewToInflate;
+    }
+
+    private int getHeaderViewToInflate(){
+
+        int _temp_header_viewID = -1;
+
+        if (isPortrait(orientation)) {
+            // check mode
+            if(this.screenMode==SCREEN_MODE_TABLET){
+                // means it is tablet with portrait
+                log("inflating portrait tablet");
+                 _temp_header_viewID = R.layout.song_card_sw600;
+            }else{
+                // mobile with portrait
+                log("inflating portrait mobile");
+                viewToInflate = R.layout.song_card_normal;
+            }
+        }else{
+            if(this.screenMode==SCREEN_MODE_TABLET){
+                // means it is tablet with landscape
+                log("inflating landscape tablet");
+                viewToInflate = R.layout.song_card_land_sw600;
+            }else{
+                // mobile with landscape
+                log("inflating landscape mobile");
+                viewToInflate = R.layout.song_card_normal_land;
+            }
+
+        }
+
+        return _temp_header_viewID;
+
     }
 
     @Override
@@ -128,7 +188,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         if(holder instanceof SongViewHolder){
 
             // bind section data
-            log("binding song " + position);
+          //  log("binding song " + position);
             Song song = songs.get(typeViewList.get(position).index);
             ((SongViewHolder) holder).title.setText(song.Title);
             ((SongViewHolder) holder).uploader.setText(song.UploadedBy);
@@ -148,7 +208,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         }else{
             // binnd song data
-            log("binding header " + position);
+            //log("binding header " + position);
             StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
             layoutParams.setFullSpan(true);
             ((SectionTitleViewHolder) holder).sectionTitle.setText(typeViewList.get(position).sectionTitle);
@@ -164,8 +224,12 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     @Override
     public int getItemViewType(int position) {
-        log("view type at"+position+" = "+typeViewList.get(position).viewType);
+        //log("view type at"+position+" = "+typeViewList.get(position).viewType);
        return typeViewList.get(position).viewType;
+    }
+
+    public void setScreenMode(int mode) {
+        this.screenMode = mode;
     }
 
     public static class SectionTitleViewHolder extends RecyclerView.ViewHolder{

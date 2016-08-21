@@ -34,7 +34,7 @@
             >
         </activity>
         <activity
-
+            android:screenOrientation="portrait"
             android:name=".activity.ErrorSplashActivity"
             android:label="@string/title_activity_error_splash" >
 

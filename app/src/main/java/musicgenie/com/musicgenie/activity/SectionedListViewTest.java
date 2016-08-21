@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -29,46 +30,99 @@ public class SectionedListViewTest extends AppCompatActivity{
     private RecyclerView mRecyclerView;
     private TrendingRecyclerViewAdapter mRecyclerAdapter;
     private StaggeredGridLayoutManager layoutManager;
+    private ArrayList<Song> list;
+    private Display display;
+    private int orientation;
+    private boolean dataPuffed = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.trending_layout);
-
+        log("onCreate()");
         // test data
-        ArrayList<Song> list = new ArrayList<>();
+        list = new ArrayList<>();
         list.add(new Song("Sanam Re1","03:15","ankit","","","","200,000"));
         list.add(new Song("Sanam Re2","03:15","ankit","","","","100,000"));
         list.add(new Song("Sanam Re3","03:15","ankit","","","","100,000"));
-        list.add(new Song("Sanam Re4","03:15","ankit","","","","100,000"));
-        list.add(new Song("Sanam Re5","03:15","ankit","","","","100,000"));
+        list.add(new Song("Sanam Re4", "03:15", "ankit", "", "", "", "100,000"));
+        list.add(new Song("Sanam Re5", "03:15", "ankit", "", "", "", "100,000"));
 
+        if(isPortrait(getOrientation())){
+            setUpRecycler(3);
+        }else{
+            setUpRecycler(4);
+        }
+        if(savedInstanceState!=null){
+            if(!savedInstanceState.getBoolean("dataLoaded")){ // neglect repeated addition of data
+                log("onCreate()p");
+                puffRecyclerWithData();
+            }
+        }else{
+            puffRecyclerWithData();
+        }
+        plugAdapter();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        log("onResume()");
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(dataPuffed)
+        outState.putBoolean("dataLoaded",true);
+    }
+
+    private void setUpRecycler(int mxCols ) {
         mRecyclerView = (RecyclerView) findViewById(R.id.trendingRecylerView);
         mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
-        layoutManager = new StaggeredGridLayoutManager(2,1);
-
+        layoutManager = new StaggeredGridLayoutManager(mxCols, 1);
         mRecyclerView.setLayoutManager(layoutManager);
-        mRecyclerAdapter.addSongs(list, "Pop");
-        mRecyclerAdapter.addSongs(list,"Rock");
-        Display display =  getWindowManager().getDefaultDisplay();
-        int orientation = display.getOrientation();
-        mRecyclerAdapter.setOrientation(orientation);
-        mRecyclerView.setAdapter(mRecyclerAdapter);
-
-//
-//        adapter = TrendingItemsGridAdapter.getInstance(this);
-//        Display display =  getWindowManager().getDefaultDisplay();
-//        int orientation = display.getOrientation();
-//        // addition of data
-//        adapter.submitGrid(trendingGrid);
-//        adapter.addSongs(list,"Pop");
-//        adapter.addSongs(list,"Rock");
-//        adapter.addSongs(list,"Remix");
-//
-//        adapter.setOrientation(orientation);
-//        trendingGrid.setAdapter(adapter);
 
     }
+    private void puffRecyclerWithData(){
+        mRecyclerAdapter.addSongs(list, "Pop");
+        mRecyclerAdapter.addSongs(list,"Rock");
+        dataPuffed = true;
+    }
+
+    private void plugAdapter(){
+        mRecyclerAdapter.setOrientation(getOrientation());
+        mRecyclerAdapter.setScreenMode(screenMode());
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+    }
+
+    private int getOrientation(){
+        return getWindowManager().getDefaultDisplay().getOrientation();
+    }
+
+    private int screenMode(){
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        float yInches = metrics.heightPixels/metrics.ydpi;
+        float xInches = metrics.widthPixels/metrics.xdpi;
+
+        double diagonal = Math.sqrt(yInches*yInches+xInches*xInches);
+        if(diagonal>6.5){
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+
+    private void log(String s) {
+        Log.d(TAG, "log "+s);
+    }
+
+    private boolean isPortrait(int orientation) {
+        return orientation%2==0;
+    }
+
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -79,8 +133,6 @@ public class SectionedListViewTest extends AppCompatActivity{
         mRecyclerView.setAdapter(mRecyclerAdapter);
         super.onConfigurationChanged(newConfig);
     }
-
-
 
     private void init() {
 
