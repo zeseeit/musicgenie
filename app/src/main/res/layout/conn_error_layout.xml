@@ -24,6 +24,7 @@
     <FrameLayout
         android:layout_gravity="center_horizontal"
         android:layout_width="120dp"
+        android:layout_marginBottom="20dp"
         android:layout_height="120dp">
         <TextView
             android:id="@+id/no_connection_wifi_icon"

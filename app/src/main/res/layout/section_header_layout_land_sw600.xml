@@ -2,15 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:paddingLeft="16dp"
-    android:paddingTop="8dp"
-    android:paddingBottom="8dp"
+    android:paddingLeft="8dp"
+    android:paddingTop="24dp"
+    android:paddingBottom="24dp"
     android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/section_title"
         android:textColor="@color/PrimaryColor"
-        android:textSize="25sp"
+        android:textSize="36sp"
         android:text="Pop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

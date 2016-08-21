@@ -10,7 +10,7 @@
     <TextView
         android:id="@+id/section_title"
         android:textColor="@color/PrimaryColor"
-        android:textSize="22sp"
+        android:textSize="25sp"
         android:text="Pop"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

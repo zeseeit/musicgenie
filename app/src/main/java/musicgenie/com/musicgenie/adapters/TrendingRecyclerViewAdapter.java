@@ -109,10 +109,11 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         View view;
         //log("VH "+" rec = "+viewType);
         if(viewType==TYPE_SECTION_TITLE){
-            view = LayoutInflater.from(context).inflate(R.layout.section_header_layout, parent, false);
+            int hvti = getHeaderViewToInflate();
+            view = LayoutInflater.from(context).inflate(hvti, parent, false);
             return new SectionTitleViewHolder(view);
         }else{
-                int vti = getViewToInflate();
+            int vti = getViewToInflate();   // getView depending on screen screen sizes
             view = LayoutInflater.from(context).inflate(vti,parent,false);
             return new SongViewHolder(view);
         }
@@ -154,22 +155,22 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             // check mode
             if(this.screenMode==SCREEN_MODE_TABLET){
                 // means it is tablet with portrait
-                log("inflating portrait tablet");
-                 _temp_header_viewID = R.layout.song_card_sw600;
+                log("[H] inflating portrait tablet");
+                 _temp_header_viewID = R.layout.section_header_layout_sw600;
             }else{
                 // mobile with portrait
-                log("inflating portrait mobile");
-                viewToInflate = R.layout.song_card_normal;
+                log("[H] inflating portrait mobile");
+                _temp_header_viewID = R.layout.section_header_layout;
             }
         }else{
             if(this.screenMode==SCREEN_MODE_TABLET){
                 // means it is tablet with landscape
-                log("inflating landscape tablet");
-                viewToInflate = R.layout.song_card_land_sw600;
+                log("[H] inflating landscape tablet");
+                _temp_header_viewID = R.layout.section_header_layout_land_sw600;
             }else{
                 // mobile with landscape
-                log("inflating landscape mobile");
-                viewToInflate = R.layout.song_card_normal_land;
+                log("[H] inflating landscape mobile");
+                _temp_header_viewID = R.layout.section_header_layout_land;
             }
 
         }

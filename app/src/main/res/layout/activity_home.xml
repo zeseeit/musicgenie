@@ -32,17 +32,6 @@
 
         <include layout="@layout/activity_main"/>
 
-
-        <android.support.design.widget.FloatingActionButton
-            android:layout_height="wrap_content"
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            app:backgroundTint="@color/PrimaryColor"
-            android:src="@android:drawable/stat_sys_download"
-            />
-
     </android.support.design.widget.CoordinatorLayout>
 
     <com.arlib.floatingsearchview.FloatingSearchView

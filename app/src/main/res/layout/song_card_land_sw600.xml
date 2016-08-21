@@ -5,7 +5,9 @@
     android:layout_width="200dp"
     android:background="@color/PrimaryColor"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_marginLeft="4dp"
+    android:layout_marginRight="4dp"
+    android:layout_marginBottom="16dp"
     android:elevation="1dp"
     cardView:cardCornerRadius="2dp">
     <RelativeLayout

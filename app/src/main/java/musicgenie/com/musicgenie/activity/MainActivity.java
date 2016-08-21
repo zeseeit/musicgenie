@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         setSearchView();
         // floating action button
         //TODO: FAB can be removed
-        pinFAB();
+       // pinFAB();
 
     }
 
@@ -85,20 +85,20 @@ public class MainActivity extends AppCompatActivity {
         AppConfig.getInstance(this).configureDevice();
     }
 
-
-    private void pinFAB() {
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-                                   @Override
-                                   public void onClick(View view) {
-                                       Intent intent = new Intent(MainActivity.this, DowloadsActivity.class);
-                                       overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-                                       startActivity(intent);
-                                   }
-                               }
-        );
-
-    }
+//
+//    private void pinFAB() {
+//        fab = (FloatingActionButton) findViewById(R.id.fab);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//                                   @Override
+//                                   public void onClick(View view) {
+//                                       Intent intent = new Intent(MainActivity.this, DowloadsActivity.class);
+//                                       overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
+//                                       startActivity(intent);
+//                                   }
+//                               }
+//        );
+//
+//    }
 
     @Override
     protected void onResume() {

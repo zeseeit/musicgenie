@@ -47,7 +47,7 @@ public class UserPreferenceSetting extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+        getSupportActionBar().setHomeButtonEnabled(true);
     }
 
     private void attachListeners() {
