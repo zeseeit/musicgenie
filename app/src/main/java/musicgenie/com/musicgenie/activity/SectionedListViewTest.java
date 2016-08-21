@@ -4,6 +4,8 @@ import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
 import android.view.Display;
 import android.view.OrientationEventListener;
@@ -14,6 +16,8 @@ import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.TrendingItemsGridAdapter;
+import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
+import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.models.TrendingSongModel;
 import musicgenie.com.musicgenie.utilities.FontManager;
 
@@ -22,6 +26,9 @@ public class SectionedListViewTest extends AppCompatActivity{
     private static final String TAG = "SectionedListView";
     private TrendingItemsGridAdapter adapter;
     private GridView trendingGrid;
+    private RecyclerView mRecyclerView;
+    private TrendingRecyclerViewAdapter mRecyclerAdapter;
+    private StaggeredGridLayoutManager layoutManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,33 +36,37 @@ public class SectionedListViewTest extends AppCompatActivity{
         setContentView(R.layout.trending_layout);
 
         // test data
-        ArrayList<TrendingSongModel> list = new ArrayList<>();
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
-        list.add(new TrendingSongModel("Sanam Re","03:15","ankit","","","","100,000",""));
+        ArrayList<Song> list = new ArrayList<>();
+        list.add(new Song("Sanam Re1","03:15","ankit","","","","200,000"));
+        list.add(new Song("Sanam Re2","03:15","ankit","","","","100,000"));
+        list.add(new Song("Sanam Re3","03:15","ankit","","","","100,000"));
+        list.add(new Song("Sanam Re4","03:15","ankit","","","","100,000"));
+        list.add(new Song("Sanam Re5","03:15","ankit","","","","100,000"));
 
-        trendingGrid = (GridView) findViewById(R.id.gridView);
-        adapter = TrendingItemsGridAdapter.getInstance(this);
+        mRecyclerView = (RecyclerView) findViewById(R.id.trendingRecylerView);
+        mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
+        layoutManager = new StaggeredGridLayoutManager(2,1);
+
+        mRecyclerView.setLayoutManager(layoutManager);
+        mRecyclerAdapter.addSongs(list, "Pop");
+        mRecyclerAdapter.addSongs(list,"Rock");
         Display display =  getWindowManager().getDefaultDisplay();
         int orientation = display.getOrientation();
-        adapter.setTrendingItems(list);
-        adapter.setOrientation(orientation);
-        trendingGrid.setAdapter(adapter);
+        mRecyclerAdapter.setOrientation(orientation);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+
+//
+//        adapter = TrendingItemsGridAdapter.getInstance(this);
+//        Display display =  getWindowManager().getDefaultDisplay();
+//        int orientation = display.getOrientation();
+//        // addition of data
+//        adapter.submitGrid(trendingGrid);
+//        adapter.addSongs(list,"Pop");
+//        adapter.addSongs(list,"Rock");
+//        adapter.addSongs(list,"Remix");
+//
+//        adapter.setOrientation(orientation);
+//        trendingGrid.setAdapter(adapter);
 
     }
 
@@ -63,9 +74,9 @@ public class SectionedListViewTest extends AppCompatActivity{
     public void onConfigurationChanged(Configuration newConfig) {
 
         setContentView(R.layout.trending_layout);
-        adapter.setOrientation(newConfig.orientation);
+        mRecyclerAdapter.setOrientation(newConfig.orientation);
         Log.e(TAG, " nConfigurationChanged to" + newConfig.orientation);
-        trendingGrid.setAdapter(adapter);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
         super.onConfigurationChanged(newConfig);
     }
 

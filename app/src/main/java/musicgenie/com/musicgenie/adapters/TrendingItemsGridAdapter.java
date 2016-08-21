@@ -9,9 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.models.Song;
@@ -44,8 +48,13 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
     private TextView popMenuBtn;
     private TextView title;
     private int orientation;
+    private TextView sectionTitle;
+    private GridView gridView;
+
     public TrendingItemsGridAdapter(Context context) {
         this.context = context;
+        typeViewList = new ArrayList<>();
+        songs = new ArrayList<>();
     }
 
     public static TrendingItemsGridAdapter getInstance(Context context) {
@@ -55,6 +64,32 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         return mInstance;
     }
 
+    private void createMaps(){
+        ArrayList<Song> _songs = new ArrayList<>();
+        HashMap<String,ArrayList<Song>> map = new HashMap<>();
+        ArrayList<Song> _temp = new ArrayList<>();
+        for(TrendingSongModel song: trendingSongList){
+            _temp = map.get(song.type)==null?_temp:map.get(song.type);
+            _temp.add(song);
+            map.put(song.type,_temp);
+        }
+
+        Iterator iterator = map.entrySet().iterator();
+        while(iterator.hasNext()){
+            Map.Entry pair = (Map.Entry) iterator.next();
+            log("adding section title "+pair.getKey());
+            addItem(null,pair.getKey().toString());
+
+            for(Song sg: map.get(pair.getKey())){
+                log("assimilation ==>"+ sg.Title);
+                addItem(sg,"");
+            }
+
+            // get each type and loop through songList and call addItem
+        }
+
+    }
+
     public void setTrendingItems(ArrayList<TrendingSongModel> list){
         this.list = list;
         notifyDataSetChanged();
@@ -62,41 +97,55 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
 
     public void setTrendingList(ArrayList<TrendingSongModel> list){
         this.trendingSongList = list;
-        assimilate();
+        createMaps();
         notifyDataSetChanged();
     }
 
 
-    private void assimilate(){
-        // loops through each trendinglist and calls addItem depending on type of songs
-        for(TrendingSongModel song: trendingSongList) {
-            addItem((Song)song,song.type);
+    public void addSongs(ArrayList<Song> list , String type){
+
+        // add section header and loops through list and call addItem on each item
+        // adding section
+        addItem(null, type);
+        for(Song s: list){
+            //  adding each item of type
+            addItem(s, "");
         }
 
+        notifyDataSetChanged();
     }
 
-    public void addItem(Song song , String section){
+    public void addItem(Song song , String section){   //     create view list
         // if section is "" then it is song
         // else it is sectionType
         if(section.equals("")){ // means it is song
+            log("add song:");
             int index = songs.size();
             songs.add(song);
             typeViewList.add(new ViewTypeModel(TYPE_SONG,"",index));
         }
         else{ //means it is Section Title
+            log("section:");
             typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
         }
 
+        log("now typeViewList: \n\n");
+        for(ViewTypeModel t: typeViewList){
+            log(t.viewType + " \t " + t.sectionTitle + " \t " + t.index);
+        }
+        log("===================");
+        for(Song s: songs){
+            log("song "+s.Title+ " ");
+        }
+
     }
-
-
 
 
     public void setOrientation(int orientation){
         this.orientation = orientation;
         Log.d(TAG, "setOrientation " + orientation);
     }
-    
+
     @Override
     public Object getItem(int i) {
         return null;
@@ -112,20 +161,41 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
 
         View tempView = view;
 
-        if(tempView==null){
+        if(tempView==null) {
             // handle type seperation
+            if (getItemViewType(position) == TYPE_SECTION_TITLE) {
+                tempView = LayoutInflater.from(context).inflate(R.layout.section_header_layout, viewGroup, false);
+                initHeader(tempView);
+                bindHeader(position);
 
+            } else {
+                if (!isLandscape(orientation)) {
+                    tempView = LayoutInflater.from(context).inflate(R.layout.song_card_land_sw600, viewGroup, false);
+                } else {
+                    tempView = LayoutInflater.from(context).inflate(R.layout.song_card_sw600, viewGroup, false);
+                }
+                init(tempView);
+                bind(position);
 
-            if(!isLandscape(orientation)){
-                tempView = LayoutInflater.from(context).inflate(R.layout.song_card_land_sw600, viewGroup, false);
-            }else {
-                tempView = LayoutInflater.from(context).inflate(R.layout.song_card_sw600, viewGroup, false);
             }
-        }
-        init(tempView);
-        bind(position);
 
+        }
         return tempView;
+    }
+
+    private void bindHeader(int position) {
+
+        log("binding header "+position);
+        sectionTitle.setText(typeViewList.get(position).sectionTitle);
+
+    }
+
+    private void log(String s) {
+        Log.d(TAG, "log " + s);
+    }
+
+    private void initHeader(View tempView) {
+        sectionTitle = (TextView) tempView.findViewById(R.id.section_title);
     }
 
     private boolean isLandscape(int orientation) {
@@ -133,7 +203,9 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
     }
 
     private void bind(int pos) {
-        Song song =  list.get(pos);
+
+        log("binding song " + pos);
+        Song song = songs.get(typeViewList.get(pos).index);
         title.setText(song.Title);
         uploader.setText(song.UploadedBy);
         views.setText(song.UserViews);
@@ -177,8 +249,11 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return trendingSongList.size();
+        return typeViewList.size();
     }
 
 
+    public void submitGrid(GridView trendingGrid) {
+        this.gridView = trendingGrid;
+    }
 }

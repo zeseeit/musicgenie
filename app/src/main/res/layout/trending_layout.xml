@@ -6,19 +6,11 @@
     android:padding="0dp"
     android:layout_height="match_parent">
 
-    <GridView
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:scrollbars="none"
-        android:columnWidth="180dp"
-        android:numColumns="auto_fit"
-        android:verticalSpacing="16dp"
-        android:stretchMode="spacingWidth"
-        android:gravity="center"
-        android:id="@+id/gridView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    </GridView>
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/trendingRecylerView"/>
+
 
 </LinearLayout>
