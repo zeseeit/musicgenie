@@ -16,7 +16,8 @@
         android:layout_height="wrap_content" />
 
     <LinearLayout
-        android:layout_marginTop="0dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginTop="6dp"
         android:background="@color/PrimaryColor"
         android:layout_width="30dp"
         android:layout_height="1.5dp" />

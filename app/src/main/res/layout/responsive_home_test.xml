@@ -21,20 +21,30 @@
             app:expandedTitleMarginEnd="50dp"
             app:expandedTitleMarginStart="10dp"
             app:contentScrim="@color/PrimaryColor"
-            app:layout_scrollFlags="scroll|exitUntilCollapsed">
+            app:layout_scrollFlags="scroll">
 
             <RelativeLayout android:layout_height="match_parent"
                 android:background="@color/ContinueBtnPressedColor"
                 android:layout_width="match_parent"
                 android:gravity="center_vertical|center_horizontal">
 
-                <ImageView
-                    android:id="@+id/profile_image"
-                    android:layout_height="wrap_content"
-                    android:layout_width="wrap_content"
-                    android:background="@drawable/hqdefault"
-                    app:layout_collapseMode="pin"
-                    />
+
+                <com.arlib.floatingsearchview.FloatingSearchView
+                    android:paddingTop="10dp"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:id="@+id/floating_search_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:floatingSearch_hintTextColor="@color/PrimaryColor"
+                    app:floatingSearch_searchHint="Search Your Favorites "
+                    app:floatingSearch_suggestionsListAnimDuration="250"
+                    app:floatingSearch_showSearchKey="true"
+                    app:floatingSearch_leftActionMode="showSearch"
+                    app:floatingSearch_menu="@menu/menu_main"
+                    app:floatingSearch_close_search_on_keyboard_dismiss="true" />
+
+
             </RelativeLayout>
 
 

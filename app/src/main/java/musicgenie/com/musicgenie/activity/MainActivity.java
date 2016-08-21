@@ -2,11 +2,15 @@ package musicgenie.com.musicgenie.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,6 +30,7 @@ import org.json.JSONException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.notification.AlertDialogManager;
 import musicgenie.com.musicgenie.utilities.AppConfig;
@@ -49,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private boolean mFloatingSearchViewSet;
     private FloatingActionButton fab;
+    private TrendingRecyclerViewAdapter mRecyclerAdapter;
+    private RecyclerView mRecyclerView;
+    private StaggeredGridLayoutManager layoutManager;
     // private ConnectivityBroadcastReceiver receiver;
 
     @Override
@@ -78,27 +86,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void init() {
-        resultListView = (ListView) findViewById(R.id.listView);
+
+        if (isPortrait(getOrientation())) {
+            setUpRecycler(3);
+        } else {
+            setUpRecycler(4);
+        }
+
     }
 
     private void configure() {
         AppConfig.getInstance(this).configureDevice();
     }
-
-//
-//    private void pinFAB() {
-//        fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//                                   @Override
-//                                   public void onClick(View view) {
-//                                       Intent intent = new Intent(MainActivity.this, DowloadsActivity.class);
-//                                       overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_right);
-//                                       startActivity(intent);
-//                                   }
-//                               }
-//        );
-//
-//    }
 
     @Override
     protected void onResume() {
@@ -165,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(i);
                 }
 
-                if(id==R.id.testPage){
+                if (id == R.id.testPage) {
                     Intent i = new Intent(MainActivity.this,SectionedListViewTest.class);
                     startActivity(i);
                 }
@@ -248,10 +247,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        adapter = SearchResultListAdapter.getInstance(this);
+        // results are submitted from here
+        //
+        mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
         subscribeToTaskAddListener();
-        adapter.setSongs(songs);
-        resultListView.setAdapter(adapter);
+        // add songs
+        mRecyclerAdapter.addSongs(songs, "Results");
+        // set adapter
+        plugAdapter();
     }
 
     private void loadTrendingSongs(Bundle saved) {
@@ -268,8 +271,61 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void setUpRecycler(int mxCols) {
+        mRecyclerView = (RecyclerView) findViewById(R.id.trendingRecylerView);
+        mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
+        layoutManager = new StaggeredGridLayoutManager(mxCols, 1);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+    }
+//
+//    private void puffRecyclerWithData(){
+////        mRecyclerAdapter.addSongs(list, "Pop");
+////        mRecyclerAdapter.addSongs(list,"Rock");
+//          plugAdapter();
+//    }
+
+    private void plugAdapter() {
+        mRecyclerAdapter.setOrientation(getOrientation());
+        mRecyclerAdapter.setScreenMode(screenMode());
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+    }
+
+    private int getOrientation() {
+        return getWindowManager().getDefaultDisplay().getOrientation();
+    }
+
+    private int screenMode() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+
+        float yInches = metrics.heightPixels / metrics.ydpi;
+        float xInches = metrics.widthPixels / metrics.xdpi;
+
+        double diagonal = Math.sqrt(yInches * yInches + xInches * xInches);
+        if (diagonal > 6.5) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    private boolean isPortrait(int orientation) {
+        return orientation % 2 == 0;
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+
+        setContentView(R.layout.sectioned_view);
+        mRecyclerAdapter.setOrientation(newConfig.orientation);
+        Log.e(TAG, " nConfigurationChanged to" + newConfig.orientation);
+        mRecyclerView.setAdapter(mRecyclerAdapter);
+        super.onConfigurationChanged(newConfig);
+    }
+
     private void subscribeToTaskAddListener() {
-        SearchResultListAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {
+        TrendingRecyclerViewAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {
             @Override
             public void onTaskTapped() {
                 log("callback: task tapped");
@@ -290,7 +346,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void unsubscribeToTaskAddListener() {
-        SearchResultListAdapter.getInstance(this).setOnTaskAddListener(null);
+        TrendingRecyclerViewAdapter.getInstance(this).setOnTaskAddListener(null);
     }
 
     private void makeSnake(String msg) {
