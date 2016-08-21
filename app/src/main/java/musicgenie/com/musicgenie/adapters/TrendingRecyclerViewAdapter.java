@@ -8,15 +8,22 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import musicgenie.com.musicgenie.R;
+import musicgenie.com.musicgenie.handlers.TaskHandler;
+import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.models.TrendingSongModel;
 import musicgenie.com.musicgenie.models.ViewTypeModel;
+import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.utilities.FontManager;
+import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 
 /**
  * Created by Ankit on 8/21/2016.
@@ -37,6 +44,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private static TrendingRecyclerViewAdapter mInstance;
     private int screenMode;
     private int viewToInflate;
+    private TaskAddListener taskAddListener;
 
     public TrendingRecyclerViewAdapter(Context context) {
         this.context = context;
@@ -92,7 +100,6 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private void log(String s) {
         Log.d(TAG, "log>>"+s);
     }
-
 
     public void setOrientation(int orientation){
         this.orientation = orientation;
@@ -195,6 +202,11 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             ((SongViewHolder) holder).uploader.setText(song.UploadedBy);
             ((SongViewHolder) holder).views.setText(song.UserViews);
             ((SongViewHolder) holder).popMenuBtn.setText("\uF142");
+            ((SongViewHolder) holder).content_length.setText(song.TrackDuration);
+            // loads thumbnail in async fashion
+            if (connected()) Picasso.with(context)
+                    .load(song.Thumbnail_url)
+                    .into(((SongViewHolder) holder).thumbnail);
 
             // setting typeface to fonta
             ((SongViewHolder) holder).downloadBtn.setTypeface(fontawesome);
@@ -202,7 +214,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             ((SongViewHolder) holder).views_icon.setTypeface(fontawesome);
             ((SongViewHolder) holder).popMenuBtn.setTypeface(fontawesome);
             //setting typeface to raleway
-            ((SongViewHolder) holder).title.setTypeface(ralewayTfBold);
+            ((SongViewHolder) holder).title.setTypeface(ralewayTfRegular);
             ((SongViewHolder) holder).content_length.setTypeface(ralewayTfRegular);
             ((SongViewHolder) holder).uploader.setTypeface(ralewayTfRegular);
             ((SongViewHolder) holder).views.setTypeface(ralewayTfRegular);
@@ -229,8 +241,30 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
        return typeViewList.get(position).viewType;
     }
 
+    public void setOnTaskAddListener(TaskAddListener listener) {
+        this.taskAddListener = listener;
+    }
+
+
+    public void addDownloadTask(final String video_id, final String file_name) {
+
+        if (this.taskAddListener != null)
+            this.taskAddListener.onTaskTapped();
+
+        TaskHandler
+                .getInstance(context)
+                .addTask(file_name, video_id);
+
+        if (this.taskAddListener != null)
+            this.taskAddListener.onTaskAddedToQueue(file_name);
+    }
+
     public void setScreenMode(int mode) {
         this.screenMode = mode;
+    }
+
+    private boolean connected() {
+        return ConnectivityUtils.getInstance(context).isConnectedToNet();
     }
 
     public static class SectionTitleViewHolder extends RecyclerView.ViewHolder{
@@ -252,6 +286,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         TextView uploader;
         TextView title;
         TextView views;
+        ImageView thumbnail;
 
         public SongViewHolder(View itemView) {
             super(itemView);
@@ -263,6 +298,8 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             uploader_icon = (TextView) itemView.findViewById(R.id.uploader_icon);
             views_icon = (TextView) itemView.findViewById(R.id.views_icon);
             popMenuBtn = (TextView) itemView.findViewById(R.id.popUpMenuIcon);
+            thumbnail = (ImageView) itemView.findViewById(R.id.Videothumbnail);
+
             downloadBtn.setTypeface(fontawesome);
             uploader_icon.setTypeface(fontawesome);
             views_icon.setTypeface(fontawesome);
@@ -276,7 +313,20 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             content_length.setTypeface(ralewayTfRegular);
             uploader.setTypeface(ralewayTfRegular);
             views.setTypeface(ralewayTfRegular);
-            // plain text
+
+
+            // attach listener
+            downloadBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
+                    int pos = getAdapterPosition();
+                    String v_id = adapter.songs.get(pos).Video_id;
+                    String file_name = adapter.songs.get(pos).Title;
+                    adapter.log("adding download task");
+                    TrendingRecyclerViewAdapter.getInstance(context).addDownloadTask(v_id, file_name);
+                }
+            });
         }
     }
 }

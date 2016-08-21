@@ -129,7 +129,7 @@ public class UserPreferenceSetting extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_downloads) {
+        if (id == R.id.action_dn) {
             Intent i= new Intent(UserPreferenceSetting.this,DowloadsActivity.class);
             startActivity(i);
             finish();

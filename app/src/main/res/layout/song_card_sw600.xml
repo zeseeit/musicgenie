@@ -24,7 +24,7 @@
             android:layout_height="180dp">
 
             <ImageView
-                android:background="@drawable/hqdefault"
+                android:id="@+id/Videothumbnail"
                 android:src="#00000000"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
@@ -36,7 +36,7 @@
                 <TextView
                     android:id="@+id/download_btn_card"
                     android:textColor="#ffffff"
-                    android:textSize="24sp"
+                    android:textSize="20sp"
                     android:gravity="center"
                     android:text=""
                     android:layout_gravity="center"
@@ -50,7 +50,8 @@
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
                     android:paddingLeft="2dp"
-                    android:paddingRight="2dp"
+                    android:paddingRight="3dp"
+                    android:paddingBottom="2dp"
                     android:layout_gravity="end|bottom"
                     android:gravity="center_horizontal"
                     android:background="@color/DownloadButtonColor"
@@ -71,6 +72,8 @@
             android:layout_height="wrap_content">
 
             <FrameLayout
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -116,6 +119,7 @@
                           android:layout_height="16dp" />
 
                       <TextView
+                          android:textColor="@color/PrimaryColor"
                           android:gravity="center_vertical"
                           android:textSize="14sp"
                           android:text="Adele"
@@ -142,6 +146,7 @@
                             android:layout_height="16dp" />
 
                         <TextView
+                            android:textColor="@color/PrimaryColor"
                             android:gravity="center_vertical"
                             android:textSize="14sp"
                             android:text="100,000 views"

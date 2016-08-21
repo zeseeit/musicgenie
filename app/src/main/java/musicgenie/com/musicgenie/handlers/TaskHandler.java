@@ -322,6 +322,7 @@ public class TaskHandler {
         private DownloadListener downloadListener;
         private boolean isCanceled = false;
         private int currentProgress;
+        private int fileLength;
         //private Context context;
 
         public DownloadThread(String taskID , String v_id , String file_name,DownloadListener listener) {
@@ -336,7 +337,6 @@ public class TaskHandler {
         @Override
         public void run() {
             int count;
-            int fileLength;
             final String t_v_id = this.v_id;
             final String t_file_name = this.file_name;
             String t_url = AppConfig.SERVER_URL;
@@ -448,6 +448,7 @@ public class TaskHandler {
             Intent intent = new Intent(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(AppConfig.EXTRA_TASK_ID,taskID);
             intent.putExtra(AppConfig.EXTRA_PROGRESS, progressPercentage);
+            intent.putExtra(AppConfig.EXTRA_CONTENT_SIZE, fileLength);
             context.sendBroadcast(intent);
         }
         private void subscribeDownloadCancelListener(){

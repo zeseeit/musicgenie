@@ -9,7 +9,6 @@ import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
-import android.view.OrientationEventListener;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -19,7 +18,6 @@ import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.TrendingItemsGridAdapter;
 import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
 import musicgenie.com.musicgenie.models.Song;
-import musicgenie.com.musicgenie.models.TrendingSongModel;
 import musicgenie.com.musicgenie.utilities.FontManager;
 
 public class SectionedListViewTest extends AppCompatActivity{
@@ -38,7 +36,7 @@ public class SectionedListViewTest extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.trending_layout);
+        setContentView(R.layout.sectioned_view);
         log("onCreate()");
         // test data
         list = new ArrayList<>();
@@ -84,6 +82,7 @@ public class SectionedListViewTest extends AppCompatActivity{
         mRecyclerView.setLayoutManager(layoutManager);
 
     }
+
     private void puffRecyclerWithData(){
         mRecyclerAdapter.addSongs(list, "Pop");
         mRecyclerAdapter.addSongs(list,"Rock");
@@ -123,11 +122,10 @@ public class SectionedListViewTest extends AppCompatActivity{
         return orientation%2==0;
     }
 
-
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
 
-        setContentView(R.layout.trending_layout);
+        setContentView(R.layout.sectioned_view);
         mRecyclerAdapter.setOrientation(newConfig.orientation);
         Log.e(TAG, " nConfigurationChanged to" + newConfig.orientation);
         mRecyclerView.setAdapter(mRecyclerAdapter);
