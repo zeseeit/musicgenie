@@ -24,6 +24,7 @@ public class AppConfig extends Application {
     public static final String ACTION_NETWORK_CONNECTED = "android.net.conn.CONNECTIVITY_CHANGE";
     public static final int SCREEN_ORIENTATION_PORTRAIT = 0;
     public static final int SCREEN_ORIENTATION_LANDSCAPE = 1;
+    public static final String EXTRA_CONTENT_SIZE = "contentSize";
     private static Context context;
     private static AppConfig mInstance;
 

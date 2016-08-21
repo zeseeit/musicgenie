@@ -78,7 +78,7 @@ public class ActiveTaskFragment extends Fragment {
         ArrayList<String> taskIDs = TaskHandler.getInstance(getActivity()).getTaskSequence();
         for(String t_id : taskIDs) {
             String title = SharedPrefrenceUtils.getInstance(getActivity()).getTaskTitle(t_id);
-            list.add(new DownloadTaskModel(title,0,t_id));
+            list.add(new DownloadTaskModel(title,0,t_id,""));
         }
         return list;
     }
@@ -95,13 +95,13 @@ public class ActiveTaskFragment extends Fragment {
         return pos;
     }
 
-    private void updateItem(int position,int progress){
+    private void updateItem(int position,int progress,String contentSize){
 
         if(position!=-1){
             ArrayList<DownloadTaskModel> old_list = getTasksList();
             for(int i=0;i<old_list.size();i++){
                 if(i==position){
-                    old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID));
+                    old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID,String.valueOf(inMB(contentSize))));
                 }
             }
 
@@ -136,10 +136,16 @@ public class ActiveTaskFragment extends Fragment {
                 log("update via broadcast " + intent.getStringExtra(AppConfig.EXTRA_PROGRESS));
                 String taskID = intent.getStringExtra(AppConfig.EXTRA_TASK_ID);
                 String progress = intent.getStringExtra(AppConfig.EXTRA_PROGRESS);
-                updateItem(getPosition(taskID),Integer.valueOf(progress));
-
+                String contentSize = intent.getStringExtra(AppConfig.EXTRA_CONTENT_SIZE);
+                updateItem(getPosition(taskID),Integer.valueOf(progress),contentSize);
             }
         }
+    }
+
+    private double inMB(String bytes){
+        double inBytes = Integer.valueOf(bytes);
+        double inMB = ((inBytes/1024)/1024);
+        return inMB;
     }
 
     private void registerForBroadcastListen(Activity activity) {

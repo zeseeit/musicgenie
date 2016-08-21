@@ -8,6 +8,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.MenuItem;
 
 import musicgenie.com.musicgenie.customViews.DownloadTab;
 import musicgenie.com.musicgenie.R;
@@ -91,6 +92,5 @@ public class DowloadsActivity extends AppCompatActivity {
     public void log(String msg){
         Log.d("DownloadsActivity",msg);
     }
-
 
 }
