@@ -348,7 +348,7 @@ public class TaskHandler {
 
                 downloadListener.onDownloadTaskProcessStart();
 
-                String _url  = AppConfig.SERVER_URL+"/g/"+t_v_id;
+                String _url = AppConfig.SERVER_URL + "/api/v1/g?url=" + t_v_id;
                 log("for dwnd url requesting on "+_url);
                 URL u = new URL(_url);
                 URLConnection dconnection = u.openConnection();

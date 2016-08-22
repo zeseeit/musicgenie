@@ -26,9 +26,11 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
     private boolean mFloatingSearchViewSet;
     private FloatingActionButton fab;
+    private HashMap<String, ArrayList<Song>> songMap;
     private TrendingRecyclerViewAdapter mRecyclerAdapter;
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager layoutManager;
@@ -79,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
         //TODO: FAB can be removed
        // pinFAB();
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
     }
 
     private void reload(Bundle savedInstanceState) {
@@ -165,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (id == R.id.testPage) {
-                    Intent i = new Intent(MainActivity.this,SectionedListViewTest.class);
+                    Intent i = new Intent(MainActivity.this, SectionedListViewTest.class);
                     startActivity(i);
                 }
 
@@ -208,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         AddSuggestionToSharedPreferences(term);
-        String url = AppConfig.SERVER_URL + "/search?q=" + URLEncoder.encode(term);
+        String url = AppConfig.SERVER_URL + "/api/v1/search?q=" + URLEncoder.encode(term);
         StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -228,12 +236,20 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void parseSearchResults(String response) {
+
+        log("got result " + response);
         ArrayList<Song> songs = new ArrayList<>();
         // parse youtube results
+
+
         try {
-            JSONArray results = new JSONArray(response);
-            for (int i = 0; i < results.length(); i++) {
-                String enc_v_id = results.getJSONObject(i).getString("get_url").substring(3);
+            JSONObject rootObj = new JSONObject(response);
+            int results_count = rootObj.getJSONObject("metadata").getInt("count");
+
+            JSONArray results = rootObj.getJSONArray("results");
+            for (int i = 0; i < results_count; i++) {
+                String enc_v_id = results.getJSONObject(i).getString("get_url").substring(14);
+                log("===? v id >" + enc_v_id);
                 songs.add(new Song(results.getJSONObject(i).getString("title"),
                         results.getJSONObject(i).getString("length"),
                         results.getJSONObject(i).getString("uploader"),
@@ -267,7 +283,127 @@ public class MainActivity extends AppCompatActivity {
         progressDialog.show();
         //load trending items
         // then dismiss progressDialog
-        progressDialog.dismiss();
+        requestPlaylist();
+
+
+    }
+
+    private void requestTrending(final String type, final boolean isLast) {
+
+        if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
+
+            getCurrentFocus().clearFocus();
+            SoftInputManager.getInstance(this).hideKeyboard(searchView);
+            progressDialog.dismiss();
+            makeSnake("No Internet Connection !! ");
+            return;
+        }
+        //AddSuggestionToSharedPreferences(term);
+        String url = AppConfig.SERVER_URL + "/api/v1/trending?number=6&type=" + type;// + URLEncoder.encode(term);
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ;
+                parseTrendingResults(response);
+                if (isLast)
+                    progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                log("[fireSearch()] Error While searching :" + volleyError);
+            }
+        });
+
+        VolleyUtils.getInstance().addToRequestQueue(request, TAG, this);
+
+    }
+
+    private void parseTrendingResults(String response) {
+
+        ArrayList<Song> songs = new ArrayList<>();
+        String type = "Results";
+        try {
+            JSONObject rootObj = new JSONObject(response);
+            int results_count = rootObj.getJSONObject("metadata").getInt("count");
+            type = rootObj.getJSONObject("metadata").getString("type");
+            JSONArray results = rootObj.getJSONArray("results");
+            for (int i = 0; i < results_count; i++) {
+                String enc_v_id = results.getJSONObject(i).getString("get_url").substring(14);
+                songs.add(new Song(results.getJSONObject(i).getString("title"),
+                        results.getJSONObject(i).getString("length"),
+                        results.getJSONObject(i).getString("uploader"),
+                        results.getJSONObject(i).getString("thumb"),
+                        enc_v_id,
+                        "missing",
+                        results.getJSONObject(i).getString("views")
+                ));
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        // what to do
+
+        // trending results are submitted from here
+
+        mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
+        subscribeToTaskAddListener();
+        // add songs
+        mRecyclerAdapter.addSongs(songs, type);
+        //songMap.put(type,songs);
+        // set adapter
+        plugAdapter();
+    }
+
+    private void requestPlaylist() {
+
+        if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
+
+            getCurrentFocus().clearFocus();
+            SoftInputManager.getInstance(this).hideKeyboard(searchView);
+            progressDialog.dismiss();
+            makeSnake("No Internet Connection !! ");
+            return;
+        }
+        //AddSuggestionToSharedPreferences(term);
+        String url = AppConfig.SERVER_URL + "/api/v1/playlists";// + URLEncoder.encode(term);
+        StringRequest request = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                ;
+                parsePlaylistsResults(response);
+                progressDialog.dismiss();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                log("[fireSearch()] Error While searching :" + volleyError);
+            }
+        });
+
+        VolleyUtils.getInstance().addToRequestQueue(request, TAG, this);
+
+    }
+
+    private void parsePlaylistsResults(String response) {
+
+//        ArrayList<String> playlist = new ArrayList<>();
+        try {
+            JSONObject rootPlaylistObj = new JSONObject(response);
+            int typeCount = rootPlaylistObj.getJSONObject("metadata").getInt("count");
+            JSONArray types = rootPlaylistObj.getJSONArray("results");
+            for (int i = 0; i < typeCount; i++) {
+                JSONObject typeObj = (JSONObject) types.get(i);
+                log("requesting trending of type " + typeObj.getString("playlist"));
+                boolean last = (i == (typeCount - 1)) ? true : false;
+                requestTrending(typeObj.getString("playlist"), last);
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -360,5 +496,4 @@ public class MainActivity extends AppCompatActivity {
     public void log(String _lg) {
         Log.d(TAG, _lg);
     }
-
 }
