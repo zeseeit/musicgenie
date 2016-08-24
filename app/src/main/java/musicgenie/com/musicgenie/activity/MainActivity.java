@@ -31,6 +31,8 @@ import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
@@ -66,16 +68,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-        // inits views
-        init();
         // make dirs
         configure();
         // load trending on preferences
         loadTrendingSongs(savedInstanceState);
         // reload previous loaded
         reload(savedInstanceState);
-        // generate alert for pending downloads , options for re-download or remove them at all
-        checkPendings();
         // sets SearchView in action with event-listeners
         setSearchView();
         // floating action button
@@ -84,19 +82,55 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+        log("saving back map");
+        outState.putSerializable("mapSong",songMap);
     }
 
     private void reload(Bundle savedInstanceState) {
-        //TODO: reload data from parcelable source - If Available
+        if(savedInstanceState==null){
+            // means it is first time app load
+            log("its first load");
+            checkPendings();
+        }else{
+            // means it is reload/orientation change
+            // load previous data if any
+            if(savedInstanceState.getSerializable("mapSong")!=null){
+                //  get map and iterate through it and grab songs
+                // add to adapter and plug it
+                mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
+                init();
+                subscribeToTaskAddListener();
+                HashMap<String,ArrayList<Song>> map = (HashMap<String, ArrayList<Song>>) savedInstanceState.getSerializable("mapSong");
+                Iterator iterator = map.entrySet().iterator();
+                while(iterator.hasNext()) {
+                    Map.Entry pair = (Map.Entry) iterator.next();
+                    log("reading hashmap for key "+pair.getKey().toString());
+                    log("adding songs");
+                    songMap.put(pair.getKey().toString(),map.get(pair.getKey()));
+                    mRecyclerAdapter.addSongs(map.get(pair.getKey()), pair.getKey().toString());
+                }
+            }
+
+
+        }
+
+
     }
 
     private void init() {
 
+        songMap = new HashMap<>();
+
         if (isPortrait(getOrientation())) {
-            setUpRecycler(3);
+            if(screenMode()==AppConfig.SCREEN_MODE_MOBILE){
+                setUpRecycler(2);
+            }else{
+                setUpRecycler(3);
+            }
         } else {
             setUpRecycler(4);
         }
@@ -104,7 +138,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configure() {
+        log("making dirs");
         AppConfig.getInstance(this).configureDevice();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+        reload(savedInstanceState);
     }
 
     @Override
@@ -135,7 +176,7 @@ public class MainActivity extends AppCompatActivity {
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
             @Override
             public void onSearchTextChanged(String s, String s1) {
-                log("query changed from " + s + " to " + s1);
+               // log("query changed from " + s + " to " + s1);
             }
         });
 
@@ -249,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
             JSONArray results = rootObj.getJSONArray("results");
             for (int i = 0; i < results_count; i++) {
                 String enc_v_id = results.getJSONObject(i).getString("get_url").substring(14);
-                log("===? v id >" + enc_v_id);
+               // log("===? v id >" + enc_v_id);
                 songs.add(new Song(results.getJSONObject(i).getString("title"),
                         results.getJSONObject(i).getString("length"),
                         results.getJSONObject(i).getString("uploader"),
@@ -263,14 +304,14 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        // results are submitted from here
-        //
+        init();
         mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
         subscribeToTaskAddListener();
-        // add songs
-        mRecyclerAdapter.addSongs(songs, "Results");
-        // set adapter
+        songMap.put("Results", songs);
+        log("adding results to adapter");
         plugAdapter();
+        mRecyclerAdapter.addSongs(songs, "Results");
+
     }
 
     private void loadTrendingSongs(Bundle saved) {
@@ -304,9 +345,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(String response) {
                 ;
-                parseTrendingResults(response);
-                if (isLast)
-                    progressDialog.dismiss();
+                parseTrendingResults(response, isLast);
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -319,7 +359,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void parseTrendingResults(String response) {
+    private void parseTrendingResults(String response,boolean lastItemLoaded) {
 
         ArrayList<Song> songs = new ArrayList<>();
         String type = "Results";
@@ -347,13 +387,22 @@ public class MainActivity extends AppCompatActivity {
 
         // trending results are submitted from here
 
+        init();
         mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
         subscribeToTaskAddListener();
         // add songs
+        plugAdapter();
         mRecyclerAdapter.addSongs(songs, type);
+
         //songMap.put(type,songs);
         // set adapter
-        plugAdapter();
+        // plug adapter once all songs has been loaded
+        songMap.put(type,songs);
+        if(lastItemLoaded){
+            plugAdapter();
+            progressDialog.dismiss();
+        }
+
     }
 
     private void requestPlaylist() {
@@ -412,7 +461,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
         layoutManager = new StaggeredGridLayoutManager(mxCols, 1);
         mRecyclerView.setLayoutManager(layoutManager);
-
+        plugAdapter();
     }
 //
 //    private void puffRecyclerWithData(){
@@ -424,6 +473,7 @@ public class MainActivity extends AppCompatActivity {
     private void plugAdapter() {
         mRecyclerAdapter.setOrientation(getOrientation());
         mRecyclerAdapter.setScreenMode(screenMode());
+        mRecyclerAdapter.clear();
         mRecyclerView.setAdapter(mRecyclerAdapter);
     }
 
@@ -440,9 +490,9 @@ public class MainActivity extends AppCompatActivity {
 
         double diagonal = Math.sqrt(yInches * yInches + xInches * xInches);
         if (diagonal > 6.5) {
-            return 0;
+            return AppConfig.SCREEN_MODE_TABLET;
         } else {
-            return 1;
+            return AppConfig.SCREEN_MODE_MOBILE;
         }
     }
 

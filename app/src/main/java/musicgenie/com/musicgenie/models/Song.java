@@ -1,11 +1,13 @@
 package musicgenie.com.musicgenie.models;
 
+import java.io.Serializable;
+
 /**
  * Created by Ankit on 8/5/2016.
  */
 
 //todo: make it pacelable
-public class Song {
+public class Song implements Serializable{
     public String Title;
     public String TrackDuration;
     public String UploadedBy;

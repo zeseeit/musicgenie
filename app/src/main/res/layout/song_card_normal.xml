@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardView="http://schemas.android.com/apk/res-auto"
     android:id="@+id/song_card"
-    android:layout_width="120dp"
+    android:layout_width="180dp"
     android:background="@color/PrimaryColor"
     android:layout_height="wrap_content"
-    android:layout_margin="4dp"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
+    android:layout_marginBottom="12dp"
     android:elevation="1dp"
     cardView:cardBackgroundColor="#ffffff"
     cardView:cardCornerRadius="2dp">
@@ -19,8 +20,8 @@
         <RelativeLayout
             android:id="@+id/thumbnailFrame"
             android:background="#009988"
-            android:layout_width="120dp"
-            android:layout_height="120dp">
+            android:layout_width="180dp"
+            android:layout_height="180dp">
 
             <ImageView
                 android:id="@+id/Videothumbnail"
@@ -35,13 +36,13 @@
                 <TextView
                     android:id="@+id/download_btn_card"
                     android:textColor="#ffffff"
-                    android:textSize="16sp"
+                    android:textSize="20sp"
                     android:gravity="center"
                     android:text=""
                     android:layout_gravity="center"
                     android:background="@drawable/download_btn_on_card"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp" />
+                    android:layout_width="56dp"
+                    android:layout_height="56dp" />
 
                 <TextView
                     android:id="@+id/song_time_length"
@@ -54,7 +55,7 @@
                     android:layout_gravity="end|bottom"
                     android:gravity="center_horizontal"
                     android:background="@color/DownloadButtonColor"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:text="02:10"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" />
@@ -65,7 +66,7 @@
 
         <LinearLayout
             android:layout_below="@+id/thumbnailFrame"
-            android:padding="6dp"
+            android:padding="10dp"
             android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
@@ -80,7 +81,7 @@
                     android:textColor="#dd000000"
                     android:gravity="center_vertical"
                     android:maxLines="2"
-                    android:textSize="14sp"
+                    android:textSize="16sp"
                     android:text="Set Fire To Rain\n - Adele"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -120,7 +121,7 @@
                         <TextView
                             android:textColor="@color/PrimaryColor"
                             android:gravity="center_vertical"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:text="Adele"
                             android:layout_toRightOf="@+id/uploader_icon"
                             android:id="@+id/uploader_name"
@@ -147,7 +148,7 @@
                         <TextView
                             android:textColor="@color/PrimaryColor"
                             android:gravity="center_vertical"
-                            android:textSize="13sp"
+                            android:textSize="14sp"
                             android:text="100,000 views"
                             android:layout_toRightOf="@+id/views_icon"
                             android:id="@+id/views_text"
@@ -173,7 +174,14 @@
 
                 </FrameLayout>
             </LinearLayout>
+
+
+
+
         </LinearLayout>
+
+
     </RelativeLayout>
+
 </android.support.v7.widget.CardView>
 

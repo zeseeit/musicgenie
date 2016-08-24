@@ -3,6 +3,7 @@ package musicgenie.com.musicgenie.handlers;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -28,6 +29,7 @@ import java.util.Date;
 
 import musicgenie.com.musicgenie.adapters.LiveDownloadListAdapter;
 import musicgenie.com.musicgenie.notification.LocalNotificationManager;
+import musicgenie.com.musicgenie.regulators.PermissionManager;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.interfaces.DownloadListener;
@@ -367,7 +369,7 @@ public class TaskHandler {
                 }
                 try {
                     JSONObject obj = new JSONObject(result.toString());
-                    if(obj.getInt("status")==0){
+                    if(obj.getInt("status")==200){
 
                         t_url += obj.getString("url");
                         log("download url:" + t_url);
@@ -394,8 +396,12 @@ public class TaskHandler {
                 }
 
                 // file creation
+                if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
+                    PermissionManager.getInstance(context).seek();
+                }
+
                  dest_dir = new File(AppConfig.FILES_DIR);
-                 dest_file = new File(dest_dir, t_file_name.trim() + ".mp3");
+                 dest_file = new File(dest_dir, t_file_name.trim() + ".m4a");
                 log("writing to " + dest_file.toString());
 
                 InputStream inputStream = new BufferedInputStream(url.openStream());
@@ -404,7 +410,7 @@ public class TaskHandler {
                 long total = 0;
                 while (!isCanceled && (count = inputStream.read(data)) != -1) {
                     total += count;
-                    publishProgress((int) total * 100 / fileLength);
+                    publishProgress((int) total * 100 / fileLength,fileLength+"");
                     outputStream.write(data, 0, count);
                 }
                 //check inturruption
@@ -430,7 +436,7 @@ public class TaskHandler {
             }
         }
 
-        private void publishProgress(int progress) {
+        private void publishProgress(int progress,String cl) {
 
             if (progress == 100) {
                 removeTask(taskID);
@@ -438,13 +444,13 @@ public class TaskHandler {
                 downloadListener.onDownloadFinish();
                 log("downloaded task " + taskID);
             }
-            broadcastUpdate(String.valueOf(progress));
+            broadcastUpdate(String.valueOf(progress),cl);
             if(currentProgress<progress) {
                 LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);
             }
             this.currentProgress = progress;
         }
-        public void broadcastUpdate(String progressPercentage){
+        public void broadcastUpdate(String progressPercentage ,String contentLen){
             Intent intent = new Intent(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(AppConfig.EXTRA_TASK_ID,taskID);
             intent.putExtra(AppConfig.EXTRA_PROGRESS, progressPercentage);

@@ -143,9 +143,10 @@ public class ActiveTaskFragment extends Fragment {
     }
 
     private double inMB(String bytes){
-        double inBytes = Integer.valueOf(bytes);
-        double inMB = ((inBytes/1024)/1024);
-        return inMB;
+        //double inBytes = Double.valueOf(bytes);
+        //double inMB = ((inBytes/1024)/1024);
+        log("bytes "+ bytes);
+        return 5;
     }
 
     private void registerForBroadcastListen(Activity activity) {

@@ -21,6 +21,7 @@ import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.models.Song;
 import musicgenie.com.musicgenie.models.TrendingSongModel;
 import musicgenie.com.musicgenie.models.ViewTypeModel;
+import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.utilities.FontManager;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
@@ -33,8 +34,6 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private static final int TYPE_SONG = 0;
     private static final int TYPE_SECTION_TITLE =1;
     private static final String TAG = "TrendingRecylerAdapter";
-    private static final int SCREEN_MODE_TABLET = 0 ;
-    private static final int SCREEN_MODE_MOBILE = 1;
     private ArrayList<ViewTypeModel> typeViewList;
     private ArrayList<TrendingSongModel> trendingSongList;
     private ArrayList<Song> songs;
@@ -57,6 +56,12 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             mInstance = new TrendingRecyclerViewAdapter(context);
         }
         return mInstance;
+    }
+
+    public void clear(){
+        int ts = songs.size();
+        this.songs.clear();
+        notifyItemRangeRemoved(0,ts);
     }
 
     public void addSongs(ArrayList<Song> list , String type){
@@ -87,10 +92,10 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         }
 
         //log("now typeViewList: \n\n");
-        for(ViewTypeModel t: typeViewList){
-            log(t.viewType + " \t " + t.sectionTitle + " \t " + t.index);
-        }
-        //log("===================");
+//        for(ViewTypeModel t: typeViewList){
+//            log(t.viewType + " \t " + t.sectionTitle + " \t " + t.index);
+//        }
+//        //log("===================");
 //        for(Song s: songs){
 //            //log("song "+s.Title+ " ");
 //        }
@@ -103,7 +108,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public void setOrientation(int orientation){
         this.orientation = orientation;
-        Log.d(TAG, "setOrientation " + orientation);
+//        Log.d(TAG, "setOrientation " + orientation);
     }
 
     private boolean isPortrait(int orientation) {
@@ -118,10 +123,12 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         if(viewType==TYPE_SECTION_TITLE){
             int hvti = getHeaderViewToInflate();
             view = LayoutInflater.from(context).inflate(hvti, parent, false);
+            log("returning section");
             return new SectionTitleViewHolder(view);
         }else{
             int vti = getViewToInflate();   // getView depending on screen screen sizes
             view = LayoutInflater.from(context).inflate(vti,parent,false);
+            log("returning song item");
             return new SongViewHolder(view);
         }
     }
@@ -130,23 +137,23 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         if (isPortrait(orientation)) {
             // check mode
-            if(this.screenMode==SCREEN_MODE_TABLET){
+            if(this.screenMode==AppConfig.SCREEN_MODE_TABLET){
                 // means it is tablet with portrait
-                log("inflating portrait tablet");
+    //            log("inflating portrait tablet");
                 viewToInflate = R.layout.song_card_sw600;
             }else{
                 // mobile with portrait
-                log("inflating portrait mobile");
+      //          log("inflating portrait mobile");
                 viewToInflate = R.layout.song_card_normal;
             }
         }else{
-            if(this.screenMode==SCREEN_MODE_TABLET){
+            if(this.screenMode== AppConfig.SCREEN_MODE_TABLET){
                 // means it is tablet with landscape
-                log("inflating landscape tablet");
+        //        log("inflating landscape tablet");
                 viewToInflate = R.layout.song_card_land_sw600;
             }else{
                 // mobile with landscape
-                log("inflating landscape mobile");
+          //      log("inflating landscape mobile");
                 viewToInflate = R.layout.song_card_normal_land;
             }
 
@@ -160,23 +167,23 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         if (isPortrait(orientation)) {
             // check mode
-            if(this.screenMode==SCREEN_MODE_TABLET){
+            if(this.screenMode==AppConfig.SCREEN_MODE_TABLET){
                 // means it is tablet with portrait
-                log("[H] inflating portrait tablet");
+            //    log("[H] inflating portrait tablet");
                  _temp_header_viewID = R.layout.section_header_layout_sw600;
             }else{
                 // mobile with portrait
-                log("[H] inflating portrait mobile");
+              //  log("[H] inflating portrait mobile");
                 _temp_header_viewID = R.layout.section_header_layout;
             }
         }else{
-            if(this.screenMode==SCREEN_MODE_TABLET){
+            if(this.screenMode==AppConfig.SCREEN_MODE_TABLET){
                 // means it is tablet with landscape
-                log("[H] inflating landscape tablet");
+                //log("[H] inflating landscape tablet");
                 _temp_header_viewID = R.layout.section_header_layout_land_sw600;
             }else{
                 // mobile with landscape
-                log("[H] inflating landscape mobile");
+                //log("[H] inflating landscape mobile");
                 _temp_header_viewID = R.layout.section_header_layout_land;
             }
 
@@ -321,6 +328,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View view) {
                     TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
                     int pos = getAdapterPosition();
+                    Log.d("Ada"," pos"+pos);
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
                     adapter.log("adding download task");
