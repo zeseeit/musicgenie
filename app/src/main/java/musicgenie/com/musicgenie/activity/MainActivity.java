@@ -50,12 +50,12 @@ import musicgenie.com.musicgenie.utilities.VolleyUtils;
 //TODO: add activity transition on swipe
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "MainActivity";
     ProgressDialog progressDialog;
     ListView resultListView;
     SearchResultListAdapter adapter;
     FloatingSearchView searchView = null;
     DrawerLayout mDrawerLayout;
-    private static final String TAG = "MainActivity";
     private boolean mFloatingSearchViewSet;
     private FloatingActionButton fab;
     private HashMap<String, ArrayList<Song>> songMap;
@@ -102,6 +102,7 @@ public class MainActivity extends AppCompatActivity {
                 //  get map and iterate through it and grab songs
                 // add to adapter and plug it
                 mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
+                mRecyclerAdapter.setSongs(null, "");
                 init();
                 subscribeToTaskAddListener();
                 HashMap<String,ArrayList<Song>> map = (HashMap<String, ArrayList<Song>>) savedInstanceState.getSerializable("mapSong");
@@ -111,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
                     log("reading hashmap for key "+pair.getKey().toString());
                     log("adding songs");
                     songMap.put(pair.getKey().toString(),map.get(pair.getKey()));
-                    mRecyclerAdapter.addSongs(map.get(pair.getKey()), pair.getKey().toString());
+                    mRecyclerAdapter.appendSongs(map.get(pair.getKey()), pair.getKey().toString());
                 }
             }
 
@@ -310,7 +311,7 @@ public class MainActivity extends AppCompatActivity {
         songMap.put("Results", songs);
         log("adding results to adapter");
         plugAdapter();
-        mRecyclerAdapter.addSongs(songs, "Results");
+        mRecyclerAdapter.setSongs(songs, "Results");
 
     }
 
@@ -392,7 +393,7 @@ public class MainActivity extends AppCompatActivity {
         subscribeToTaskAddListener();
         // add songs
         plugAdapter();
-        mRecyclerAdapter.addSongs(songs, type);
+        mRecyclerAdapter.appendSongs(songs, type);
 
         //songMap.put(type,songs);
         // set adapter
@@ -400,6 +401,7 @@ public class MainActivity extends AppCompatActivity {
         songMap.put(type,songs);
         if(lastItemLoaded){
             plugAdapter();
+            mRecyclerAdapter.appendSongs(songs, type);
             progressDialog.dismiss();
         }
 
@@ -473,7 +475,6 @@ public class MainActivity extends AppCompatActivity {
     private void plugAdapter() {
         mRecyclerAdapter.setOrientation(getOrientation());
         mRecyclerAdapter.setScreenMode(screenMode());
-        mRecyclerAdapter.clear();
         mRecyclerView.setAdapter(mRecyclerAdapter);
     }
 

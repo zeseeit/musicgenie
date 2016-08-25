@@ -10,63 +10,63 @@
     cardView:cardCornerRadius="2dp">
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:weightSum="9"
-    android:layout_height="100dp">
+    android:layout_height="100dp"
+    android:orientation="horizontal"
+    android:weightSum="9">
 
     <LinearLayout
-        android:layout_weight="7.5"
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_weight="7.5"
         android:orientation="vertical"
         android:weightSum="3">
 
         <FrameLayout
-            android:padding="4dp"
-            android:layout_weight="2"
             android:layout_width="match_parent"
-            android:layout_height="0dp">
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:padding="4dp">
             <TextView
-                android:maxLines="2"
-                android:textSize="22dp"
-                android:text="Sanam Re | Arjit Singh Full Title Song"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="match_parent"
+                android:maxLines="2"
+                android:text="Sanam Re | Arjit Singh Full Title Song"
+                android:textSize="22dp" />
         </FrameLayout>
 
         <ProgressBar
-            android:progress="40"
-            android:paddingLeft="4dp"
+            android:id="@+id/progressBar"
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:id="@+id/progressBar" />
+            android:paddingLeft="4dp"
+            android:progress="0" />
 
 
     </LinearLayout>
 
     <LinearLayout
-        android:padding="4dp"
-        android:layout_weight="1.5"
         android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1.5"
         android:orientation="vertical"
-        android:weightSum="3"
-        android:layout_height="match_parent">
+        android:padding="4dp"
+        android:weightSum="3">
 
         <Button
-            android:layout_margin="4dp"
-            android:background="@android:drawable/ic_menu_close_clear_cancel"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2"/>
+            android:layout_margin="4dp"
+            android:layout_weight="2"
+            android:background="@android:drawable/ic_menu_close_clear_cancel" />
 
         <TextView
-            android:padding="4dp"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
+            android:padding="4dp"
             android:text="100 %"/>
 
     </LinearLayout>

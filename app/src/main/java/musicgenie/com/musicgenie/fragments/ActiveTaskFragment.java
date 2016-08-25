@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.LiveDownloadListAdapter;
 import musicgenie.com.musicgenie.handlers.TaskHandler;
+import musicgenie.com.musicgenie.interfaces.DownloadCancelListener;
 import musicgenie.com.musicgenie.models.DownloadTaskModel;
 import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
@@ -30,9 +31,19 @@ public class ActiveTaskFragment extends Fragment {
     private static final String TAG = "ActiveTaskFragment";
     private ListView liveDownloadListView;
     private LiveDownloadListAdapter adapter;
+    DownloadCancelListener downloadCancelListener = new DownloadCancelListener() {
+        @Override
+        public void onDownloadCancel(String taskID) {
+            // remove download task and updata listview
+            TaskHandler.getInstance(getActivity()).removeTask(taskID);
+            // update
+            adapter.setDownloadingList(getTasksList());
+            liveDownloadListView.setAdapter(adapter);
+
+        }
+    };
     private ProgressUpdateBroadcastReceiver receiver;
     private boolean mReceiverRegistered;
-
 
     public ActiveTaskFragment() {
         // Required empty public constructor
@@ -48,6 +59,7 @@ public class ActiveTaskFragment extends Fragment {
         View fragmentView =inflater.inflate(R.layout.fragment_active_task, container, false);
         liveDownloadListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
         adapter = LiveDownloadListAdapter.getInstance(getActivity());
+        adapter.setOnDownloadCancelListener(downloadCancelListener);
         adapter.setDownloadingList(getTasksList());
         liveDownloadListView.setAdapter(adapter);
 
@@ -126,27 +138,13 @@ public class ActiveTaskFragment extends Fragment {
         }
     }
 
-    public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if(intent.getAction().equals(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST)){
-
-                log("update via broadcast " + intent.getStringExtra(AppConfig.EXTRA_PROGRESS));
-                String taskID = intent.getStringExtra(AppConfig.EXTRA_TASK_ID);
-                String progress = intent.getStringExtra(AppConfig.EXTRA_PROGRESS);
-                String contentSize = intent.getStringExtra(AppConfig.EXTRA_CONTENT_SIZE);
-                updateItem(getPosition(taskID),Integer.valueOf(progress),contentSize);
-            }
-        }
-    }
-
     private double inMB(String bytes){
-        //double inBytes = Double.valueOf(bytes);
-        //double inMB = ((inBytes/1024)/1024);
-        log("bytes "+ bytes);
-        return 5;
+        if (bytes != null) {
+            double inBytes = Double.parseDouble(bytes);
+            double inMB = ((inBytes / 1024) / 1024);
+            log("bytes " + bytes);
+            return inMB;
+        } else return 0;
     }
 
     private void registerForBroadcastListen(Activity activity) {
@@ -166,7 +164,24 @@ public class ActiveTaskFragment extends Fragment {
         Toast.makeText(getActivity(),msg,Toast.LENGTH_LONG).show();
 
     }
+
     public void log(String msg){
         Log.d(TAG,msg);
+    }
+
+    public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST)) {
+
+                log("update via broadcast " + intent.getStringExtra(AppConfig.EXTRA_PROGRESS));
+                String taskID = intent.getStringExtra(AppConfig.EXTRA_TASK_ID);
+                String progress = intent.getStringExtra(AppConfig.EXTRA_PROGRESS);
+                String contentSize = intent.getStringExtra(AppConfig.EXTRA_CONTENT_SIZE);
+                updateItem(getPosition(taskID), Integer.valueOf(progress), contentSize);
+            }
+        }
     }
 }

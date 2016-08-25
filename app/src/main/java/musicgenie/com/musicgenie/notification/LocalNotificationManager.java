@@ -70,6 +70,9 @@ public class LocalNotificationManager {
                 manager.notify(mNotificationId , mBuilder.build());
             }
         }).start();
+        if (progress == 100) {
+            manager.cancel(mNotificationId);
+        }
     }
 
 }

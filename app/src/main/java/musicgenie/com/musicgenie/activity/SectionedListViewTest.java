@@ -84,8 +84,8 @@ public class SectionedListViewTest extends AppCompatActivity{
     }
 
     private void puffRecyclerWithData(){
-        mRecyclerAdapter.addSongs(list, "Pop");
-        mRecyclerAdapter.addSongs(list,"Rock");
+//        mRecyclerAdapter.addSongs(list, "Pop");
+        //mRecyclerAdapter.addSongs(list,"Rock");
         dataPuffed = true;
     }
 

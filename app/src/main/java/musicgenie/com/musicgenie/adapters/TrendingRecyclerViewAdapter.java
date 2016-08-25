@@ -34,13 +34,12 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private static final int TYPE_SONG = 0;
     private static final int TYPE_SECTION_TITLE =1;
     private static final String TAG = "TrendingRecylerAdapter";
+    private static Context context;
+    private static TrendingRecyclerViewAdapter mInstance;
     private ArrayList<ViewTypeModel> typeViewList;
     private ArrayList<TrendingSongModel> trendingSongList;
     private ArrayList<Song> songs;
     private int orientation;
-
-    private static Context context;
-    private static TrendingRecyclerViewAdapter mInstance;
     private int screenMode;
     private int viewToInflate;
     private TaskAddListener taskAddListener;
@@ -58,23 +57,37 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         return mInstance;
     }
 
-    public void clear(){
-        int ts = songs.size();
-        this.songs.clear();
-        notifyItemRangeRemoved(0,ts);
-    }
-
-    public void addSongs(ArrayList<Song> list , String type){
-
+    public void appendSongs(ArrayList<Song> list, String type) {
         // add section header and loops through list and call addItem on each item
         // adding section
         addItem(null, type);
-        for(Song s: list){
+        for (Song s : list) {
             //  adding each item of type
             addItem(s, "");
         }
 
         notifyDataSetChanged();
+    }
+
+    public void setSongs(ArrayList<Song> list, String type) {
+        if (list == null) {
+            this.songs.clear();
+            this.typeViewList.clear();
+            notifyDataSetChanged();
+            return;
+        }
+
+        this.songs.clear();
+        this.typeViewList.clear();
+        addItem(null, type);
+        for(Song s: list){
+            //  adding each item of type
+            log("setSong() adding " + s.Title);
+            addItem(s, "");
+        }
+
+        notifyDataSetChanged();
+
     }
 
     public void addItem(Song song , String section){   //     create view list

@@ -79,7 +79,8 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         contentSizeMB.setText(downloadingList.get(position).contentSize);
         progressBar.setProgress(downloadingList.get(position).Progress);
         progressText.setText(downloadingList.get(position).Progress + " %");
-
+        taskTitle.setText(downloadingList.get(position).Title);
+        progressBar.setIndeterminate(false);
         // font assign
         progressText.setTypeface(raleway);
         taskTitle.setTypeface(raleway);
@@ -108,6 +109,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         if (this.downloadCancelListener != null) {
             downloadCancelListener.onDownloadCancel(taskID);
         }
+        // remove items from list
 
     }
 
