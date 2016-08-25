@@ -13,5 +13,6 @@
     <color name="DownloadingPageBackground">#f1f1f1</color>
     <color name="NoWifiColor">#33000000</color>
     <color name="DownloadButtonColor">#daf44336</color>
+    <color name="StreamButtonColor">#AA000000</color>
 
 </resources>

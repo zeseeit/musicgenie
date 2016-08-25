@@ -4,6 +4,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <size android:height="20dp" android:width="20dp"/>
-    <solid android:color="@color/DownloadButtonColor"/>
+    <solid android:color="@color/StreamButtonColor"/>
 
 </shape>
