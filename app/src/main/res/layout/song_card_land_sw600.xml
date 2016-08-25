@@ -29,15 +29,28 @@
                 android:layout_height="147dp">
 
                 <TextView
-                    android:id="@+id/download_btn_card"
-                    android:layout_width="56dp"
-                    android:layout_height="56dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/download_btn_on_card"
+                    android:id="@+id/stream_btn_card"
+                    android:textColor="#ffffff"
+                    android:layout_marginRight="30dp"
+                    android:textSize="20sp"
                     android:gravity="center"
                     android:text=""
+                    android:layout_gravity="center"
+                    android:background="@drawable/stream_btn_on_card"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp" />
+
+                <TextView
+                    android:id="@+id/download_btn_card"
                     android:textColor="#ffffff"
-                    android:textSize="20sp" />
+                    android:layout_marginLeft="30dp"
+                    android:textSize="20sp"
+                    android:gravity="center"
+                    android:text=""
+                    android:layout_gravity="center"
+                    android:background="@drawable/download_btn_on_card"
+                    android:layout_width="34dp"
+                    android:layout_height="34dp" />
 
                 <TextView
                     android:id="@+id/song_time_length"
@@ -116,7 +129,7 @@
                         <TextView
                             android:id="@+id/uploader_name"
                             android:layout_width="match_parent"
-                            android:layout_height="16dp"
+                            android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/uploader_icon"
                             android:gravity="center_vertical"
                             android:text="Adele"
@@ -133,7 +146,7 @@
                         <TextView
                             android:id="@+id/views_icon"
                             android:layout_width="16sp"
-                            android:layout_height="16dp"
+                            android:layout_height="wrap_content"
                             android:layout_marginRight="4dp"
                             android:gravity="bottom|center_horizontal"
                             android:text=""
@@ -143,7 +156,7 @@
                         <TextView
                             android:id="@+id/views_text"
                             android:layout_width="match_parent"
-                            android:layout_height="16dp"
+                            android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/views_icon"
                             android:gravity="center_vertical"
                             android:text="100,000 views"

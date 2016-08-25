@@ -19,17 +19,19 @@
 
         <RelativeLayout
             android:id="@+id/thumbnailFrame"
-            android:layout_width="180dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/Videothumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="147dp" />
+
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:id="@+id/Videothumbnail"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/hqdefault"/>
                 <TextView
                     android:id="@+id/stream_btn_card"
                     android:textColor="#ffffff"
@@ -59,8 +61,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginRight="4dp"
                     android:background="@color/DownloadButtonColor"
                     android:gravity="center_horizontal"
                     android:paddingBottom="2dp"
@@ -68,7 +68,7 @@
                     android:paddingRight="3dp"
                     android:text="02:10"
                     android:textColor="@color/White"
-                    android:textSize="16sp" />
+                    android:textSize="12sp" />
 
             </FrameLayout>
 
@@ -121,8 +121,8 @@
 
                         <TextView
                             android:id="@+id/uploader_icon"
-                            android:layout_width="16sp"
-                            android:layout_height="16dp"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_marginRight="4dp"
                             android:gravity="bottom|center_horizontal"
                             android:text=""
@@ -132,7 +132,7 @@
                         <TextView
                             android:id="@+id/uploader_name"
                             android:layout_width="match_parent"
-                            android:layout_height="16dp"
+                            android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/uploader_icon"
                             android:gravity="center_vertical"
                             android:text="Adele"
@@ -159,7 +159,7 @@
                         <TextView
                             android:id="@+id/views_text"
                             android:layout_width="match_parent"
-                            android:layout_height="16dp"
+                            android:layout_height="wrap_content"
                             android:layout_toRightOf="@+id/views_icon"
                             android:gravity="center_vertical"
                             android:text="100,000 views"

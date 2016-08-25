@@ -410,6 +410,7 @@ public class TaskHandler {
                 long total = 0;
                 while (!isCanceled && (count = inputStream.read(data)) != -1) {
                     total += count;
+                    Log.d("Sending filelength",fileLength+"");
                     publishProgress((int) total * 100 / fileLength,fileLength+"");
                     outputStream.write(data, 0, count);
                 }
@@ -454,7 +455,7 @@ public class TaskHandler {
             Intent intent = new Intent(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(AppConfig.EXTRA_TASK_ID,taskID);
             intent.putExtra(AppConfig.EXTRA_PROGRESS, progressPercentage);
-            intent.putExtra(AppConfig.EXTRA_CONTENT_SIZE, fileLength);
+            intent.putExtra(AppConfig.EXTRA_CONTENT_SIZE, contentLen);
             context.sendBroadcast(intent);
         }
         private void subscribeDownloadCancelListener(){

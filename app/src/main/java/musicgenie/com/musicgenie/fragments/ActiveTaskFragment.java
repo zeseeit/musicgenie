@@ -143,7 +143,9 @@ public class ActiveTaskFragment extends Fragment {
             double inBytes = Double.parseDouble(bytes);
             double inMB = ((inBytes / 1024) / 1024);
             log("bytes " + bytes);
+            
             return inMB;
+
         } else return 0;
     }
 
