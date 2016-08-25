@@ -104,7 +104,7 @@
                     android:layout_height="wrap_content"
                     android:id="@+id/progressBar"
                     android:indeterminate="true"
-                    android:progress="40"
+                    android:progress="0"
                     android:layout_gravity="center_vertical" />
             </FrameLayout>
             <FrameLayout
