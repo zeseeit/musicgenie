@@ -41,8 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:paddingLeft="4dp"
-            android:progress="0" />
+            android:indeterminate="false"
+            android:paddingLeft="4dp" />
 
 
     </LinearLayout>
@@ -55,12 +55,13 @@
         android:padding="4dp"
         android:weightSum="3">
 
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_margin="4dp"
-            android:layout_weight="2"
-            android:background="@android:drawable/ic_menu_close_clear_cancel" />
+        <TextView
+            android:textColor="@color/PrimaryColor"
+            android:gravity="center"
+            android:text="C"
+            android:background="@drawable/cancel_btn"
+            android:layout_width="30dp"
+            android:layout_height="30dp" />
 
         <TextView
             android:layout_width="match_parent"

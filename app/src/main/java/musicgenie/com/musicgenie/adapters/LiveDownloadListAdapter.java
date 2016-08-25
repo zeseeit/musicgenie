@@ -73,6 +73,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
 
         progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
         progressText = (TextView) v.findViewById(R.id.progressText);
+        progressBar.setIndeterminate(false);
         cancelBtn = (TextView) v.findViewById(R.id.cancel_btn_text);
         taskTitle = (TextView) v.findViewById(R.id.download_task_title);
         contentSizeMB = (TextView) v.findViewById(R.id.content_size_MB);
@@ -80,7 +81,6 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         progressBar.setProgress(downloadingList.get(position).Progress);
         progressText.setText(downloadingList.get(position).Progress + " %");
         taskTitle.setText(downloadingList.get(position).Title);
-        progressBar.setIndeterminate(false);
         // font assign
         progressText.setTypeface(raleway);
         taskTitle.setTypeface(raleway);
