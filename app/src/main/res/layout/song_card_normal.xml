@@ -30,7 +30,8 @@
                 <ImageView
                     android:id="@+id/Videothumbnail"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="147dp"
+                    android:scaleType="centerCrop"
                     android:src="@drawable/hqdefault"/>
                 <TextView
                     android:id="@+id/stream_btn_card"
@@ -121,7 +122,7 @@
 
                         <TextView
                             android:id="@+id/uploader_icon"
-                            android:layout_width="match_parent"
+                            android:layout_width="16sp"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="4dp"
                             android:gravity="bottom|center_horizontal"
