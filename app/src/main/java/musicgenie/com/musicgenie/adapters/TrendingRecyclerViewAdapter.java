@@ -304,6 +304,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         TextView popMenuBtn;
         TextView content_length;
         TextView uploader;
+        TextView streamBtn;
         TextView title;
         TextView views;
         ImageView thumbnail;
@@ -319,7 +320,9 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             views_icon = (TextView) itemView.findViewById(R.id.views_icon);
             popMenuBtn = (TextView) itemView.findViewById(R.id.popUpMenuIcon);
             thumbnail = (ImageView) itemView.findViewById(R.id.Videothumbnail);
+            streamBtn = (TextView) itemView.findViewById(R.id.stream_btn_card);
 
+            streamBtn.setTypeface(fontawesome);
             downloadBtn.setTypeface(fontawesome);
             uploader_icon.setTypeface(fontawesome);
             views_icon.setTypeface(fontawesome);
