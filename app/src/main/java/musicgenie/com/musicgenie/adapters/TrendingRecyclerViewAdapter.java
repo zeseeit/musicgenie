@@ -399,6 +399,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 }
             });
 
+
         }
 
 

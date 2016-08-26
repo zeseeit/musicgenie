@@ -21,8 +21,10 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -560,16 +562,20 @@ public class MainActivity extends AppCompatActivity {
     private void prepareStreaming(String uri){
 
         Dialog streamDialog = new Dialog(this);
-       // View myLayout = LayoutInflater.from(context).inflate(R.layout.stream_layout, null);
+        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.stream_layout, (ViewGroup)findViewById(R.id.dialogParent));
+        streamDialog.setContentView(layout);
         streamDialog.setContentView(R.layout.stream_layout);
         streamDialog.show();
-        streamingItemTitle = (TextView) findViewById(R.id.streamItemTitle);
-        playPauseBtn = (TextView) findViewById(R.id.playPauseBtn);
-        streamSeeker = (SeekBar) findViewById(R.id.streaming_audio_seekbar);
+
+        streamingItemTitle = (TextView) layout.findViewById(R.id.streamItemTitle);
+        playPauseBtn = (TextView) layout.findViewById(R.id.playPauseBtn);
+        streamSeeker = (SeekBar) layout.findViewById(R.id.streaming_audio_seekbar);
         mPlayer = new MediaPlayer();
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         final String uriToStream = uri;
 
+        isStreaming = true;
         new Player().execute(uriToStream);
         log("playBtn "+playPauseBtn);
 //        playPauseBtn.setOnClickListener(new View.OnClickListener() {
@@ -653,7 +659,6 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                   MediaPlayer.create(MainActivity.this, Uri.parse(strings[0])).start();
-                  isStreaming = true;
                   log("playing");
                   mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
 
