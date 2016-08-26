@@ -113,7 +113,7 @@ public class ActiveTaskFragment extends Fragment {
             ArrayList<DownloadTaskModel> old_list = getTasksList();
             for(int i=0;i<old_list.size();i++){
                 if(i==position){
-                    old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID,String.valueOf(inMB(contentSize))));
+                    old_list.set(i,new DownloadTaskModel(old_list.get(i).Title,progress,old_list.get(i).taskID,String.valueOf(inMB(contentSize))+"Mb"));
                 }
             }
 
@@ -137,11 +137,20 @@ public class ActiveTaskFragment extends Fragment {
 
         }
     }
+    public static double roundOf(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
 
     private double inMB(String bytes){
         if (bytes != null) {
             double inBytes = Double.parseDouble(bytes);
             double inMB = ((inBytes / 1024) / 1024);
+            inMB=roundOf(inMB,2);
             log("bytes " + bytes);
             
             return inMB;
