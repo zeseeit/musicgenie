@@ -45,7 +45,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private int screenMode;
     private int viewToInflate;
     private TaskAddListener taskAddListener;
-    private OnStreamingSourceAvailableListener streamingPreparedListener;
+    private OnStreamingSourceAvailableListener streamingSourceAvailableListener;
 
     public TrendingRecyclerViewAdapter(Context context) {
         this.context = context;
@@ -268,7 +268,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     public void setOnStreamingSourceAvailable(OnStreamingSourceAvailableListener listener) {
-        this.streamingPreparedListener = listener;
+        this.streamingSourceAvailableListener = listener;
     }
 
     public void addDownloadTask(final String video_id, final String file_name) {
@@ -294,6 +294,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     public interface OnStreamingSourceAvailableListener {
         void onPrepared(String uri);
+        void optioned();
     }
 
     public static class SectionTitleViewHolder extends RecyclerView.ViewHolder {
@@ -322,10 +323,9 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
             @Override
             public void onUriAvailable(String uri) {
-                if (TrendingRecyclerViewAdapter.getInstance(context).streamingPreparedListener != null) {
+                if (TrendingRecyclerViewAdapter.getInstance(context).streamingSourceAvailableListener != null) {
                     Log.d(TAG, "onUriAvailable : uri made available");
-                    TrendingRecyclerViewAdapter.getInstance(context).streamingPreparedListener.onPrepared(uri);
-                    //progressDialoge.dismiss();
+                    TrendingRecyclerViewAdapter.getInstance(context).streamingSourceAvailableListener.onPrepared(uri);
                 }
 
             }
@@ -366,10 +366,10 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View view) {
                     TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
                     int pos = getAdapterPosition();
-                    Log.d("Ada", " pos" + pos);
+                    //Log.d("Ada", " pos" + pos);
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
-                    adapter.log("adding download task");
+                   // adapter.log("adding download task");
                     TrendingRecyclerViewAdapter.getInstance(context).addDownloadTask(v_id, file_name);
                 }
             });
@@ -377,27 +377,26 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             streamBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    progressDialoge = new ProgressDialog(context);
-
-                    progressDialoge.setMessage("Requesting For Stream....");
-                    progressDialoge.setCancelable(false);
-                    progressDialoge.show();
 
                     TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
+                    adapter.streamingSourceAvailableListener.optioned();
                     int pos = getAdapterPosition();
-                    Log.d("Ada", " pos" + pos);
+                   // Log.d("Ada", " pos" + pos);
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
-                    adapter.log("fetch for streaming");
-
+                   // adapter.log("fetch for streaming");
                     // set Uri Fetched Listener to MusicStreamer
+
+
                     MusicStreamer
                             .getInstance(context)
-                            .setData(v_id)
+                            .setData(v_id,file_name)
                             .setOnStreamUriFetchedListener(streamUriFetchedListener)
                             .initProcess();
+
                 }
             });
+
 
 
         }

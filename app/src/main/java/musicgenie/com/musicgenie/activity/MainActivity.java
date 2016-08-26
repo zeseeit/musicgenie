@@ -5,9 +5,12 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -55,6 +58,7 @@ import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.R;
 import musicgenie.com.musicgenie.adapters.SearchResultListAdapter;
+import musicgenie.com.musicgenie.utilities.FontManager;
 import musicgenie.com.musicgenie.utilities.Segmentor;
 import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
 import musicgenie.com.musicgenie.utilities.SoftInputManager;
@@ -85,6 +89,7 @@ public class MainActivity extends AppCompatActivity {
     private StaggeredGridLayoutManager layoutManager;
     private StreamUriBroadcastReceiver receiver;
     private boolean mReceiverRegistered;
+    private boolean musicIntentLaunched;
     // private ConnectivityBroadcastReceiver receiver;
 
     @Override
@@ -105,12 +110,21 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        log("back Pressed Player " + isStreaming);
+        if(isStreaming){
+            mPlayer.stop();
+            mPlayer.reset();
+        }
+    }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         log("saving back map");
-        outState.putSerializable("mapSong",songMap);
+        outState.putSerializable("mapSong", songMap);
     }
 
     private void reload(Bundle savedInstanceState) {
@@ -182,6 +196,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         unsubscribeToTaskAddListener();
+        //unRegisterBroadcast();
     }
 
     public void checkPendings(){
@@ -499,6 +514,27 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerAdapter.setScreenMode(screenMode());
         mRecyclerView.setAdapter(mRecyclerAdapter);
         registerForBroadcastListen(this);
+        subscribeForStreamOption(mRecyclerAdapter);
+    }
+
+    private void subscribeForStreamOption(TrendingRecyclerViewAdapter adapter) {
+        adapter.setOnStreamingSourceAvailable(new TrendingRecyclerViewAdapter.OnStreamingSourceAvailableListener() {
+            @Override
+            public void onPrepared(String uri) {
+
+
+
+            }
+
+            @Override
+            public void optioned() {
+
+                progressDialog = new ProgressDialog(MainActivity.this);
+                progressDialog.setMessage("Requesting Audio For You....");
+                progressDialog.show();
+
+            }
+        });
     }
 
     private int getOrientation() {
@@ -559,75 +595,98 @@ public class MainActivity extends AppCompatActivity {
         TrendingRecyclerViewAdapter.getInstance(this).setOnTaskAddListener(null);
     }
 
-    private void prepareStreaming(String uri){
+    private void prepareStreaming(String uri , String file_name){
+
+       // progressDialog.hide();
+       // progressDialog.dismiss();
 
         Dialog streamDialog = new Dialog(this);
+
+        streamDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialogInterface) {
+                progressDialog.dismiss();
+
+                if(isStreaming){
+                    mPlayer.stop();
+                    mPlayer.reset();
+                }
+            }
+        });
+
         LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.stream_layout, (ViewGroup)findViewById(R.id.dialogParent));
-        streamDialog.setContentView(layout);
-        streamDialog.setContentView(R.layout.stream_layout);
-        streamDialog.show();
 
         streamingItemTitle = (TextView) layout.findViewById(R.id.streamItemTitle);
         playPauseBtn = (TextView) layout.findViewById(R.id.playPauseBtn);
         streamSeeker = (SeekBar) layout.findViewById(R.id.streaming_audio_seekbar);
+        streamSeeker.setEnabled(false);
+
+        streamSeeker.getProgressDrawable().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
+        streamSeeker.getThumb().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
+
         mPlayer = new MediaPlayer();
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-        final String uriToStream = uri;
+        streamingItemTitle.setText(file_name);
+        playPauseBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_AWESOME));
+        streamDialog.setTitle("Streaming...");
+        streamDialog.setContentView(layout);
+        streamDialog.show();
 
+
+        final String uriToStream = uri;
         isStreaming = true;
+        playPauseBtn.setText(getResources().getString(R.string.pauseStreamFontText));
         new Player().execute(uriToStream);
         log("playBtn "+playPauseBtn);
-//        playPauseBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                if (!isStreaming) {
-//                    // btn.setBackgroundResource(R.drawable.button_pause);
-//                    if (zygoteStreamer)
-//                      new Player().execute(uriToStream);
-//                    else {
-//                        if (!mPlayer.isPlaying())
-//                            mPlayer.start();
-//                    }
-//                    isStreaming = true;
-//                } else {
-//                    //btn.setBackgroundResource(R.drawable.button_play);
-//                    if (mPlayer.isPlaying())
-//                        mPlayer.pause();
-//                    isStreaming = false;
-//                }
-//            }
-//        });
-//        streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
-//                if (prepared) {
-//                    mPlayer.seekTo(position);
-//                }
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
+
+        playPauseBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(isStreaming){
+                    mPlayer.stop();
+                    mPlayer.reset();
+                    isStreaming = false;
+                }else{
+                    mPlayer.start();
+                }
+
+            }
+        });
+        streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
+                if (prepared) {
+                    mPlayer.seekTo(position);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
     }
 
     private void registerForBroadcastListen(Context context) {
         receiver = new StreamUriBroadcastReceiver();
-        context.registerReceiver(receiver, new IntentFilter(AppConfig.ACTION_STREAM_URL_FETCHED));
-        mReceiverRegistered = true;
-
+        if(!mReceiverRegistered) {
+            context.registerReceiver(receiver, new IntentFilter(AppConfig.ACTION_STREAM_URL_FETCHED));
+            mReceiverRegistered = true;
+        }
     }
 
     private void unRegisterBroadcast() {
-        this.unregisterReceiver(receiver);
-        mReceiverRegistered = false;
+        if(mReceiverRegistered){
+            this.unregisterReceiver(receiver);
+            mReceiverRegistered = false;
+        }
     }
 
     private void makeSnake(String msg) {
@@ -658,19 +717,41 @@ public class MainActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
-                  MediaPlayer.create(MainActivity.this, Uri.parse(strings[0])).start();
-                  log("playing");
-                  mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                 mPlayer =  MediaPlayer.create(MainActivity.this, Uri.parse(strings[0]));
+                 log("playing");
+                 mPlayer.start();
+                progressDialog.dismiss();
+                while(mPlayer.isPlaying()){
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            streamSeeker.setMax(mPlayer.getDuration());
+                            log("currently at " + mPlayer.getCurrentPosition());
+                            streamSeeker.setProgress(mPlayer.getCurrentPosition());
+                        }
+                    });
 
-                      @Override
-                      public void onCompletion(MediaPlayer mediaPlayer) {
-                          zygoteStreamer = true;
-                          isStreaming = false;
-                          // change background resource to play
-                          mPlayer.stop();
-                          mPlayer.reset();
-                      }
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+                }
+                 mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                     @Override
+                     public void onCompletion(MediaPlayer mediaPlayer) {
+                         isStreaming = false;
+                     }
+                 });
+                mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+                    @Override
+                    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
+                        isStreaming = false;
+                        return true;
+                    }
                 });
+
 
             } catch (IllegalArgumentException e) {
                 // TODO Auto-generated catch block
@@ -698,8 +779,10 @@ public class MainActivity extends AppCompatActivity {
             if (progressDialog.isShowing()) {
                 progressDialog.cancel();
             }
+
             Log.d("Prepared", "//" + result);
             zygoteStreamer = false;
+            isStreaming = false;
         }
 
         @Override
@@ -719,10 +802,20 @@ public class MainActivity extends AppCompatActivity {
 
             if (intent.getAction().equals(AppConfig.ACTION_STREAM_URL_FETCHED)) {
 
+
                 log("update via broadcast: streaming uri fetched " + intent.getStringExtra(AppConfig.EXTRAA_URI));
+//                if(!musicIntentLaunched) {
+//                    musicIntentLaunched = true;
+//                    Intent mIntent = new Intent(Intent.ACTION_VIEW);
+//                    intent.setDataAndType(Uri.parse(intent.getStringExtra(AppConfig.EXTRAA_URI)), "audio/m4a");
+//                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(mIntent);
+//                }
+
                 if(!isStreaming)
-                prepareStreaming(intent.getStringExtra(AppConfig.EXTRAA_URI));
+                prepareStreaming(intent.getStringExtra(AppConfig.EXTRAA_URI) , intent.getStringExtra(AppConfig.EXTRAA_STREAM_FILE));
             }
         }
+
     }
 }

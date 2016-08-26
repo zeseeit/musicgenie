@@ -35,6 +35,7 @@ public class MusicStreamer {
     private static Context context;
     private static MusicStreamer mInstance;
     private String vid;
+    private String file;
     private OnStreamUriFetchedListener onStreamUriFetchedListener;
 
 
@@ -54,20 +55,22 @@ public class MusicStreamer {
         return this;
     }
 
-    public MusicStreamer setData(String v_id){
+    public MusicStreamer setData(String v_id,String file_name){
        this.vid = v_id;
+        this.file = file_name;
         return this;
     }
 
     public void initProcess(){
-        new StreamThread(this.vid).start();
+        new StreamThread(this.vid,this.file).start();
         log("started fetching uri");
     }
 
-    private void broadcastURI(String t_url) {
+    private void broadcastURI(String t_url,String file) {
 
             Intent intent = new Intent(AppConfig.ACTION_STREAM_URL_FETCHED);
             intent.putExtra(AppConfig.EXTRAA_URI, t_url);
+        intent.putExtra(AppConfig.EXTRAA_STREAM_FILE, file);
             context.sendBroadcast(intent);
         }
 
@@ -82,8 +85,10 @@ public class MusicStreamer {
     private class StreamThread extends Thread{
 
         private String v_id;
-        public StreamThread(String v_id) {
+        private String file;
+        public StreamThread(String v_id, String file) {
             this.v_id = v_id;
+            this.file = file;
         }
 
         @Override
@@ -113,8 +118,8 @@ public class MusicStreamer {
                         if(obj.getInt("status")==200){
                             t_url += obj.getString("url").substring(10);
                             log("download url:" + t_url);
-
-                            broadcastURI(t_url);
+                            onStreamUriFetchedListener.onUriAvailable(t_url);
+                            broadcastURI(t_url, file);
                         }else{
 
                         }

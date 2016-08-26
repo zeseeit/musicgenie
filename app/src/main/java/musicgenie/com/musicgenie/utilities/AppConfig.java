@@ -39,6 +39,7 @@ public class AppConfig extends Application {
     public static final String ACTION_STREAM_URL_FETCHED = "action_uri_fetched";
     public static final String EXTRAA_URI = "uri";
     private static final String TAG = "AppConfig";
+    public static final String EXTRAA_STREAM_FILE = "stream_file_name";
     private static Context context;
     private static AppConfig mInstance;
 

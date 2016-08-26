@@ -24,4 +24,6 @@
     <string name="title_activity_error_splash">ErrorSplashActivity</string>
     <string name="title_activity_user_preference_setting">UserPreferenceSetting</string>
     <string name="title_activity_main2">Main2Activity</string>
+    <string name="pauseStreamFontText"></string>
+    <string name="playStreamFontText"></string>
 </resources>
