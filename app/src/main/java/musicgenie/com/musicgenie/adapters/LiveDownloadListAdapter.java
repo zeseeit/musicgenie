@@ -36,7 +36,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         super(context, 0);
         this.context = context;
         downloadingList = new ArrayList<>();
-        tfIcon = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
+        tfIcon = FontManager.getInstance(context).getTypeFace(FontManager.FONT_AWESOME);
         raleway = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
 
     }

@@ -1,6 +1,8 @@
 package musicgenie.com.musicgenie.adapters;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.drm.ProcessedData;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -24,15 +26,15 @@ import musicgenie.com.musicgenie.models.ViewTypeModel;
 import musicgenie.com.musicgenie.utilities.AppConfig;
 import musicgenie.com.musicgenie.utilities.ConnectivityUtils;
 import musicgenie.com.musicgenie.utilities.FontManager;
-import musicgenie.com.musicgenie.utilities.SharedPrefrenceUtils;
+import musicgenie.com.musicgenie.utilities.MusicStreamer;
 
 /**
  * Created by Ankit on 8/21/2016.
  */
-public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>{
+public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private static final int TYPE_SONG = 0;
-    private static final int TYPE_SECTION_TITLE =1;
+    private static final int TYPE_SECTION_TITLE = 1;
     private static final String TAG = "TrendingRecylerAdapter";
     private static Context context;
     private static TrendingRecyclerViewAdapter mInstance;
@@ -43,6 +45,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     private int screenMode;
     private int viewToInflate;
     private TaskAddListener taskAddListener;
+    private OnStreamingSourceAvailableListener streamingPreparedListener;
 
     public TrendingRecyclerViewAdapter(Context context) {
         this.context = context;
@@ -80,7 +83,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         this.songs.clear();
         this.typeViewList.clear();
         addItem(null, type);
-        for(Song s: list){
+        for (Song s : list) {
             //  adding each item of type
             log("setSong() adding " + s.Title);
             addItem(s, "");
@@ -90,18 +93,17 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
     }
 
-    public void addItem(Song song , String section){   //     create view list
+    public void addItem(Song song, String section) {   //     create view list
         // if section is "" then it is song
         // else it is sectionType
-        if(section.equals("")){ // means it is song
-      //      log("add song:");
+        if (section.equals("")) { // means it is song
+            //      log("add song:");
             int index = songs.size();
             songs.add(song);
-            typeViewList.add(new ViewTypeModel(TYPE_SONG,"",index));
-        }
-        else{ //means it is Section Title
-    //        log("section:");
-            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
+            typeViewList.add(new ViewTypeModel(TYPE_SONG, "", index));
+        } else { //means it is Section Title
+            //        log("section:");
+            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE, section, -1));
         }
 
         //log("now typeViewList: \n\n");
@@ -116,16 +118,16 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     }
 
     private void log(String s) {
-        Log.d(TAG, "log>>"+s);
+        Log.d(TAG, "log>>" + s);
     }
 
-    public void setOrientation(int orientation){
+    public void setOrientation(int orientation) {
         this.orientation = orientation;
 //        Log.d(TAG, "setOrientation " + orientation);
     }
 
     private boolean isPortrait(int orientation) {
-        return orientation%2==0;
+        return orientation % 2 == 0;
     }
 
     @Override
@@ -133,14 +135,14 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         View view;
         //log("VH "+" rec = "+viewType);
-        if(viewType==TYPE_SECTION_TITLE){
+        if (viewType == TYPE_SECTION_TITLE) {
             int hvti = getHeaderViewToInflate();
             view = LayoutInflater.from(context).inflate(hvti, parent, false);
             log("returning section");
             return new SectionTitleViewHolder(view);
-        }else{
+        } else {
             int vti = getViewToInflate();   // getView depending on screen screen sizes
-            view = LayoutInflater.from(context).inflate(vti,parent,false);
+            view = LayoutInflater.from(context).inflate(vti, parent, false);
             log("returning song item");
             return new SongViewHolder(view);
         }
@@ -150,23 +152,23 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
         if (isPortrait(orientation)) {
             // check mode
-            if(this.screenMode==AppConfig.SCREEN_MODE_TABLET){
+            if (this.screenMode == AppConfig.SCREEN_MODE_TABLET) {
                 // means it is tablet with portrait
-    //            log("inflating portrait tablet");
+                //            log("inflating portrait tablet");
                 viewToInflate = R.layout.song_card_sw600;
-            }else{
+            } else {
                 // mobile with portrait
-      //          log("inflating portrait mobile");
+                //          log("inflating portrait mobile");
                 viewToInflate = R.layout.song_card_normal;
             }
-        }else{
-            if(this.screenMode== AppConfig.SCREEN_MODE_TABLET){
+        } else {
+            if (this.screenMode == AppConfig.SCREEN_MODE_TABLET) {
                 // means it is tablet with landscape
-        //        log("inflating landscape tablet");
+                //        log("inflating landscape tablet");
                 viewToInflate = R.layout.song_card_land_sw600;
-            }else{
+            } else {
                 // mobile with landscape
-          //      log("inflating landscape mobile");
+                //      log("inflating landscape mobile");
                 viewToInflate = R.layout.song_card_normal_land;
             }
 
@@ -174,27 +176,27 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         return viewToInflate;
     }
 
-    private int getHeaderViewToInflate(){
+    private int getHeaderViewToInflate() {
 
         int _temp_header_viewID = -1;
 
         if (isPortrait(orientation)) {
             // check mode
-            if(this.screenMode==AppConfig.SCREEN_MODE_TABLET){
+            if (this.screenMode == AppConfig.SCREEN_MODE_TABLET) {
                 // means it is tablet with portrait
-            //    log("[H] inflating portrait tablet");
-                 _temp_header_viewID = R.layout.section_header_layout_sw600;
-            }else{
+                //    log("[H] inflating portrait tablet");
+                _temp_header_viewID = R.layout.section_header_layout_sw600;
+            } else {
                 // mobile with portrait
-              //  log("[H] inflating portrait mobile");
+                //  log("[H] inflating portrait mobile");
                 _temp_header_viewID = R.layout.section_header_layout;
             }
-        }else{
-            if(this.screenMode==AppConfig.SCREEN_MODE_TABLET){
+        } else {
+            if (this.screenMode == AppConfig.SCREEN_MODE_TABLET) {
                 // means it is tablet with landscape
                 //log("[H] inflating landscape tablet");
                 _temp_header_viewID = R.layout.section_header_layout_land_sw600;
-            }else{
+            } else {
                 // mobile with landscape
                 //log("[H] inflating landscape mobile");
                 _temp_header_viewID = R.layout.section_header_layout_land;
@@ -213,10 +215,10 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         Typeface ralewayTfRegular = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
         Typeface ralewayTfBold = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_BOLD);
 
-        if(holder instanceof SongViewHolder){
+        if (holder instanceof SongViewHolder) {
 
             // bind section data
-          //  log("binding song " + position);
+            //  log("binding song " + position);
             Song song = songs.get(typeViewList.get(position).index);
             ((SongViewHolder) holder).title.setText(song.Title);
             ((SongViewHolder) holder).uploader.setText(song.UploadedBy);
@@ -239,7 +241,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             ((SongViewHolder) holder).uploader.setTypeface(ralewayTfRegular);
             ((SongViewHolder) holder).views.setTypeface(ralewayTfRegular);
 
-        }else{
+        } else {
             // binnd song data
             //log("binding header " + position);
             StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
@@ -258,13 +260,16 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
     @Override
     public int getItemViewType(int position) {
         //log("view type at"+position+" = "+typeViewList.get(position).viewType);
-       return typeViewList.get(position).viewType;
+        return typeViewList.get(position).viewType;
     }
 
     public void setOnTaskAddListener(TaskAddListener listener) {
         this.taskAddListener = listener;
     }
 
+    public void setOnStreamingSourceAvailable(OnStreamingSourceAvailableListener listener) {
+        this.streamingPreparedListener = listener;
+    }
 
     public void addDownloadTask(final String video_id, final String file_name) {
 
@@ -287,17 +292,23 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         return ConnectivityUtils.getInstance(context).isConnectedToNet();
     }
 
-    public static class SectionTitleViewHolder extends RecyclerView.ViewHolder{
+    public interface OnStreamingSourceAvailableListener {
+        void onPrepared(String uri);
+    }
+
+    public static class SectionTitleViewHolder extends RecyclerView.ViewHolder {
 
         TextView sectionTitle;
+
         public SectionTitleViewHolder(View itemView) {
             super(itemView);
             sectionTitle = (TextView) itemView.findViewById(R.id.section_title);
         }
     }
 
-    public static class SongViewHolder extends RecyclerView.ViewHolder{
+    public static class SongViewHolder extends RecyclerView.ViewHolder {
 
+        ProgressDialog progressDialoge;
         TextView downloadBtn;
         TextView uploader_icon;
         TextView views_icon;
@@ -308,6 +319,17 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         TextView title;
         TextView views;
         ImageView thumbnail;
+        MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
+            @Override
+            public void onUriAvailable(String uri) {
+                if (TrendingRecyclerViewAdapter.getInstance(context).streamingPreparedListener != null) {
+                    Log.d(TAG, "onUriAvailable : uri made available");
+                    TrendingRecyclerViewAdapter.getInstance(context).streamingPreparedListener.onPrepared(uri);
+                    //progressDialoge.dismiss();
+                }
+
+            }
+        };
 
         public SongViewHolder(View itemView) {
             super(itemView);
@@ -344,13 +366,41 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 public void onClick(View view) {
                     TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
                     int pos = getAdapterPosition();
-                    Log.d("Ada"," pos"+pos);
+                    Log.d("Ada", " pos" + pos);
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
                     adapter.log("adding download task");
                     TrendingRecyclerViewAdapter.getInstance(context).addDownloadTask(v_id, file_name);
                 }
             });
+
+            streamBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    progressDialoge = new ProgressDialog(context);
+
+                    progressDialoge.setMessage("Requesting For Stream....");
+                    progressDialoge.setCancelable(false);
+                    progressDialoge.show();
+
+                    TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
+                    int pos = getAdapterPosition();
+                    Log.d("Ada", " pos" + pos);
+                    String v_id = adapter.songs.get(pos).Video_id;
+                    String file_name = adapter.songs.get(pos).Title;
+                    adapter.log("fetch for streaming");
+
+                    // set Uri Fetched Listener to MusicStreamer
+                    MusicStreamer
+                            .getInstance(context)
+                            .setData(v_id)
+                            .setOnStreamUriFetchedListener(streamUriFetchedListener)
+                            .initProcess();
+                }
+            });
+
         }
+
+
     }
 }

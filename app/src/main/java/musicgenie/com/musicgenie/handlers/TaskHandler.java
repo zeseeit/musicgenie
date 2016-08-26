@@ -47,11 +47,11 @@ public class TaskHandler {
     private static final String TAG = "TaskHandler";
     private static Context context;
     private static TaskHandler mInstance;
+    private static Handler mHandler;
     private boolean isHandlerRunning = false;
     private int task_count = 0;
     private ProgressDialog progressDialog;
     private String dwnd_url;
-    private static Handler mHandler;
 
     public TaskHandler(Context context) {
         this.context = context;
@@ -451,6 +451,7 @@ public class TaskHandler {
             }
             this.currentProgress = progress;
         }
+
         public void broadcastUpdate(String progressPercentage ,String contentLen){
             Intent intent = new Intent(AppConfig.ACTION_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(AppConfig.EXTRA_TASK_ID,taskID);
@@ -458,6 +459,7 @@ public class TaskHandler {
             intent.putExtra(AppConfig.EXTRA_CONTENT_SIZE, contentLen);
             context.sendBroadcast(intent);
         }
+
         private void subscribeDownloadCancelListener(){
             LiveDownloadListAdapter.getInstance(context).setOnDownloadCancelListener(new DownloadCancelListener() {
                 @Override

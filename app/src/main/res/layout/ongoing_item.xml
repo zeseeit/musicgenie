@@ -56,12 +56,12 @@
         android:weightSum="3">
 
         <TextView
-            android:textColor="@color/PrimaryColor"
-            android:gravity="center"
-            android:text="C"
-            android:background="@drawable/cancel_btn"
             android:layout_width="30dp"
-            android:layout_height="30dp" />
+            android:layout_height="30dp"
+            android:background="@drawable/cancel_btn"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/PrimaryColor" />
 
         <TextView
             android:layout_width="match_parent"

@@ -36,6 +36,8 @@ public class AppConfig extends Application {
     public static final int SCREEN_ORIENTATION_PORTRAIT = 0;
     public static final int SCREEN_ORIENTATION_LANDSCAPE = 1;
     public static final String EXTRA_CONTENT_SIZE = "contentSize";
+    public static final String ACTION_STREAM_URL_FETCHED = "action_uri_fetched";
+    public static final String EXTRAA_URI = "uri";
     private static final String TAG = "AppConfig";
     private static Context context;
     private static AppConfig mInstance;

@@ -1,8 +1,17 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.app.Activity;
+import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -15,6 +24,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -28,6 +39,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -52,16 +64,25 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
     ProgressDialog progressDialog;
+    MediaPlayer mPlayer;
+    SeekBar streamSeeker;
+    TextView playPauseBtn;
+    TextView streamingItemTitle;
+    Boolean prepared = false;
     ListView resultListView;
     SearchResultListAdapter adapter;
     FloatingSearchView searchView = null;
     DrawerLayout mDrawerLayout;
+    private boolean isStreaming;
+    private boolean zygoteStreamer;
     private boolean mFloatingSearchViewSet;
     private FloatingActionButton fab;
     private HashMap<String, ArrayList<Song>> songMap;
     private TrendingRecyclerViewAdapter mRecyclerAdapter;
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager layoutManager;
+    private StreamUriBroadcastReceiver receiver;
+    private boolean mReceiverRegistered;
     // private ConnectivityBroadcastReceiver receiver;
 
     @Override
@@ -471,11 +492,11 @@ public class MainActivity extends AppCompatActivity {
 ////        mRecyclerAdapter.addSongs(list,"Rock");
 //          plugAdapter();
 //    }
-
     private void plugAdapter() {
         mRecyclerAdapter.setOrientation(getOrientation());
         mRecyclerAdapter.setScreenMode(screenMode());
         mRecyclerView.setAdapter(mRecyclerAdapter);
+        registerForBroadcastListen(this);
     }
 
     private int getOrientation() {
@@ -536,6 +557,73 @@ public class MainActivity extends AppCompatActivity {
         TrendingRecyclerViewAdapter.getInstance(this).setOnTaskAddListener(null);
     }
 
+    private void prepareStreaming(String uri){
+
+        Dialog streamDialog = new Dialog(this);
+       // View myLayout = LayoutInflater.from(context).inflate(R.layout.stream_layout, null);
+        streamDialog.setContentView(R.layout.stream_layout);
+        streamDialog.show();
+        streamingItemTitle = (TextView) findViewById(R.id.streamItemTitle);
+        playPauseBtn = (TextView) findViewById(R.id.playPauseBtn);
+        streamSeeker = (SeekBar) findViewById(R.id.streaming_audio_seekbar);
+        mPlayer = new MediaPlayer();
+        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+        final String uriToStream = uri;
+
+        new Player().execute(uriToStream);
+        log("playBtn "+playPauseBtn);
+//        playPauseBtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                if (!isStreaming) {
+//                    // btn.setBackgroundResource(R.drawable.button_pause);
+//                    if (zygoteStreamer)
+//                      new Player().execute(uriToStream);
+//                    else {
+//                        if (!mPlayer.isPlaying())
+//                            mPlayer.start();
+//                    }
+//                    isStreaming = true;
+//                } else {
+//                    //btn.setBackgroundResource(R.drawable.button_play);
+//                    if (mPlayer.isPlaying())
+//                        mPlayer.pause();
+//                    isStreaming = false;
+//                }
+//            }
+//        });
+//        streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+//            @Override
+//            public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
+//                if (prepared) {
+//                    mPlayer.seekTo(position);
+//                }
+//            }
+//
+//            @Override
+//            public void onStartTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//
+//            @Override
+//            public void onStopTrackingTouch(SeekBar seekBar) {
+//
+//            }
+//        });
+    }
+
+    private void registerForBroadcastListen(Context context) {
+        receiver = new StreamUriBroadcastReceiver();
+        context.registerReceiver(receiver, new IntentFilter(AppConfig.ACTION_STREAM_URL_FETCHED));
+        mReceiverRegistered = true;
+
+    }
+
+    private void unRegisterBroadcast() {
+        this.unregisterReceiver(receiver);
+        mReceiverRegistered = false;
+    }
+
     private void makeSnake(String msg) {
         Snackbar.make(resultListView, msg, Snackbar.LENGTH_LONG).show();
     }
@@ -546,5 +634,90 @@ public class MainActivity extends AppCompatActivity {
 
     public void log(String _lg) {
         Log.d(TAG, _lg);
+    }
+
+    class Player extends AsyncTask<String,Void,Boolean>{
+
+        Context context;
+        private ProgressDialog progressDialog;
+
+        public Player(Context context) {
+            this.context = context;
+        }
+        public Player() {
+            progressDialog = new ProgressDialog(MainActivity.this);
+        }
+
+        @Override
+        protected Boolean doInBackground(String... strings) {
+
+            try {
+                  MediaPlayer.create(MainActivity.this, Uri.parse(strings[0])).start();
+                  isStreaming = true;
+                  log("playing");
+                  mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+
+                      @Override
+                      public void onCompletion(MediaPlayer mediaPlayer) {
+                          zygoteStreamer = true;
+                          isStreaming = false;
+                          // change background resource to play
+                          mPlayer.stop();
+                          mPlayer.reset();
+                      }
+                });
+
+            } catch (IllegalArgumentException e) {
+                // TODO Auto-generated catch block
+                Log.d("IllegarArgument", e.getMessage());
+                prepared = false;
+                e.printStackTrace();
+            } catch (SecurityException e) {
+                // TODO Auto-generated catch block
+                prepared = false;
+                e.printStackTrace();
+            } catch (IllegalStateException e) {
+                // TODO Auto-generated catch block
+                prepared = false;
+                e.printStackTrace();
+            }
+
+
+            return prepared;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            // TODO Auto-generated method stub
+            super.onPostExecute(result);
+            if (progressDialog.isShowing()) {
+                progressDialog.cancel();
+            }
+            Log.d("Prepared", "//" + result);
+            zygoteStreamer = false;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            // TODO Auto-generated method stub
+            super.onPreExecute();
+            this.progressDialog.setMessage("Buffering...");
+            this.progressDialog.show();
+
+        }
+    }
+
+    public class StreamUriBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(AppConfig.ACTION_STREAM_URL_FETCHED)) {
+
+                log("update via broadcast: streaming uri fetched " + intent.getStringExtra(AppConfig.EXTRAA_URI));
+                if(!isStreaming)
+                prepareStreaming(intent.getStringExtra(AppConfig.EXTRAA_URI));
+            }
+        }
     }
 }
