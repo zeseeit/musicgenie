@@ -175,21 +175,6 @@
                     </RelativeLayout>
 
                 </LinearLayout>
-                <FrameLayout
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
-
-                    <TextView
-                        android:id="@+id/popUpMenuIcon"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:gravity="end|center_vertical"
-                        android:paddingRight="2dp"
-                        android:text="&#8942;"
-                        android:textSize="14dp" />
-
-                </FrameLayout>
             </LinearLayout>
 
 
