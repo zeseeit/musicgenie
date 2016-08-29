@@ -10,14 +10,41 @@
 
         <SeekBar
             android:paddingTop="10dp"
-            android:paddingBottom="10dp"
+            android:paddingBottom="0dp"
             android:id="@+id/streaming_audio_seekbar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:progress="10" />
+            android:progress="0" />
 
     </FrameLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:textColor="@color/PrimaryColor"
+            android:id="@+id/currentTrackPositionText"
+            android:text="00:00"
+            android:textSize="14sp"
+            android:paddingLeft="14dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:textColor="@color/PrimaryColor"
+            android:text="buffering..."
+            android:textSize="14sp"
+            android:paddingRight="14dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:id="@+id/totalTrackLengthText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -26,8 +53,9 @@
         android:weightSum="5">
 
         <TextView
+            android:textSize="16sp"
             android:paddingLeft="14dp"
-            android:paddingTop="0dp"
+            android:paddingTop="5dp"
             android:paddingRight="14dp"
             android:paddingBottom="20dp"
             android:id="@+id/streamItemTitle"
@@ -39,18 +67,7 @@
             android:text="aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
             android:textColor="@color/PrimaryColor" />
 
-        <TextView
-            android:visibility="gone"
-            android:paddingLeft="10dp"
-            android:paddingBottom="20dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/PrimaryColor"
-            android:id="@+id/playPauseBtn"
-            android:layout_width="36dp"
-            android:layout_height="match_parent"
-            android:textSize="16sp"
-            android:gravity="center"
-            android:text="@string/playStreamFontText" />
+
 
     </LinearLayout>
 

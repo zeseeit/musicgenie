@@ -88,7 +88,12 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
 
         artist.setText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST));
         title.setText(mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE));
-        int totalMillis = Integer.parseInt((mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+        int totalMillis = 0;
+        try {
+             totalMillis = Integer.parseInt((mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)));
+        } catch (Exception e){
+            log("exception while retrieving meta info");
+        }
         int minute = (totalMillis/1000)/60;
         int second = (totalMillis/1000)%60;
         String min = (String.valueOf(minute).length()==1)?"0"+String.valueOf(minute):String.valueOf(minute);

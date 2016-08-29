@@ -365,7 +365,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
                 @Override
                 public void onClick(View view) {
                     TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
-                    int pos = getAdapterPosition();
+                    int pos = getAdapterPosition() - 1;
                     //Log.d("Ada", " pos" + pos);
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
@@ -380,7 +380,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
 
                     TrendingRecyclerViewAdapter adapter = TrendingRecyclerViewAdapter.getInstance(context);
                     adapter.streamingSourceAvailableListener.optioned();
-                    int pos = getAdapterPosition();
+                    int pos = getAdapterPosition() - 1;
                    // Log.d("Ada", " pos" + pos);
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;

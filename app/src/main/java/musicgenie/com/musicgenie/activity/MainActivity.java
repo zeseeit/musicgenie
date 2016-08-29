@@ -11,6 +11,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -50,6 +51,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
@@ -72,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog progressDialog;
     MediaPlayer mPlayer;
     SeekBar streamSeeker;
+    TextView currentTrackPosition;
+    TextView totalTrackPosition;
     TextView playPauseBtn;
     TextView streamingItemTitle;
     Boolean prepared = false;
@@ -523,7 +528,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPrepared(String uri) {
 
 
-
             }
 
             @Override
@@ -567,6 +571,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerAdapter.setOrientation(newConfig.orientation);
         Log.e(TAG, " nConfigurationChanged to" + newConfig.orientation);
         mRecyclerView.setAdapter(mRecyclerAdapter);
+
         super.onConfigurationChanged(newConfig);
     }
 
@@ -600,6 +605,36 @@ public class MainActivity extends AppCompatActivity {
        // progressDialog.hide();
        // progressDialog.dismiss();
 
+        makeStreamingDialog(file_name);
+
+        final String uriToStream = uri;
+        isStreaming = true;
+//        playPauseBtn.setText(getResources().getString(R.string.pauseStreamFontText));
+        new Player().execute(uriToStream);
+        log("playBtn "+playPauseBtn);
+
+        streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
+
+                if (fromUser)
+                    mPlayer.seekTo(position);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+    }
+
+    private void makeStreamingDialog(String file_name) {
+
         Dialog streamDialog = new Dialog(this);
 
         streamDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -617,61 +652,27 @@ public class MainActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.stream_layout, (ViewGroup)findViewById(R.id.dialogParent));
 
+
         streamingItemTitle = (TextView) layout.findViewById(R.id.streamItemTitle);
-        playPauseBtn = (TextView) layout.findViewById(R.id.playPauseBtn);
+        // playPauseBtn = (TextView) layout.findViewById(R.id.playPauseBtn);
         streamSeeker = (SeekBar) layout.findViewById(R.id.streaming_audio_seekbar);
-        streamSeeker.setEnabled(false);
+        //streamSeeker.setEnabled(false);
+        Typeface tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        currentTrackPosition = (TextView) layout.findViewById(R.id.currentTrackPositionText);
+        totalTrackPosition = (TextView) layout.findViewById(R.id.totalTrackLengthText);
+        currentTrackPosition.setTypeface(tf);
+        totalTrackPosition.setTypeface(tf);
 
         streamSeeker.getProgressDrawable().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
         streamSeeker.getThumb().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
 
-        mPlayer = new MediaPlayer();
-        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+//        mPlayer = new MediaPlayer();
+//        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         streamingItemTitle.setText(file_name);
-        playPauseBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_AWESOME));
+        // playPauseBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_AWESOME));
         streamDialog.setTitle("Streaming...");
         streamDialog.setContentView(layout);
         streamDialog.show();
-
-
-        final String uriToStream = uri;
-        isStreaming = true;
-        playPauseBtn.setText(getResources().getString(R.string.pauseStreamFontText));
-        new Player().execute(uriToStream);
-        log("playBtn "+playPauseBtn);
-
-        playPauseBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                if(isStreaming){
-                    mPlayer.stop();
-                    mPlayer.reset();
-                    isStreaming = false;
-                }else{
-                    mPlayer.start();
-                }
-
-            }
-        });
-        streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int position, boolean b) {
-                if (prepared) {
-                    mPlayer.seekTo(position);
-                }
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-
-            }
-        });
     }
 
     private void registerForBroadcastListen(Context context) {
@@ -718,21 +719,27 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                  mPlayer =  MediaPlayer.create(MainActivity.this, Uri.parse(strings[0]));
+                 mPlayer.setScreenOnWhilePlaying(true);
                  log("playing");
                  mPlayer.start();
-                progressDialog.dismiss();
+
                 while(mPlayer.isPlaying()){
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            streamSeeker.setMax(mPlayer.getDuration());
-                            log("currently at " + mPlayer.getCurrentPosition());
-                            streamSeeker.setProgress(mPlayer.getCurrentPosition());
+                            int currentPos = mPlayer.getCurrentPosition();
+                            int total = mPlayer.getDuration();
+
+                            streamSeeker.setMax(total);
+                            log("currently at " + currentPos);
+                            currentTrackPosition.setText(getTimeFromMillisecond(currentPos));
+                            totalTrackPosition.setText(getTimeFromMillisecond(total));
+                            streamSeeker.setProgress(currentPos);
                         }
                     });
 
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
@@ -789,10 +796,34 @@ public class MainActivity extends AppCompatActivity {
         protected void onPreExecute() {
             // TODO Auto-generated method stub
             super.onPreExecute();
-            this.progressDialog.setMessage("Buffering...");
-            this.progressDialog.show();
+//            this.progressDialog.setMessage("Buffering...");
+//            this.progressDialog.show();
 
         }
+
+        private String getTimeFromMillisecond(int millis){
+            String hr = "";
+            String min="";
+            String  sec = "";
+            String time="";
+            int i_hr = (millis/1000)/3600;
+            int i_min = (millis/1000)/60;
+            int i_sec = (millis / 1000) % 60;
+
+            if(i_hr==0){
+                min = (String.valueOf(i_min).length()<2)?"0"+i_min:String.valueOf(i_min);
+                sec = (String.valueOf(i_sec).length()<2)?"0"+i_sec:String.valueOf(i_sec);
+                time = min +" : "+sec;
+            }else{
+                hr = (String.valueOf(i_hr).length()<2)?"0"+i_hr:String.valueOf(i_hr);
+                min = (String.valueOf(i_min).length()<2)?"0"+i_min:String.valueOf(i_min);
+                sec = (String.valueOf(i_sec).length()<2)?"0"+i_sec:String.valueOf(i_sec);
+                time =hr+" : "+ min +" : "+sec;
+            }
+
+            return time;
+        }
+
     }
 
     public class StreamUriBroadcastReceiver extends BroadcastReceiver {
