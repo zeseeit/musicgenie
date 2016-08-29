@@ -223,7 +223,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             ((SongViewHolder) holder).title.setText(song.Title);
             ((SongViewHolder) holder).uploader.setText(song.UploadedBy);
             ((SongViewHolder) holder).views.setText(song.UserViews);
-            ((SongViewHolder) holder).popMenuBtn.setText("\uF142");
+//            ((SongViewHolder) holder).popMenuBtn.setText("\uF142");
             ((SongViewHolder) holder).content_length.setText(song.TrackDuration);
             // loads thumbnail in async fashion
             if (connected()) Picasso.with(context)
@@ -234,7 +234,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             ((SongViewHolder) holder).downloadBtn.setTypeface(fontawesome);
             ((SongViewHolder) holder).uploader_icon.setTypeface(fontawesome);
             ((SongViewHolder) holder).views_icon.setTypeface(fontawesome);
-            ((SongViewHolder) holder).popMenuBtn.setTypeface(fontawesome);
+//            ((SongViewHolder) holder).popMenuBtn.setTypeface(fontawesome);
             //setting typeface to raleway
             ((SongViewHolder) holder).title.setTypeface(ralewayTfRegular);
             ((SongViewHolder) holder).content_length.setTypeface(ralewayTfRegular);
@@ -340,7 +340,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             downloadBtn = (TextView) itemView.findViewById(R.id.download_btn_card);
             uploader_icon = (TextView) itemView.findViewById(R.id.uploader_icon);
             views_icon = (TextView) itemView.findViewById(R.id.views_icon);
-            popMenuBtn = (TextView) itemView.findViewById(R.id.popUpMenuIcon);
+           // popMenuBtn = (TextView) itemView.findViewById(R.id.popUpMenuIcon);
             thumbnail = (ImageView) itemView.findViewById(R.id.Videothumbnail);
             streamBtn = (TextView) itemView.findViewById(R.id.stream_btn_card);
 
@@ -348,7 +348,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             downloadBtn.setTypeface(fontawesome);
             uploader_icon.setTypeface(fontawesome);
             views_icon.setTypeface(fontawesome);
-            popMenuBtn.setTypeface(fontawesome);
+            //popMenuBtn.setTypeface(fontawesome);
             // regular raleway
             content_length = (TextView) itemView.findViewById(R.id.song_time_length);
             uploader = (TextView) itemView.findViewById(R.id.uploader_name);

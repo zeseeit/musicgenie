@@ -152,7 +152,7 @@ public class SectionedListViewTest extends AppCompatActivity{
         uploader.setTypeface(ralewayTf);
         views.setTypeface(ralewayTf);
         // plain text
-        TextView popMenuBtn = (TextView) findViewById(R.id.popUpMenuIcon);
+       // TextView popMenuBtn = (TextView) findViewById(R.id.popUpMenuIcon);
 
 
 

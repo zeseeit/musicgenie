@@ -222,11 +222,11 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         downloadBtn = (TextView) v.findViewById(R.id.download_btn_card);
         uploader_icon = (TextView) v.findViewById(R.id.uploader_icon);
         views_icon = (TextView) v.findViewById(R.id.views_icon);
-        popMenuBtn = (TextView) v.findViewById(R.id.popUpMenuIcon);
+      //  popMenuBtn = (TextView) v.findViewById(R.id.popUpMenuIcon);
         downloadBtn.setTypeface(fontawesome);
         uploader_icon.setTypeface(fontawesome);
         views_icon.setTypeface(fontawesome);
-        popMenuBtn.setTypeface(fontawesome);
+        //popMenuBtn.setTypeface(fontawesome);
         // regular raleway
         content_length = (TextView) v.findViewById(R.id.song_time_length);
         uploader = (TextView) v.findViewById(R.id.uploader_name);
