@@ -33,8 +33,8 @@
 
                 <TextView
                     android:id="@+id/stream_btn_card"
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_gravity="center"
                     android:layout_marginRight="26dp"
                     android:background="@drawable/stream_btn_on_card"
@@ -45,8 +45,8 @@
 
                 <TextView
                     android:id="@+id/download_btn_card"
-                    android:layout_width="34dp"
-                    android:layout_height="34dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="26dp"
                     android:background="@drawable/download_btn_on_card"
@@ -83,6 +83,7 @@
             android:padding="10dp">
 
             <FrameLayout
+                android:layout_marginTop="4dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="2dp"
@@ -116,6 +117,8 @@
                     android:weightSum="2">
 
                     <RelativeLayout
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
                       android:layout_width="match_parent"
                       android:layout_height="14dp"
                       android:layout_weight="1">
@@ -142,6 +145,8 @@
                   </RelativeLayout>
 
                     <RelativeLayout
+                        android:layout_marginBottom="4dp"
+                        android:layout_marginTop="4dp"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="1">

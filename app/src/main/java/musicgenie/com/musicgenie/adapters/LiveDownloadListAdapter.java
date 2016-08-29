@@ -74,7 +74,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
         progressText = (TextView) v.findViewById(R.id.progressText);
         progressBar.setIndeterminate(false);
-        cancelBtn = (TextView) v.findViewById(R.id.cancel_btn_text);
+        cancelBtn = (TextView) v.findViewById(R.id.cancel_btn_ongoing_dnd);
         taskTitle = (TextView) v.findViewById(R.id.download_task_title);
         contentSizeMB = (TextView) v.findViewById(R.id.content_size_MB);
         contentSizeMB.setText(downloadingList.get(position).contentSize);

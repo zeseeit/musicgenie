@@ -60,6 +60,7 @@
             android:paddingBottom="20dp"
             android:id="@+id/streamItemTitle"
             android:layout_width="0dp"
+            android:layout_marginBottom="4dp"
             android:layout_height="match_parent"
             android:layout_weight="5"
             android:gravity="center_vertical"
