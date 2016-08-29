@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -90,7 +91,9 @@ public class SectionedListViewAdapter extends ArrayAdapter<String> {
             typeViewList.add(new ViewTypeModel(TYPE_SONG,"",index));
         }
         else{ //means it is Section Title
-            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
+            String section_format = section.substring(0,1).toUpperCase()+section.substring(1);
+            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section_format,-1));
+            Toast.makeText(getContext(),section,Toast.LENGTH_SHORT).show();
         }
 
     }

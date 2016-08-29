@@ -246,7 +246,8 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             //log("binding header " + position);
             StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
             layoutParams.setFullSpan(true);
-            ((SectionTitleViewHolder) holder).sectionTitle.setText(typeViewList.get(position).sectionTitle);
+            String section_format = typeViewList.get(position).sectionTitle.substring(0,1).toUpperCase()+typeViewList.get(position).sectionTitle.substring(1);
+            ((SectionTitleViewHolder) holder).sectionTitle.setText(section_format);
             ((SectionTitleViewHolder) holder).sectionTitle.setTypeface(ralewayTfRegular);
         }
 

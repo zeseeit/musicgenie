@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,6 +79,7 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         while(iterator.hasNext()){
             Map.Entry pair = (Map.Entry) iterator.next();
             log("adding section title "+pair.getKey());
+            Log.e("Section",pair.getKey().toString());
             addItem(null,pair.getKey().toString());
 
             for(Song sg: map.get(pair.getKey())){
@@ -126,7 +128,8 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
         }
         else{ //means it is Section Title
             log("section:");
-            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section,-1));
+            String section_format = section.substring(0,1).toUpperCase()+section.substring(1);
+            typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE,section_format,-1));
         }
 
         log("now typeViewList: \n\n");
@@ -186,7 +189,11 @@ public class TrendingItemsGridAdapter extends BaseAdapter {
     private void bindHeader(int position) {
 
         log("binding header "+position);
-        sectionTitle.setText(typeViewList.get(position).sectionTitle);
+        String title = typeViewList.get(position).sectionTitle;
+        String section_format = title.substring(0,1).toUpperCase()+title.substring(1);
+
+        sectionTitle.setText(typeViewList.get(position).sectionTitle.toUpperCase());
+
 
     }
 
