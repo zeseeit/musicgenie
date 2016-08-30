@@ -85,7 +85,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
         addItem(null, type);
         for (Song s : list) {
             //  adding each item of type
-            log("setSong() adding " + s.Title);
+           // log("setSong() adding " + s.Title);
             addItem(s, "");
         }
 
@@ -325,7 +325,7 @@ public class TrendingRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVi
             @Override
             public void onUriAvailable(String uri) {
                 if (TrendingRecyclerViewAdapter.getInstance(context).streamingSourceAvailableListener != null) {
-                    Log.d(TAG, "onUriAvailable : uri made available");
+                   // Log.d(TAG, "onUriAvailable : uri made available");
                     TrendingRecyclerViewAdapter.getInstance(context).streamingSourceAvailableListener.onPrepared(uri);
                 }
 

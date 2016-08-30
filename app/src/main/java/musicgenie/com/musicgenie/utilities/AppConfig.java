@@ -40,6 +40,7 @@ public class AppConfig extends Application {
     public static final String EXTRAA_URI = "uri";
     private static final String TAG = "AppConfig";
     public static final String EXTRAA_STREAM_FILE = "stream_file_name";
+    public static final String EXTRAA_ACTIVITY_PRE_LOAD_FLAG = "actvity_preloaded";
     private static Context context;
     private static AppConfig mInstance;
 

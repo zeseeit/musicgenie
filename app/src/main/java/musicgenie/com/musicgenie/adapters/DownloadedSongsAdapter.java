@@ -70,7 +70,7 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
 
         title = (TextView) view.findViewById(R.id.song_title);
         duration = (TextView) view.findViewById(R.id.content_time_length);
-        fileSize = (TextView) view.findViewById(R.id.fileSize);
+        //fileSize = (TextView) view.findViewById(R.id.fileSize);
         albumArt = (ImageView) view.findViewById(R.id.albumArt);
         artist = (TextView) view.findViewById(R.id.artist);
         final android.media.MediaMetadataRetriever mmr= new MediaMetadataRetriever();

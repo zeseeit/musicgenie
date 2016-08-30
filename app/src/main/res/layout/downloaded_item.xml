@@ -20,7 +20,7 @@
             android:layout_centerVertical="true"
             android:background="#009988"
             android:id="@+id/albumArt_frame"
-            android:layout_width="60dp"
+            android:layout_width="60dp  "
             android:layout_height="45dp">
 
             <RelativeLayout
@@ -104,20 +104,6 @@
                     android:layout_height="match_parent" />
             </FrameLayout>
 
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_weight="1.5"
-                android:layout_height="0dp">
-                <TextView
-                    android:id="@+id/fileSize"
-                    android:textColor="@color/ExtraInfoTextColor"
-                    android:textSize="10dp"
-                    android:text="5.65 MB"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" />
-            </FrameLayout>
-
         </LinearLayout>
             <LinearLayout
                 android:paddingLeft="4dp"
@@ -127,6 +113,13 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent">
 
+                <TextView
+                    android:textColor="@color/PrimaryColor"
+                    android:textSize="30dp"
+                    android:gravity="center"
+                    android:text="P"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
 
 
             </LinearLayout>

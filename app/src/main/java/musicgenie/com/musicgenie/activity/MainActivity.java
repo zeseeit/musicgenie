@@ -1,5 +1,9 @@
 package musicgenie.com.musicgenie.activity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -12,6 +16,7 @@ import android.content.res.Configuration;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -54,6 +59,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import musicgenie.com.musicgenie.Helpers.SearchSuggestionHelper;
 import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.notification.AlertDialogManager;
@@ -95,14 +101,22 @@ public class MainActivity extends AppCompatActivity {
     private StreamUriBroadcastReceiver receiver;
     private boolean mReceiverRegistered;
     private boolean musicIntentLaunched;
+    private String mLastQuery = "";
     // private ConnectivityBroadcastReceiver receiver;
+
+    @Override
+    protected void onStop() {
+        log("onStop()");
+        super.onStop();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        log("onCreate() i "+savedInstanceState);
         setContentView(R.layout.activity_home);
         // make dirs
-        configure();
+        configure(savedInstanceState);
         // load trending on preferences
         loadTrendingSongs(savedInstanceState);
         // reload previous loaded
@@ -118,6 +132,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+
+       searchView.setSearchFocused(false);
+
         log("back Pressed Player " + isStreaming);
         if(isStreaming){
             mPlayer.stop();
@@ -129,6 +146,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         log("saving back map");
+        outState.putBoolean(AppConfig.EXTRAA_ACTIVITY_PRE_LOAD_FLAG, true);
         outState.putSerializable("mapSong", songMap);
     }
 
@@ -138,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             log("its first load");
             checkPendings();
         }else{
+            log("its not first load");
             // means it is reload/orientation change
             // load previous data if any
             if(savedInstanceState.getSerializable("mapSong")!=null){
@@ -157,11 +176,7 @@ public class MainActivity extends AppCompatActivity {
                     mRecyclerAdapter.appendSongs(map.get(pair.getKey()), pair.getKey().toString());
                 }
             }
-
-
         }
-
-
     }
 
     private void init() {
@@ -180,26 +195,31 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void configure() {
-        log("making dirs");
-        AppConfig.getInstance(this).configureDevice();
+    private void configure(Bundle savedInstance) {
+        if(savedInstance==null) {
+            log("making dirs");
+            AppConfig.getInstance(this).configureDevice();
+        }
     }
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+        log("onRestoreInstance() i "+savedInstanceState);
         reload(savedInstanceState);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        log("onResume()");
         if(!mFloatingSearchViewSet)setSearchView();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        log("onPause()");
         unsubscribeToTaskAddListener();
         //unRegisterBroadcast();
     }
@@ -218,32 +238,86 @@ public class MainActivity extends AppCompatActivity {
         mFloatingSearchViewSet = true;
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
+
+
             @Override
             public void onSearchTextChanged(String s, String s1) {
-               // log("query changed from " + s + " to " + s1);
-            }
+                // log("query changed from " + s + " to " + s1);
+
+
+                if (!s.equals("") && s1.equals("")) {
+                    searchView.clearSuggestions();
+                }else
+                {
+                searchView.showProgress();
+
+                SearchSuggestionHelper.getInstance(MainActivity.this).findSuggestion(s1, new SearchSuggestionHelper.OnFindSuggestionListener() {
+                    @Override
+                    public void onResult(ArrayList<musicgenie.com.musicgenie.models.SearchSuggestion> list) {
+                        searchView.swapSuggestions(list);
+                        searchView.hideProgress();
+                    }
+                });
+            }}
         });
 
 
         searchView.setOnSearchListener(new FloatingSearchView.OnSearchListener() {
             @Override
-            public void onSuggestionClicked(SearchSuggestion searchSuggestion) {
-                log("suggestion clicked");
+            public void onSuggestionClicked(final SearchSuggestion searchSuggestion) {
+                fireSearch(searchSuggestion.getBody());
+                mLastQuery = searchSuggestion.getBody();
             }
 
             @Override
-            public void onSearchAction(String s) {
-                log("search action clicked");
-                fireSearch(s);
+            public void onSearchAction(String query) {
+                mLastQuery = query;
+                //fireSearch(query);
+                Log.d(TAG, "onSearchAction()");
             }
         });
 
-        searchView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View view, boolean b) {
-                log("onFocusChange()");
-            }
-        });
+
+//        searchView.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
+//            @Override
+//            public void onFocus() {
+//                int headerHeight = getResources().getDimensionPixelOffset(R.dimen.sliding_search_view_header_height);
+//                ObjectAnimator anim = ObjectAnimator.ofFloat(searchView, "translationY",
+//                        headerHeight, 0);
+//                anim.setDuration(350);
+//                //fadeDimBackground(0, 150, null);
+//                anim.addListener(new AnimatorListenerAdapter() {
+//
+//                    @Override
+//                    public void onAnimationEnd(Animator animation) {
+//                        //show suggestions when search bar gains focus (typically history suggestions)
+//                        searchView.swapSuggestions(SearchSuggestionHelper.getHistory(MainActivity.this));
+//
+//                    }
+//                });
+//                anim.start();
+//
+//                Log.d(TAG, "onFocus()");
+//            }
+//
+//            @Override
+//            public void onFocusCleared() {
+//                int headerHeight = getResources().getDimensionPixelOffset(R.dimen.sliding_search_view_header_height);
+//                ObjectAnimator anim = ObjectAnimator.ofFloat(searchView, "translationY",
+//                        0, headerHeight);
+//                anim.setDuration(350);
+//                anim.start();
+//                // fade back ground call
+//                //set the title of the bar so that when focus is returned a new query begins
+//                searchView.setSearchBarTitle(mLastQuery);
+//
+//                //you can also set setSearchText(...) to make keep the query there when not focused and when focus returns
+//                //mSearchView.setSearchText(searchSuggestion.getBody());
+//
+//                Log.d(TAG, "onFocusCleared()");
+//            }
+//        });
+
         searchView.setOnMenuItemClickListener(new FloatingSearchView.OnMenuItemClickListener() {
             @Override
             public void onActionMenuItemSelected(MenuItem menuItem) {
@@ -256,18 +330,14 @@ public class MainActivity extends AppCompatActivity {
                     Intent i = new Intent(MainActivity.this, DowloadsActivity.class);
                     startActivity(i);
                 }
-
-                if (id == R.id.testPage) {
-                    Intent i = new Intent(MainActivity.this, SectionedListViewTest.class);
-                    startActivity(i);
-                }
-
             }
         });
 
 
 
     }
+
+
 
     public void AddSuggestionToSharedPreferences(String suggestion) {
 
@@ -322,7 +392,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void parseSearchResults(String response) {
 
-        log("got result " + response);
+        //log("got result " + response);
         ArrayList<Song> songs = new ArrayList<>();
         // parse youtube results
 
@@ -352,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
         subscribeToTaskAddListener();
         songMap.put("Results", songs);
-        log("adding results to adapter");
+       // log("adding results to adapter");
         plugAdapter();
         mRecyclerAdapter.setSongs(songs, "Results");
 
