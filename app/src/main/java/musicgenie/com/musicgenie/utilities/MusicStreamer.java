@@ -95,12 +95,14 @@ public class MusicStreamer {
         public void run() {
 
             final String t_v_id = this.v_id;
-            String t_url = AppConfig.SERVER_URL+ "/api/v1/stream?";
+            String streaming_url_pref = AppConfig.SERVER_URL;
 
                 try {
     // getting download url
-                    String _url = AppConfig.SERVER_URL + "/api/v1/g?url=" + t_v_id;
-                    log("for dwnd url requesting on "+_url);
+                    //=http://ymp3.aavi.me/api/v1/stream?url=fSR3dG4kPCIkanZ2cnU8MTF0NC8vL3VwL3I3c251cHV7MGlxcWluZ3hrZmdxMGVxbzF4a2ZncXJuY3tkY2VtQXdycD9IaktLZWhvVDZFZShrdmNpPzM2Mih1cmN0Y291P2VuZ3AnNEVmd3QnNEVnayc0RWlldCc0RWlrdCc0RWtmJzRFa3BrdmV5cGZkcnUnNEVrcic0RWtyZGt2dSc0RWt2Y2knNEVtZ2dyY25reGcnNEVub3YnNEVva29nJzRFb28nNEVvcCc0RW91JzRFb3gnNEVwaic0RXJuJzRFdGdzd2t0Z3V1bic0RXVxd3RlZyc0RXdycCc0RWd6cmt0Zyhvdj8zNjk0ODU0Nzs0KHV4Z3Q_NShpZXQ_d3UoZ3pya3RnPzM2OTQ4NzY3OjgodGdzd2t0Z3V1bj97Z3Uoa3BrdmV5cGZkcnU_OTg6ODQ3MihtZ3s_e3Y4KGlrdD97Z3Uob2tvZz9jd2ZrcSc0SG9yNihtZ2dyY25reGc_e2d1KHBqP0tpcnllbEN6Tm9ualxGSzRNaW16T2xld09FNnlObEcoZW5ncD80Ozc5Ozo2KGZ3dD8zOjgwNDIyKG5vdj8zNjc6NDI0NDU6ODg3Mzc1KHVxd3RlZz97cXd2d2RnKGtyPzc2MDo2MDIwMzo7KG91P2N3KGdrP29ybElYOHhZT1tjezppVlt7cXBDREMob3g_byhybj8zNyhrcmRrdnU_MihrZj9xL0NDUmZ1UlhpXHVMTG9ONEN4dlRNVHFudDROOHV1e3o3a2tWdGlaNllMenBVKG9wP3VwL3I3c251cHV7KG9vPzUzKHVraXBjdnd0Zz86MkU7NDg0RUdGMzVEMjQ1OzZEOTUyQzI4OUY7RUY3NDNFMjNDQzg3MDpDSDYyNUhHOEg7RkZGNjY7OTpDREg2M0c7OzU7OTcyNUY0NzlDNjsodGN2Z2R7cmN1dT97Z3UkLiIkbmdwaXZqJDwiJDU8MjkkLiIka2YkPCIkbVpba1dhTEVbdlckLiIkdmt2bmckPCIkUHdvZCIqUWhoa2VrY24iWGtmZ3ErIi8iTmtwbWtwIlJjdG0kfw%3D%3D
+
+                    String _url = AppConfig.SERVER_URL + "/api/v1/stream?url=" + t_v_id;
+                    log("for stream url requesting on "+_url);
                     URL u = new URL(_url);
                     URLConnection dconnection = u.openConnection();
                     dconnection.setReadTimeout(20000);
@@ -116,10 +118,10 @@ public class MusicStreamer {
                     try {
                         JSONObject obj = new JSONObject(result.toString());
                         if(obj.getInt("status")==200){
-                            t_url += obj.getString("url").substring(10);
-                            log("download url:" + t_url);
-                            onStreamUriFetchedListener.onUriAvailable(t_url);
-                            broadcastURI(t_url, file);
+                            streaming_url_pref += obj.getString("url");
+                            log("stream url:" + streaming_url_pref);
+                            onStreamUriFetchedListener.onUriAvailable(streaming_url_pref);
+                            broadcastURI(streaming_url_pref, file);
                         }else{
 
                         }
