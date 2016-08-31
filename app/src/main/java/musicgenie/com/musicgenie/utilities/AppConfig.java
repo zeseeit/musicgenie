@@ -41,6 +41,7 @@ public class AppConfig extends Application {
     private static final String TAG = "AppConfig";
     public static final String EXTRAA_STREAM_FILE = "stream_file_name";
     public static final String EXTRAA_ACTIVITY_PRE_LOAD_FLAG = "actvity_preloaded";
+    public static final String FLAG_STREAMING_CONTINUED = "streamingWillContinue";
     private static Context context;
     private static AppConfig mInstance;
 

@@ -27,11 +27,4 @@ public class StreamDialog extends Dialog {
         return mInstance;
     }
 
-    @Override
-    public void setContentView(int layoutResID) {
-        View myLayout = LayoutInflater.from(context).inflate(R.layout.stream_layout, null);
-        super.setContentView(myLayout);
-    }
-
-
 }

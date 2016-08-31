@@ -21,6 +21,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.support.annotation.MainThread;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -60,7 +61,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import musicgenie.com.musicgenie.Helpers.SearchSuggestionHelper;
+import musicgenie.com.musicgenie.MusicGenieMediaPlayer;
 import musicgenie.com.musicgenie.adapters.TrendingRecyclerViewAdapter;
+import musicgenie.com.musicgenie.customViews.StreamDialog;
 import musicgenie.com.musicgenie.interfaces.TaskAddListener;
 import musicgenie.com.musicgenie.notification.AlertDialogManager;
 import musicgenie.com.musicgenie.utilities.AppConfig;
@@ -83,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
     SeekBar streamSeeker;
     TextView currentTrackPosition;
     TextView totalTrackPosition;
-    TextView playPauseBtn;
+    TextView cancelStreamingBtn;
     TextView streamingItemTitle;
     Boolean prepared = false;
     ListView resultListView;
@@ -102,18 +105,25 @@ public class MainActivity extends AppCompatActivity {
     private boolean mReceiverRegistered;
     private boolean musicIntentLaunched;
     private String mLastQuery = "";
-    // private ConnectivityBroadcastReceiver receiver;
+    private Dialog streamDialog;
 
     @Override
     protected void onStop() {
         log("onStop()");
         super.onStop();
+        // dismiss dialog befor stop to rescue from leakage
+        if (streamDialog != null) {
+            streamDialog.hide();
+            streamDialog.dismiss();
+        }
+
+        unRegisterBroadcast();
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        log("onCreate() i "+savedInstanceState);
+        log("onCreate()");
         setContentView(R.layout.activity_home);
         // make dirs
         configure(savedInstanceState);
@@ -125,54 +135,55 @@ public class MainActivity extends AppCompatActivity {
         setSearchView();
         // floating action button
         //TODO: FAB can be removed
-       // pinFAB();
+        // pinFAB();
 
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
+        searchView.setSearchFocused(false);
 
-       searchView.setSearchFocused(false);
-
-        log("back Pressed Player " + isStreaming);
-        if(isStreaming){
-            mPlayer.stop();
-            mPlayer.reset();
-        }
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        log("saving back map");
+        log("onSavedInstanceState()");
         outState.putBoolean(AppConfig.EXTRAA_ACTIVITY_PRE_LOAD_FLAG, true);
+
+        // flag for re-creating dialog
+        if (isStreaming) {
+            log("saving flag to cont... streaming ");
+            SharedPrefrenceUtils.getInstance(this).setFlagForContinuedStreaming(true);
+        }
+
         outState.putSerializable("mapSong", songMap);
     }
 
     private void reload(Bundle savedInstanceState) {
-        if(savedInstanceState==null){
+        if (savedInstanceState == null) {
             // means it is first time app load
-            log("its first load");
+            // log("its first load");
             checkPendings();
-        }else{
-            log("its not first load");
+        } else {
+            //log("its not first load");
             // means it is reload/orientation change
             // load previous data if any
-            if(savedInstanceState.getSerializable("mapSong")!=null){
+            if (savedInstanceState.getSerializable("mapSong") != null) {
                 //  get map and iterate through it and grab songs
                 // add to adapter and plug it
                 mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
                 mRecyclerAdapter.setSongs(null, "");
                 init();
                 subscribeToTaskAddListener();
-                HashMap<String,ArrayList<Song>> map = (HashMap<String, ArrayList<Song>>) savedInstanceState.getSerializable("mapSong");
+                HashMap<String, ArrayList<Song>> map = (HashMap<String, ArrayList<Song>>) savedInstanceState.getSerializable("mapSong");
                 Iterator iterator = map.entrySet().iterator();
-                while(iterator.hasNext()) {
+                while (iterator.hasNext()) {
                     Map.Entry pair = (Map.Entry) iterator.next();
-                    log("reading hashmap for key "+pair.getKey().toString());
+                    log("reading hashmap for key " + pair.getKey().toString());
                     log("adding songs");
-                    songMap.put(pair.getKey().toString(),map.get(pair.getKey()));
+                    songMap.put(pair.getKey().toString(), map.get(pair.getKey()));
                     mRecyclerAdapter.appendSongs(map.get(pair.getKey()), pair.getKey().toString());
                 }
             }
@@ -184,9 +195,9 @@ public class MainActivity extends AppCompatActivity {
         songMap = new HashMap<>();
 
         if (isPortrait(getOrientation())) {
-            if(screenMode()==AppConfig.SCREEN_MODE_MOBILE){
+            if (screenMode() == AppConfig.SCREEN_MODE_MOBILE) {
                 setUpRecycler(2);
-            }else{
+            } else {
                 setUpRecycler(3);
             }
         } else {
@@ -196,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void configure(Bundle savedInstance) {
-        if(savedInstance==null) {
+        if (savedInstance == null) {
             log("making dirs");
             AppConfig.getInstance(this).configureDevice();
         }
@@ -205,7 +216,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        log("onRestoreInstance() i "+savedInstanceState);
+        log("onRestoreInstance()");
+
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+        if (!utils.getCurrentStreamingItem().equals("")) {
+            log("Streaming....");
+            makeStreamingDialog(utils.getCurrentStreamingItem());
+        }
+
         reload(savedInstanceState);
     }
 
@@ -213,7 +231,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         log("onResume()");
-        if(!mFloatingSearchViewSet)setSearchView();
+        if (!mFloatingSearchViewSet) setSearchView();
+        if (!mReceiverRegistered) {
+            registerForBroadcastListen(this);
+        }
+
     }
 
     @Override
@@ -221,14 +243,21 @@ public class MainActivity extends AppCompatActivity {
         super.onPause();
         log("onPause()");
         unsubscribeToTaskAddListener();
-        //unRegisterBroadcast();
     }
 
-    public void checkPendings(){
+    @Override
+    protected void onDestroy() {
+        log("onDestroy()");
+        //SharedPrefrenceUtils.getInstance(this).setCurrentStreamingItem("");
+        super.onDestroy();
+
+    }
+
+    public void checkPendings() {
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
-        if(utils.getCurrentDownloadsCount()==0){ // check for on-going download process
-            int pendingCount = new Segmentor().getParts(utils.getTaskSequence(),'#').size();
-            if(pendingCount>0){
+        if (utils.getCurrentDownloadsCount() == 0) { // check for on-going download process
+            int pendingCount = new Segmentor().getParts(utils.getTaskSequence(), '#').size();
+            if (pendingCount > 0) {
                 AlertDialogManager.getInstance(this).popAlertForPendings(pendingCount);
             }
         }
@@ -242,23 +271,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSearchTextChanged(String s, String s1) {
-                // log("query changed from " + s + " to " + s1);
-
-
                 if (!s.equals("") && s1.equals("")) {
                     searchView.clearSuggestions();
-                }else
-                {
-                searchView.showProgress();
+                } else {
 
-                SearchSuggestionHelper.getInstance(MainActivity.this).findSuggestion(s1, new SearchSuggestionHelper.OnFindSuggestionListener() {
-                    @Override
-                    public void onResult(ArrayList<musicgenie.com.musicgenie.models.SearchSuggestion> list) {
-                        searchView.swapSuggestions(list);
-                        searchView.hideProgress();
-                    }
-                });
-            }}
+                    searchView.showProgress();
+                    SearchSuggestionHelper.getInstance(MainActivity.this).findSuggestion(s1, new SearchSuggestionHelper.OnFindSuggestionListener() {
+                        @Override
+                        public void onResult(ArrayList<musicgenie.com.musicgenie.models.SearchSuggestion> list) {
+                            searchView.swapSuggestions(list);
+                            searchView.hideProgress();
+                        }
+                    });
+                }
+            }
         });
 
 
@@ -272,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSearchAction(String query) {
                 mLastQuery = query;
-                //fireSearch(query);
+                fireSearch(query);
                 Log.d(TAG, "onSearchAction()");
             }
         });
@@ -334,9 +360,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
-
     }
-
 
 
     public void AddSuggestionToSharedPreferences(String suggestion) {
@@ -349,7 +373,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public ArrayList<String> getSuggestionList(){
+    public ArrayList<String> getSuggestionList() {
         ArrayList<String> suggs;
         String _s = SharedPrefrenceUtils.getInstance(this).getSuggestionList();
         suggs = new Segmentor().getParts(_s, '#');
@@ -404,7 +428,7 @@ public class MainActivity extends AppCompatActivity {
             JSONArray results = rootObj.getJSONArray("results");
             for (int i = 0; i < results_count; i++) {
                 String enc_v_id = results.getJSONObject(i).getString("get_url").substring(14);
-               // log("===? v id >" + enc_v_id);
+                // log("===? v id >" + enc_v_id);
                 songs.add(new Song(results.getJSONObject(i).getString("title"),
                         results.getJSONObject(i).getString("length"),
                         results.getJSONObject(i).getString("uploader"),
@@ -422,14 +446,15 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerAdapter = TrendingRecyclerViewAdapter.getInstance(this);
         subscribeToTaskAddListener();
         songMap.put("Results", songs);
-       // log("adding results to adapter");
+        // log("adding results to adapter");
         plugAdapter();
         mRecyclerAdapter.setSongs(songs, "Results");
 
     }
 
     private void loadTrendingSongs(Bundle saved) {
-        if (!SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio() || saved!=null)return; // user denied for trending load
+        if (!SharedPrefrenceUtils.getInstance(this).getOptionForTrendingAudio() || saved != null)
+            return; // user denied for trending load
         // saved!=null  means it is back-navigation from another activity and its not the first time.
 
         progressDialog = new ProgressDialog(this);
@@ -473,7 +498,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void parseTrendingResults(String response,boolean lastItemLoaded) {
+    private void parseTrendingResults(String response, boolean lastItemLoaded) {
 
         ArrayList<Song> songs = new ArrayList<>();
         String type = "Results";
@@ -511,8 +536,8 @@ public class MainActivity extends AppCompatActivity {
         //songMap.put(type,songs);
         // set adapter
         // plug adapter once all songs has been loaded
-        songMap.put(type,songs);
-        if(lastItemLoaded){
+        songMap.put(type, songs);
+        if (lastItemLoaded) {
             plugAdapter();
             mRecyclerAdapter.appendSongs(songs, type);
             progressDialog.dismiss();
@@ -578,7 +603,8 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerView.setLayoutManager(layoutManager);
         plugAdapter();
     }
-//
+
+    //
 //    private void puffRecyclerWithData(){
 ////        mRecyclerAdapter.addSongs(list, "Pop");
 ////        mRecyclerAdapter.addSongs(list,"Rock");
@@ -588,7 +614,7 @@ public class MainActivity extends AppCompatActivity {
         mRecyclerAdapter.setOrientation(getOrientation());
         mRecyclerAdapter.setScreenMode(screenMode());
         mRecyclerView.setAdapter(mRecyclerAdapter);
-        registerForBroadcastListen(this);
+        //registerForBroadcastListen(this);
         subscribeForStreamOption(mRecyclerAdapter);
     }
 
@@ -597,6 +623,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPrepared(String uri) {
 
+
+                progressDialog.dismiss();
 
             }
 
@@ -637,13 +665,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
 
+        log("conf changed pre view");
         setContentView(R.layout.sectioned_view);
         mRecyclerAdapter.setOrientation(newConfig.orientation);
-        Log.e(TAG, " nConfigurationChanged to" + newConfig.orientation);
+        log("conf changed post view");
         mRecyclerView.setAdapter(mRecyclerAdapter);
-
         super.onConfigurationChanged(newConfig);
     }
+
 
     private void subscribeToTaskAddListener() {
         TrendingRecyclerViewAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {
@@ -670,18 +699,18 @@ public class MainActivity extends AppCompatActivity {
         TrendingRecyclerViewAdapter.getInstance(this).setOnTaskAddListener(null);
     }
 
-    private void prepareStreaming(String uri , String file_name){
+    private void prepareStreaming(String uri, String file_name) {
 
-       // progressDialog.hide();
-       // progressDialog.dismiss();
-
+        // progressDialog.hide();
+        // progressDialog.dismiss();
+        SharedPrefrenceUtils.getInstance(this).setCurrentStreamingItem(file_name);
         makeStreamingDialog(file_name);
 
         final String uriToStream = uri;
         isStreaming = true;
 //        playPauseBtn.setText(getResources().getString(R.string.pauseStreamFontText));
         new Player().execute(uriToStream);
-        log("playBtn "+playPauseBtn);
+        //log("playBtn "+playPauseBtn);
 
         streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -705,56 +734,77 @@ public class MainActivity extends AppCompatActivity {
 
     private void makeStreamingDialog(String file_name) {
 
-        Dialog streamDialog = new Dialog(this);
-
+        streamDialog = new Dialog(this);
+        streamDialog.setCancelable(false);
+        final SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(MainActivity.this);
         streamDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                progressDialog.dismiss();
+                log("onDialogDismiss");
+                if (progressDialog != null)
+                    progressDialog.dismiss();
 
-                if(isStreaming){
-                    mPlayer.stop();
-                    mPlayer.reset();
+                if (isStreaming) {
+                    log("Still Streaming");
+                    if (!utils.getFlagForContinuedStreaming()) {
+                        log("flaged for discontinue streaming...");
+                        mPlayer.reset();
+                        mPlayer.stop();
+                        log("flushing streaming pref..");
+                        utils.setCurrentStreamingItem("");
+                    }
                 }
+
+
             }
         });
 
-        LayoutInflater inflater = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.stream_layout, (ViewGroup)findViewById(R.id.dialogParent));
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View layout = inflater.inflate(R.layout.stream_layout, (ViewGroup) findViewById(R.id.dialogParent));
 
 
-        streamingItemTitle = (TextView) layout.findViewById(R.id.streamItemTitle);
-        // playPauseBtn = (TextView) layout.findViewById(R.id.playPauseBtn);
-        streamSeeker = (SeekBar) layout.findViewById(R.id.streaming_audio_seekbar);
-        //streamSeeker.setEnabled(false);
+        this.streamingItemTitle = (TextView) layout.findViewById(R.id.streamItemTitle);
+        this.cancelStreamingBtn = (TextView) layout.findViewById(R.id.stream_cancel_btn_text);
+        this.streamSeeker = (SeekBar) layout.findViewById(R.id.streaming_audio_seekbar);
         Typeface tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
-        currentTrackPosition = (TextView) layout.findViewById(R.id.currentTrackPositionText);
-        totalTrackPosition = (TextView) layout.findViewById(R.id.totalTrackLengthText);
+        this.currentTrackPosition = (TextView) layout.findViewById(R.id.currentTrackPositionText);
+        this.totalTrackPosition = (TextView) layout.findViewById(R.id.totalTrackLengthText);
         currentTrackPosition.setTypeface(tf);
         totalTrackPosition.setTypeface(tf);
-
         streamSeeker.getProgressDrawable().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
         streamSeeker.getThumb().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
-
-//        mPlayer = new MediaPlayer();
-//        mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         streamingItemTitle.setText(file_name);
-        // playPauseBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_AWESOME));
+        cancelStreamingBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_AWESOME));
+        cancelStreamingBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                log("touched cancel btn");
+
+                MusicGenieMediaPlayer
+                        .getInstance(MainActivity.this)
+                        .stopPlayer();
+
+                streamDialog.hide();
+                streamDialog.dismiss();
+            }
+        });
         streamDialog.setTitle("Streaming...");
         streamDialog.setContentView(layout);
         streamDialog.show();
+
+
     }
 
     private void registerForBroadcastListen(Context context) {
         receiver = new StreamUriBroadcastReceiver();
-        if(!mReceiverRegistered) {
+        if (!mReceiverRegistered) {
             context.registerReceiver(receiver, new IntentFilter(AppConfig.ACTION_STREAM_URL_FETCHED));
             mReceiverRegistered = true;
         }
     }
 
     private void unRegisterBroadcast() {
-        if(mReceiverRegistered){
+        if (mReceiverRegistered) {
             this.unregisterReceiver(receiver);
             mReceiverRegistered = false;
         }
@@ -772,7 +822,7 @@ public class MainActivity extends AppCompatActivity {
         Log.d(TAG, _lg);
     }
 
-    class Player extends AsyncTask<String,Void,Boolean>{
+    class Player extends AsyncTask<String, Void, Boolean> {
 
         Context context;
         private ProgressDialog progressDialog;
@@ -780,6 +830,7 @@ public class MainActivity extends AppCompatActivity {
         public Player(Context context) {
             this.context = context;
         }
+
         public Player() {
             progressDialog = new ProgressDialog(MainActivity.this);
         }
@@ -788,23 +839,20 @@ public class MainActivity extends AppCompatActivity {
         protected Boolean doInBackground(String... strings) {
 
             try {
-                 mPlayer =  MediaPlayer.create(MainActivity.this, Uri.parse(strings[0]));
-                 mPlayer.setScreenOnWhilePlaying(true);
-                 log("playing");
-                 mPlayer.start();
+                mPlayer = MusicGenieMediaPlayer
+                        .getInstance(MainActivity.this)
+                        .setURI(strings[0])
+                        .getPlayer();
 
-                while(mPlayer.isPlaying()){
+                mPlayer.setScreenOnWhilePlaying(true);
+                log("playing");
+                mPlayer.start();
+
+                while (mPlayer.isPlaying()) {
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            int currentPos = mPlayer.getCurrentPosition();
-                            int total = mPlayer.getDuration();
-
-                            streamSeeker.setMax(total);
-                            log("currently at " + currentPos);
-                            currentTrackPosition.setText(getTimeFromMillisecond(currentPos));
-                            totalTrackPosition.setText(getTimeFromMillisecond(total));
-                            streamSeeker.setProgress(currentPos);
+                            publishStreamingProgress(mPlayer.getCurrentPosition(), mPlayer.getDuration());
                         }
                     });
 
@@ -815,12 +863,12 @@ public class MainActivity extends AppCompatActivity {
                     }
 
                 }
-                 mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                     @Override
-                     public void onCompletion(MediaPlayer mediaPlayer) {
-                         isStreaming = false;
-                     }
-                 });
+                mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        isStreaming = false;
+                    }
+                });
                 mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
                     @Override
                     public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
@@ -849,15 +897,30 @@ public class MainActivity extends AppCompatActivity {
             return prepared;
         }
 
+        private void publishStreamingProgress(int currentPosition, int duration) {
+
+
+            log("streamSeeker : "+streamSeeker.getId()+" currentTrackPosition :"+currentTrackPosition.getId());
+//
+
+            streamSeeker.setMax(duration);
+            currentTrackPosition.setText(getTimeFromMillisecond(currentPosition));
+            totalTrackPosition.setText(getTimeFromMillisecond(duration));
+            streamSeeker.setProgress(currentPosition);
+
+        }
+
         @Override
         protected void onPostExecute(Boolean result) {
             // TODO Auto-generated method stub
             super.onPostExecute(result);
-            if (progressDialog.isShowing()) {
-                progressDialog.cancel();
-            }
 
             Log.d("Prepared", "//" + result);
+            if (streamDialog != null) {
+                streamDialog.hide();
+                streamDialog.dismiss();
+                SharedPrefrenceUtils.getInstance(MainActivity.this).setCurrentStreamingItem("");
+            }
             zygoteStreamer = false;
             isStreaming = false;
         }
@@ -871,24 +934,24 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        private String getTimeFromMillisecond(int millis){
+        private String getTimeFromMillisecond(int millis) {
             String hr = "";
-            String min="";
-            String  sec = "";
-            String time="";
-            int i_hr = (millis/1000)/3600;
-            int i_min = (millis/1000)/60;
+            String min = "";
+            String sec = "";
+            String time = "";
+            int i_hr = (millis / 1000) / 3600;
+            int i_min = (millis / 1000) / 60;
             int i_sec = (millis / 1000) % 60;
 
-            if(i_hr==0){
-                min = (String.valueOf(i_min).length()<2)?"0"+i_min:String.valueOf(i_min);
-                sec = (String.valueOf(i_sec).length()<2)?"0"+i_sec:String.valueOf(i_sec);
-                time = min +" : "+sec;
-            }else{
-                hr = (String.valueOf(i_hr).length()<2)?"0"+i_hr:String.valueOf(i_hr);
-                min = (String.valueOf(i_min).length()<2)?"0"+i_min:String.valueOf(i_min);
-                sec = (String.valueOf(i_sec).length()<2)?"0"+i_sec:String.valueOf(i_sec);
-                time =hr+" : "+ min +" : "+sec;
+            if (i_hr == 0) {
+                min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+                sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+                time = min + " : " + sec;
+            } else {
+                hr = (String.valueOf(i_hr).length() < 2) ? "0" + i_hr : String.valueOf(i_hr);
+                min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+                sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+                time = hr + " : " + min + " : " + sec;
             }
 
             return time;
@@ -913,8 +976,8 @@ public class MainActivity extends AppCompatActivity {
 //                    startActivity(mIntent);
 //                }
 
-                if(!isStreaming)
-                prepareStreaming(intent.getStringExtra(AppConfig.EXTRAA_URI) , intent.getStringExtra(AppConfig.EXTRAA_STREAM_FILE));
+                if (!isStreaming)
+                    prepareStreaming(intent.getStringExtra(AppConfig.EXTRAA_URI), intent.getStringExtra(AppConfig.EXTRAA_STREAM_FILE));
             }
         }
 

@@ -123,4 +123,22 @@ public class SharedPrefrenceUtils {
     public boolean getOptionsForThumbnailLoad(){
         return preferences.getBoolean("needThumb",true);
     }
+
+    public void setCurrentStreamingItem(String file_name) {
+        editor.putString("streaming",file_name);
+        editor.commit();
+    }
+
+    public String getCurrentStreamingItem(){
+        return preferences.getString("streaming","");
+    }
+
+    public void setFlagForContinuedStreaming(boolean b) {
+        editor.putBoolean(AppConfig.FLAG_STREAMING_CONTINUED,b);
+        editor.commit();
+    }
+
+    public boolean getFlagForContinuedStreaming(){
+        return preferences.getBoolean(AppConfig.FLAG_STREAMING_CONTINUED,false);
+    }
 }
