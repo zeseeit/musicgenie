@@ -38,7 +38,7 @@ public class SectionedListViewTest extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sectioned_view);
         log("onCreate()");
-        // test data
+        // test data hello ankit this is my push
         list = new ArrayList<>();
         list.add(new Song("Sanam Re1","03:15","ankit","","","","200,000"));
         list.add(new Song("Sanam Re2","03:15","ankit","","","","100,000"));
@@ -144,7 +144,7 @@ public class SectionedListViewTest extends AppCompatActivity{
         uploader_icon.setTypeface(fontawesome);
         views_icon.setTypeface(fontawesome);
 
-        // regular raleway
+        // regular raleway rajeev
         TextView content_length = (TextView) findViewById(R.id.song_time_length);
         TextView uploader = (TextView) findViewById(R.id.uploader_name);
         TextView views = (TextView) findViewById(R.id.views_text);
