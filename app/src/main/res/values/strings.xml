@@ -1,29 +1,29 @@
 <resources>
-    <string name="app_name">MusicGenie</string>
+    <string name="app_name">Music</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_">Activity</string>
-    <string name="search_box_hint">Search Song...</string>
-    <string name="action_downloads_title">Downloads</string>
-    <string name="progress_dialog_msg">Retrieving Data....</string>
-    <string name="download_request_progress_dialog_msg">Requesting Data..</string>
-    <string name="preparing_audio_dialog_msg">Preparing Audio For You.....</string>
-    <string name="download_start_toast_msg">Added to Download....</string>
-    <string name="title_activity_dowloads">Download</string>
+    <string name="title_activity_error_splash">ErrorSplash</string>
+    <string name="title_activity_home">Home</string>
+    <string name="title_activity_delete">delete</string>
 
     <string name="title_section1">Section 1</string>
     <string name="title_section2">Section 2</string>
     <string name="title_section3">Section 3</string>
 
-<!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="drawer_open">do</string>
-    <string name="drawer_close">dc</string>
-    <string name="title_activity_responsive_drawer_test">ResponsiveDrawerTest</string>
-    <string name="title_activity_error_splash">ErrorSplashActivity</string>
-    <string name="title_activity_user_preference_setting">UserPreferenceSetting</string>
-    <string name="title_activity_main2">Main2Activity</string>
-    <string name="pauseStreamFontText"></string>
-    <string name="playStreamFontText"></string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
+    <string name="title_activity_test">TestAct</string>
+
+    <string name="title_activity_fullscreen">FullscreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="action_downloads_title">Downloads</string>
+    <string name="activity_downloads">Downloads</string>
+    <string name="activity_preferences">Preferences</string>
+    <string name="overflow_icon_text_unicode">⋮</string>
 </resources>

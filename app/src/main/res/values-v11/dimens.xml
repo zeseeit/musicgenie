@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="progress_bar_message_panel_text_size">16sp</dimen>
+    <dimen name="downloaded_item_thumbnai_dimen">72dp</dimen>
+    <dimen name="downloaded_item_wrapper_padding">4dp</dimen>
+    <dimen name="downloaded_item_thumb_margin">2dp</dimen>
+    <dimen name="dowloaded_item_wrapper_elevation">1dp</dimen>
+    <dimen name="downloaded_item_title_margin">4dp</dimen>
+    <dimen name="downloaded_item_extra_meta_info_margin_left">4dp</dimen>
+    <dimen name="dowloaded_item_extraa_metainfo_text_size">14sp</dimen>
+    <dimen name="downloaded_item_extraa_meta_info_text_size">16sp</dimen>
+    <dimen name="downloaded_item_overflow_icon_text_size">26sp</dimen>
+    <dimen name="downloaded_item_overflow_icon_text_padding">16dp</dimen>
+</resources>
