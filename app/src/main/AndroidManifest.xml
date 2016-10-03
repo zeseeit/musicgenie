@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="simple.musicgenie" >
+    package="any.audio">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -15,12 +15,12 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name=".ErrorSplash"
+            android:name="any.audio.ErrorSplash"
             android:label="@string/title_activity_error_splash" >
         </activity>
         <activity
+            android:name="any.audio.Home"
             android:hardwareAccelerated="true"
-            android:name=".Home"
             android:label="@string/title_activity_home" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,23 +30,23 @@
 
         </activity>
         <activity
-            android:name=".TestAct"
+            android:name="any.audio.TestAct"
             android:label="@string/title_activity_test" >
 
         </activity>
 
         <activity
-            android:parentActivityName=".Home"
-            android:name=".DowloadsActivity"
-            android:label="@string/activity_downloads" >
+            android:name="any.audio.DowloadsActivity"
+            android:label="@string/activity_downloads"
+            android:parentActivityName="any.audio.Home">
 
         </activity>
 
         <activity
+            android:name="any.audio.UserPreferenceSetting"
             android:configChanges="orientation"
-            android:parentActivityName=".Home"
-            android:name=".UserPreferenceSetting"
-            android:label="@string/activity_preferences" >
+            android:label="@string/activity_preferences"
+            android:parentActivityName="any.audio.Home">
 
         </activity>
 

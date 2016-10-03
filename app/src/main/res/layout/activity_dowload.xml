@@ -3,14 +3,16 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <include layout="@layout/toolbar" android:id="@+id/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
-    <simple.musicgenie.DownloadTab
-        android:background="@color/PrimaryColor"
+    <any.audio.DownloadTab
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/toolbar"
+        android:background="@color/PrimaryColor"
         android:elevation="4dp"/>
 
     <android.support.v4.view.ViewPager

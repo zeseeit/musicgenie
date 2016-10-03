@@ -9,53 +9,53 @@
 
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
-    tools:context="simple.musicgenie.TestAct">
+    tools:context="any.audio.TestAct">
 
 
     <TextView
-        android:layout_width="wrap_content"
         android:id="@+id/pad"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/search"
-        android:gravity="center_horizontal"
-        android:layout_height="wrap_content" />
+        android:gravity="center_horizontal" />
 
     <Button
+        android:id="@+id/firstLoad"
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="FirstLoad"
-        android:id="@+id/firstLoad" />
+        android:text="FirstLoad" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="ReStore"
         android:id="@+id/button"
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_toRightOf="@+id/firstLoad"
-        android:layout_centerHorizontal="true" />
+        android:text="ReStore" />
 
     <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Refress"
-        android:layout_toRightOf="@id/button"
         android:id="@+id/refress"
-        android:layout_centerHorizontal="true" />
-
-    <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Search"
-        android:layout_below="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_toRightOf="@id/button"
+        android:text="Refress" />
+
+    <Button
         android:id="@+id/search"
-        android:layout_centerHorizontal="true" />
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:text="Search" />
 
 
 </RelativeLayout>
