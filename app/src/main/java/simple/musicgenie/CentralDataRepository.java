@@ -1,6 +1,8 @@
 package simple.musicgenie;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -38,15 +40,16 @@ public class CentralDataRepository {
      */
     public static final int TYPE_RESULT = 406;
 
-    private ActionCompletedListener mActionCompletdListener;
-    private DataReadyToSubmitListener dataReadyToSubmitListener;
+   // private ActionCompletedListener mActionCompletdListener;
+    //private DataReadyToSubmitListener dataReadyToSubmitListener;
     private DbHelper mDBHelper;
     private CloudManager mCloudManager;
     private static Context context;
-
+    private Handler mHandler;
     private static CentralDataRepository mInstance;
 
     private int mLastLoadedType = TYPE_TRENDING;
+    private String MESSAGE_TO_PASS = "";
 
     /**
      * Default constructor
@@ -77,35 +80,40 @@ public class CentralDataRepository {
     }
 
     /**
-     * @param type     Flag for operation type
-     * @param callback Callback for action completed
+     * @param type Action Type
+     * @param handler   Main Thread Handler
      */
-
-    public void submitAction(int type, ActionCompletedListener callback) throws InvalidCallbackException {
+    public void submitAction(final int type, Handler handler){
 
         L.m("CDR","Action Invoke Type:"+type);
 
-        if (callback != null)
-            setListener(callback);
-        else throw new InvalidCallbackException("Callback in Invalid");
+        this.mHandler = handler;
 
-        switch (type) {
+        new Thread(){
+            @Override
+            public void run() {
 
-            case FLAG_FIRST_LOAD:
-                loadTrendingOrRequestTrending();
-                break;
-            case FLAG_RESTORE:
-                submitLastLoaded();
-                break;
-            case FLAG_SEARCH:
-                searchAndSubmit();
-                break;
-            case FLAG_REFRESS:
-                refressAndSubmit();
-                break;
-            default:
-                break;              // do nothing
-        }
+                switch (type) {
+
+                    case FLAG_FIRST_LOAD:
+                        loadTrendingOrRequestTrending();
+                        break;
+                    case FLAG_RESTORE:
+                        submitLastLoaded();
+                        break;
+                    case FLAG_SEARCH:
+                        searchAndSubmit();
+                        break;
+                    case FLAG_REFRESS:
+                        refressAndSubmit();
+                        break;
+                    default:
+                        break;              // do nothing
+                }
+            }
+        }.start();
+
+        L.m("CDR","started thread for action");
 
     }
 
@@ -121,13 +129,13 @@ public class CentralDataRepository {
             mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
                 @Override
                 public void onTrendingLoad(SectionModel trendingItem) {
-                    // now result are written to database
-                    // so submit them to thirsty adapters
-                    dataReadyToSubmitListener.onDataSubmit(trendingItem);
-                    // callback confirmation to operation initiater
-                    mActionCompletdListener.onActionCompleted();
+                    // Create Message Object
+                   dispatchMessage(
+                           Constants.MESSAGE_STATUS_OK,
+                           MESSAGE_TO_PASS,
+                           trendingItem
+                           );
 
-                    mLastLoadedType = TYPE_TRENDING;
                 }
             });
 
@@ -151,14 +159,12 @@ public class CentralDataRepository {
             @Override
             public void onResultLoadListener(SectionModel result) {
 
-//                ArrayList<SectionModel> temp = new ArrayList<>();
-//                temp.add(new SectionModel(result.sectionTitle, result.getList()));
+                dispatchMessage(
+                        Constants.MESSAGE_STATUS_OK,
+                        MESSAGE_TO_PASS,
+                        result
+                );
 
-                //callback to thirsty adapters
-                dataReadyToSubmitListener.onDataSubmit(result);
-
-                // callback confirmation to operation initiater
-                mActionCompletdListener.onActionCompleted();
 
             }
         });
@@ -186,11 +192,13 @@ public class CentralDataRepository {
             mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
                 @Override
                 public void onTrendingLoad(SectionModel trendingItem) {
-                    // now result are written to database
-                    // so submit them to thirsty adapters
-                    dataReadyToSubmitListener.onDataSubmit(trendingItem);
-                    // callback confirmation to operation initiater
-                    mActionCompletdListener.onActionCompleted();
+
+                    dispatchMessage(
+                            Constants.MESSAGE_STATUS_OK,
+                            MESSAGE_TO_PASS,
+                            trendingItem
+                    );
+
                 }
             });
 
@@ -204,10 +212,11 @@ public class CentralDataRepository {
                 @Override
                 public void onResultLoadListener(SectionModel result) {
 
-                    dataReadyToSubmitListener.onDataSubmit(result);
-
-                    // callback confirmation to operation initiater
-                    mActionCompletdListener.onActionCompleted();
+                    dispatchMessage(
+                            Constants.MESSAGE_STATUS_OK,
+                            MESSAGE_TO_PASS,
+                            result
+                    );
 
                 }
             });
@@ -237,11 +246,14 @@ public class CentralDataRepository {
         mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
             @Override
             public void onTrendingLoad(SectionModel trendingItem) {
-                // now result are written to database
-                // so submit them to thirsty adapters
-                dataReadyToSubmitListener.onDataSubmit(trendingItem);
-                // callback confirmation to operation initiater
-                mActionCompletdListener.onActionCompleted();
+
+
+                dispatchMessage(
+                        Constants.MESSAGE_STATUS_OK,
+                        MESSAGE_TO_PASS,
+                        trendingItem
+                );
+
             }
         });
 
@@ -258,19 +270,33 @@ public class CentralDataRepository {
 
     }
 
-    /**
-     * @param listener callback from data seekers adapters
-     */
-    public void registerForDataLoadListener(DataReadyToSubmitListener listener) {
-        this.dataReadyToSubmitListener = listener;
+    private void dispatchMessage(int status,String message,SectionModel data){
+
+        L.m("CDR","dispatching Message");
+        Message msg = Message.obtain();
+        msg.obj = new MessageObjectModel(
+                status,
+                message,    // temp : for future requis. if needed
+                data
+        );
+
+        // send message
+        mHandler.sendMessage(msg);
     }
 
-    /**
-     * @param mListener callback for action complete to operation initiater
-     */
-    public void setListener(ActionCompletedListener mListener) {
-        this.mActionCompletdListener = mListener;
-    }
+//    /**
+//     * @param listener callback from data seekers adapters
+//     */
+//    public void registerForDataLoadListener(DataReadyToSubmitListener listener) {
+//        this.dataReadyToSubmitListener = listener;
+//    }
+
+//    /**
+//     * @param mListener callback for action complete to operation initiater
+//     */
+//    public void setListener(ActionCompletedListener mListener) {
+//        this.mActionCompletdListener = mListener;
+//    }
 
     public int getLastLoadedType() {
         return this.mLastLoadedType;
@@ -280,23 +306,22 @@ public class CentralDataRepository {
         this.mLastLoadedType = mLastLoadedType;
     }
 
-    public interface ActionCompletedListener {      // these listeners will be summitted by Operation Initiater
-        void onActionCompleted();
+//    public interface ActionCompletedListener {      // these listeners will be summitted by Operation Initiater
+//        void onActionCompleted();
+//    }
+
+//    public interface DataReadyToSubmitListener {    // these listeners will be summitted by Adapter who are waiting for our data
+//
+//        // for Result  there will be single item
+//        // for Trending there will be list of items
+//        void onDataSubmit(SectionModel item);
+//    }
+
+//    public class InvalidCallbackException extends Exception {
+//        public InvalidCallbackException(String detailMessage) {
+//            super(detailMessage);
+//            System.out.println(detailMessage);
+//            Log.e("CentralDataRepository", detailMessage);
+//        }
+
     }
-
-    public interface DataReadyToSubmitListener {    // these listeners will be summitted by Adapter who are waiting for our data
-
-        // for Result  there will be single item
-        // for Trending there will be list of items
-        void onDataSubmit(SectionModel item);
-    }
-
-    public class InvalidCallbackException extends Exception {
-        public InvalidCallbackException(String detailMessage) {
-            super(detailMessage);
-            System.out.println(detailMessage);
-            Log.e("CentralDataRepository", detailMessage);
-        }
-
-    }
-}

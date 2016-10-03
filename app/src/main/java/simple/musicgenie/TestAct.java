@@ -45,102 +45,102 @@ public class TestAct extends AppCompatActivity {
 
     }
 
-    private void test(){
-
-        findViewById(R.id.firstLoad).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //  initiating operation
-                // for first time load -  test
-                try {
-                    centralDataRepository.submitAction(CentralDataRepository.FLAG_FIRST_LOAD, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-
-                            Toast.makeText(TestAct.this, "Action Callback Flag Restore", Toast.LENGTH_LONG).show();
-
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //  initiating operation
-                // for first time load -  test
-                try {
-                    centralDataRepository.submitAction(CentralDataRepository.FLAG_RESTORE, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-
-                            Toast.makeText(TestAct.this, "Action Callback Flag Restore", Toast.LENGTH_LONG).show();
-
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-
-            }
-        });
-
-        findViewById(R.id.search).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //  initiating operation
-                // for search -  test
-                // we need to set the search term to SP
-
-                SharedPrefrenceUtils.getInstance(TestAct.this).setLastSearchTerm("Pawan Singh");
-
-                try {
-                    centralDataRepository.submitAction(CentralDataRepository.FLAG_SEARCH, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-
-                            Toast.makeText(TestAct.this,"Action Callback Flag: Search",Toast.LENGTH_LONG).show();
-
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-        findViewById(R.id.refress).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //  initiating operation
-                // for refress -  test
-                // we need to set the search term to SP
-
-                try {
-                    centralDataRepository.submitAction(CentralDataRepository.FLAG_REFRESS, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-
-                            Toast.makeText(TestAct.this,"Action Callback Flag: Refress",Toast.LENGTH_LONG).show();
-
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
-
-    }
+//    private void test(){
+//
+//        findViewById(R.id.firstLoad).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                //  initiating operation
+//                // for first time load -  test
+//                try {
+//                    centralDataRepository.submitAction(CentralDataRepository.FLAG_FIRST_LOAD, new CentralDataRepositoryl.ActionCompletedListener() {
+//                        @Override
+//                        public void onActionCompleted() {
+//
+//                            Toast.makeText(TestAct.this, "Action Callback Flag Restore", Toast.LENGTH_LONG).show();
+//
+//                        }
+//                    });
+//                } catch (CentralDataRepository.InvalidCallbackException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
+//
+//        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                //  initiating operation
+//                // for first time load -  test
+//                try {
+//                    centralDataRepository.submitAction(CentralDataRepository.FLAG_RESTORE, new CentralDataRepository.ActionCompletedListener() {
+//                        @Override
+//                        public void onActionCompleted() {
+//
+//                            Toast.makeText(TestAct.this, "Action Callback Flag Restore", Toast.LENGTH_LONG).show();
+//
+//                        }
+//                    });
+//                } catch (CentralDataRepository.InvalidCallbackException e) {
+//                    e.printStackTrace();
+//                }
+//
+//            }
+//        });
+//
+//        findViewById(R.id.search).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                //  initiating operation
+//                // for search -  test
+//                // we need to set the search term to SP
+//
+//                SharedPrefrenceUtils.getInstance(TestAct.this).setLastSearchTerm("Pawan Singh");
+//
+//                try {
+//                    centralDataRepository.submitAction(CentralDataRepository.FLAG_SEARCH, new CentralDataRepository.ActionCompletedListener() {
+//                        @Override
+//                        public void onActionCompleted() {
+//
+//                            Toast.makeText(TestAct.this,"Action Callback Flag: Search",Toast.LENGTH_LONG).show();
+//
+//                        }
+//                    });
+//                } catch (CentralDataRepository.InvalidCallbackException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//
+//        findViewById(R.id.refress).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                //  initiating operation
+//                // for refress -  test
+//                // we need to set the search term to SP
+//
+//                try {
+//                    centralDataRepository.submitAction(CentralDataRepository.FLAG_REFRESS, new CentralDataRepository.ActionCompletedListener() {
+//                        @Override
+//                        public void onActionCompleted() {
+//
+//                            Toast.makeText(TestAct.this,"Action Callback Flag: Refress",Toast.LENGTH_LONG).show();
+//
+//                        }
+//                    });
+//                } catch (CentralDataRepository.InvalidCallbackException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//        });
+//
+//
+//    }
 
 }

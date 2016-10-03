@@ -124,6 +124,5 @@ public class UserPreferenceSetting extends AppCompatActivity{
     @Override
     protected void onStop() {
         super.onStop();
-        SharedPrefrenceUtils.getInstance(this).setFirstPageLoadedStatus(false);
     }
 }

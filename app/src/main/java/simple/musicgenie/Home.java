@@ -51,11 +51,12 @@ public class Home extends AppCompatActivity {
     private StaggeredGridLayoutManager layoutManager;
     private ResulstsRecyclerAdapter mRecyclerAdapter;
     private ProgressDialog progressDialog;
-    private HashMap<String, ArrayList<BaseSong>> songMap;
     private CentralDataRepository repository;
     private FloatingSearchView searchView;
     private SwipeRefreshLayout swipeRefressLayout;
-    private Handler mHandler;
+    // non-static handlers : We don`t have
+    private  Handler mStreamHandler;
+    private  Handler mCDRMessageHandler;
     private SharedPrefrenceUtils utils;
     private ProgressBar progressBar;
     private TextView progressBarMsgPanel;
@@ -79,7 +80,7 @@ public class Home extends AppCompatActivity {
         setContentView(R.layout.activity_home);
         configureStorageDirectory(savedInstanceState);
         instantiateViews();
-        redgisterAdapter();
+        handleMessages();   // message handler on UI thread
         subscribeToTaskAddListener();
 
         utils = SharedPrefrenceUtils.getInstance(this);
@@ -129,42 +130,53 @@ public class Home extends AppCompatActivity {
         invokeAction(Constants.ACTION_TYPE_RESUME);
     }
 
-    private void redgisterAdapter() {
-
-        repository = CentralDataRepository.getInstance(this);
-
-        repository.registerForDataLoadListener(new CentralDataRepository.DataReadyToSubmitListener() {
+    private void handleMessages() {
+        mCDRMessageHandler = new Handler() {
             @Override
-            public void onDataSubmit(SectionModel item) {
+            public void handleMessage(Message msg) {
+                // hide progress
+                L.m("CDR","handling Message[UI Thread]");
 
-
-                // check if item is empty
-                if (item.getList() != null) {
-                    if (item.getList().size() == 0 && mRecyclerAdapter.getItemCount() == 0) {
-                        // hide the recycler view and Show Message
-                        mRecyclerView.setVisibility(RecyclerView.GONE);
-                        progressBar.setVisibility(View.GONE);
-                        progressBarMsgPanel.setVisibility(View.VISIBLE);
-                        progressBarMsgPanel.setText("Troubling Getting Data......\nCheck Your Working Data Connection");
-                        progressBarMsgPanel.setText("hello");
-
-                    }
+                if(swipeRefressLayout.isRefreshing()){
+                    L.m("Home","Disabling Swipe Refresh Layout");
+                    swipeRefressLayout.setRefreshing(false);
+                    swipeRefressLayout.setEnabled(true);
                 }
 
+                hideProgress();
+                MessageObjectModel object = (MessageObjectModel) msg.obj;
+                SectionModel item = object.data;
 
-                mRecyclerView.setVisibility(RecyclerView.VISIBLE);
-                progressBar.setVisibility(View.GONE);
-                progressBarMsgPanel.setVisibility(View.GONE);
+                if (object.Status == Constants.MESSAGE_STATUS_OK) {
 
-                mRecyclerAdapter.enque(item);
+                    // check if item is empty
+                    if (item.getList() != null) {
+                        if (item.getList().size() == 0 && mRecyclerAdapter.getItemCount() == 0) {
+                            // hide the recycler view and Show Message
+                            mRecyclerView.setVisibility(RecyclerView.GONE);
+                            progressBar.setVisibility(View.GONE);
+                            progressBarMsgPanel.setVisibility(View.VISIBLE);
+                            progressBarMsgPanel.setText("Troubling Getting Data......");
 
+                        } else {
+
+                            mRecyclerView.setVisibility(RecyclerView.VISIBLE);
+                            progressBar.setVisibility(View.GONE);
+                            progressBarMsgPanel.setVisibility(View.GONE);
+
+                        }
+                    }
+                    // enque item regardless of cases
+                    mRecyclerAdapter.enque(item);
+                } else {
+                    //TODO: Collect Unexpected Error From CDR(Central Data Repository)
+                }
             }
-        });
+        };
     }
 
     /**
      * @param actionType type of action to invoke
-     *                   todo: must- attach Adapters
      */
     public void invokeAction(int actionType) {
 
@@ -174,97 +186,53 @@ public class Home extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         progressBarMsgPanel.setVisibility(View.VISIBLE);
 
+        repository = CentralDataRepository.getInstance(this);
 
         switch (actionType) {
 
+
             case Constants.ACTION_TYPE_FIRST_LOAD:
                 //  showProgress("Presenting Trending...");
-                if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+                if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
                     mRecyclerView.setVisibility(RecyclerView.GONE);
                     progressBar.setVisibility(View.GONE);
                     progressBarMsgPanel.setVisibility(View.VISIBLE);
-                    L.m("Home","setting msg");Toast.makeText(this,"hello",Toast.LENGTH_SHORT).show();
+                    L.m("Home", "setting msg");
+                    Toast.makeText(this, "hello", Toast.LENGTH_SHORT).show();
                     progressBarMsgPanel.setText("Troubling Getting DataCheck Your Working Data Connection");
                     return;
                 }
 
                 progressBarMsgPanel.setText("Loading Trending");
-
-                try {
-                    repository.submitAction(CentralDataRepository.FLAG_FIRST_LOAD, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-                            hideProgress();
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-
+                repository.submitAction(CentralDataRepository.FLAG_FIRST_LOAD, mCDRMessageHandler);
                 break;
+
             case Constants.ACTION_TYPE_RESUME:
                 //showProgress("Presenting Your Items");
-
                 progressBarMsgPanel.setText("Resuming Contents");
-
-                try {
-                    repository.submitAction(CentralDataRepository.FLAG_RESTORE, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-                            hideProgress();
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-
+                repository.submitAction(CentralDataRepository.FLAG_RESTORE, mCDRMessageHandler);
                 break;
 
             case Constants.ACTION_TYPE_REFRESS:
 
-                if(!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+                if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
                     mRecyclerView.setVisibility(RecyclerView.GONE);
                     progressBar.setVisibility(View.GONE);
                     progressBarMsgPanel.setVisibility(View.VISIBLE);
                     progressBarMsgPanel.setText("Troubling Getting Data......\nCheck Your Working Data Connection");
                     return;
                 }// or continue the same
+
                 progressBarMsgPanel.setText("Refressing Content");
 
-                try {
-                    repository.submitAction(CentralDataRepository.FLAG_REFRESS, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-                            // disable refressing
-                            L.m("Callback[Refress] ", "Refressed");
-                            if (swipeRefressLayout.isRefreshing()) {
-                                swipeRefressLayout.setRefreshing(false);
-                                swipeRefressLayout.setEnabled(true);
-                            }
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
-
+                repository.submitAction(CentralDataRepository.FLAG_REFRESS,mCDRMessageHandler);
                 break;
-
 
             case Constants.ACTION_TYPE_SEARCH:
                 //showProgress("Searching Item");
                 String searchQuery = SharedPrefrenceUtils.getInstance(this).getLastSearchTerm();
                 progressBarMsgPanel.setText("Searching For.. " + searchQuery);
-
-                try {
-                    repository.submitAction(CentralDataRepository.FLAG_SEARCH, new CentralDataRepository.ActionCompletedListener() {
-                        @Override
-                        public void onActionCompleted() {
-                            hideProgress();
-                        }
-                    });
-                } catch (CentralDataRepository.InvalidCallbackException e) {
-                    e.printStackTrace();
-                }
+                repository.submitAction(CentralDataRepository.FLAG_SEARCH,mCDRMessageHandler);
                 break;
         }
 
@@ -500,8 +468,8 @@ public class Home extends AppCompatActivity {
                     Message msg = Message.obtain();
                     msg.arg1 = mPlayer.getCurrentPosition();
                     msg.arg2 = mPlayer.getDuration();
-                    if (mHandler != null)
-                        mHandler.sendMessage(msg);
+                    if (mStreamHandler != null)
+                        mStreamHandler.sendMessage(msg);
 
                     try {
                         Thread.sleep(500);
@@ -589,7 +557,7 @@ public class Home extends AppCompatActivity {
 
         streamDialog = new StreamFragment();
 
-        mHandler = new Handler() {
+        mStreamHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
 
