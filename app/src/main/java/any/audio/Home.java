@@ -100,11 +100,6 @@ public class Home extends AppCompatActivity {
     protected void onStop() {
         L.m("Home", "onStop()");
         super.onStop();
-        // dismiss dialog befor stop to rescue from leakage
-//        if (streamDialog != null) {
-////            streamDialog.hide();
-//            streamDialog.dismiss();
-//        }
 
         if (mReceiverRegistered) {
             unRegisterBroadcast();

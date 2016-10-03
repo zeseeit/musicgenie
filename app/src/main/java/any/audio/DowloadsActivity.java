@@ -38,8 +38,6 @@ public class DowloadsActivity extends AppCompatActivity {
 
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
-//                int tabIconColor = ContextCompat.getColor(DowloadsActivity.this, R.color.TabUnselectionColor);
-//                tab.getIcon().setColorFilter(tabIconColor, PorterDuff.Mode.SRC_IN);
             }
 
             @Override
@@ -49,11 +47,9 @@ public class DowloadsActivity extends AppCompatActivity {
         });
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Downloads");
-        //TODO: handle diff sdk versions
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeButtonEnabled(true);
-        log("tasks >" + SharedPrefrenceUtils.getInstance(this).getTaskSequence());
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
         mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
@@ -63,7 +59,6 @@ public class DowloadsActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        //unRegisterBroadcast();
     }
 
     @Override
@@ -75,10 +70,6 @@ public class DowloadsActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
         finish();
-    }
-
-    public void log(String msg){
-        Log.d("DownloadsActivity",msg);
     }
 
 }

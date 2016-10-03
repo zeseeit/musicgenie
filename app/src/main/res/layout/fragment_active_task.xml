@@ -5,9 +5,9 @@
     tools:context="musicgenie.com.musicgenie.fragments.ActiveTaskFragment">
 
     <ListView
-        android:paddingTop="8dp"
+        android:paddingTop="4dp"
         android:divider="@color/DownloadingPageBackground"
-        android:dividerHeight="8dp"
+        android:dividerHeight="2dp"
         android:id="@+id/liveDownloadListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"></ListView>

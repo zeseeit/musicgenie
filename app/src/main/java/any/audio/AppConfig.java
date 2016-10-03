@@ -29,11 +29,7 @@ package any.audio;
             }
 
             public static void configureDevice() {
-
-                String savePref = SharedPrefrenceUtils.getInstance(context).getFileSavingLocation();
-                int tasks_pending = TaskHandler.getInstance(context).getTaskCount();
-                if(tasks_pending>0)LocalNotificationManager.getInstance(context).launchNotification("You Have "+ tasks_pending +" Tasks Pending");
-
+                
                 if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M){
                     PermissionManager.getInstance(context).seek();
                 }

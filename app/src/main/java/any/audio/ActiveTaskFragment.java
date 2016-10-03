@@ -127,7 +127,6 @@ public class ActiveTaskFragment extends Fragment {
             int end = liveDownloadListView.getLastVisiblePosition();
 
             if(start<=position && end>=position){
-                log("updating "+position+"with "+progress+" %");
 
                 View view = liveDownloadListView.getChildAt(position);
                 liveDownloadListView.getAdapter().getView(position,view,liveDownloadListView);
@@ -145,7 +144,6 @@ public class ActiveTaskFragment extends Fragment {
         if (bytes != null) {
             double inBytes = Double.parseDouble(bytes);
             double inMB = ((inBytes / 1024) / 1024);
-            log("bytes " + bytes);
             inMB=roundOf(inMB,2);
 
             return inMB;
@@ -181,8 +179,6 @@ public class ActiveTaskFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             if (intent.getAction().equals(Constants.ACTION_PROGRESS_UPDATE_BROADCAST)) {
-
-                log("update via broadcast " + intent.getStringExtra(Constants.EXTRA_PROGRESS));
                 String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
                 String progress = intent.getStringExtra(Constants.EXTRA_PROGRESS);
                 String contentSize = intent.getStringExtra(Constants.EXTRA_CONTENT_SIZE);

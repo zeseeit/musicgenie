@@ -33,20 +33,22 @@ public class LocalNotificationManager {
 //        PendingIntent pendingIntent = PendingIntent.getActivity(context,0,intent,PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle("MusicGenie");
+        mBuilder.setContentTitle("AnyAudio");
+        mBuilder.setSmallIcon(R.drawable.head);
         mBuilder.setContentText(msg);
 //        mBuilder.setContentIntent(pendingIntent);
         mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         this.mNotificationId +=1;
 
         NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.notify(mNotificationId , mBuilder.build());
+        manager.notify(mNotificationId, mBuilder.build());
     }
 
     public void publishProgressOnNotification(final int progress,String item_name){
 
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
-        mBuilder.setContentTitle("MusicGenie");
+        mBuilder.setContentTitle("AnyAudio");
+        mBuilder.setSmallIcon(R.drawable.head);
         mBuilder.setContentText(item_name);
         mNotificationId = 0; // single notificationId is enough as there is single downoad at a time
 
@@ -57,12 +59,19 @@ public class LocalNotificationManager {
             public void run() {
                 mBuilder.setProgress(100,progress,false);
                 manager.notify(mNotificationId , mBuilder.build());
+
+                if(progress>=100){
+                    manager.cancel(mNotificationId);
+                }
             }
         }).start();
 
-        if (progress == 100) {
-            manager.cancel(mNotificationId);
-        }
+
+
+    }
+
+    private void cancelPendingNotification(){
+
     }
 
 }
