@@ -22,7 +22,7 @@ public class Constants {
     public static final String EXTRAA_STREAM_FILE = "stream_file_name";
     public static final String EXTRAA_ACTIVITY_PRE_LOAD_FLAG = "actvity_preloaded";
     public static final String FLAG_STREAMING_CONTINUED = "streamingWillContinue";
-    public static final int ACTION_TYPE_FIRST_LOAD = 0;
+    public static final int ACTION_TYPE_TRENDING = 0;
     public static final int ACTION_TYPE_RESUME = 1;
     public static final int ACTION_TYPE_REFRESS = 2;
     public static final int ACTION_TYPE_SEARCH = 3;
@@ -32,4 +32,7 @@ public class Constants {
     public static final String KEY_FIRST_PAGE_LOADED = "first_page_loaded";
     public static final int MESSAGE_STATUS_OK = 200;
     private static final String TAG = "AppConfig";
+    public static final String FEATURE_STREAM = "stream";
+    public static final String FEATURE_DOWNLOAD = "download";
+    public static int FLAG_NEW_VERSION = 1;
 }

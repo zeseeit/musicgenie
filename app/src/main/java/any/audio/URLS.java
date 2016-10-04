@@ -8,4 +8,6 @@ public class URLS {
     public static final String URL_TRENDING_API = URL_SERVER_ROOT+"/api/v1/trending";
     public static final String URL_SUPPORTED_PLAYLIST = URL_SERVER_ROOT+"/api/v1/playlists";
     public static final String URL_SEARCH_RESULT = URL_SERVER_ROOT+"/api/v1/search?";
+    public static final String URL_LATEST_APP_VERSION = "https://github.com/zeseeit/AnyAudio/blob/master/version.txt";
+    public static final String URL_LATEST_APP_DOWNLOAD = "";
 }

@@ -6,21 +6,25 @@ import android.app.DialogFragment;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -53,8 +57,10 @@ public class Home extends AppCompatActivity {
     private FloatingSearchView searchView;
     private SwipeRefreshLayout swipeRefressLayout;
     // non-static handlers : We don`t have
-    private  Handler mStreamHandler;
-    private  Handler mCDRMessageHandler;
+    private Handler mStreamHandler;
+    private Handler mCDRMessageHandler;
+    private Handler mNewUpdateAvailableHandler;
+
     private SharedPrefrenceUtils utils;
     private ProgressBar progressBar;
     private TextView progressBarMsgPanel;
@@ -74,17 +80,16 @@ public class Home extends AppCompatActivity {
         configureStorageDirectory(savedInstanceState);
         instantiateViews();
         handleMessages();   // message handler on UI thread
-        subscribeToTaskAddListener();
+        subscribeToFeatureRequestListener();
 
         utils = SharedPrefrenceUtils.getInstance(this);
 
         if (!utils.getFirstPageLoadedStatus()) {
-            invokeAction(Constants.ACTION_TYPE_FIRST_LOAD);
+            invokeAction(Constants.ACTION_TYPE_TRENDING);
             utils.setFirstPageLoadedStatus(true);
         } else {
             invokeAction(Constants.ACTION_TYPE_RESUME);
         }
-
     }
 
     @Override
@@ -123,10 +128,10 @@ public class Home extends AppCompatActivity {
             @Override
             public void handleMessage(Message msg) {
                 // hide progress
-                L.m("CDR","handling Message[UI Thread]");
+                L.m("CDR", "handling Message[UI Thread]");
 
-                if(swipeRefressLayout.isRefreshing()){
-                    L.m("Home","Disabling Swipe Refresh Layout");
+                if (swipeRefressLayout.isRefreshing()) {
+                    L.m("Home", "Disabling Swipe Refresh Layout");
                     swipeRefressLayout.setRefreshing(false);
                     swipeRefressLayout.setEnabled(true);
                 }
@@ -179,7 +184,7 @@ public class Home extends AppCompatActivity {
         switch (actionType) {
 
 
-            case Constants.ACTION_TYPE_FIRST_LOAD:
+            case Constants.ACTION_TYPE_TRENDING:
                 //  showProgress("Presenting Trending...");
                 if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
                     mRecyclerView.setVisibility(RecyclerView.GONE);
@@ -213,14 +218,14 @@ public class Home extends AppCompatActivity {
 
                 progressBarMsgPanel.setText("Refressing Content");
 
-                repository.submitAction(CentralDataRepository.FLAG_REFRESS,mCDRMessageHandler);
+                repository.submitAction(CentralDataRepository.FLAG_REFRESS, mCDRMessageHandler);
                 break;
 
             case Constants.ACTION_TYPE_SEARCH:
                 //showProgress("Searching Item");
                 String searchQuery = SharedPrefrenceUtils.getInstance(this).getLastSearchTerm();
                 progressBarMsgPanel.setText("Searching For.. " + searchQuery);
-                repository.submitAction(CentralDataRepository.FLAG_SEARCH,mCDRMessageHandler);
+                repository.submitAction(CentralDataRepository.FLAG_SEARCH, mCDRMessageHandler);
                 break;
         }
 
@@ -238,26 +243,102 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    private void subscribeToTaskAddListener() {
-        ResulstsRecyclerAdapter.getInstance(this).setOnTaskAddListener(new TaskAddListener() {
+    private void subscribeToFeatureRequestListener() {
+        ResulstsRecyclerAdapter.getInstance(this).setOnFeatureRequestListener(new FeatureRequestListener() {
             @Override
-            public void onTaskTapped() {
-                L.m("Home subscribeToTaskAddListener() ", "callback: task tapped");
-                progressDialog = new ProgressDialog(Home.this);
-                progressDialog.setMessage("Requesting Your Stuff..");
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-            }
+            public void onTaskTapped(String type, String video_id, String file_name) {
 
-            @Override
-            public void onTaskAddedToQueue(String task_info) {
-                L.m("Home subscribeToTaskAddListener() ", "callback: task added to download queue");
-                progressDialog.dismiss();
-                Toast.makeText(Home.this, task_info + " Added To Download", Toast.LENGTH_LONG).show();
-                //TODO: navigate to DownloadsActivity
+                switch (type) {
+
+                    case Constants.FEATURE_DOWNLOAD:
+                        showAlertForAssuringFeatureRequest(Constants.FEATURE_DOWNLOAD, file_name, video_id);
+                        break;
+
+                    case Constants.FEATURE_STREAM:
+                        showAlertForAssuringFeatureRequest(Constants.FEATURE_STREAM, file_name, video_id);
+                        break;
+
+                }
             }
         });
     }
+
+    MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
+        @Override
+        public void onUriAvailable(String uri) {
+
+            if (progressDialog != null)
+                progressDialog.dismiss();
+
+        }
+    };
+
+    private void showAlertForAssuringFeatureRequest(String forType, final String stuff, final String v_id) {
+
+        switch (forType) {
+            case Constants.FEATURE_STREAM:
+                DialogInterface.OnClickListener streamDialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+
+                                progressDialog = new ProgressDialog(Home.this);
+                                progressDialog.setMessage(getString(R.string.audio_streaming_wait_request_msg));
+                                progressDialog.show();
+
+
+                                MusicStreamer
+                                        .getInstance(Home.this)
+                                        .setData(v_id, stuff)
+                                        .setOnStreamUriFetchedListener(streamUriFetchedListener)
+                                        .initProcess();
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //Dismiss dialog
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setMessage(Html.fromHtml("Do You Want To " + "<b> " + " Stream " + "</b>" + " ?") + "\n" + stuff).setPositiveButton("Yes", streamDialogClickListener)
+                        .setNegativeButton("No", streamDialogClickListener).show();
+
+                break;
+            case Constants.FEATURE_DOWNLOAD:
+                DialogInterface.OnClickListener downloaDialogClickListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case DialogInterface.BUTTON_POSITIVE:
+
+                                TaskHandler
+                                        .getInstance(Home.this)
+                                        .addTask(stuff, v_id);
+
+                                Toast.makeText(Home.this, stuff + " Added To Download", Toast.LENGTH_LONG).show();
+
+                                break;
+
+                            case DialogInterface.BUTTON_NEGATIVE:
+                                //dismiss dialog
+                                dialog.dismiss();
+                                break;
+                        }
+                    }
+                };
+
+                AlertDialog.Builder builderDownloadAlert = new AlertDialog.Builder(this);
+                builderDownloadAlert.setMessage(Html.fromHtml("Do You Want To " + "<b>" + "Download " + "</b>" + "?") + "\n" + stuff).setPositiveButton("Yes", downloaDialogClickListener)
+                        .setNegativeButton("No", downloaDialogClickListener).show();
+        }
+
+    }
+
 
     private int screenMode() {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -278,7 +359,6 @@ public class Home extends AppCompatActivity {
         mRecyclerAdapter.setOrientation(getOrientation());
         mRecyclerAdapter.setScreenMode(screenMode());
         mRecyclerView.setAdapter(mRecyclerAdapter);
-        subscribeForStreamOption(mRecyclerAdapter);
     }
 
     private void instantiateViews() {
@@ -375,6 +455,11 @@ public class Home extends AppCompatActivity {
                     Intent i = new Intent(Home.this, DowloadsActivity.class);
                     startActivity(i);
                 }
+
+                if (id == R.id.action_request_trending) {
+                    invokeAction(Constants.ACTION_TYPE_TRENDING);
+                }
+
             }
         });
 
@@ -395,27 +480,48 @@ public class Home extends AppCompatActivity {
             L.m("Home configureStorageDirectory()", "making dirs");
             AppConfig.getInstance(this).configureDevice();
         }
+
+        checkForUpdateAvailable();
     }
 
-    private void subscribeForStreamOption(ResulstsRecyclerAdapter mRecyclerAdapter) {
-        mRecyclerAdapter.setOnStreamingSourceAvailable(new ResulstsRecyclerAdapter.OnStreamingSourceAvailableListener() {
-            @Override
-            public void onPrepared(String uri) {
+    private void checkForUpdateAvailable() {
 
-                if (progressDialog != null)
-                    progressDialog.dismiss();
+        mNewUpdateAvailableHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+
+                if (msg.arg1 == Constants.FLAG_NEW_VERSION) {
+
+                    DialogInterface.OnClickListener updateDialogClickListener = new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+
+                                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                                    intent.setData(Uri.parse(URLS.URL_LATEST_APP_DOWNLOAD));
+                                    startActivity(intent);
+
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    //Dismiss dialog
+                                    dialog.dismiss();
+                                    break;
+                            }
+                        }
+                    };
+
+                    AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
+                    builder.setMessage(Html.fromHtml(getString(R.string.app_update_msg))).setPositiveButton("Download", updateDialogClickListener)
+                            .setNegativeButton("Cancel", updateDialogClickListener).show();
+
+                }
 
             }
+        };
 
-            @Override
-            public void optioned() {
-
-                progressDialog = new ProgressDialog(Home.this);
-                progressDialog.setMessage("Requesting Audio For You....");
-                progressDialog.show();
-
-            }
-        });
+        AppConfig.getInstance(this).checkUpdates(mNewUpdateAvailableHandler);
 
     }
 

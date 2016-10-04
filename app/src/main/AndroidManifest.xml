@@ -29,11 +29,6 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name="any.audio.TestAct"
-            android:label="@string/title_activity_test" >
-
-        </activity>
 
         <activity
             android:name="any.audio.DowloadsActivity"

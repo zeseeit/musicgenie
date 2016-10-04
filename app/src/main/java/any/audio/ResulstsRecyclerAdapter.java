@@ -27,14 +27,12 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     private static Context context;
     private static ResulstsRecyclerAdapter mInstance;
     private ArrayList<ViewTypeModel> typeViewList;
-    private ArrayList<ItemModel> trendingSongList;
     private ArrayList<BaseSong> songs;
     private int orientation;
     private int screenMode;
     private int viewToInflate;
-    private TaskAddListener taskAddListener;
-    private OnStreamingSourceAvailableListener streamingSourceAvailableListener;
-    private int mLastAnimatedItemPosition =-1;
+    private FeatureRequestListener featureRequestListener;
+    private int mLastAnimatedItemPosition = -1;
 
     public ResulstsRecyclerAdapter(Context context) {
         ResulstsRecyclerAdapter.context = context;
@@ -56,10 +54,10 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
      */
     private void appendSongs(String type, ArrayList<ItemModel> inList) {
 
-     //   L.m("RADP","adding type "+type);
+        //   L.m("RADP","adding type "+type);
         addItem(null, type);
         for (int i = 0; i < inList.size(); i++) {
-       //     L.m("RADP","adding song "+inList.get(i).Title);
+            //     L.m("RADP","adding song "+inList.get(i).Title);
             addItem(inList.get(i), "");
         }
         notifyDataSetChanged();
@@ -70,11 +68,11 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
         if (sectionModel.sectionTitle.equals(Constants.FLAG_RESET_ADAPTER_DATA)) {
             //reset previous data
-         //   L.m("Result Adapter[enque]","Data wiping out!");
+            //   L.m("Result Adapter[enque]","Data wiping out!");
             resetData();
         } else {
             //append
-           // L.m("Result Adapter[enque] ","Section Title : "+sectionModel.sectionTitle);
+            // L.m("Result Adapter[enque] ","Section Title : "+sectionModel.sectionTitle);
             appendSongs(sectionModel.sectionTitle, sectionModel.getList());
         }
 
@@ -96,17 +94,17 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-    private void logListValues(ArrayList<ViewTypeModel> list){
+    private void logListValues(ArrayList<ViewTypeModel> list) {
         //L.m("Result Adapter","Logging Values");
-        for(int i= 0;i<list.size();i++){
-          //  L.m("Result Adapter","Title = "+list.get(i).sectionTitle);
+        for (int i = 0; i < list.size(); i++) {
+            //  L.m("Result Adapter","Title = "+list.get(i).sectionTitle);
         }
     }
 
     private void resetData() {
         typeViewList = new ArrayList<>();
         songs = new ArrayList<>();
- //       notifyDataSetChanged();
+        //       notifyDataSetChanged();
     }
 
     private void log(String s) {
@@ -128,7 +126,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         if (viewType == TYPE_SECTION_TITLE) {
             int hvti = getHeaderViewToInflate();
             view = LayoutInflater.from(context).inflate(hvti, parent, false);
-  //          L.m("Result Adapter"," sectionTitle");
+            //          L.m("Result Adapter"," sectionTitle");
             return new SectionTitleViewHolder(view);
         } else {
             int vti = getViewToInflate();   // getView depending on screen screen sizes
@@ -194,7 +192,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((SectionTitleViewHolder) holder).sectionTitle.setTypeface(ralewayTfRegular);
         }
 
-        if(mLastAnimatedItemPosition < position){
+        if (mLastAnimatedItemPosition < position) {
             animateItem(holder.itemView);
             mLastAnimatedItemPosition = position;
         }
@@ -217,30 +215,28 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     @Override
     public int getItemViewType(int position) {
-        //log("view type at"+position+" = "+typeViewList.get(position).viewType);
+
         return typeViewList.get(position).viewType;
     }
 
-    public void setOnTaskAddListener(TaskAddListener listener) {
-        this.taskAddListener = listener;
+    public void setOnFeatureRequestListener(FeatureRequestListener listener) {
+        this.featureRequestListener = listener;
     }
 
-    public void setOnStreamingSourceAvailable(OnStreamingSourceAvailableListener listener) {
-        this.streamingSourceAvailableListener = listener;
+    public void requestDownload(final String video_id, final String file_name) {
+
+        if (this.featureRequestListener != null)
+            this.featureRequestListener.onTaskTapped(Constants.FEATURE_DOWNLOAD, video_id, file_name);
+
     }
 
-    public void addDownloadTask(final String video_id, final String file_name) {
+    public void requestStream(final String video_id, final String file_name) {
 
-        if (this.taskAddListener != null)
-            this.taskAddListener.onTaskTapped();
+        if (this.featureRequestListener != null)
+            this.featureRequestListener.onTaskTapped(Constants.FEATURE_STREAM, video_id, file_name);
 
-        TaskHandler
-                .getInstance(context)
-                .addTask(file_name, video_id);
-
-        if (this.taskAddListener != null)
-            this.taskAddListener.onTaskAddedToQueue(file_name);
     }
+
 
     public void setScreenMode(int mode) {
         this.screenMode = mode;
@@ -248,12 +244,6 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private boolean connected() {
         return ConnectivityUtils.getInstance(context).isConnectedToNet();
-    }
-
-    public interface OnStreamingSourceAvailableListener {
-        void onPrepared(String uri);
-
-        void optioned();
     }
 
     public static class SectionTitleViewHolder extends RecyclerView.ViewHolder {
@@ -279,17 +269,6 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         TextView title;
         TextView views;
         ImageView thumbnail;
-
-        MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
-            @Override
-            public void onUriAvailable(String uri) {
-                if (ResulstsRecyclerAdapter.getInstance(context).streamingSourceAvailableListener != null) {
-                     L.m("RADP", "onUriAvailable : uri made available");
-                    ResulstsRecyclerAdapter.getInstance(context).streamingSourceAvailableListener.onPrepared(uri);
-                }
-
-            }
-        };
 
         public SongViewHolder(View itemView) {
             super(itemView);
@@ -328,7 +307,8 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
-                    adapter.addDownloadTask(v_id, file_name);
+
+                    adapter.requestDownload(v_id, file_name);
                 }
             });
 
@@ -337,16 +317,11 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                 public void onClick(View view) {
 
                     ResulstsRecyclerAdapter adapter = ResulstsRecyclerAdapter.getInstance(context);
-                    adapter.streamingSourceAvailableListener.optioned();
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
 
-                    MusicStreamer
-                            .getInstance(context)
-                            .setData(v_id, file_name)
-                            .setOnStreamUriFetchedListener(streamUriFetchedListener)
-                            .initProcess();
+                    adapter.requestStream(v_id, file_name);
 
                 }
             });

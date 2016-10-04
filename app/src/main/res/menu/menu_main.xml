@@ -4,11 +4,13 @@
 
 
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="102" app:showAsAction="never" />
 
     <item android:id="@+id/action_downloads" android:title="@string/action_downloads_title"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="101" app:showAsAction="never" />
 
+    <item android:id="@+id/action_request_trending" android:title="@string/action_trending_request"
+        android:orderInCategory="100" app:showAsAction="never" />
 
 
 

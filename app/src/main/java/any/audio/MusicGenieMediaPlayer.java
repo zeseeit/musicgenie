@@ -36,7 +36,6 @@ public class MusicGenieMediaPlayer extends MediaPlayer {
         if (player.isPlaying()) {
             player.reset();
             player.release();
- //           this.player.stop();
         }
     }
 
