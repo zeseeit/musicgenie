@@ -35,4 +35,5 @@ public class Constants {
     public static final String FEATURE_STREAM = "stream";
     public static final String FEATURE_DOWNLOAD = "download";
     public static int FLAG_NEW_VERSION = 1;
+    public static String KEY_CURRENT_VERSION = "currentVersion";
 }

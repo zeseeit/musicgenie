@@ -1,5 +1,6 @@
 package any.audio;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -17,6 +18,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
 import java.io.File;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by Ankit on 9/13/2016.
@@ -40,20 +43,13 @@ public class AppConfig extends Application {
     }
 
     private int getCurrentAppVersionCode() {
-        PackageInfo pInfo = null;
-        try {
-            pInfo = context.getPackageManager().getPackageInfo(getPackageName(), 0);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        return pInfo.versionCode;
+        return SharedPrefrenceUtils.getInstance(context).getCurrentVersionCode();
     }
 
     private String getCurrentAppVersionName() {
         PackageInfo pInfo = null;
         try {
-            pInfo = context.getPackageManager().getPackageInfo(getPackageName(), 0);
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
@@ -89,8 +85,10 @@ public class AppConfig extends Application {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String s) {
-                            L.m("AppConfig","response "+s);
-                        if (Integer.parseInt(s)>getCurrentAppVersionCode()){
+
+                        double currentVersion = Double.parseDouble(s);
+
+                        if (currentVersion>getCurrentAppVersionCode()){
                             //  new version is available
                             Message msg = Message.obtain();
                             msg.arg1 = Constants.FLAG_NEW_VERSION;

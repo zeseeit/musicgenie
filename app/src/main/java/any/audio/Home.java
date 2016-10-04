@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
@@ -485,6 +486,16 @@ public class Home extends AppCompatActivity {
     }
 
     private void checkForUpdateAvailable() {
+
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+        try {
+            int currentVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
+            String currentVersionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
+            utils.setCurrentVersionCode(currentVersion);
+           // utils.setCurrentVersionName(currentVersionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
         mNewUpdateAvailableHandler = new Handler() {
             @Override

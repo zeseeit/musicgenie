@@ -159,4 +159,15 @@ public class SharedPrefrenceUtils {
         editor.putBoolean(Constants.KEY_FIRST_PAGE_LOADED,firstPageLoadedStatus);
         editor.commit();
     }
+
+    public void setCurrentVersionCode(int currentVersion) {
+        editor.putInt(Constants.KEY_CURRENT_VERSION, currentVersion);
+        editor.commit();
+
+    }
+
+    public int getCurrentVersionCode(){
+        return preferences.getInt(Constants.KEY_CURRENT_VERSION,1);
+    }
+
 }
