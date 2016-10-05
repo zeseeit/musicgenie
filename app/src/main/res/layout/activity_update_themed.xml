@@ -1,0 +1,42 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:context="any.audio.UpdateThemedActivity">
+
+
+    <TextView
+        android:padding="12dp"
+        android:id="@+id/updateMsg"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Update Available !"/>
+
+    <TextView
+        android:padding="12sp"
+        android:layout_below="@+id/updateMsg"
+        android:layout_toLeftOf="@+id/download_btn_update_msg"
+        android:id="@+id/cancel_update_msg_dialog"
+        android:text="Cancel"
+        android:textSize="20sp"
+        android:textColor="@color/PrimaryColorDark"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="cancel"/>
+
+    <TextView
+        android:onClick="download"
+        android:id="@+id/download_btn_update_msg"
+        android:padding="12dp"
+        android:layout_alignParentEnd="true"
+        android:textColor="@color/PrimaryColorDark"
+        android:layout_below="@+id/updateMsg"
+        android:textSize="20sp"
+        android:text="Download"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        />
+
+</RelativeLayout>

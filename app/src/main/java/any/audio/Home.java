@@ -40,6 +40,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.google.android.exoplayer.ExoPlayer;
+import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
+import com.google.android.exoplayer.extractor.ExtractorSampleSource;
+import com.google.android.exoplayer.upstream.Allocator;
+import com.google.android.exoplayer.upstream.DataSource;
+import com.google.android.exoplayer.upstream.DefaultAllocator;
+import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer.util.Util;
 
 import java.util.ArrayList;
 
@@ -88,9 +96,15 @@ public class Home extends AppCompatActivity {
         if (!utils.getFirstPageLoadedStatus()) {
             invokeAction(Constants.ACTION_TYPE_TRENDING);
             utils.setFirstPageLoadedStatus(true);
+            // start only once
+            startService(new Intent(this, UpdateCheckService.class));
+
         } else {
             invokeAction(Constants.ACTION_TYPE_RESUME);
         }
+
+
+
     }
 
     @Override
@@ -481,59 +495,6 @@ public class Home extends AppCompatActivity {
             L.m("Home configureStorageDirectory()", "making dirs");
             AppConfig.getInstance(this).configureDevice();
         }
-
-        checkForUpdateAvailable();
-    }
-
-    private void checkForUpdateAvailable() {
-
-        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
-        try {
-            int currentVersion = getPackageManager().getPackageInfo(getPackageName(), 0).versionCode;
-            String currentVersionName = getPackageManager().getPackageInfo(getPackageName(), 0).versionName;
-            utils.setCurrentVersionCode(currentVersion);
-           // utils.setCurrentVersionName(currentVersionName);
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
-
-        mNewUpdateAvailableHandler = new Handler() {
-            @Override
-            public void handleMessage(Message msg) {
-
-                if (msg.arg1 == Constants.FLAG_NEW_VERSION) {
-
-                    DialogInterface.OnClickListener updateDialogClickListener = new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case DialogInterface.BUTTON_POSITIVE:
-
-                                    Intent intent = new Intent(Intent.ACTION_VIEW);
-                                    intent.setData(Uri.parse(URLS.URL_LATEST_APP_DOWNLOAD));
-                                    startActivity(intent);
-
-                                    break;
-
-                                case DialogInterface.BUTTON_NEGATIVE:
-                                    //Dismiss dialog
-                                    dialog.dismiss();
-                                    break;
-                            }
-                        }
-                    };
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Home.this);
-                    builder.setMessage(Html.fromHtml(getString(R.string.app_update_msg))).setPositiveButton("Download", updateDialogClickListener)
-                            .setNegativeButton("Cancel", updateDialogClickListener).show();
-
-                }
-
-            }
-        };
-
-        AppConfig.getInstance(this).checkUpdates(mNewUpdateAvailableHandler);
-
     }
 
     private int getOrientation() {
@@ -570,27 +531,10 @@ public class Home extends AppCompatActivity {
         SharedPrefrenceUtils.getInstance(this).setCurrentStreamingItem(file_name);
         makeStreamingDialog(file_name);
         final String uriToStream = uri;
-        isStreaming = true;
-        new Player().execute(uriToStream);
-//        streamSeeker.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-//            @Override
-//            public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
-//
-//                if (fromUser)
-//                    mPlayer.seekTo(position);
-//            }
-//
-//            @Override
-//            public void onStartTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//
-//            @Override
-//            public void onStopTrackingTouch(SeekBar seekBar) {
-//
-//            }
-//        });
 
+        new MusicGenieMediaPlayer(this,uri,mStreamHandler).start();
+
+        isStreaming = true;
 
     }
 
@@ -673,10 +617,6 @@ public class Home extends AppCompatActivity {
                 public void onClick(View view) {
                     L.m("Home", "touched cancel btn");
 
-                    MusicGenieMediaPlayer
-                            .getInstance(getActivity())
-                            .stopPlayer();
-
                     streamDialog.hide();
                     streamDialog.dismiss();
                 }
@@ -687,8 +627,8 @@ public class Home extends AppCompatActivity {
                 public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
 
                     L.m("StreamTEST", " from User:" + fromUser + " new position " + position);
-                    if (fromUser)
-                        MusicGenieMediaPlayer.getInstance(getActivity()).seekTo(position);
+                    //if (fromUser)
+                        //MusicGenieMediaPlayer.getInstance(getActivity()).seekTo(position);
                 }
 
                 @Override
@@ -715,124 +655,6 @@ public class Home extends AppCompatActivity {
 
             return streamDialog;
         }
-
-    }
-
-    class Player extends AsyncTask<String, Void, Boolean> {
-
-        Context context;
-        private ProgressDialog progressDialog;
-
-        public Player(Context context) {
-            this.context = context;
-        }
-
-        public Player() {
-            progressDialog = new ProgressDialog(Home.this);
-
-
-        }
-
-        @Override
-        protected Boolean doInBackground(String... strings) {
-
-            try {
-                mPlayer = MusicGenieMediaPlayer
-                        .getInstance(Home.this)
-                        .setURI(strings[0])
-                        .getPlayer();
-
-                // mPlayer.setScreenOnWhilePlaying(true);
-                L.m("Home", "playing");
-                mPlayer.start();
-
-                while (mPlayer.isPlaying()) {
-
-                    Message msg = Message.obtain();
-                    msg.arg1 = mPlayer.getCurrentPosition();
-                    msg.arg2 = mPlayer.getDuration();
-                    if (mStreamHandler != null)
-                        mStreamHandler.sendMessage(msg);
-
-                    try {
-                        Thread.sleep(500);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-
-
-                }
-                mPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
-                        isStreaming = false;
-                    }
-                });
-                mPlayer.setOnErrorListener(new MediaPlayer.OnErrorListener() {
-                    @Override
-                    public boolean onError(MediaPlayer mediaPlayer, int i, int i1) {
-                        isStreaming = false;
-                        return true;
-                    }
-                });
-
-
-            } catch (IllegalArgumentException e) {
-                // TODO Auto-generated catch block
-                Log.d("IllegarArgument", e.getMessage());
-                prepared = false;
-                e.printStackTrace();
-            } catch (SecurityException e) {
-                // TODO Auto-generated catch block
-                prepared = false;
-                e.printStackTrace();
-            } catch (IllegalStateException e) {
-                // TODO Auto-generated catch block
-                prepared = false;
-                e.printStackTrace();
-            }
-
-
-            return prepared;
-        }
-//
-//        private void publishStreamingProgress(int currentPosition, int duration) {
-//
-//
-//  //          L.m("Home","streamSeeker : "+streamSeeker.getId()+" currentTrackPosition :"+currentTrackPosition.getId());
-////
-//
-//            streamSeeker.setMax(duration);
-//            currentTrackPosition.setText(getTimeFromMillisecond(currentPosition));
-//            totalTrackPosition.setText(getTimeFromMillisecond(duration));
-//            streamSeeker.setProgress(currentPosition);
-//
-//        }
-
-        @Override
-        protected void onPostExecute(Boolean result) {
-            // TODO Auto-generated method stub
-            super.onPostExecute(result);
-
-            Log.d("Prepared", "//" + result);
-            if (streamDialog != null) {
-//                streamDialog.hide();
-//                streamDialog.dismiss();
-                SharedPrefrenceUtils.getInstance(Home.this).setCurrentStreamingItem("");
-            }
-
-            isStreaming = false;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            // TODO Auto-generated method stub
-            super.onPreExecute();
-//            this.progressDialog.setMessage("Buffering...");
-//            this.progressDialog.show();
-
-        }
-
 
     }
 

@@ -14,4 +14,7 @@
     <string name="alert_message_download">Want To <b>Download</b> \n\"</string>
     <string name="alert_message_stream">Do You Want To <b>Stream</b> \n\"</string>
     <string name="app_update_msg">"AnyAudio`s Update Available !"</string>
+    <string name="title_activity_update_themed">AnyAudio</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

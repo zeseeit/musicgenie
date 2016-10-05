@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="any.audio">
+    package="any.audio" >
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -8,18 +8,21 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+        <service android:name=".UpdateCheckService" />
+
         <activity
-            android:name="any.audio.ErrorSplash"
+            android:name=".ErrorSplash"
             android:label="@string/title_activity_error_splash" >
         </activity>
         <activity
-            android:name="any.audio.Home"
+            android:name=".Home"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_home" >
             <intent-filter>
@@ -27,24 +30,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
         <activity
-            android:name="any.audio.DowloadsActivity"
+            android:name=".DowloadsActivity"
             android:label="@string/activity_downloads"
-            android:parentActivityName="any.audio.Home">
-
+            android:parentActivityName=".Home" >
         </activity>
-
         <activity
-            android:name="any.audio.UserPreferenceSetting"
+            android:name=".UserPreferenceSetting"
             android:configChanges="orientation"
             android:label="@string/activity_preferences"
-            android:parentActivityName="any.audio.Home">
-
+            android:parentActivityName=".Home" >
         </activity>
-
+        <activity
+            android:theme="@style/Theme.AppCompat.Light.Dialog"
+            android:name=".UpdateThemedActivity"
+            android:label="@string/title_activity_update_themed" >
+        </activity>
     </application>
 
 </manifest>
