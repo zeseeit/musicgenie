@@ -9,15 +9,14 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,7 +26,6 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Html;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,6 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
@@ -69,6 +68,7 @@ public class Home extends AppCompatActivity {
     private Handler mStreamHandler;
     private Handler mCDRMessageHandler;
     private Handler mNewUpdateAvailableHandler;
+    private Handler mRemoteThreadControlHandler;
 
     private SharedPrefrenceUtils utils;
     private ProgressBar progressBar;
@@ -81,6 +81,9 @@ public class Home extends AppCompatActivity {
     private boolean mReceiverRegistered = false;
     private int mDuration;
     private int mCurrentPosition;
+    private MusicGenieMediaPlayer mPlayerThread;
+    private ExoPlayer exoPlayer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,7 +105,6 @@ public class Home extends AppCompatActivity {
         } else {
             invokeAction(Constants.ACTION_TYPE_RESUME);
         }
-
 
 
     }
@@ -152,7 +154,7 @@ public class Home extends AppCompatActivity {
                 }
 
                 hideProgress();
-                MessageObjectModel object = (MessageObjectModel) msg.obj;
+                ResultMessageObjectModel object = (ResultMessageObjectModel) msg.obj;
                 SectionModel item = object.data;
 
                 if (object.Status == Constants.MESSAGE_STATUS_OK) {
@@ -299,6 +301,7 @@ public class Home extends AppCompatActivity {
                             case DialogInterface.BUTTON_POSITIVE:
 
                                 progressDialog = new ProgressDialog(Home.this);
+                                progressDialog.setCancelable(false);
                                 progressDialog.setMessage(getString(R.string.audio_streaming_wait_request_msg));
                                 progressDialog.show();
 
@@ -504,24 +507,35 @@ public class Home extends AppCompatActivity {
     private void makeStreamingDialog(String file_name) {
 
         streamDialog = new StreamFragment();
-
-        mStreamHandler = new Handler() {
+        streamDialog.setFileName(file_name);
+        streamDialog.setSeekBarChangeListener(new SeekBarChangeListener() {
             @Override
-            public void handleMessage(Message msg) {
+            public void onSeekTo(int seekToPosition) {
+                Message seekMsg = Message.obtain();
+                seekMsg.arg2 = seekToPosition;
 
-                mDuration = msg.arg2;
-                mCurrentPosition = msg.arg1;
+                if (mPlayerThread != null) {
+                    L.m("Home", "sending seek msg");
+                    if (exoPlayer.getBufferedPosition() > seekToPosition)
+                        exoPlayer.seekTo(seekToPosition);
+                }
+            }
+        });
 
-                streamSeeker.setProgress(mCurrentPosition);
-                streamSeeker.setMax(mDuration);
-                currentTrackPosition.setText(getTimeFromMillisecond(mCurrentPosition));
-                totalTrackPosition.setText(getTimeFromMillisecond(mDuration));
+        streamDialog.setStreamCancelListener(new StreamCancelListener() {
+            @Override
+            public void onCancel() {
+
+                if (mPlayerThread != null) {
+                    L.m("Home", "sending cancel stream msg");
+                    exoPlayer.stop();
+                    exoPlayer.release();
+
+                }
 
             }
-        };
+        });
 
-
-        streamDialog.setFileName(file_name);
         streamDialog.show(getFragmentManager(), "Stream");
 
 
@@ -529,12 +543,36 @@ public class Home extends AppCompatActivity {
 
     private void prepareStreaming(String uri, String file_name) {
         SharedPrefrenceUtils.getInstance(this).setCurrentStreamingItem(file_name);
+
+        mStreamHandler = new Handler() {
+            @Override
+            public void handleMessage(Message msg) {
+
+                StreamMessageObjectModel object = (StreamMessageObjectModel) msg.obj;
+                mCurrentPosition = (int) object.progress;
+                mDuration = (int) object.maxLength;
+
+                if (mCurrentPosition >= 0) {
+                    streamSeeker.setProgress(mCurrentPosition);
+                    streamSeeker.setMax(mDuration);
+                    currentTrackPosition.setText(getTimeFromMillisecond(mCurrentPosition));
+                    totalTrackPosition.setText(getTimeFromMillisecond(mDuration));
+                }
+
+                if(mCurrentPosition>mDuration && mDuration!=-1){
+                    if (streamDialog != null) {
+                        streamDialog.dismiss();
+                    }
+                }
+
+            }
+        };
+
+        mPlayerThread = new MusicGenieMediaPlayer(this, uri, mStreamHandler);
         makeStreamingDialog(file_name);
-        final String uriToStream = uri;
-
-        new MusicGenieMediaPlayer(this,uri,mStreamHandler).start();
-
-        isStreaming = true;
+        mPlayerThread.start();
+        //new MusicGenieMediaPlayer(this,uri,mStreamHandler).start();
+        //isStreaming = true;
 
     }
 
@@ -579,6 +617,17 @@ public class Home extends AppCompatActivity {
     public static class StreamFragment extends DialogFragment {
 
         private String fileName;
+        private StreamCancelListener streamCancelListener;
+        private SeekBarChangeListener seekBarChangeListener;
+
+        public void setSeekBarChangeListener(SeekBarChangeListener seekBarChangeListener) {
+            this.seekBarChangeListener = seekBarChangeListener;
+        }
+
+
+        public void setStreamCancelListener(StreamCancelListener streamCancelListener) {
+            this.streamCancelListener = streamCancelListener;
+        }
 
         public void setFileName(String fileName) {
             this.fileName = fileName;
@@ -617,8 +666,12 @@ public class Home extends AppCompatActivity {
                 public void onClick(View view) {
                     L.m("Home", "touched cancel btn");
 
+                    if (streamCancelListener != null) {
+                        streamCancelListener.onCancel();
+                    }
                     streamDialog.hide();
                     streamDialog.dismiss();
+
                 }
             });
 
@@ -627,8 +680,9 @@ public class Home extends AppCompatActivity {
                 public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
 
                     L.m("StreamTEST", " from User:" + fromUser + " new position " + position);
-                    //if (fromUser)
-                        //MusicGenieMediaPlayer.getInstance(getActivity()).seekTo(position);
+                    if (fromUser) {
+                        seekBarChangeListener.onSeekTo(position);
+                    }
                 }
 
                 @Override
@@ -674,5 +728,104 @@ public class Home extends AppCompatActivity {
 
     }
 
+    public class MusicGenieMediaPlayer extends Thread {
+
+        private static final String TAG = "MusicGenieMediaPlayer";
+        private Context context;
+        private MusicGenieMediaPlayer mInstance;
+        private MediaPlayer player;
+        private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+        private static final int BUFFER_SEGMENT_COUNT = 256;
+        private MediaCodecAudioTrackRenderer audioRenderer;
+        private Uri mUri;
+        private Handler mUIHandler;
+        private boolean PLAYER_STATE_ENDED = false;
+        private boolean PLAYER_STATE_PLAYING = false;
+        private int playerCurrentPositon = -1;
+        private int playerContentDuration =-1;
+        public MusicGenieMediaPlayer(Context context, String uri, Handler handler) {
+            this.context = context;
+            mUri = Uri.parse(uri);
+            mUIHandler = handler;
+
+        }
+
+        @Override
+        public void run() {
+            Looper.prepare();
+            useExoplayer();
+            Looper.loop();
+        }
+
+        private void useNativeMediaPlayer() {
+
+            Uri mUri = Uri.parse("https://redirector.googlevideo.com/videoplayback?ip=2405%3A204%3Aa108%3Ad941%3Ac1a6%3Aee19%3Ab91e%3A2212&requiressl=yes&lmt=1475255327003268&itag=43&id=o-AEwHFbPb9W4VvmStnHurqdnMuVo-XQif-0oAXbXuVoed&dur=0.000&pcm2cms=yes&source=youtube&upn=gA6OYhdD4fs&mime=video%2Fwebm&ratebypass=yes&ipbits=0&initcwndbps=320000&expire=1475706999&gcr=in&sparams=dur%2Cei%2Cgcr%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpcm2cms%2Cpl%2Cratebypass%2Crequiressl%2Csource%2Cupn%2Cexpire&key=yt6&mn=sn-gwpa-qxae&mm=31&ms=au&ei=Fyz1V4KYDImEoAPRwLjwCQ&pl=36&mv=m&mt=1475684495&signature=A8B6FD2BC32B05B17E0C62DA1E36967B72E84E3A.3515AE79C436E6A1B1A42BC9E3E14892C5C2C95A&title=%E0%A4%B2%E0%A4%B2%E0%A4%95%E0%A5%80+%E0%A4%9A%E0%A5%81%E0%A4%A8%E0%A4%B0%E0%A4%BF%E0%A4%AF%E0%A4%BE+%E0%A4%93%E0%A5%9D+%E0%A4%95%E0%A5%87+-+Pawan+Singh+%26+Akshara+Singh+-+Dular+Devi+Maiya+Ke+-+Bhojpuri+Devi+Geet+2016");
+            MediaPlayer mediaPlayer = MediaPlayer.create(context, mUri);
+            mediaPlayer.start();
+
+            if (mediaPlayer != null) {
+                while (mediaPlayer.isPlaying()) {
+
+                    StreamMessageObjectModel objectModel = new StreamMessageObjectModel(
+                            mediaPlayer.getCurrentPosition(),
+                            mediaPlayer.getDuration(),
+                            0);
+
+                    Message msg = Message.obtain();
+                    msg.obj = objectModel;
+                    mUIHandler.sendMessage(msg);
+
+                }
+            }
+
+        }
+
+        private void useExoplayer() {
+
+            exoPlayer = ExoPlayer.Factory.newInstance(1);
+            // Settings for exoPlayer
+            Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
+            String userAgent = Util.getUserAgent(context, "AnyAudio");
+            DataSource dataSource = new DefaultUriDataSource(context, null, userAgent);
+
+            ExtractorSampleSource sampleSource = new ExtractorSampleSource(
+                    mUri,
+                    dataSource,
+                    allocator,
+                    BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
+
+            audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+            // Prepare ExoPlayer
+            exoPlayer.prepare(audioRenderer);
+            exoPlayer.setPlayWhenReady(true);
+
+            while (exoPlayer.getPlayWhenReady()) {
+
+                playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
+                playerContentDuration = (int) exoPlayer.getDuration();
+
+                StreamMessageObjectModel objectModel = new StreamMessageObjectModel(
+                        playerCurrentPositon,
+                        playerContentDuration,
+                        exoPlayer.getBufferedPosition());
+
+                Message msg = Message.obtain();
+                msg.obj = objectModel;
+                L.m("ExoPlayer", "sending..");
+                mUIHandler.sendMessage(msg);
+
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+
+                if(playerContentDuration!=-1){
+                    if(playerCurrentPositon>playerContentDuration)break;
+                }
+            }
+        }
+    }
 
 }

@@ -34,6 +34,10 @@ public class Constants {
     private static final String TAG = "AppConfig";
     public static final String FEATURE_STREAM = "stream";
     public static final String FEATURE_DOWNLOAD = "download";
+    public static final int FLAG_STOP_MEDIA_PLAYER = 303;
+    public static final int FLAG_CANCEL_STREAM = 304;
+    public static final int FLAG_PASSING_HANDLER_REF = 101;
+    public static final long FLAG_STREAM_END = -1;
     public static int FLAG_NEW_VERSION = 1;
     public static String KEY_CURRENT_VERSION = "currentVersion";
 }

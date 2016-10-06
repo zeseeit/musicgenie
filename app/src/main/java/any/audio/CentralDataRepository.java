@@ -269,7 +269,7 @@ public class CentralDataRepository {
 
         L.m("CDR","dispatching Message");
         Message msg = Message.obtain();
-        msg.obj = new MessageObjectModel(
+        msg.obj = new ResultMessageObjectModel(
                 status,
                 message,    // temp : for future requis. if needed
                 data

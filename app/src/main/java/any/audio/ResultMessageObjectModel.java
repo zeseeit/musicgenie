@@ -3,13 +3,13 @@ package any.audio;
 /**
  * Created by Ankit on 10/3/2016.
  */
-public class MessageObjectModel {
+public class ResultMessageObjectModel {
 
     int Status;
     String Message;
     SectionModel data;
 
-    public MessageObjectModel(int status, String message, SectionModel data) {
+    public ResultMessageObjectModel(int status, String message, SectionModel data) {
         Status = status;
         Message = message;
         this.data = data;
