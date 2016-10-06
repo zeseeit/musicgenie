@@ -81,6 +81,7 @@ public class Home extends AppCompatActivity {
     private boolean mReceiverRegistered = false;
     private int mDuration;
     private int mCurrentPosition;
+    private int mCurrentBuffered;
     private MusicGenieMediaPlayer mPlayerThread;
     private ExoPlayer exoPlayer;
 
@@ -551,15 +552,17 @@ public class Home extends AppCompatActivity {
                 StreamMessageObjectModel object = (StreamMessageObjectModel) msg.obj;
                 mCurrentPosition = (int) object.progress;
                 mDuration = (int) object.maxLength;
-
+                mCurrentBuffered = (int) object.currentBuffered;
                 if (mCurrentPosition >= 0) {
                     streamSeeker.setProgress(mCurrentPosition);
+                    streamSeeker.setSecondaryProgress(mCurrentBuffered);
+                    streamSeeker.setSecondaryProgressTintMode(PorterDuff.Mode.LIGHTEN);
                     streamSeeker.setMax(mDuration);
                     currentTrackPosition.setText(getTimeFromMillisecond(mCurrentPosition));
                     totalTrackPosition.setText(getTimeFromMillisecond(mDuration));
                 }
 
-                if(mCurrentPosition>mDuration && mDuration!=-1){
+                if(mCurrentPosition>=mDuration && mDuration!=-1){
                     if (streamDialog != null) {
                         streamDialog.dismiss();
                     }
@@ -656,8 +659,10 @@ public class Home extends AppCompatActivity {
             totalTrackPosition = (TextView) layout.findViewById(R.id.totalTrackLengthText);
             currentTrackPosition.setTypeface(tf);
             totalTrackPosition.setTypeface(tf);
+
             streamSeeker.getProgressDrawable().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
             streamSeeker.getThumb().setColorFilter(getResources().getColor(R.color.PrimaryColor), PorterDuff.Mode.SRC_IN);
+
             streamingItemTitle.setText(utils.getCurrentStreamingItem());
             cancelStreamingBtn.setTypeface(FontManager.getInstance(getActivity()).getTypeFace(FontManager.FONT_AWESOME));
 
@@ -822,7 +827,7 @@ public class Home extends AppCompatActivity {
 
 
                 if(playerContentDuration!=-1){
-                    if(playerCurrentPositon>playerContentDuration)break;
+                    if(playerCurrentPositon>=playerContentDuration)break;
                 }
             }
         }

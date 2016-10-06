@@ -10,6 +10,7 @@
         android:layout_height="wrap_content">
 
         <SeekBar
+            android:secondaryProgressTint="@color/secondaryProgressTint"
             android:paddingTop="10dp"
             android:paddingBottom="0dp"
             android:id="@+id/streaming_audio_seekbar"

@@ -107,7 +107,6 @@ public class MusicStreamer {
                         JSONObject obj = new JSONObject(result.toString());
                         if(obj.getInt("status")==200){
                             streaming_url_pref += obj.getString("url");
- //                           log("stream url:" + streaming_url_pref);
                             L.m("MusicStream","stream Url "+streaming_url_pref);
                             onStreamUriFetchedListener.onUriAvailable(streaming_url_pref);
                             broadcastURI(streaming_url_pref, file);

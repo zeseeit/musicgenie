@@ -112,11 +112,13 @@ public class CloudManager {
                 for (int j = 0; j < typeArray.length(); j++) {      // j represent current item model inside i`th section model
 
                     JSONObject songObj = (JSONObject) typeArray.get(j);
+                    String enc_v_id = songObj.getString("get_url").substring(14);
+
                     item = new ItemModel(songObj.getString("title"),
                             songObj.getString("length"),
                             songObj.getString("uploader"),
                             songObj.getString("thumb"),
-                            songObj.getString("get_url"),
+                            enc_v_id,
                             TIME_SINCE_UPLOADED_LEFT_VACCANT,
                             songObj.getString("views"),
                             playlists.get(playlistNum));
