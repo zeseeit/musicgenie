@@ -16,5 +16,8 @@
     <string name="app_update_msg">"AnyAudio`s Update Available !"</string>
     <string name="title_activity_update_themed">AnyAudio</string>
 
-    <string name="hello_world">Hello world!</string>
+    <string name="streaming_play_btn"></string>
+    <string name="streaming_pause_btn"></string>
+    <string name="streaming_cancel_btn"></string>
+
 </resources>

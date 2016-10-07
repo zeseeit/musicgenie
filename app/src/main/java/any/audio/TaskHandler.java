@@ -167,6 +167,7 @@ public class TaskHandler {
 
     public void setCancelled(Boolean status){
         this.isCanceled = status;
+        L.m("TaskHandler","isCancelled set to "+status);
     }
 
     private void deleteFile(String taskID) {
@@ -412,11 +413,19 @@ public class TaskHandler {
                     OutputStream outputStream = new FileOutputStream(dest_file);
                     byte data[] = new byte[1024];
                     long total = 0;
+                    int progressPercentage = 0;
+                    int progressSent = 0;
                     while (!isCanceled && (count = inputStream.read(data)) != -1) {
-                        L.m("TaskHandler","[Downloading.....] isCancelled "+isCanceled);
+                        //L.m("TaskHandler","[Downloading.....] isCancelled "+isCanceled);
                         total += count;
   //                      Log.d("Sending filelength", fileLength + "");
-                        publishProgress((int) total * 100 / fileLength, fileLength + "");
+                        progressPercentage =((int) total * 100 / fileLength);//, fileLength;
+
+                        if(progressSent<progressPercentage) {
+                            publishProgress(progressPercentage,String.valueOf(fileLength));
+                            progressSent = progressPercentage;
+                        }
+
                         outputStream.write(data, 0, count);
                     }
 
@@ -452,6 +461,8 @@ public class TaskHandler {
 //                log("downloaded task " + taskID);
                 L.m("TaskHandler","downloaded task "+taskID);
             }
+            L.m("TaskHandler","prog "+progress);
+
             broadcastUpdate(String.valueOf(progress), cl);
             if (currentProgress < progress) {
                 LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);

@@ -95,7 +95,7 @@
                     android:lines="2"
                     android:maxLines="2"
                     android:text="Set Fire To Rain\n - Adele"
-                    android:textColor="#dd000000"
+                    android:textColor="@color/TitleColor"
                     android:textSize="@dimen/song_card_tittle_text_size" />
 
             </FrameLayout>

@@ -40,4 +40,5 @@ public class Constants {
     public static final long FLAG_STREAM_END = -1;
     public static int FLAG_NEW_VERSION = 1;
     public static String KEY_CURRENT_VERSION = "currentVersion";
+    public static String KEY_STREAMING_THUMB_URL = "streamingThumbUrl";
 }

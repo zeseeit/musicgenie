@@ -32,7 +32,7 @@
     <ProgressBar
         android:indeterminateBehavior="cycle"
         android:indeterminate="true"
-        android:visibility="visible"
+        android:visibility="invisible"
         android:layout_marginTop="200dp"
         android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
@@ -43,6 +43,8 @@
     <TextView
         android:layout_marginTop="16dp"
         android:textSize="@dimen/progress_bar_message_panel_text_size"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"
         android:layout_centerHorizontal="true"
         android:text="Refressing Your Content"
         android:layout_below="@+id/homeProgressBar"

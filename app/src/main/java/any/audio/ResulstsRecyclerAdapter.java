@@ -321,6 +321,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
 
+                    SharedPrefrenceUtils.getInstance(context).setStreamingThumbnailUrl(adapter.songs.get(pos).Thumbnail_url);
                     adapter.requestStream(v_id, file_name);
 
                 }

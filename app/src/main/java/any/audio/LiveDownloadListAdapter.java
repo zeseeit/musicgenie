@@ -2,6 +2,7 @@ package any.audio;
 
 import android.content.Context;
 import android.graphics.Typeface;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,7 +24,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
     private DownloadCancelListener downloadCancelListener;
     private Typeface tfIcon;
     private Typeface raleway;
-
+    //private Handler cance
     public LiveDownloadListAdapter(Context context) {
         super(context, 0);
         LiveDownloadListAdapter.context = context;
@@ -82,12 +83,13 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
         cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                log("cancel btn click");
+                L.m("LiveDownloadAdapter","cancel btn click");
                 cancelDownload(downloadingList.get(position).taskID);
             }
         });
 
         return v;
+
     }
 
     @Override
@@ -97,7 +99,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
 
 
     private void cancelDownload(String taskID) {
-        log("cancelled task " + taskID + " li" + downloadCancelListener);
+        L.m("LiveDownloadAdapter","cancelled task " + taskID + " li" + downloadCancelListener);
         if (this.downloadCancelListener != null) {
             downloadCancelListener.onDownloadCancel(taskID);
         }

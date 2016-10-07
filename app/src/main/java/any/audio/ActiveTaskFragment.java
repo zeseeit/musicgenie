@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -182,10 +183,17 @@ public class ActiveTaskFragment extends Fragment {
         public void onReceive(Context context, Intent intent) {
 
             if (intent.getAction().equals(Constants.ACTION_PROGRESS_UPDATE_BROADCAST)) {
-                String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
-                String progress = intent.getStringExtra(Constants.EXTRA_PROGRESS);
-                String contentSize = intent.getStringExtra(Constants.EXTRA_CONTENT_SIZE);
-                updateItem(getPosition(taskID), Integer.valueOf(progress), contentSize);
+                final String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
+                final String progress = intent.getStringExtra(Constants.EXTRA_PROGRESS);
+                final String contentSize = intent.getStringExtra(Constants.EXTRA_CONTENT_SIZE);
+
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateItem(getPosition(taskID), Integer.valueOf(progress), contentSize);
+                    }
+                }, 700);
+
             }
         }
     }

@@ -170,4 +170,12 @@ public class SharedPrefrenceUtils {
         return preferences.getInt(Constants.KEY_CURRENT_VERSION,1);
     }
 
+    public void setStreamingThumbnailUrl(String thumbnail_url) {
+        editor.putString(Constants.KEY_STREAMING_THUMB_URL,thumbnail_url);
+        editor.commit();
+    }
+
+    public String getStreamingThumbnailUrl(){
+        return preferences.getString(Constants.KEY_STREAMING_THUMB_URL,"");
+    }
 }
