@@ -33,7 +33,6 @@ public class DowloadsActivity extends AppCompatActivity {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
-
             }
 
             @Override
@@ -45,6 +44,7 @@ public class DowloadsActivity extends AppCompatActivity {
 
             }
         });
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Downloads");
         setSupportActionBar(toolbar);

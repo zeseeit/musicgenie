@@ -40,7 +40,9 @@ public class TaskHandler {
     private boolean isHandlerRunning = false;
     private int task_count = 0;
     private ProgressDialog progressDialog;
+    public boolean isCanceled = false;
     private String dwnd_url;
+    private DownloadItemInvalidatedListener itemInvalidatedListener;
 
     public TaskHandler(Context context) {
         TaskHandler.context = context;
@@ -99,6 +101,10 @@ public class TaskHandler {
         }
     }
 
+    public void setItemInvalidatedListener(DownloadItemInvalidatedListener itemInvalidatedListener){
+        this.itemInvalidatedListener = itemInvalidatedListener;
+    }
+
     public void pauseHandler() {
         //TODO: check how to cancel activities on thread
     }
@@ -141,6 +147,7 @@ public class TaskHandler {
             }
         };
 
+        setCancelled(false);
         DownloadThread thread = new DownloadThread(taskID, v_id, file_name, listener);
         thread.start();
 
@@ -158,18 +165,24 @@ public class TaskHandler {
         }
     }
 
+    public void setCancelled(Boolean status){
+        this.isCanceled = status;
+    }
+
     private void deleteFile(String taskID) {
 
         SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
-        log("callback: download error");
+        L.m("TaskHandler","callback: download error");
 
         String fn = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
-        File dest_file = new File(Constants.FILES_DIR + "/" + fn + ".mp3");
+        File dest_file = new File(Constants.FILES_DIR + "/" + fn + ".m4a");
         if (dest_file.exists()) {
             if (dest_file.delete()) {
-                log("Successfully Deleted File" + dest_file.getName());
+                if(itemInvalidatedListener!=null)
+                    itemInvalidatedListener.onItemsInvalidated();
+                L.m("TaskHandler","Successfully Deleted File" + dest_file.getName());
             } else {
-                log("Failed To Delete File " + dest_file.getName());
+                L.m("TaskHandler","Failed To Delete File " + dest_file.getName());
             }
         }
     }
@@ -295,6 +308,10 @@ public class TaskHandler {
         Log.d(TAG, msg);
     }
 
+    public void cancelCurrentDownload(){
+        this.isCanceled = true;
+    }
+
     /*
     *   Download Thread
     * */
@@ -307,7 +324,7 @@ public class TaskHandler {
         private String v_id;
         private String file_name;
         private DownloadListener downloadListener;
-        private boolean isCanceled = false;
+
         private int currentProgress;
         private int fileLength;
         //private Context context;
@@ -331,6 +348,7 @@ public class TaskHandler {
             File dest_dir = null;
             subscribeDownloadCancelListener();
             if (!isCanceled) {
+                L.m("TaskHandler"," isCancelled "+isCanceled);
                 try {
 
                     downloadListener.onDownloadTaskProcessStart();
@@ -395,16 +413,17 @@ public class TaskHandler {
                     byte data[] = new byte[1024];
                     long total = 0;
                     while (!isCanceled && (count = inputStream.read(data)) != -1) {
+                        L.m("TaskHandler","[Downloading.....] isCancelled "+isCanceled);
                         total += count;
   //                      Log.d("Sending filelength", fileLength + "");
                         publishProgress((int) total * 100 / fileLength, fileLength + "");
                         outputStream.write(data, 0, count);
                     }
+
                     //check inturruption
                     if (total < fileLength) {
                         if (downloadListener != null) {
                             downloadListener.onInterruptted(taskID);
-//                            log("Download Interrupted :" + taskID);
                             L.m("TaskHandler","Download Interrupted");
                         }
                     }
@@ -415,11 +434,9 @@ public class TaskHandler {
 
                 } catch (MalformedURLException e) {
                     downloadListener.onError(taskID);
-//                    log("URL exception " + e);
                     L.m("TaskHandler"," URL exception");
                 } catch (IOException e) {
                     downloadListener.onError(taskID);
-  //                  log("IO exception " + e);
                     L.m("TaskHandler"," IO exception");
                 }
 

@@ -12,7 +12,7 @@ import android.widget.ListView;
 import java.io.File;
 import java.util.ArrayList;
 
-public class DownloadFragment extends Fragment {
+public class DownloadFragment extends Fragment implements DownloadItemInvalidatedListener{
 
     private static final String TAG = "DownloadFragment";
     private static ListView downloadedItemListView;
@@ -62,4 +62,8 @@ public class DownloadFragment extends Fragment {
         super.onDetach();
     }
 
+    @Override
+    public void onItemsInvalidated() {
+        setUpAdapter();
+    }
 }

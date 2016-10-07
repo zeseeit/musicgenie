@@ -69,8 +69,14 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
 
         final android.media.MediaMetadataRetriever mmr = new MediaMetadataRetriever();
         mmr.setDataSource(fileList.get(position));
+        byte[] data = null;
 
-        byte[] data = mmr.getEmbeddedPicture();
+        try {
+            data = mmr.getEmbeddedPicture();
+        }
+        catch (Exception e){
+
+        }
 
         if (data != null) {
             Bitmap bmp = BitmapFactory.decodeByteArray(data, 0, data.length);

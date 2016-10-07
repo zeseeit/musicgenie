@@ -29,9 +29,12 @@ public class ActiveTaskFragment extends Fragment {
     DownloadCancelListener downloadCancelListener = new DownloadCancelListener() {
         @Override
         public void onDownloadCancel(String taskID) {
-            // remove download task and updata listview
-            TaskHandler.getInstance(getActivity()).removeTask(taskID);
-            // update
+
+            TaskHandler handler = TaskHandler.getInstance(getActivity());
+
+            // remove specific task
+            handler.removeTask(taskID);
+            handler.setCancelled(true);
             adapter.setDownloadingList(getTasksList());
             liveDownloadListView.setAdapter(adapter);
 
