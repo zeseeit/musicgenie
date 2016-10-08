@@ -99,6 +99,7 @@ public class Home extends AppCompatActivity {
     private MusicGenieMediaPlayer mPlayerThread;
     private ExoPlayer exoPlayer;
     private FrameLayout streamDialogContainer;
+    private String mStreamFileName;
 
 
     @Override
@@ -128,6 +129,7 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
         if (!mReceiverRegistered) {
             registerForBroadcastListen(this);
             L.m("Home", "Register Receiver");
@@ -154,6 +156,13 @@ public class Home extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         invokeAction(Constants.ACTION_TYPE_RESUME);
+
+        if (SharedPrefrenceUtils.getInstance(this).getCurrentStreamingItem().length() > 0) {
+            L.m("StreamFragment", "transacting");
+            transactStreamFragment();
+
+        }
+
     }
 
     private void handleMessages() {
@@ -318,7 +327,6 @@ public class Home extends AppCompatActivity {
         });
     }
 
-
     MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
         @Override
         public void onUriAvailable(String uri) {
@@ -340,20 +348,7 @@ public class Home extends AppCompatActivity {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
-//                                progressDialog = new ProgressDialog(Home.this);
-//                                progressDialog.setCancelable(false);
-//                                progressDialog.setMessage(getString(R.string.audio_streaming_wait_request_msg));
-//                                progressDialog.show();
-
-                                // bottom fragment
-                                transactStreamFragment();
-
-
-                                MusicStreamer
-                                        .getInstance(Home.this)
-                                        .setData(v_id, stuff)
-                                        .setOnStreamUriFetchedListener(streamUriFetchedListener)
-                                        .initProcess();
+                                stream(v_id, stuff);
 
                                 break;
 
@@ -400,6 +395,17 @@ public class Home extends AppCompatActivity {
 
     }
 
+    private void stream(String v_id, String stuff) {
+
+        resetPlayer();
+        transactStreamFragment();
+        MusicStreamer
+                .getInstance(Home.this)
+                .setData(v_id, stuff)
+                .setOnStreamUriFetchedListener(streamUriFetchedListener)
+                .initProcess();
+
+    }
 
     private int screenMode() {
         DisplayMetrics metrics = new DisplayMetrics();
@@ -601,7 +607,7 @@ public class Home extends AppCompatActivity {
     }
 
     private void prepareStreaming(String uri, final String file_name) {
-        SharedPrefrenceUtils.getInstance(this).setCurrentStreamingItem(file_name);
+        //SharedPrefrenceUtils.getInstance(this).setCurrentStreamingItem(file_name);
 
         mStreamHandler = new Handler() {
 
@@ -615,7 +621,7 @@ public class Home extends AppCompatActivity {
                 mCurrentBuffered = (int) object.currentBuffered;
                 if (mCurrentPosition >= 0) {
 
-                    streamingFragment.onProgressChange(mCurrentPosition, mCurrentBuffered, mDuration, file_name);
+                    streamingFragment.onProgressChange(mCurrentPosition, mCurrentBuffered, mDuration);
 //
 //                    streamSeeker.setProgress(mCurrentPosition);
 //                    streamSeeker.setSecondaryProgress(mCurrentBuffered);
@@ -635,10 +641,7 @@ public class Home extends AppCompatActivity {
         };
 
         mPlayerThread = new MusicGenieMediaPlayer(this, uri, mStreamHandler);
-        // makeStreamingDialog(file_name);
         mPlayerThread.start();
-        //new MusicGenieMediaPlayer(this,uri,mStreamHandler).start();
-        //isStreaming = true;
 
     }
 
@@ -796,6 +799,7 @@ public class Home extends AppCompatActivity {
 
         }
 
+
         @Override
         public void run() {
             Looper.prepare();
@@ -826,20 +830,20 @@ public class Home extends AppCompatActivity {
 
         }
 
-        private void resetExoPlayer(){
+        private void resetExoPlayer() {
 
             // check for already streaming
-        if(exoPlayer!=null)
-            if(exoPlayer.getPlayWhenReady()){
-                exoPlayer.stop();
-                exoPlayer.release();
-            }
+            if (exoPlayer != null)
+                if (exoPlayer.getPlayWhenReady()) {
+                    exoPlayer.stop();
+                    exoPlayer.release();
+                }
 
         }
 
         private void useExoplayer() {
 
-            resetExoPlayer();
+            // resetExoPlayer();
 
             exoPlayer = ExoPlayer.Factory.newInstance(1);
             // Settings for exoPlayer
@@ -866,7 +870,8 @@ public class Home extends AppCompatActivity {
                 StreamMessageObjectModel objectModel = new StreamMessageObjectModel(
                         playerCurrentPositon,
                         playerContentDuration,
-                        exoPlayer.getBufferedPosition());
+                        exoPlayer.getBufferedPosition()
+                );
 
                 Message msg = Message.obtain();
                 msg.obj = objectModel;
@@ -887,6 +892,15 @@ public class Home extends AppCompatActivity {
         }
     }
 
+    private void resetPlayer() {
+
+        if (exoPlayer != null) {
+            L.m("StreamingFragment", "reset Player");
+            exoPlayer.stop();
+            exoPlayer.release();
+        }
+
+    }
 
     private void transactStreamFragment() {
 
@@ -894,6 +908,9 @@ public class Home extends AppCompatActivity {
         streamDialogContainer.setVisibility(View.VISIBLE);
 
         final FragmentManager manager = getSupportFragmentManager();
+        final FragmentTransaction fragmentTransaction = manager.beginTransaction();
+        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.leave_from_bottom);
+
         streamingFragment = new StreamingFragment();
 
         streamingFragment.setSeekBarChangeListener(new SeekBarChangeListener() {
@@ -914,13 +931,15 @@ public class Home extends AppCompatActivity {
             public void onCancel() {
 
                 if (mPlayerThread != null) {
-                    L.m("Home", "sending cancel stream msg");
-                    //streamDialogContainer.setVisibility(View.INVISIBLE);
                     exoPlayer.stop();
                     exoPlayer.release();
 
-                    manager.beginTransaction().remove(streamingFragment).commit();
-                    streamingFragment.onDestroyView();
+                    //reset shared pref
+                    SharedPrefrenceUtils.getInstance(getApplicationContext()).setCurrentStreamingItem("");
+
+                    FragmentTransaction newFragmentTransaction = manager.beginTransaction();
+                    newFragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.leave_from_bottom);
+                    newFragmentTransaction.remove(streamingFragment).commit();
                 }
 
             }
@@ -929,16 +948,17 @@ public class Home extends AppCompatActivity {
         streamingFragment.setPlayPauseListener(new StreamPlayPauseListener() {
             @Override
             public void onStateChange(boolean Stream) {
-                if(Stream){
+                if (Stream) {
                     exoPlayer.setPlayWhenReady(true);
-                }else{
+                } else {
                     exoPlayer.setPlayWhenReady(false);
                 }
             }
         });
 
-
-        manager.beginTransaction().replace(stream_fragment_bottom_container, streamingFragment).commit();
+//        Fragment existingFragment = getSupportFragmentManager().findFragmentById(R.id.stream_fragment_bottom_container);
+//        if (existingFragment == null || !existingFragment.getClass().equals(StreamingFragment.class))
+        fragmentTransaction.replace(stream_fragment_bottom_container, streamingFragment).commit();
 
     }
 
@@ -950,6 +970,7 @@ public class Home extends AppCompatActivity {
         ImageView streamingThumbnail;
         TextView streamingSongTitle;
         SeekBar seekbar;
+        ProgressBar indeterminateProgressBar;
         TextView cancelStreamBtn;
         TextView currentStreamPosition;
         TextView streamDuration;
@@ -958,6 +979,8 @@ public class Home extends AppCompatActivity {
         private StreamCancelListener streamCancelListener;
         private StreamPlayPauseListener playPauseListener;
         private View streamView;
+        int mBuffered = -1;
+        private boolean progressViewToggleDone = false;
 
         public void setPlayPauseListener(StreamPlayPauseListener playPauseListener) {
             this.playPauseListener = playPauseListener;
@@ -994,13 +1017,28 @@ public class Home extends AppCompatActivity {
             streamingThumbnail = (ImageView) streamView.findViewById(R.id.streaming_item_thumb);
             streamDuration = (TextView) streamView.findViewById(R.id.streaming_item_totalTrackLengthText);
             seekbar = (SeekBar) streamView.findViewById(R.id.streaming_item_audio_seekbar);
+            seekbar.setVisibility(View.INVISIBLE);
             currentStreamPosition = (TextView) streamView.findViewById(R.id.streaming_item_currentTrackPositionText);
             playPauseStreamBtn = (TextView) streamView.findViewById(R.id.streaming_item_play_pauseBtn);
             streamingSongTitle = (TextView) streamView.findViewById(R.id.streaming_item_title);
             cancelStreamBtn = (TextView) streamView.findViewById(R.id.streaming_item_cancel_text_btn);
+
+            indeterminateProgressBar = (ProgressBar) streamView.findViewById(R.id.stream_indeterminate_progress);
+            indeterminateProgressBar.setVisibility(View.VISIBLE);
+//            indeterminateProgressBar.getIndeterminateDrawable().setColorFilter(R.color.PrimaryColor, PorterDuff.Mode.SRC_IN);
+//            indeterminateProgressBar.getProgressDrawable().setColorFilter(R.color.PrimaryColor, PorterDuff.Mode.SRC_IN);
+
             String uri = SharedPrefrenceUtils.getInstance(getActivity()).getStreamingThumbnailUrl();
+            String streamFileName = SharedPrefrenceUtils.getInstance(getActivity()).getCurrentStreamingItem();
 
             Picasso.with(getActivity()).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
+            streamingSongTitle.setText(streamFileName);
+            streamDuration.setText(" | 00:00");
+            currentStreamPosition.setText("00:00");
+            seekbar.setProgress(0);
+            seekbar.setSecondaryProgress(0);
+
+            //.transform(new CircularImageTransformer())
 
             // raleway
             streamDuration.setTypeface(raleway);
@@ -1067,7 +1105,6 @@ public class Home extends AppCompatActivity {
             return streamView;
         }
 
-
         @Override
         public void onDestroyView() {
             super.onDestroyView();
@@ -1075,16 +1112,27 @@ public class Home extends AppCompatActivity {
         }
 
         @Override
-        public void onProgressChange(int progress, int buffered, int duration, String title) {
+        public void onProgressChange(int progress, int buffered, int duration) {
+
+            if (!progressViewToggleDone) {
+                // hide indeterminate and show seekbar
+                if (buffered > 0) {
+                    indeterminateProgressBar.setVisibility(View.INVISIBLE);
+                    seekbar.setVisibility(View.VISIBLE);
+                    progressViewToggleDone = true;
+                }
+            }
 
             currentStreamPosition.setText(getTimeFromMillisecond(progress));
+            seekbar.setProgress(progress);
             streamDuration.setText(" | " + getTimeFromMillisecond(duration));
             seekbar.setMax(duration);
-            seekbar.setProgress(progress);
-            seekbar.setSecondaryProgress(buffered);
-            streamingSongTitle.setText(title);
 
 
+            if (mBuffered < buffered) {
+                seekbar.setSecondaryProgress(buffered);
+                mBuffered = buffered;
+            }
         }
 
 

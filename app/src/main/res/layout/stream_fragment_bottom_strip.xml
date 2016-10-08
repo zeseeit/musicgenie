@@ -1,111 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:cardView="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:elevation="0dp"
-    cardView:cardCornerRadius="0dp">
-
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/stream_fragment_background"
-    android:layout_height="104dp">
+    android:layout_height="108dp">
 
     <ImageView
-        android:layout_centerVertical="true"
-        android:padding="8dp"
-        android:src="@drawable/head"
-        android:id="@+id/streaming_item_thumb"
-        android:layout_width="84dp"
-        android:layout_height="84dp" />
-
-    <RelativeLayout
-        android:layout_toRightOf="@+id/streaming_item_thumb"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    <TextView
-        android:id="@+id/streaming_item_title"
-        android:textColor="@color/TitleColor"
-        android:text=""
-        android:lines="1"
-        android:maxLength="25"
-        android:paddingTop="14dp"
-        android:paddingLeft="8dp"
-        android:paddingRight="16dp"
-        android:paddingBottom="2dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:id="@+id/streaming_item_cancel_text_btn"
-        android:text="@string/streaming_cancel_btn"
-        android:textColor="@color/TitleColor"
-        android:layout_toRightOf="@+id/streaming_item_title"
-        android:paddingRight="16dp"
-        android:paddingTop="6dp"
-        android:paddingLeft="8dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:gravity="end"
-        android:textSize="30sp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-
-    <SeekBar
-        android:secondaryProgressTint="@color/secondaryProgressTint"
-        android:paddingTop="1dp"
-        android:paddingBottom="0dp"
-        android:paddingLeft="8dp"
-        android:id="@+id/streaming_item_audio_seekbar"
+        android:id="@+id/shade"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/streaming_item_title"
-        android:layout_gravity="center_vertical"
-        android:progress="0" />
+        android:src="@drawable/streaming_bottom_strip_elevation_drawable" />
 
-    <TextView
-        android:textColor="@color/PrimaryColor"
-        android:id="@+id/streaming_item_currentTrackPositionText"
-        android:text="00:00"
-        android:layout_below="@+id/streaming_item_audio_seekbar"
-        android:textSize="14sp"
-        android:paddingLeft="8dp"
-        android:paddingTop="4dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="104dp"
+        android:layout_below="@+id/shade"
+        android:layout_marginTop="-1dp"
+        android:background="@color/stream_fragment_background">
 
-    <TextView
-        android:textColor="@color/TitleColor"
-        android:text=" | "
-        android:textSize="14sp"
-        android:paddingRight="14dp"
-        android:paddingTop="4dp"
-        android:paddingLeft="4dp"
-        android:layout_below="@+id/streaming_item_audio_seekbar"
-        android:layout_toRightOf="@+id/streaming_item_currentTrackPositionText"
-        android:id="@+id/streaming_item_totalTrackLengthText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
 
-    <TextView
-        android:textColor="@color/TitleColor"
-        android:text="@string/streaming_pause_btn"
-        android:textSize="36sp"
-        android:paddingLeft="14sp"
-        android:paddingRight="14dp"
-        android:paddingBottom="2dp"
-        android:layout_marginTop="-6dp"
-        android:id="@+id/streaming_item_play_pauseBtn"
-        android:layout_below="@+id/streaming_item_audio_seekbar"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        <ImageView
+            android:id="@+id/streaming_item_thumb"
+            android:layout_width="104dp"
+            android:layout_height="104dp"
+            android:layout_centerVertical="true"
+            android:padding="16dp"
+            android:src="@drawable/head" />
+
+        <RelativeLayout
+            android:id="@+id/stream_meta_data_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/streaming_item_thumb">
+
+            <TextView
+                android:id="@+id/streaming_item_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:lines="1"
+                android:maxLength="25"
+                android:paddingBottom="2dp"
+                android:paddingLeft="0dp"
+                android:paddingRight="16dp"
+                android:paddingTop="14dp"
+                android:text=""
+                android:textColor="@color/TitleColor" />
+
+            <TextView
+                android:id="@+id/streaming_item_cancel_text_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_toRightOf="@+id/streaming_item_title"
+                android:gravity="end"
+                android:paddingLeft="8dp"
+                android:paddingRight="16dp"
+                android:paddingTop="6dp"
+                android:text="@string/streaming_cancel_btn"
+                android:textColor="@color/TitleColor"
+                android:textSize="30sp" />
+
+
+            <SeekBar
+                android:visibility="invisible"
+                android:id="@+id/streaming_item_audio_seekbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/streaming_item_title"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="0dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="1dp"
+                android:progress="0"
+                android:secondaryProgressTint="@color/secondaryProgressTint" />
+
+            <ProgressBar
+                android:id="@+id/stream_indeterminate_progress"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:indeterminateOnly="true"
+                android:layout_below="@+id/streaming_item_title"
+                android:paddingLeft="0dp"
+                android:layout_marginRight="16dp"
+                android:paddingTop="1dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+
+            <TextView
+                android:id="@+id/streaming_item_currentTrackPositionText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/streaming_item_audio_seekbar"
+                android:paddingLeft="0dp"
+                android:paddingTop="4dp"
+                android:text="00:00"
+                android:textColor="@color/PrimaryColor"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/streaming_item_totalTrackLengthText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/streaming_item_audio_seekbar"
+                android:layout_toRightOf="@+id/streaming_item_currentTrackPositionText"
+                android:paddingLeft="4dp"
+                android:paddingRight="14dp"
+                android:paddingTop="4dp"
+                android:text=" | "
+                android:textColor="@color/TitleColor"
+                android:textSize="14sp" />
+
+            <TextView
+                android:id="@+id/streaming_item_play_pauseBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/streaming_item_audio_seekbar"
+                android:layout_marginTop="-6dp"
+                android:paddingBottom="2dp"
+                android:paddingLeft="14sp"
+                android:paddingRight="14dp"
+                android:text="@string/streaming_pause_btn"
+                android:textColor="@color/TitleColor"
+                android:textSize="36sp" />
+
+        </RelativeLayout>
 
     </RelativeLayout>
-
 </RelativeLayout>
-    </android.support.v7.widget.CardView>

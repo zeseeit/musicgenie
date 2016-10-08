@@ -21,12 +21,11 @@
         app:floatingSearch_close_search_on_keyboard_dismiss="true" />
 
     <FrameLayout
-        android:elevation="16dp"
         android:visibility="invisible"
         android:layout_alignParentBottom="true"
         android:id="@+id/stream_fragment_bottom_container"
         android:layout_width="match_parent"
-        android:layout_height="104dp"/>
+        android:layout_height="108dp"/>
 
 
 </RelativeLayout>

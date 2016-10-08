@@ -41,7 +41,6 @@
         </activity>
         <activity
             android:name=".UserPreferenceSetting"
-            android:configChanges="orientation"
             android:label="@string/activity_preferences"
             android:parentActivityName=".Home" >
         </activity>
