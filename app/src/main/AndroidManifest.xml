@@ -15,10 +15,11 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
-        <service android:name=".UpdateCheckService" />
+        <service android:name=".services.UpdateCheckService" />
 
         <activity
-            android:name=".ErrorSplash"
+            android:screenOrientation="portrait"
+            android:name=".Activity.ErrorSplash"
             android:label="@string/title_activity_error_splash" >
 
             <intent-filter>
@@ -29,24 +30,28 @@
 
         </activity>
         <activity
-            android:name=".Home"
+            android:screenOrientation="portrait"
+            android:name=".Activity.Home"
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_home" >
 
         </activity>
         <activity
-            android:name=".DowloadsActivity"
+            android:screenOrientation="portrait"
+            android:name=".Activity.DowloadsActivity"
             android:label="@string/activity_downloads"
-            android:parentActivityName=".Home" >
+            android:parentActivityName=".Activity.Home" >
         </activity>
         <activity
-            android:name=".UserPreferenceSetting"
+            android:screenOrientation="portrait"
+            android:name=".Activity.UserPreferenceSetting"
             android:label="@string/activity_preferences"
-            android:parentActivityName=".Home" >
+            android:parentActivityName=".Activity.Home" >
         </activity>
         <activity
+            android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.Dialog"
-            android:name=".UpdateThemedActivity"
+            android:name=".Activity.UpdateThemedActivity"
             android:label="@string/title_activity_update_themed" >
         </activity>
     </application>

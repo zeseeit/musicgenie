@@ -1,0 +1,13 @@
+StreamUIManager:  > is called on onResume();
+                > Check SharedPrefrences for stream status
+                > Transact Stream fragment accordingly
+                > Subscribe For Player(Streaming) Events(stop,error,pause,play)
+
+StreamFragment: > onAttach()- get Stream Info From shared Pref. and update to views
+
+StreamPref    : > saves stream status
+                > get/set stream info
+
+StreamerCallbackListener: > contains method to inform different state of player
+
+Streamer Is old Streamer

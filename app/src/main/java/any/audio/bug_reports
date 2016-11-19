@@ -1,0 +1,31 @@
+Bugs Related With Live-Streaming
+
+> streaming second song over already streaming :
+  Issue:
+        previous thumbnail persist.
+        previous title persist
+
+> Navigation To another activity
+   Issue:
+         While streaming song, if we navigate to another activity
+         on returning back, fragment disappears
+
+> Try Streaming over disappeared streaming fragment
+    Issue:
+        multiple streaming get started while trying streaming over disappeared fragment
+
+> After one pause, progress Bar and play-time is not updating
+
+> played-time is persist on second time
+
+> add download button to side of play/pause btn on streaming fragment
+
+> after streaming ends , stream fragment should disappear
+
+> On network failure there should corresponding event notification , and UI updation.
+
+> make stream fragment height bit narrower
+
+> make streaming content`s title size bigger
+
+
