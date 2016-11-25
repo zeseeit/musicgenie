@@ -9,7 +9,7 @@ public class Constants {
     public static final String PHONE = "phone";
     public static final int SCREEN_MODE_TABLET = 0 ;
     public static final int SCREEN_MODE_MOBILE = 1;
-    public static final String ACTION_PROGRESS_UPDATE_BROADCAST = "action_progress_update";
+    public static final String ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST = "action_progress_update";
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_PROGRESS = "progress";
     public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Musicgenie/Audio";
@@ -41,4 +41,10 @@ public class Constants {
     public static int FLAG_NEW_VERSION = 1;
     public static String KEY_CURRENT_VERSION = "currentVersion";
     public static String KEY_STREAMING_THUMB_URL = "streamingThumbUrl";
+    public static String ACTION_STREAM_PROGRESS_UPDATE_BROADCAST = "streaming_update";
+    public static String STREAM_PROGRESS_TIME = "stream_progress_time";
+    public static String EXTRA_BUFFERED = "buffered_pos";
+    public static String EXTRAA_STREAM_CONTENT_LEN = "stream_content_len";
+    public static String EXTRAA_STREAM_BUFFERED_PROGRESS = "stream_buffered_extraa";
+    public static String EXTRAA_STREAM_PROGRESS = "stream_progress_extraa";
 }

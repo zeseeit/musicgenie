@@ -29,6 +29,7 @@ import any.audio.Models.ViewTypeModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.SharedPreferences.StreamSharedPref;
 
 public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -332,8 +333,10 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
-                    SharedPrefrenceUtils.getInstance(context).setCurrentStreamingItem(adapter.songs.get(pos).Title);
-                    SharedPrefrenceUtils.getInstance(context).setStreamingThumbnailUrl(adapter.songs.get(pos).Thumbnail_url);
+//
+//                    SharedPrefrenceUtils.getInstance(context).setCurrentStreamingItem(adapter.songs.get(pos).Title);
+//                    SharedPrefrenceUtils.getInstance(context).setStreamingThumbnailUrl(adapter.songs.get(pos).Thumbnail_url);
+
                     adapter.requestStream(v_id, file_name);
 
                 }

@@ -377,11 +377,11 @@ package any.audio.Database;
                     this.mResultLoadListener = mResultLoadListener;
                 }
 
-                interface TrendingLoadListener {
+                public interface TrendingLoadListener {
                     void onTrendingLoad(SectionModel trendingItem);
                 }
 
-                interface ResultLoadListener {
+                public interface ResultLoadListener {
                     void onResultLoadListener(SectionModel result);
                 }
 

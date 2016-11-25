@@ -1,7 +1,12 @@
 package any.audio.Managers;
 
 import android.content.Context;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 
+import any.audio.Fragments.StreamFragment;
+import any.audio.R;
 import any.audio.SharedPreferences.StreamSharedPref;
 
 /**
@@ -34,7 +39,7 @@ public class StreamUIManager  {
     }
 
     private void transactStreamFragment(){
-
+            // just transact the new fragment that`s it ,
     }
 
 

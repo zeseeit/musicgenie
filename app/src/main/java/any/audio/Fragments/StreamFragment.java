@@ -3,8 +3,10 @@ package any.audio.Fragments;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +18,8 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 
 import java.lang.reflect.Field;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import any.audio.Activity.Home;
 import any.audio.Interfaces.SeekBarChangeListener;
@@ -25,6 +29,7 @@ import any.audio.Interfaces.StreamProgressListener;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.L;
 
@@ -35,7 +40,7 @@ public class StreamFragment extends Fragment {
 
 
     private Activity mActivity;
-
+    private boolean ACTIVITY_ATTACHED_STATE = false;
     String playBtn;
     String pauseBtn;
     private boolean isStreaming = false;
@@ -56,6 +61,8 @@ public class StreamFragment extends Fragment {
     private FontManager mFontManager;
     private Typeface mTypefaceMaterial;
     private Typeface mTypefaceRaleway;
+    private Timer mTimer;
+    private long STREAM_INFO_UPDATE_INTERVAL = 500;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +90,11 @@ public class StreamFragment extends Fragment {
         initialProgressItemVisibility();
         setTypeFaces();
         attachListeners();
-        subscribeForProgressUpdate((Home) mActivity);
+        //subscribeForProgressUpdate((Home) mActivity);
+
+        if (mTimer == null)
+            mTimer = new Timer();
+        mTimer.scheduleAtFixedRate(new StreamInfoUpdateTask(), 0, STREAM_INFO_UPDATE_INTERVAL);
 
     }
 
@@ -102,10 +113,11 @@ public class StreamFragment extends Fragment {
 
     private void initValues() {
 
-        String uri = SharedPrefrenceUtils.getInstance(getActivity()).getStreamingThumbnailUrl();
-        String streamFileName = SharedPrefrenceUtils.getInstance(getActivity()).getCurrentStreamingItem();
+        String uri = StreamSharedPref.getInstance(getActivity()).getStreamThumbnailUrl();
+        String streamFileName = StreamSharedPref.getInstance(getActivity()).getStreamTitle();
         Picasso.with(getActivity()).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
         streamingSongTitle.setText(streamFileName);
+
         streamDuration.setText(" | 00:00");
         currentStreamPosition.setText("00:00");
         seekbar.setProgress(0);
@@ -134,8 +146,9 @@ public class StreamFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                L.m("StreamTest"," onCancel "+streamCancelListener);
+                L.m("StreamTest", " onCancel " + streamCancelListener);
                 if (streamCancelListener != null) {
+                    StreamSharedPref.getInstance(getActivity()).setStreamState(false);
                     streamCancelListener.onCancel();
                 }
 
@@ -195,7 +208,7 @@ public class StreamFragment extends Fragment {
         return (SharedPrefrenceUtils.getInstance(getActivity()).getCurrentStreamingItem().length() == 0);
     }
 
-    private void subscribeForProgressUpdate(Home home){
+    private void subscribeForProgressUpdate(Home home) {
 
         home.setStreamProgressListener(new StreamProgressListener() {
             @Override
@@ -224,14 +237,57 @@ public class StreamFragment extends Fragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         this.mActivity = activity;
-        //todo: start updatehandler which checks info from sharedpref. and update to UI.
 
+        //todo: start updatehandler which checks info from sharedpref. and update to UI.
+        // regular update at interval
+
+    }
+
+    private class StreamInfoUpdateTask extends TimerTask {
+
+        @Override
+        public void run() {
+
+            //read from sharedpref and log
+            StreamSharedPref pref = StreamSharedPref.getInstance(getActivity());
+            Log.d("StreamFragment", " progress " + pref.getStreamingProgress() + " content " + pref.getStreamContentLength());
+
+            int buffered = pref.getStreamingBuffer();
+            int progress = pref.getStreamCurrentPlayingPosition();
+            int duration = pref.getStreamContentLength();
+
+            try {
+
+                if (!progressViewToggleDone) {
+                    if (buffered > 0) {
+                        indeterminateProgressBar.setVisibility(View.INVISIBLE);
+                        seekbar.setVisibility(View.VISIBLE);
+                        progressViewToggleDone = true;
+                    }
+                }
+
+                currentStreamPosition.setText(getTimeFromMillisecond(progress));
+                seekbar.setProgress(progress);
+                streamDuration.setText(" | " + getTimeFromMillisecond(duration));
+                seekbar.setMax(duration);
+                if (mBuffered < buffered) {
+                    seekbar.setSecondaryProgress(buffered);
+                    mBuffered = buffered;
+                }
+
+            } catch (Exception e) {
+                Log.d("StreamFragment", "something went wrong " + e);
+            }
+        }
     }
 
     @Override
     public void onDetach() {
         super.onDetach();
 
+        if (mTimer != null) {
+            mTimer.cancel();
+        }
 
         try {
             Field childFragmentManager = Fragment.class.getDeclaredField("mChildFragmentManager");

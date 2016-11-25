@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 public class SectionModel {
 
-    String sectionTitle;
+    public String sectionTitle;
     ArrayList<ItemModel> list;
 
     public SectionModel(String sectionTitle) {

@@ -1,6 +1,5 @@
 package any.audio.Activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -8,15 +7,16 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -24,15 +24,18 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.text.Html;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.google.android.exoplayer.ExoPlaybackException;
 import com.google.android.exoplayer.ExoPlayer;
 import com.google.android.exoplayer.MediaCodecAudioTrackRenderer;
 import com.google.android.exoplayer.extractor.ExtractorSampleSource;
@@ -41,15 +44,21 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
+import com.squareup.picasso.Picasso;
 
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import any.audio.Config.AppConfig;
 import any.audio.Centrals.CentralDataRepository;
+import any.audio.Managers.FontManager;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.FeatureRequestListener;
+import any.audio.SharedPreferences.StreamSharedPref;
+import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.L;
 import any.audio.helpers.MusicStreamer;
 import any.audio.R;
@@ -58,17 +67,12 @@ import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Models.SearchSuggestion;
 import any.audio.helpers.SearchSuggestionHelper;
 import any.audio.Models.SectionModel;
-import any.audio.Interfaces.SeekBarChangeListener;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
-import any.audio.Interfaces.StreamCancelListener;
 import any.audio.Fragments.StreamFragment;
 import any.audio.Models.StreamMessageObjectModel;
-import any.audio.Interfaces.StreamPlayPauseListener;
 import any.audio.Interfaces.StreamProgressListener;
 import any.audio.helpers.TaskHandler;
 import any.audio.services.UpdateCheckService;
-
-import static any.audio.R.id.stream_fragment_bottom_container;
 
 public class Home extends AppCompatActivity {
 
@@ -81,6 +85,14 @@ public class Home extends AppCompatActivity {
     static TextView cancelStreamingBtn;
     static TextView streamingItemTitle;
 
+    private ProgressBar indeterminateProgressBar;
+    private ImageView streamingThumbnail;
+    private TextView streamDuration;
+    private SeekBar seekbar;
+    private TextView currentStreamPosition;
+    private TextView playPauseStreamBtn;
+    private TextView streamingSongTitle;
+    private TextView cancelStreamBtn;
     private StreamFragment streamingFragment;
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager layoutManager;
@@ -109,15 +121,20 @@ public class Home extends AppCompatActivity {
     private int mCurrentBuffered;
     private MusicGenieMediaPlayer mPlayerThread;
     private ExoPlayer exoPlayer;
+    int mBuffered = -1;
+    private boolean progressViewToggleDone = false;
     private FrameLayout streamDialogContainer;
     private String mStreamFileName;
 
     private StreamProgressListener streamProgressListener;
+    private boolean mStreamUpdateReceiverRegistered = false;
+    private StreamProgressUpdateBroadcastReceiver streamProgressUpdateReceiver;
+    private boolean streamBottomSheetsVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_home);
+        setContentView(R.layout.new_home_test_layout);
         configureStorageDirectory(savedInstanceState);
         instantiateViews();
         handleMessages();   // message handler on UI thread
@@ -143,9 +160,14 @@ public class Home extends AppCompatActivity {
         super.onResume();
 
         if (!mReceiverRegistered) {
-            registerForBroadcastListen(this);
+            registerForStreamUriFetchedBroadcastListen(this);
             L.m("Home", "Register Receiver");
         }
+        if (!mStreamUpdateReceiverRegistered) {
+            registerForStreamProgressUpdateBroadcastListen(this);
+            L.m("Home", "Register Receiver");
+        }
+
     }
 
     @Override
@@ -154,9 +176,18 @@ public class Home extends AppCompatActivity {
         super.onStop();
 
         if (mReceiverRegistered) {
-            unRegisterBroadcast();
-            L.m("Home", "UnRegister Receiver");
+            unRegisterStreamUriFetchBroadcast();
+            L.m("HomeStream", "UnRegister Receiver");
         }
+
+        if (mStreamUpdateReceiverRegistered) {
+            unRegisterStreamProgressUpdateBroadcast();
+            L.m("HomeStream", "UnRegister Receiver");
+        }
+
+        // setting flag for streamBottomSheets visibility
+        streamBottomSheetsVisible = false;
+
     }
 
     @Override
@@ -168,15 +199,15 @@ public class Home extends AppCompatActivity {
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
         invokeAction(Constants.ACTION_TYPE_RESUME);
-
-        if (SharedPrefrenceUtils.getInstance(this).getCurrentStreamingItem().length() > 0) {
-            L.m("StreamTest", "transacting");
-            transactStreamFragment();
-        }
+//
+//        if (SharedPrefrenceUtils.getInstance(this).getCurrentStreamingItem().length() > 0) {
+//            L.m("StreamTest", "transacting");
+//            transactStreamFragment();
+//        }
     }
 
     // for stream fragment
-    public void setStreamProgressListener(StreamProgressListener listener){
+    public void setStreamProgressListener(StreamProgressListener listener) {
         this.streamProgressListener = listener;
     }
 
@@ -402,7 +433,13 @@ public class Home extends AppCompatActivity {
     private void stream(String v_id, String stuff) {
 
         resetPlayer();
-        transactStreamFragment();
+        StreamSharedPref.getInstance(this).setStreamThumbnailUrl(v_id);
+        StreamSharedPref.getInstance(this).setStreamTitle(stuff);
+
+        Log.d("Home", "setting stream state to true");
+        StreamSharedPref.getInstance(this).setStreamState(true);
+        new StreamUIAgent().init();
+
         MusicStreamer
                 .getInstance(Home.this)
                 .setData(v_id, stuff)
@@ -575,36 +612,24 @@ public class Home extends AppCompatActivity {
 
     private void prepareStreaming(String uri, final String file_name) {
 
-        mStreamHandler = new Handler() {
+        if(!streamBottomSheetsVisible){
+            prepareBottomStreamSheet();
+            streamBottomSheetsVisible = true;
+        }
 
-            //@TargetApi(Build.VERSION_CODES.LOLLIPOP)
-            @Override
-            public void handleMessage(Message msg) {
-
-                StreamMessageObjectModel object = (StreamMessageObjectModel) msg.obj;
-                mCurrentPosition = (int) object.progress;
-                mDuration = (int) object.maxLength;
-                mCurrentBuffered = (int) object.currentBuffered;
-                if (mCurrentPosition >= 0) {
-                    if(streamProgressListener!=null)
-                        streamProgressListener.onProgressChange(mCurrentPosition, mCurrentBuffered, mDuration);
-                }
-            }
-        };
-
-        mPlayerThread = new MusicGenieMediaPlayer(this, uri, mStreamHandler);
+        mPlayerThread = new MusicGenieMediaPlayer(this, uri);
         mPlayerThread.start();
 
     }
 
-    private void unRegisterBroadcast() {
+    private void unRegisterStreamUriFetchBroadcast() {
         if (mReceiverRegistered) {
             this.unregisterReceiver(receiver);
             mReceiverRegistered = false;
         }
     }
 
-    private void registerForBroadcastListen(Context context) {
+    private void registerForStreamUriFetchedBroadcastListen(Context context) {
         receiver = new StreamUriBroadcastReceiver();
         if (!mReceiverRegistered) {
             context.registerReceiver(receiver, new IntentFilter(Constants.ACTION_STREAM_URL_FETCHED));
@@ -628,6 +653,227 @@ public class Home extends AppCompatActivity {
 
     }
 
+    private void unRegisterStreamProgressUpdateBroadcast() {
+        if (mStreamUpdateReceiverRegistered) {
+            this.unregisterReceiver(streamProgressUpdateReceiver);
+            mStreamUpdateReceiverRegistered = false;
+        }
+    }
+
+    private void registerForStreamProgressUpdateBroadcastListen(Context context) {
+        streamProgressUpdateReceiver = new StreamProgressUpdateBroadcastReceiver();
+        if (!mStreamUpdateReceiverRegistered) {
+            context.registerReceiver(streamProgressUpdateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
+            mStreamUpdateReceiverRegistered = true;
+        }
+    }
+
+    public class StreamProgressUpdateBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST)) {
+
+                L.m("StreamingHome", "update via broadcast: progress " + intent.getStringExtra(Constants.STREAM_PROGRESS_TIME));
+
+                int contentLen = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_CONTENT_LEN));
+                int buffered = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS));
+                int progress = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_PROGRESS));
+
+                if(!streamBottomSheetsVisible){
+                    prepareBottomStreamSheet();
+                    streamBottomSheetsVisible = true;
+                }
+
+                if(streamBottomSheetsVisible){
+
+                    if (contentLen > 0) {
+
+                        try {
+
+                            if (contentLen > 0 && buffered > 0) {
+
+                                indeterminateProgressBar.setVisibility(View.INVISIBLE);
+                                seekbar.setVisibility(View.VISIBLE);
+
+                            }
+
+                            currentStreamPosition.setText(getTimeFromMillisecond(progress));
+                            seekbar.setProgress(progress);
+                            streamDuration.setText(" | " + getTimeFromMillisecond(contentLen));
+                            seekbar.setMax(contentLen);
+                            if (mBuffered < buffered) {
+                                seekbar.setSecondaryProgress(buffered);
+                                mBuffered = buffered;
+                            }
+
+                        } catch (Exception e) {
+                            Log.d("StreamFragment", "something went wrong " + e);
+                        }
+                    }
+                }
+
+
+            }
+        }
+
+    }
+
+    private String getTimeFromMillisecond(int millis) {
+        String hr = "";
+        String min = "";
+        String sec = "";
+        String time = "";
+        int i_hr = (millis / 1000) / 3600;
+        int i_min = (millis / 1000) / 60;
+        int i_sec = (millis / 1000) % 60;
+
+        if (i_hr == 0) {
+            min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+            sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+            time = min + " : " + sec;
+        } else {
+            hr = (String.valueOf(i_hr).length() < 2) ? "0" + i_hr : String.valueOf(i_hr);
+            min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+            sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+            time = hr + " : " + min + " : " + sec;
+        }
+
+        return time;
+    }
+
+
+    public void broadcastStreamProgresUpdate(String playingAt, String contentLen, String bufferedProgress) {
+
+        Intent intent = new Intent(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST);
+        intent.putExtra(Constants.EXTRAA_STREAM_PROGRESS, playingAt);
+        intent.putExtra(Constants.EXTRAA_STREAM_CONTENT_LEN, contentLen);
+        intent.putExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS, bufferedProgress);
+        sendBroadcast(intent);
+
+    }
+
+
+    public void prepareBottomStreamSheet() {
+
+        final String playBtn = getString(R.string.streaming_play_btn);
+        final String pauseBtn = getString(R.string.streaming_pause_btn);
+
+        View bottomSheet = findViewById(R.id.design_bottom_sheet);
+        final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+        behavior.setPeekHeight(220);
+        behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                switch (newState) {
+                    case BottomSheetBehavior.STATE_DRAGGING:
+                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_DRAGGING");
+                        break;
+                    case BottomSheetBehavior.STATE_SETTLING:
+                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_SETTLING");
+                        break;
+                    case BottomSheetBehavior.STATE_EXPANDED:
+                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_EXPANDED");
+                        break;
+                    case BottomSheetBehavior.STATE_COLLAPSED:
+                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_COLLAPSED");
+                        break;
+                    case BottomSheetBehavior.STATE_HIDDEN:
+                        resetPlayer();
+                        Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_HIDDEN");
+                        break;
+                }
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                Log.i("BottomSheetCallback", "slideOffset: " + slideOffset);
+            }
+        });
+
+
+        streamingThumbnail = (ImageView) findViewById(R.id.streaming_item_thumb);
+        streamDuration = (TextView) findViewById(R.id.streaming_item_totalTrackLengthText);
+        seekbar = (SeekBar) findViewById(R.id.streaming_item_audio_seekbar);
+        currentStreamPosition = (TextView) findViewById(R.id.streaming_item_currentTrackPositionText);
+        playPauseStreamBtn = (TextView) findViewById(R.id.streaming_item_play_pauseBtn);
+        streamingSongTitle = (TextView) findViewById(R.id.streaming_item_title);
+        cancelStreamBtn = (TextView) findViewById(R.id.streaming_item_cancel_text_btn);
+        indeterminateProgressBar = (ProgressBar) findViewById(R.id.stream_indeterminate_progress);
+
+        String uri = StreamSharedPref.getInstance(Home.this).getStreamThumbnailUrl();
+        String streamFileName = StreamSharedPref.getInstance(Home.this).getStreamTitle();
+        Picasso.with(Home.this).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
+        streamingSongTitle.setText(streamFileName);
+        streamDuration.setText(" | 00:00");
+        currentStreamPosition.setText("00:00");
+        seekbar.setProgress(0);
+        seekbar.setSecondaryProgress(0);
+
+       FontManager mFontManager = FontManager.getInstance(Home.this);
+        Typeface mTypefaceMaterial = mFontManager.getTypeFace(FontManager.FONT_MATERIAL);
+        Typeface mTypefaceRaleway = mFontManager.getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        // raleway
+        streamDuration.setTypeface(mTypefaceRaleway);
+        currentStreamPosition.setTypeface(mTypefaceRaleway);
+        streamingSongTitle.setTypeface(mTypefaceRaleway);
+        // material icons
+        playPauseStreamBtn.setTypeface(mTypefaceMaterial);
+        cancelStreamBtn.setTypeface(mTypefaceMaterial);
+
+        seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
+
+                if (fromUser) {
+                    if (mPlayerThread != null) {
+                        L.m("Home", "sending seek msg");
+                        if (exoPlayer.getBufferedPosition() > position)
+                            exoPlayer.seekTo(position);
+                    }
+                }
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        playPauseStreamBtn.setOnClickListener(new View.OnClickListener() {
+                                                  @Override
+                                                  public void onClick(View view) {
+
+                                                      if (mPlayerThread != null) {
+
+                                                          if (isStreaming) {
+                                                              // pause
+                                                              isStreaming = false;
+                                                              playPauseStreamBtn.setText(playBtn);
+                                                          } else {
+                                                              //play
+                                                              isStreaming = true;
+                                                              playPauseStreamBtn.setText(pauseBtn);
+                                                          }
+
+                                                          exoPlayer.setPlayWhenReady(isStreaming);
+                                                      }
+
+                                                  }
+                                              }
+
+        );
+
+    }
+
+
     public class MusicGenieMediaPlayer extends Thread {
 
         private static final String TAG = "MusicGenieMediaPlayer";
@@ -644,10 +890,10 @@ public class Home extends AppCompatActivity {
         private int playerCurrentPositon = -1;
         private int playerContentDuration = -1;
 
-        public MusicGenieMediaPlayer(Context context, String uri, Handler handler) {
+        public MusicGenieMediaPlayer(Context context, String uri) {
             this.context = context;
             mUri = Uri.parse(uri);
-            mUIHandler = handler;
+            // mUIHandler = handler;
 
         }
 
@@ -713,22 +959,35 @@ public class Home extends AppCompatActivity {
             // Prepare ExoPlayer
             exoPlayer.prepare(audioRenderer);
             exoPlayer.setPlayWhenReady(true);
+            exoPlayer.addListener(new ExoPlayer.Listener() {
+                @Override
+                public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+                }
+
+                @Override
+                public void onPlayWhenReadyCommitted() {
+
+                }
+
+                @Override
+                public void onPlayerError(ExoPlaybackException error) {
+                    Log.d("Home-Exo", "exo error setting stream state false");
+                    StreamSharedPref.getInstance(Home.this).setStreamState(false);
+                }
+            });
 
             while (exoPlayer.getPlayWhenReady()) {
-
+                StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
                 playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
                 playerContentDuration = (int) exoPlayer.getDuration();
 
-                StreamMessageObjectModel objectModel = new StreamMessageObjectModel(
-                        playerCurrentPositon,
-                        playerContentDuration,
-                        exoPlayer.getBufferedPosition()
+                Log.d("ExoPlayer", " broadcasting progress");
+                broadcastStreamProgresUpdate(
+                        String.valueOf(playerCurrentPositon),
+                        String.valueOf(playerContentDuration),
+                        String.valueOf(exoPlayer.getBufferedPosition())
                 );
-
-                Message msg = Message.obtain();
-                msg.obj = objectModel;
-                L.m("ExoPlayer", "sending..");
-                mUIHandler.sendMessage(msg);
 
                 try {
                     Thread.sleep(500);
@@ -750,76 +1009,241 @@ public class Home extends AppCompatActivity {
             L.m("StreamingFragment", "reset Player");
             exoPlayer.stop();
             exoPlayer.release();
+            streamBottomSheetsVisible = false;
+            StreamSharedPref.getInstance(Home.this).setStreamState(false);
         }
 
     }
 
-    private void transactStreamFragment() {
+    private class StreamUIAgent {
 
-        streamDialogContainer = (FrameLayout) findViewById(stream_fragment_bottom_container);
-        streamDialogContainer.setVisibility(View.VISIBLE);
-        final FragmentManager manager = getSupportFragmentManager();
-        final FragmentTransaction fragmentTransaction = manager.beginTransaction();
-        fragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.leave_from_bottom);
 
-        StreamFragment oldFragment = (StreamFragment) manager.findFragmentById(R.id.stream_fragment_bottom_container);
+        private FontManager mFontManager;
+        private Typeface mTypefaceMaterial;
+        private Typeface mTypefaceRaleway;
+        private long STREAM_INFO_UPDATE_INTERVAL = 500;
+        private Timer mTimer;
 
-        if(oldFragment==null) {
 
-            streamingFragment = new StreamFragment();
-            streamingFragment.setRetainInstance(true);
-            streamingFragment.setSeekBarChangeListener(new SeekBarChangeListener() {
+        public StreamUIAgent() {
+        }
+
+        public void init() {
+
+            if (isStreaming()) {
+
+                prepareBottomSheet();
+                initUpdaterTask();
+            }
+
+        }
+
+        public boolean isStreaming() {
+            boolean streaming = false;
+            streaming = StreamSharedPref.getInstance(Home.this).getStreamState();
+            return streaming;
+        }
+
+        public void prepareBottomSheet() {
+
+            final String playBtn = getString(R.string.streaming_play_btn);
+            final String pauseBtn = getString(R.string.streaming_pause_btn);
+
+            View bottomSheet = findViewById(R.id.design_bottom_sheet);
+            final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
+            behavior.setPeekHeight(220);
+            behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
                 @Override
-                public void onSeekTo(int seekToPosition) {
-
-                    if (mPlayerThread != null) {
-                        L.m("Home", "sending seek msg");
-                        if (exoPlayer.getBufferedPosition() > seekToPosition)
-                            exoPlayer.seekTo(seekToPosition);
+                public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                    switch (newState) {
+                        case BottomSheetBehavior.STATE_DRAGGING:
+                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_DRAGGING");
+                            break;
+                        case BottomSheetBehavior.STATE_SETTLING:
+                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_SETTLING");
+                            break;
+                        case BottomSheetBehavior.STATE_EXPANDED:
+                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_EXPANDED");
+                            break;
+                        case BottomSheetBehavior.STATE_COLLAPSED:
+                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_COLLAPSED");
+                            break;
+                        case BottomSheetBehavior.STATE_HIDDEN:
+                            resetPlayer();
+                            // StreamSharedPref.getInstance(Home.this).setStreamState(false);
+                            if (mTimer != null)
+                                mTimer.cancel();
+                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_HIDDEN");
+                            break;
                     }
+                }
+
+                @Override
+                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+                    Log.i("BottomSheetCallback", "slideOffset: " + slideOffset);
                 }
             });
 
 
-            streamingFragment.setStreamCancelListener(new StreamCancelListener() {
+            streamingThumbnail = (ImageView) findViewById(R.id.streaming_item_thumb);
+            streamDuration = (TextView) findViewById(R.id.streaming_item_totalTrackLengthText);
+            seekbar = (SeekBar) findViewById(R.id.streaming_item_audio_seekbar);
+            currentStreamPosition = (TextView) findViewById(R.id.streaming_item_currentTrackPositionText);
+            playPauseStreamBtn = (TextView) findViewById(R.id.streaming_item_play_pauseBtn);
+            streamingSongTitle = (TextView) findViewById(R.id.streaming_item_title);
+            cancelStreamBtn = (TextView) findViewById(R.id.streaming_item_cancel_text_btn);
+            indeterminateProgressBar = (ProgressBar) findViewById(R.id.stream_indeterminate_progress);
+
+            String uri = StreamSharedPref.getInstance(Home.this).getStreamThumbnailUrl();
+            String streamFileName = StreamSharedPref.getInstance(Home.this).getStreamTitle();
+            Picasso.with(Home.this).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
+            streamingSongTitle.setText(streamFileName);
+            streamDuration.setText(" | 00:00");
+            currentStreamPosition.setText("00:00");
+            seekbar.setProgress(0);
+            seekbar.setSecondaryProgress(0);
+
+            mFontManager = FontManager.getInstance(Home.this);
+            mTypefaceMaterial = mFontManager.getTypeFace(FontManager.FONT_MATERIAL);
+            mTypefaceRaleway = mFontManager.getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+            // raleway
+            streamDuration.setTypeface(mTypefaceRaleway);
+            currentStreamPosition.setTypeface(mTypefaceRaleway);
+            streamingSongTitle.setTypeface(mTypefaceRaleway);
+            // material icons
+            playPauseStreamBtn.setTypeface(mTypefaceMaterial);
+            cancelStreamBtn.setTypeface(mTypefaceMaterial);
+
+            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
-                public void onCancel() {
+                public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
 
-                    if (mPlayerThread != null) {
-                        exoPlayer.stop();
-                        exoPlayer.release();
-
-                        //reset shared pref
-                        final Activity activity = wrActivity.get();
-                        if (activity != null && !activity.isFinishing()) {
-                            SharedPrefrenceUtils.getInstance(getApplicationContext()).setCurrentStreamingItem("");
-                            FragmentTransaction newFragmentTransaction = getSupportFragmentManager().beginTransaction();
-                            newFragmentTransaction.setCustomAnimations(R.anim.enter_from_bottom, R.anim.leave_from_bottom);
-                            newFragmentTransaction.remove(streamingFragment);
-                            newFragmentTransaction.commitAllowingStateLoss();
+                    if (fromUser) {
+                        if (mPlayerThread != null) {
+                            L.m("Home", "sending seek msg");
+                            if (exoPlayer.getBufferedPosition() > position)
+                                exoPlayer.seekTo(position);
                         }
-
                     }
 
                 }
-            });
 
-            streamingFragment.setPlayPauseListener(new StreamPlayPauseListener() {
                 @Override
-                public void onStateChange(boolean Stream) {
-                    if (Stream) {
-                        exoPlayer.setPlayWhenReady(true);
-                    } else {
-                        exoPlayer.setPlayWhenReady(false);
-                    }
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+
                 }
             });
 
-            L.m("StreamTest", " new trans");
-            fragmentTransaction.replace(stream_fragment_bottom_container, streamingFragment).commit();
-        }else{
-            L.m("StreamTest"," old trans");
-            fragmentTransaction.replace(stream_fragment_bottom_container, oldFragment).commit();
+            playPauseStreamBtn.setOnClickListener(new View.OnClickListener() {
+                                                      @Override
+                                                      public void onClick(View view) {
+
+                                                          if (mPlayerThread != null) {
+
+                                                              if (isStreaming) {
+                                                                  // pause
+                                                                  isStreaming = false;
+                                                                  playPauseStreamBtn.setText(playBtn);
+                                                              } else {
+                                                                  //play
+                                                                  isStreaming = true;
+                                                                  playPauseStreamBtn.setText(pauseBtn);
+                                                              }
+
+                                                              exoPlayer.setPlayWhenReady(isStreaming);
+                                                          }
+
+                                                      }
+                                                  }
+
+            );
+
         }
+
+        public void initUpdaterTask() {
+
+            if (mTimer == null)
+                mTimer = new Timer();
+            mTimer.scheduleAtFixedRate(new StreamInfoUpdateTask(), 0, STREAM_INFO_UPDATE_INTERVAL);
+
+        }
+
+        private void subscribeToPlayerEvents() {
+            // subscribe to player and other possible inturuuptions
+
+        }
+
+
     }
+
+    private class StreamInfoUpdateTask extends TimerTask {
+
+
+        @Override
+        public void run() {
+
+            //read from sharedpref and log
+            StreamSharedPref pref = StreamSharedPref.getInstance(Home.this);
+
+            if (pref.getStreamContentLength() > 0) {
+
+                int buffered = pref.getStreamingBuffer();
+                int progress = pref.getStreamCurrentPlayingPosition();
+                int duration = pref.getStreamContentLength();
+
+                try {
+
+                    if (pref.getStreamContentLength() > 0 && pref.getStreamingBuffer() > 0) {
+
+                        indeterminateProgressBar.setVisibility(View.INVISIBLE);
+                        seekbar.setVisibility(View.VISIBLE);
+
+                    }
+
+                    currentStreamPosition.setText(getTimeFromMillisecond(progress));
+                    seekbar.setProgress(progress);
+                    streamDuration.setText(" | " + getTimeFromMillisecond(duration));
+                    seekbar.setMax(duration);
+                    if (mBuffered < buffered) {
+                        seekbar.setSecondaryProgress(buffered);
+                        mBuffered = buffered;
+                    }
+
+                } catch (Exception e) {
+                    Log.d("StreamFragment", "something went wrong " + e);
+                }
+            }
+        }
+
+        private String getTimeFromMillisecond(int millis) {
+            String hr = "";
+            String min = "";
+            String sec = "";
+            String time = "";
+            int i_hr = (millis / 1000) / 3600;
+            int i_min = (millis / 1000) / 60;
+            int i_sec = (millis / 1000) % 60;
+
+            if (i_hr == 0) {
+                min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+                sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+                time = min + " : " + sec;
+            } else {
+                hr = (String.valueOf(i_hr).length() < 2) ? "0" + i_hr : String.valueOf(i_hr);
+                min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+                sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+                time = hr + " : " + min + " : " + sec;
+            }
+
+            return time;
+        }
+
+    }
+
+
 }

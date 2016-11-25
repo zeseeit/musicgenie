@@ -7,9 +7,9 @@ import any.audio.Models.SectionModel;
  */
 public class ResultMessageObjectModel {
 
-    int Status;
+    public int Status;
     String Message;
-    SectionModel data;
+    public SectionModel data;
 
     public ResultMessageObjectModel(int status, String message, SectionModel data) {
         Status = status;
