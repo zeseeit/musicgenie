@@ -43,12 +43,6 @@ public class StreamSharedPref {
     public void setStreamState(boolean isStreaming) {
 
         Log.d("StreamSharedPref"," setting stream state "+isStreaming);
-
-        if(!isStreaming)
-        {
-            resetStreamInfo();
-        }
-
         editor.putBoolean(KEY_IS_STREAMING, isStreaming);
         editor.commit();
     }

@@ -123,6 +123,7 @@ public class MusicStreamer {
                     L.m("MusicStream","URL exc");
                 } catch (IOException e) {
                     L.m("MusicStream", "IO exc");
+                    broadcastURI(Constants.STREAM_PREPARE_FAILED_URL_FLAG, file);
                 }
             }
     }

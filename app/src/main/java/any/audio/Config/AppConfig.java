@@ -66,7 +66,7 @@ public class AppConfig extends Application {
         }
 
         File root = Environment.getExternalStorageDirectory();
-        File dir = new File(root + "/Musicgenie/Audio");
+        File dir = new File(root + "/AnyAudio/YourSongs");
 
         boolean s = false;
         if (dir.exists() == false) {

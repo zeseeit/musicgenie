@@ -333,9 +333,11 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
-//
-//                    SharedPrefrenceUtils.getInstance(context).setCurrentStreamingItem(adapter.songs.get(pos).Title);
-//                    SharedPrefrenceUtils.getInstance(context).setStreamingThumbnailUrl(adapter.songs.get(pos).Thumbnail_url);
+                    String thumb_uri = adapter.songs.get(pos).Thumbnail_url;
+
+                    StreamSharedPref.getInstance(context).setStreamTitle(file_name);
+                    Log.d("StreamingHome"," setting thumb uri "+thumb_uri);
+                    StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
 
                     adapter.requestStream(v_id, file_name);
 

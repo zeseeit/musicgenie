@@ -47,4 +47,6 @@ public class Constants {
     public static String EXTRAA_STREAM_CONTENT_LEN = "stream_content_len";
     public static String EXTRAA_STREAM_BUFFERED_PROGRESS = "stream_buffered_extraa";
     public static String EXTRAA_STREAM_PROGRESS = "stream_progress_extraa";
+    public static String STREAM_PREPARE_FAILED_URL_FLAG = "failed_url";
+    public static String EXTRAA_FLAG_STREAM_WILL_CONTINUE = "streamin_will_continue";
 }

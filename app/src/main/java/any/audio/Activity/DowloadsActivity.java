@@ -7,6 +7,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
+import any.audio.Config.Constants;
+import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.Views.DownloadTab;
 import any.audio.R;
 import any.audio.Adapters.SectionsPagerAdapter;
@@ -27,6 +29,7 @@ public class DowloadsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dowload);
+
         tabLayout = (DownloadTab) findViewById(R.id.tab_layout);
         tabLayout.setUpTab(tabLayout);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);

@@ -3,7 +3,6 @@ package any.audio.Fragments;
 import android.app.Activity;
 import android.graphics.Typeface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -25,7 +24,7 @@ import any.audio.Activity.Home;
 import any.audio.Interfaces.SeekBarChangeListener;
 import any.audio.Interfaces.StreamCancelListener;
 import any.audio.Interfaces.StreamPlayPauseListener;
-import any.audio.Interfaces.StreamProgressListener;
+import any.audio.Interfaces.StreamPrepareFailedListener;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
@@ -206,31 +205,6 @@ public class StreamFragment extends Fragment {
 
     private boolean isStreaming() {
         return (SharedPrefrenceUtils.getInstance(getActivity()).getCurrentStreamingItem().length() == 0);
-    }
-
-    private void subscribeForProgressUpdate(Home home) {
-
-        home.setStreamProgressListener(new StreamProgressListener() {
-            @Override
-            public void onProgressChange(int progress, int buffered, int duration) {
-
-                if (!progressViewToggleDone) {
-                    if (buffered > 0) {
-                        indeterminateProgressBar.setVisibility(View.INVISIBLE);
-                        seekbar.setVisibility(View.VISIBLE);
-                        progressViewToggleDone = true;
-                    }
-                }
-                currentStreamPosition.setText(getTimeFromMillisecond(progress));
-                seekbar.setProgress(progress);
-                streamDuration.setText(" | " + getTimeFromMillisecond(duration));
-                seekbar.setMax(duration);
-                if (mBuffered < buffered) {
-                    seekbar.setSecondaryProgress(buffered);
-                    mBuffered = buffered;
-                }
-            }
-        });
     }
 
     @Override

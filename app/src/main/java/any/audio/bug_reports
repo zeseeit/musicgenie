@@ -28,4 +28,20 @@ Bugs Related With Live-Streaming
 
 > make streaming content`s title size bigger
 
+[[[ Fixed ]]]
+
+Current Situation:
+
+On Closing By sliding Stream Ends and new stream can be started.
+On Resume Progress Update are working as expected.
+
+Issues:
+
+    Streaming second audio while one is playing donot stops the previous streaming.
+    [[[ Fixed ]]]
+
+
+    Some times swipe of bottom sheets behave unexpected.
+    its state are not well called/transisted.
+
 

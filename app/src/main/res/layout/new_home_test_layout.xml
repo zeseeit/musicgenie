@@ -18,29 +18,33 @@
 
         </RelativeLayout>
 
-    <RelativeLayout
-        android:id="@+id/design_bottom_sheet"
+
+    <RelativeLayout android:id="@+id/design_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="78dp"
         android:background="@color/PrimaryColor"
         app:behavior_hideable="true"
         app:behavior_peekHeight="0dp"
         app:elevation="4dp"
-        app:layout_behavior="@string/bottom_sheet_behavior">
+        app:layout_behavior="@string/bottom_sheet_behavior"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="96dp"
+            android:layout_height="78dp"
             android:background="@color/stream_fragment_background">
 
 
             <ImageView
                 android:id="@+id/streaming_item_thumb"
                 android:layout_width="72dp"
-                android:src="@color/black"
+                android:src="@drawable/hqdefault"
                 android:layout_height="72dp"
-                android:padding="16dp"
+                android:paddingLeft="12dp"
+                android:paddingTop="8dp"
+                android:paddingRight="8dp"
                 />
 
             <RelativeLayout
@@ -88,6 +92,7 @@
                     android:paddingBottom="0dp"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
+                    android:layout_marginRight="42dp"
                     android:progress="0"
                     android:secondaryProgressTint="@color/secondaryProgressTint" />
 
@@ -96,8 +101,8 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:indeterminateOnly="true"
                     android:layout_below="@+id/streaming_item_title"
-                    android:paddingLeft="0dp"
-                    android:layout_marginRight="16dp"
+                    android:paddingRight="4dp"
+                    android:layout_marginRight="42dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
 
@@ -108,7 +113,8 @@
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/streaming_item_audio_seekbar"
                     android:paddingLeft="0dp"
-                    android:paddingTop="2dp"
+                    android:paddingTop="0dp"
+                    android:layout_marginTop="-10dp"
                     android:text="00:00"
                     android:textColor="@color/PrimaryColor"
                     android:textSize="14sp" />
@@ -121,7 +127,8 @@
                     android:layout_toRightOf="@+id/streaming_item_currentTrackPositionText"
                     android:paddingLeft="4dp"
                     android:paddingRight="14dp"
-                    android:paddingTop="2dp"
+                    android:paddingTop="0dp"
+                    android:layout_marginTop="-10dp"
                     android:text=" | "
                     android:textColor="@color/TitleColor"
                     android:textSize="14sp" />
@@ -135,8 +142,8 @@
                     android:layout_toRightOf="@+id/streaming_item_title"
                     android:gravity="end"
                     android:paddingLeft="8dp"
-                    android:paddingRight="16dp"
-                    android:paddingTop="8dp"
+                    android:paddingRight="6dp"
+                    android:paddingTop="6dp"
                     android:paddingBottom="2dp"
                     android:text="@string/streaming_pause_btn"
                     android:textColor="@color/TitleColor"
@@ -147,6 +154,7 @@
         </RelativeLayout>
 
     </RelativeLayout>
+
 
 
 </android.support.design.widget.CoordinatorLayout>
