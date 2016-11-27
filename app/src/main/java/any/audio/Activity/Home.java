@@ -120,7 +120,7 @@ public class Home extends AppCompatActivity {
     private int mCurrentPosition;
     private int mCurrentBuffered;
     private MusicGenieMediaPlayer mPlayerThread;
-    private ExoPlayer exoPlayer;
+    private static ExoPlayer exoPlayer;
     int mBuffered = -1;
     private boolean progressViewToggleDone = false;
     private FrameLayout streamDialogContainer;
@@ -136,7 +136,9 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d("AnyAudioApp", " [Home] onCreate()");
         setContentView(R.layout.new_home_test_layout);
+
         configureStorageDirectory(savedInstanceState);
         instantiateViews();
         handleMessages();   // message handler on UI thread
@@ -682,9 +684,7 @@ public class Home extends AppCompatActivity {
             if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
 
                 L.m("Home", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
-
-                //todo: Remove comment to restrict the user from hiding before preparation
-                //mStreamingBottomSheetBehavior.setHideable(true);
+                StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(true);
 
                 if (!isStreaming) {
 
@@ -708,6 +708,7 @@ public class Home extends AppCompatActivity {
     }
 
     private void hideStreamSheet(String msg) {
+
         try {
             mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
         } catch (Exception e) {
@@ -832,10 +833,6 @@ public class Home extends AppCompatActivity {
         final String pauseBtn = getString(R.string.streaming_pause_btn);
         mBottomSheet = findViewById(R.id.design_bottom_sheet);
         mStreamingBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-
-        //todo: Remove comment to restrict the user from hiding before preparation
-        //mStreamingBottomSheetBehavior.setHideable(true);
-
         mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         mStreamingBottomSheetBehavior.setPeekHeight(10);
         mStreamingBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
@@ -853,14 +850,32 @@ public class Home extends AppCompatActivity {
                         break;
                     case BottomSheetBehavior.STATE_COLLAPSED:
 
-                        streamBottomSheetsVisible = false;
-                        resetPlayer();
+                        if (StreamSharedPref.getInstance(Home.this).getStreamUrlFetchedStatus()) {
+
+                            streamBottomSheetsVisible = false;
+                            resetPlayer();
+                            StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(false);
+
+                        } else {
+
+                            Toast.makeText(Home.this, "Cannot Cancel At The Moment !", Toast.LENGTH_SHORT).show();
+                            mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+
+                        }
 
                         Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_COLLAPSED");
                         break;
                     case BottomSheetBehavior.STATE_HIDDEN:
-                        streamBottomSheetsVisible = false;
-                        resetPlayer();
+
+                        if (StreamSharedPref.getInstance(Home.this).getStreamUrlFetchedStatus()) {
+                            streamBottomSheetsVisible = false;
+                            resetPlayer();
+                            StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(false);
+
+                        } else {
+                            Toast.makeText(Home.this, "Cannot Cancel At The Moment !", Toast.LENGTH_SHORT).show();
+                            mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+                        }
 
                         Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_HIDDEN");
                         break;
@@ -937,17 +952,22 @@ public class Home extends AppCompatActivity {
 
                                                       Log.d("StreamingHome", " clicked Play Pause Btn");
 
-                                                      if (StreamSharedPref.getInstance(Home.this).getStreamerPlayState()) {
-                                                          // pause
-                                                          StreamSharedPref.getInstance(Home.this).setStreamerPlayState(false);
-                                                          playPauseStreamBtn.setText(playBtn);
-                                                      } else {
-                                                          //play
-                                                          StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
-                                                          playPauseStreamBtn.setText(pauseBtn);
-                                                      }
+                                                      if (exoPlayer != null) {
 
-                                                      exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
+                                                          if (StreamSharedPref.getInstance(Home.this).getStreamerPlayState()) {
+                                                              // pause
+                                                              StreamSharedPref.getInstance(Home.this).setStreamerPlayState(false);
+                                                              playPauseStreamBtn.setText(playBtn);
+                                                          } else {
+                                                              //play
+                                                              StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
+                                                              playPauseStreamBtn.setText(pauseBtn);
+                                                          }
+
+                                                          exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
+                                                      }else{
+                                                       Log.d("StreamingHome"," exoPlayer object null");
+                                                      }
                                                   }
 
 
@@ -1061,10 +1081,11 @@ public class Home extends AppCompatActivity {
                 public void onPlayerError(ExoPlaybackException error) {
                     Log.d("ExoPlayer", "exo error setting stream state false");
                     StreamSharedPref.getInstance(Home.this).setStreamState(false);
+                    hideStreamSheet("Something Is Wrong ! ");
                 }
             });
 
-            while (exoPlayer !=null) {
+            while (exoPlayer != null) {
 
                 playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
                 playerContentDuration = (int) exoPlayer.getDuration();
@@ -1091,6 +1112,7 @@ public class Home extends AppCompatActivity {
 
 
         }
+
     }
 
     private void resetPlayer() {
@@ -1105,234 +1127,6 @@ public class Home extends AppCompatActivity {
             L.m("StreamingHome", "Player Reset Done");
         }
         StreamSharedPref.getInstance(Home.this).setStreamState(false);
-
-    }
-
-    private class StreamUIAgent {
-
-
-        private FontManager mFontManager;
-        private Typeface mTypefaceMaterial;
-        private Typeface mTypefaceRaleway;
-        private long STREAM_INFO_UPDATE_INTERVAL = 500;
-        private Timer mTimer;
-
-
-        public StreamUIAgent() {
-        }
-
-        public void init() {
-
-            if (isStreaming()) {
-
-                prepareBottomSheet();
-                initUpdaterTask();
-            }
-
-        }
-
-        public boolean isStreaming() {
-            boolean streaming = false;
-            streaming = StreamSharedPref.getInstance(Home.this).getStreamState();
-            return streaming;
-        }
-
-        public void prepareBottomSheet() {
-
-            final String playBtn = getString(R.string.streaming_play_btn);
-            final String pauseBtn = getString(R.string.streaming_pause_btn);
-
-            View bottomSheet = findViewById(R.id.design_bottom_sheet);
-            final BottomSheetBehavior behavior = BottomSheetBehavior.from(bottomSheet);
-            behavior.setPeekHeight(220);
-            behavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-                @Override
-                public void onStateChanged(@NonNull View bottomSheet, int newState) {
-                    switch (newState) {
-                        case BottomSheetBehavior.STATE_DRAGGING:
-                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_DRAGGING");
-                            break;
-                        case BottomSheetBehavior.STATE_SETTLING:
-                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_SETTLING");
-                            break;
-                        case BottomSheetBehavior.STATE_EXPANDED:
-                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_EXPANDED");
-                            break;
-                        case BottomSheetBehavior.STATE_COLLAPSED:
-                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_COLLAPSED");
-                            break;
-                        case BottomSheetBehavior.STATE_HIDDEN:
-                            resetPlayer();
-                            // StreamSharedPref.getInstance(Home.this).setStreamState(false);
-                            if (mTimer != null)
-                                mTimer.cancel();
-                            Log.i("BottomSheetCallback", "BottomSheetBehavior.STATE_HIDDEN");
-                            break;
-                    }
-                }
-
-                @Override
-                public void onSlide(@NonNull View bottomSheet, float slideOffset) {
-                    Log.i("BottomSheetCallback", "slideOffset: " + slideOffset);
-                }
-            });
-
-
-            streamingThumbnail = (ImageView) findViewById(R.id.streaming_item_thumb);
-            streamDuration = (TextView) findViewById(R.id.streaming_item_totalTrackLengthText);
-            seekbar = (SeekBar) findViewById(R.id.streaming_item_audio_seekbar);
-            currentStreamPosition = (TextView) findViewById(R.id.streaming_item_currentTrackPositionText);
-            playPauseStreamBtn = (TextView) findViewById(R.id.streaming_item_play_pauseBtn);
-            streamingSongTitle = (TextView) findViewById(R.id.streaming_item_title);
-            indeterminateProgressBar = (ProgressBar) findViewById(R.id.stream_indeterminate_progress);
-
-            String uri = StreamSharedPref.getInstance(Home.this).getStreamThumbnailUrl();
-            String streamFileName = StreamSharedPref.getInstance(Home.this).getStreamTitle();
-            Picasso.with(Home.this).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
-            streamingSongTitle.setText(streamFileName);
-            streamDuration.setText(" | 00:00");
-            currentStreamPosition.setText("00:00");
-            seekbar.setProgress(0);
-            seekbar.setSecondaryProgress(0);
-
-            mFontManager = FontManager.getInstance(Home.this);
-            mTypefaceMaterial = mFontManager.getTypeFace(FontManager.FONT_MATERIAL);
-            mTypefaceRaleway = mFontManager.getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
-            // raleway
-            streamDuration.setTypeface(mTypefaceRaleway);
-            currentStreamPosition.setTypeface(mTypefaceRaleway);
-            streamingSongTitle.setTypeface(mTypefaceRaleway);
-            // material icons
-            playPauseStreamBtn.setTypeface(mTypefaceMaterial);
-
-            seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-                @Override
-                public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
-
-                    if (fromUser) {
-                        if (mPlayerThread != null) {
-                            L.m("Home", "sending seek msg");
-                            if (exoPlayer.getBufferedPosition() > position)
-                                exoPlayer.seekTo(position);
-                        }
-                    }
-
-                }
-
-                @Override
-                public void onStartTrackingTouch(SeekBar seekBar) {
-
-                }
-
-                @Override
-                public void onStopTrackingTouch(SeekBar seekBar) {
-
-                }
-            });
-
-            playPauseStreamBtn.setOnClickListener(new View.OnClickListener() {
-                                                      @Override
-                                                      public void onClick(View view) {
-
-                                                          if (mPlayerThread != null) {
-
-                                                              if (isStreaming) {
-                                                                  // pause
-                                                                  isStreaming = false;
-                                                                  playPauseStreamBtn.setText(playBtn);
-                                                              } else {
-                                                                  //play
-                                                                  isStreaming = true;
-                                                                  playPauseStreamBtn.setText(pauseBtn);
-                                                              }
-
-                                                              exoPlayer.setPlayWhenReady(isStreaming);
-                                                          }
-
-                                                      }
-                                                  }
-
-            );
-
-        }
-
-        public void initUpdaterTask() {
-
-            if (mTimer == null)
-                mTimer = new Timer();
-            mTimer.scheduleAtFixedRate(new StreamInfoUpdateTask(), 0, STREAM_INFO_UPDATE_INTERVAL);
-
-        }
-
-        private void subscribeToPlayerEvents() {
-            // subscribe to player and other possible inturuuptions
-
-        }
-
-
-    }
-
-    private class StreamInfoUpdateTask extends TimerTask {
-
-
-        @Override
-        public void run() {
-
-            //read from sharedpref and log
-            StreamSharedPref pref = StreamSharedPref.getInstance(Home.this);
-
-            if (pref.getStreamContentLength() > 0) {
-
-                int buffered = pref.getStreamingBuffer();
-                int progress = pref.getStreamCurrentPlayingPosition();
-                int duration = pref.getStreamContentLength();
-
-                try {
-
-                    if (pref.getStreamContentLength() > 0 && pref.getStreamingBuffer() > 0) {
-
-                        indeterminateProgressBar.setVisibility(View.INVISIBLE);
-                        seekbar.setVisibility(View.VISIBLE);
-
-                    }
-
-                    currentStreamPosition.setText(getTimeFromMillisecond(progress));
-                    seekbar.setProgress(progress);
-                    streamDuration.setText(" | " + getTimeFromMillisecond(duration));
-                    seekbar.setMax(duration);
-                    if (mBuffered < buffered) {
-                        seekbar.setSecondaryProgress(buffered);
-                        mBuffered = buffered;
-                    }
-
-                } catch (Exception e) {
-                    Log.d("StreamFragment", "something went wrong " + e);
-                }
-            }
-        }
-
-        private String getTimeFromMillisecond(int millis) {
-            String hr = "";
-            String min = "";
-            String sec = "";
-            String time = "";
-            int i_hr = (millis / 1000) / 3600;
-            int i_min = (millis / 1000) / 60;
-            int i_sec = (millis / 1000) % 60;
-
-            if (i_hr == 0) {
-                min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
-                sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
-                time = min + " : " + sec;
-            } else {
-                hr = (String.valueOf(i_hr).length() < 2) ? "0" + i_hr : String.valueOf(i_hr);
-                min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
-                sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
-                time = hr + " : " + min + " : " + sec;
-            }
-
-            return time;
-        }
 
     }
 

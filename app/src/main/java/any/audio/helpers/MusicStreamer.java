@@ -24,6 +24,7 @@ import any.audio.Config.Constants;
 public class MusicStreamer {
 
     private static final String TAG = "MusicStreamer";
+    private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000 ; // 1 min
     private static Context context;
     private static MusicStreamer mInstance;
     private String vid;
@@ -95,8 +96,8 @@ public class MusicStreamer {
                     L.m("MusicStream"," Requesting for stream url - req on -"+_url);
                     URL u = new URL(_url);
                     URLConnection dconnection = u.openConnection();
-                    dconnection.setReadTimeout(20000);
-                    dconnection.setConnectTimeout(20000);
+                    dconnection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
+                    dconnection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
                     dconnection.connect();
                     StringBuilder result = new StringBuilder();
                     InputStream in = new BufferedInputStream(dconnection.getInputStream());
@@ -122,7 +123,7 @@ public class MusicStreamer {
  //                   log("URL exception " + e);
                     L.m("MusicStream","URL exc");
                 } catch (IOException e) {
-                    L.m("MusicStream", "IO exc");
+                    L.m("MusicStream", "IO exc "+e.toString());
                     broadcastURI(Constants.STREAM_PREPARE_FAILED_URL_FLAG, file);
                 }
             }

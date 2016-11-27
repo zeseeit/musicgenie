@@ -16,10 +16,24 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
         super(fm);
     }
 
+
     @Override
     public Fragment getItem(int position) {
+
+
         if (position == 0) {
-            return new ActiveTaskFragment();
+            Fragment activeFragment = new ActiveTaskFragment();
+            final Fragment downloadFragment = new DownloadFragment();
+
+            ((ActiveTaskFragment) activeFragment).setNewDownloadItemArrivalListener(new ActiveTaskFragment.NewDownloadItemArrivalListener() {
+                @Override
+                public void onNewItemAdded() {
+                    ((DownloadFragment) downloadFragment).refreshDownloadedList();
+                }
+            });
+
+            return activeFragment;
+
         } else return new DownloadFragment();
     }
 

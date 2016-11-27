@@ -80,7 +80,7 @@
          https://developer.android.com/design/patterns/navigation-drawer.html -->
     <dimen name="navigation_drawer_width">240dp</dimen>
     <dimen name="progress_bar_message_panel_text_size">16sp</dimen>
-    <dimen name="downloaded_item_thumbnai_dimen">72dp</dimen>
+    <dimen name="downloaded_item_thumbnai_dimen">36dp</dimen>
     <dimen name="downloaded_item_wrapper_padding">4dp</dimen>
     <dimen name="downloaded_item_thumb_margin">2dp</dimen>
     <dimen name="dowloaded_item_wrapper_elevation">1dp</dimen>

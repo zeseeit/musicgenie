@@ -178,7 +178,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             //            ((SongViewHolder) holder).popMenuBtn.setText("\uF142");
             ((SongViewHolder) holder).content_length.setText(song.TrackDuration);
             // loads thumbnail in async fashion
-            if (connected()) Picasso.with(context)
+            if (connected() && SharedPrefrenceUtils.getInstance(context).getOptionsForThumbnailLoad()) Picasso.with(context)
                     .load(song.Thumbnail_url)
                     .into(((SongViewHolder) holder).thumbnail);
 

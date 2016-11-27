@@ -24,7 +24,7 @@
             android:layout_height="104dp"
             android:layout_centerVertical="true"
             android:padding="16dp"
-            android:src="@drawable/head" />
+            />
 
         <RelativeLayout
             android:id="@+id/stream_meta_data_wrapper"

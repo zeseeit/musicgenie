@@ -5,6 +5,7 @@ import android.content.ComponentCallbacks;
 import android.content.res.Configuration;
 import android.util.Log;
 
+import any.audio.Activity.Home;
 import any.audio.SharedPreferences.StreamSharedPref;
 
 /**
@@ -19,9 +20,11 @@ public class AnyAudio extends Application {
 
     @Override
     public void onCreate() {
-        Log.d("AnyAudioApp","onCreate()");
+        Log.d("AnyAudioApp","[Application] onCreate()");
 
         StreamSharedPref.getInstance(this).resetStreamInfo();
+        StreamSharedPref.getInstance(this).setStreamUrlFetchedStatus(false);
+
         Log.d("AnyAudioApp","reset shared pref. for stream status");
         super.onCreate();
     }

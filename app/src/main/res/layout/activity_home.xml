@@ -21,22 +21,4 @@
         app:floatingSearch_menu="@menu/menu_main"
         app:floatingSearch_close_search_on_keyboard_dismiss="true" />
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tabs"
-        android:layout_marginTop="72dp"
-        android:background="@color/PrimaryColor"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:tabMode="fixed"
-        app:tabGravity="fill"/>
-
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
-        android:layout_below="@+id/tabs"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"  />
-
-
-
 </RelativeLayout>

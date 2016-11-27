@@ -50,6 +50,7 @@ public class TaskHandler {
     private ProgressDialog progressDialog;
     public boolean isCanceled = false;
     private String dwnd_url;
+    private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000 ; // 1 min
     private DownloadItemInvalidatedListener itemInvalidatedListener;
 
     public TaskHandler(Context context) {
@@ -367,8 +368,8 @@ public class TaskHandler {
                     L.m("TaskHandler"," Request For Download Url - on - "+_url);
                     URL u = new URL(_url);
                     URLConnection dconnection = u.openConnection();
-                    dconnection.setReadTimeout(20000);
-                    dconnection.setConnectTimeout(20000);
+                    dconnection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
+                    dconnection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
                     dconnection.connect();
 
                     StringBuilder result = new StringBuilder();
@@ -397,8 +398,8 @@ public class TaskHandler {
 
                     URL url = new URL(t_url);
                     URLConnection connection = url.openConnection();
-                    connection.setReadTimeout(20000);
-                    connection.setConnectTimeout(20000);
+                    connection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
+                    connection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
                     connection.connect();
                     fileLength = connection.getContentLength();
 //                    log("content len " + fileLength);
@@ -451,9 +452,11 @@ public class TaskHandler {
 
                 } catch (MalformedURLException e) {
                     downloadListener.onError(taskID);
+                    broadcastUpdate(String.valueOf(0),"0",false);
                     L.m("TaskHandler"," URL exception");
                 } catch (IOException e) {
                     downloadListener.onError(taskID);
+                    broadcastUpdate(String.valueOf(0),"0",false);
                     L.m("TaskHandler"," IO exception");
                 }
 
@@ -471,7 +474,7 @@ public class TaskHandler {
             }
             L.m("TaskHandler","prog "+progress);
 
-            broadcastUpdate(String.valueOf(progress), cl);
+            broadcastUpdate(String.valueOf(progress), cl,true);
             if (currentProgress < progress) {
                 LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);
             }
@@ -480,29 +483,16 @@ public class TaskHandler {
 
         // broadcast is for progress update to download activity
 
-        public void broadcastUpdate(String progressPercentage, String contentLen) {
+        public void broadcastUpdate(String progressPercentage, String contentLen,boolean currentDownloadStatus) {
             Intent intent = new Intent(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
             intent.putExtra(Constants.EXTRA_PROGRESS, progressPercentage);
             intent.putExtra(Constants.EXTRA_CONTENT_SIZE, contentLen);
+            intent.putExtra(Constants.EXTRAA_FLAG_DOWNLOAD_STATE,currentDownloadStatus);
             context.sendBroadcast(intent);
         }
 
         private void subscribeDownloadCancelListener() {
-//
-//            LiveDownloadListAdapter.getInstance(context).setOnDownloadCancelListener(new DownloadCancelListener() {
-//                @Override
-//                public void onDownloadCancel(String tID) {
-//                    if (taskID.equals(tID)) { // means current downloading task is canceled
-//                        log("cancelling live download task");
-//                        isCanceled = true;
-//                    }
-//                    removeTask(taskID);     // work in both circumstances (cancel live-download or pending download)
-//                    log("task " + taskID + " got canceled !!");
-//                }
-//            });
-//        }
-
         }
 
     }

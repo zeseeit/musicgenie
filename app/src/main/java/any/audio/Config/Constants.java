@@ -4,7 +4,8 @@ import android.os.Environment;
 
 public class Constants {
 
-    public static final String SERVER_URL = "http://ymp3.aavi.me";
+    public static final String SERVER_URL = "http://anyaudio.in";
+    public static final String TERM_OF_USE_URL = "http://anyaudio.in/terms-of-use";
     public static final String SDCARD = "sdcard";
     public static final String PHONE = "phone";
     public static final int SCREEN_MODE_TABLET = 0 ;
@@ -12,7 +13,7 @@ public class Constants {
     public static final String ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST = "action_progress_update";
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_PROGRESS = "progress";
-    public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/Musicgenie/Audio";
+    public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AnyAudio/YourSongs";
     public static final String ACTION_NETWORK_CONNECTED = "android.net.conn.CONNECTIVITY_CHANGE";
     public static final int SCREEN_ORIENTATION_PORTRAIT = 0;
     public static final int SCREEN_ORIENTATION_LANDSCAPE = 1;
@@ -49,4 +50,5 @@ public class Constants {
     public static String EXTRAA_STREAM_PROGRESS = "stream_progress_extraa";
     public static String STREAM_PREPARE_FAILED_URL_FLAG = "failed_url";
     public static String EXTRAA_FLAG_STREAM_WILL_CONTINUE = "streamin_will_continue";
+    public static String EXTRAA_FLAG_DOWNLOAD_STATE = "healthy_download_status";
 }
