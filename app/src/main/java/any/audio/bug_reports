@@ -32,7 +32,7 @@ Bugs Related With Live-Streaming
 
 Current Situation:
 
-On Closing By sliding Stream Ends and new stream can be started.
+On Closing Bottom Sheets By sliding Stream Ends and new stream can be started.
 On Resume Progress Update are working as expected.
 
 Issues:
@@ -43,5 +43,12 @@ Issues:
 
     Some times swipe of bottom sheets behave unexpected.
     its state are not well called/transisted.
+
+    If app if force closed while streaming SharedPref status is not Set to False,
+    So next time when app opens Streaming Sheet pops up.
+
+    Play-Pause Button is not working
+
+
 
 

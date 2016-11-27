@@ -45,6 +45,10 @@ public class StreamSharedPref {
         Log.d("StreamSharedPref"," setting stream state "+isStreaming);
         editor.putBoolean(KEY_IS_STREAMING, isStreaming);
         editor.commit();
+        if(!isStreaming){
+            setStreamerPlayState(false);
+        }
+
     }
 
     public boolean getStreamState() {
@@ -126,19 +130,14 @@ public class StreamSharedPref {
     }
 
     public void resetStreamInfo(){
-        // progress
-        setStreamingProgress(0);
-        // buffer
-        setStreamigZBuffer(0);
+
         // title
         setStreamTitle("");
         //url
         setStreamThumbnailUrl("");
         // set play state
-        setStreamerPlayState(false);
+        setStreamState(false);
         //current playing
-        setStreamCurrentPlayingPosition(0);
-        Log.d("StreamSharedPref"," flushed data");
 
     }
 }

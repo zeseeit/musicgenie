@@ -9,6 +9,7 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -92,7 +93,6 @@ public class Home extends AppCompatActivity {
     private TextView currentStreamPosition;
     private TextView playPauseStreamBtn;
     private TextView streamingSongTitle;
-    private TextView cancelStreamBtn;
     private StreamFragment streamingFragment;
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager layoutManager;
@@ -180,7 +180,7 @@ public class Home extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        L.m("Home", "onStop()");
+        L.m("StreamingHome", "onStop()");
         super.onStop();
 
         if (mReceiverRegistered) {
@@ -200,6 +200,7 @@ public class Home extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        L.m("StreamingHome", "onPause()");
         super.onPause();
 
 
@@ -520,7 +521,7 @@ public class Home extends AppCompatActivity {
         swipeRefressLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                swipeRefressLayout.setRefreshing(false);
+                swipeRefressLayout.setRefreshing(true);
                 refressContent();
             }
         });
@@ -536,8 +537,9 @@ public class Home extends AppCompatActivity {
     private void refressContent() {
 
         if (ConnectivityUtils.getInstance(this).isConnectedToNet()) {
-            invokeAction(Constants.ACTION_TYPE_REFRESS);
             swipeRefressLayout.setEnabled(false);
+            invokeAction(Constants.ACTION_TYPE_REFRESS);
+
 
         } else {
             Snackbar.make(swipeRefressLayout, "No Connectivity !!", Snackbar.LENGTH_SHORT).show();
@@ -758,13 +760,15 @@ public class Home extends AppCompatActivity {
 
                                 indeterminateProgressBar.setVisibility(View.INVISIBLE);
                                 seekbar.setVisibility(View.VISIBLE);
+                                playPauseStreamBtn.setVisibility(View.VISIBLE);
 
                             }
 
                             currentStreamPosition.setText(getTimeFromMillisecond(progress));
                             seekbar.setProgress(progress);
-                            streamDuration.setText(" | " + getTimeFromMillisecond(contentLen));
+                            streamDuration.setText(" |  " + getTimeFromMillisecond(contentLen));
                             seekbar.setMax(contentLen);
+
                             if (mBuffered < buffered) {
                                 seekbar.setSecondaryProgress(buffered);
                                 mBuffered = buffered;
@@ -778,7 +782,7 @@ public class Home extends AppCompatActivity {
 
                 //WTD: hide stream bar when player reached last of track
                 if (contentLen <= progress && contentLen >= 0) {
-                    hideStreamSheet("Thanks You");
+                    hideStreamSheet("Thank You");
                 }
 
 
@@ -876,8 +880,8 @@ public class Home extends AppCompatActivity {
         seekbar.setVisibility(View.INVISIBLE);
         currentStreamPosition = (TextView) findViewById(R.id.streaming_item_currentTrackPositionText);
         playPauseStreamBtn = (TextView) findViewById(R.id.streaming_item_play_pauseBtn);
+        playPauseStreamBtn.setVisibility(View.GONE);
         streamingSongTitle = (TextView) findViewById(R.id.streaming_item_title);
-        cancelStreamBtn = (TextView) findViewById(R.id.streaming_item_cancel_text_btn);
         indeterminateProgressBar = (ProgressBar) findViewById(R.id.stream_indeterminate_progress);
         indeterminateProgressBar.setVisibility(View.VISIBLE);
 
@@ -901,7 +905,6 @@ public class Home extends AppCompatActivity {
         streamingSongTitle.setTypeface(mTypefaceRaleway);
         // material icons
         playPauseStreamBtn.setTypeface(mTypefaceMaterial);
-        cancelStreamBtn.setTypeface(mTypefaceMaterial);
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -932,22 +935,22 @@ public class Home extends AppCompatActivity {
                                                   @Override
                                                   public void onClick(View view) {
 
-                                                      if (mPlayerThread != null) {
+                                                      Log.d("StreamingHome", " clicked Play Pause Btn");
 
-                                                          if (isStreaming) {
-                                                              // pause
-                                                              isStreaming = false;
-                                                              playPauseStreamBtn.setText(playBtn);
-                                                          } else {
-                                                              //play
-                                                              isStreaming = true;
-                                                              playPauseStreamBtn.setText(pauseBtn);
-                                                          }
-
-                                                          exoPlayer.setPlayWhenReady(isStreaming);
+                                                      if (StreamSharedPref.getInstance(Home.this).getStreamerPlayState()) {
+                                                          // pause
+                                                          StreamSharedPref.getInstance(Home.this).setStreamerPlayState(false);
+                                                          playPauseStreamBtn.setText(playBtn);
+                                                      } else {
+                                                          //play
+                                                          StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
+                                                          playPauseStreamBtn.setText(pauseBtn);
                                                       }
 
+                                                      exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
                                                   }
+
+
                                               }
 
         );
@@ -1038,9 +1041,14 @@ public class Home extends AppCompatActivity {
             // Prepare ExoPlayer
             exoPlayer.prepare(audioRenderer);
             exoPlayer.setPlayWhenReady(true);
+            StreamSharedPref.getInstance(context).setStreamerPlayState(true);
             exoPlayer.addListener(new ExoPlayer.Listener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+
+                    Log.d("ExoPlayer", " Player State Changed PlayWhenReady:" + playWhenReady + " PlayerState : " + playbackState);
+                    if (playbackState == 5) // 5 - > integer code for player end state
+                        StreamSharedPref.getInstance(context).setStreamState(false);
 
                 }
 
@@ -1051,13 +1059,13 @@ public class Home extends AppCompatActivity {
 
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
-                    Log.d("Home-Exo", "exo error setting stream state false");
+                    Log.d("ExoPlayer", "exo error setting stream state false");
                     StreamSharedPref.getInstance(Home.this).setStreamState(false);
                 }
             });
 
-            while (exoPlayer.getPlayWhenReady()) {
-                StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
+            while (exoPlayer !=null) {
+
                 playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
                 playerContentDuration = (int) exoPlayer.getDuration();
 
@@ -1078,8 +1086,8 @@ public class Home extends AppCompatActivity {
                 if (playerContentDuration != -1) {
                     if (playerCurrentPositon >= playerContentDuration) break;
                 }
+
             }
-            StreamSharedPref.getInstance(context).setStreamState(false);
 
 
         }
@@ -1176,7 +1184,6 @@ public class Home extends AppCompatActivity {
             currentStreamPosition = (TextView) findViewById(R.id.streaming_item_currentTrackPositionText);
             playPauseStreamBtn = (TextView) findViewById(R.id.streaming_item_play_pauseBtn);
             streamingSongTitle = (TextView) findViewById(R.id.streaming_item_title);
-            cancelStreamBtn = (TextView) findViewById(R.id.streaming_item_cancel_text_btn);
             indeterminateProgressBar = (ProgressBar) findViewById(R.id.stream_indeterminate_progress);
 
             String uri = StreamSharedPref.getInstance(Home.this).getStreamThumbnailUrl();
@@ -1197,7 +1204,6 @@ public class Home extends AppCompatActivity {
             streamingSongTitle.setTypeface(mTypefaceRaleway);
             // material icons
             playPauseStreamBtn.setTypeface(mTypefaceMaterial);
-            cancelStreamBtn.setTypeface(mTypefaceMaterial);
 
             seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
