@@ -55,7 +55,7 @@ public class SearchSuggestionHelper {
     }
 
     public void findSuggestion(String query, final OnFindSuggestionListener callback){
-        // this.onFindSuggestionListener = callback;
+         this.onFindSuggestionListener = callback;
 
         String url = "http://suggestqueries.google.com/complete/search?q="+ URLEncoder.encode(query)+"&client=firefox&hl=en&ds=yt";
 
@@ -100,6 +100,9 @@ public class SearchSuggestionHelper {
 
     public void cancelFuthurRequestUntilQueryChange(){
         VolleyUtils.getInstance().cancelPendingRequests(TAG);
+        if(onFindSuggestionListener!=null){
+            onFindSuggestionListener.onCacelRequests();
+        }
     }
 
     private void log(String s) {
@@ -108,5 +111,7 @@ public class SearchSuggestionHelper {
 
     public interface OnFindSuggestionListener {
         void onResult(ArrayList<SearchSuggestion> list);
+        void onCacelRequests();
     }
+
 }

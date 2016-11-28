@@ -1,5 +1,6 @@
 package any.audio.Activity;
 
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -80,11 +81,6 @@ public class Home extends AppCompatActivity {
     private static WeakReference<Home> wrActivity = null;
 
     private static final int MAX_DATABASE_RESPONSE_TIME = 5 * 1000; // 5 secs
-    static SeekBar streamSeeker;
-    static TextView currentTrackPosition;
-    static TextView totalTrackPosition;
-    static TextView cancelStreamingBtn;
-    static TextView streamingItemTitle;
 
     private ProgressBar indeterminateProgressBar;
     private ImageView streamingThumbnail;
@@ -93,45 +89,30 @@ public class Home extends AppCompatActivity {
     private TextView currentStreamPosition;
     private TextView playPauseStreamBtn;
     private TextView streamingSongTitle;
-    private StreamFragment streamingFragment;
     private RecyclerView mRecyclerView;
     private StaggeredGridLayoutManager layoutManager;
     private ResulstsRecyclerAdapter mRecyclerAdapter;
-    private ProgressDialog progressDialog;
     private CentralDataRepository repository;
     private FloatingSearchView searchView;
     private SwipeRefreshLayout swipeRefressLayout;
     // non-static handlers : We don`t have
-    private Handler mStreamHandler;
     private Handler mCDRMessageHandler;
-    private Handler mNewUpdateAvailableHandler;
-    private Handler mRemoteThreadControlHandler;
 
     private SharedPrefrenceUtils utils;
     private ProgressBar progressBar;
     private TextView progressBarMsgPanel;
-    //private StreamFragment streamDialog;
-    private boolean isStreaming;
-    private MediaPlayer mPlayer;
-    private boolean prepared = false;
     private StreamUriBroadcastReceiver receiver;
     private boolean mReceiverRegistered = false;
-    private int mDuration;
-    private int mCurrentPosition;
-    private int mCurrentBuffered;
     private MusicGenieMediaPlayer mPlayerThread;
     private static ExoPlayer exoPlayer;
     int mBuffered = -1;
-    private boolean progressViewToggleDone = false;
-    private FrameLayout streamDialogContainer;
-    private String mStreamFileName;
-
-    private StreamPrepareFailedListener streamProgressListener;
     private boolean mStreamUpdateReceiverRegistered = false;
     private StreamProgressUpdateBroadcastReceiver streamProgressUpdateReceiver;
     private boolean streamBottomSheetsVisible = false;
     private View mBottomSheet;
     private BottomSheetBehavior mStreamingBottomSheetBehavior;
+    private ProgressDialog progressDialog;
+    private boolean isStreaming = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -150,7 +131,6 @@ public class Home extends AppCompatActivity {
             invokeAction(Constants.ACTION_TYPE_TRENDING);
             utils.setFirstPageLoadedStatus(true);
             // start only once
-            startService(new Intent(this, UpdateCheckService.class));
 
         } else {
             invokeAction(Constants.ACTION_TYPE_RESUME);
@@ -224,10 +204,6 @@ public class Home extends AppCompatActivity {
 //        }
     }
 
-    // for stream fragment
-    public void setStreamProgressListener(StreamPrepareFailedListener listener) {
-        this.streamProgressListener = listener;
-    }
 
     private void handleMessages() {
         mCDRMessageHandler = new Handler() {
@@ -310,7 +286,7 @@ public class Home extends AppCompatActivity {
                     progressBarMsgPanel.setVisibility(View.VISIBLE);
                     //  L.m("Home", "setting msg");
                     //Toast.makeText(this, "hello", Toast.LENGTH_SHORT).show();
-                    progressBarMsgPanel.setText("Troubling Getting DataCheck Your Working Data Connection");
+                    progressBarMsgPanel.setText("Troubling Getting Data . Check Your Working Data Connection");
                     return;
                 }
 
@@ -582,7 +558,14 @@ public class Home extends AppCompatActivity {
                                     searchView.swapSuggestions(list);
                                     searchView.hideProgress();
                                 }
-                            });
+
+                                @Override
+                                public void onCacelRequests() {
+                                    searchView.hideProgress();
+                                    searchView.clearSuggestions();
+                                }
+                            }
+                    );
                 }
 
 
@@ -645,6 +628,8 @@ public class Home extends AppCompatActivity {
 
         SharedPrefrenceUtils.getInstance(this).setLastSearchTerm(query);
         L.m("Home", " invoking action search");
+        // cancelling furthur suggestion    -------------- User is Self-Satified
+        SearchSuggestionHelper.getInstance(this).cancelFuthurRequestUntilQueryChange();
         invokeAction(Constants.ACTION_TYPE_SEARCH);
 
     }
@@ -833,7 +818,6 @@ public class Home extends AppCompatActivity {
         final String pauseBtn = getString(R.string.streaming_pause_btn);
         mBottomSheet = findViewById(R.id.design_bottom_sheet);
         mStreamingBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
-        mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         mStreamingBottomSheetBehavior.setPeekHeight(10);
         mStreamingBottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
@@ -892,14 +876,18 @@ public class Home extends AppCompatActivity {
         streamingThumbnail = (ImageView) findViewById(R.id.streaming_item_thumb);
         streamDuration = (TextView) findViewById(R.id.streaming_item_totalTrackLengthText);
         seekbar = (SeekBar) findViewById(R.id.streaming_item_audio_seekbar);
-        seekbar.setVisibility(View.INVISIBLE);
         currentStreamPosition = (TextView) findViewById(R.id.streaming_item_currentTrackPositionText);
         playPauseStreamBtn = (TextView) findViewById(R.id.streaming_item_play_pauseBtn);
         playPauseStreamBtn.setVisibility(View.GONE);
         streamingSongTitle = (TextView) findViewById(R.id.streaming_item_title);
         indeterminateProgressBar = (ProgressBar) findViewById(R.id.stream_indeterminate_progress);
-        indeterminateProgressBar.setVisibility(View.VISIBLE);
 
+        // reset progress
+        seekbar.setVisibility(View.INVISIBLE);
+        indeterminateProgressBar.setVisibility(View.VISIBLE);
+        Log.d("StreamingHome", " reset the visibility of progress");
+
+        mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
         String uri = StreamSharedPref.getInstance(Home.this).getStreamThumbnailUrl();
         String streamFileName = StreamSharedPref.getInstance(Home.this).getStreamTitle();
 
@@ -965,8 +953,8 @@ public class Home extends AppCompatActivity {
                                                           }
 
                                                           exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
-                                                      }else{
-                                                       Log.d("StreamingHome"," exoPlayer object null");
+                                                      } else {
+                                                          Log.d("StreamingHome", " exoPlayer object null");
                                                       }
                                                   }
 
@@ -1090,12 +1078,14 @@ public class Home extends AppCompatActivity {
                 playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
                 playerContentDuration = (int) exoPlayer.getDuration();
 
-                Log.d("ExoPlayer", " broadcasting progress");
-                broadcastStreamProgresUpdate(
-                        String.valueOf(playerCurrentPositon),
-                        String.valueOf(playerContentDuration),
-                        String.valueOf(exoPlayer.getBufferedPosition())
-                );
+                if (exoPlayer.getPlayWhenReady()) {
+                    Log.d("ExoPlayer", " broadcasting progress");
+                    broadcastStreamProgresUpdate(
+                            String.valueOf(playerCurrentPositon),
+                            String.valueOf(playerContentDuration),
+                            String.valueOf(exoPlayer.getBufferedPosition())
+                    );
+                }
 
                 try {
                     Thread.sleep(500);

@@ -56,8 +56,8 @@ public class DownloadTab extends TabLayout {
     }
 
     public void setUpTab(DownloadTab tab){
-        String downloadingTab = " \uE2C4 DOING";
-        String downloadedTab =" \uE149 DONE";
+        String downloadingTab = " \uE2C4 DOWNLOADING";
+        String downloadedTab =" \uE149 DOWNLOADED";
         addTab(tab.newTab().setText(downloadingTab));
         addTab(tab.newTab().setText(downloadedTab));
 

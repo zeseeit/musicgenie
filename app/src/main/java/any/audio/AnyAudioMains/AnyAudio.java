@@ -2,11 +2,13 @@ package any.audio.AnyAudioMains;
 
 import android.app.Application;
 import android.content.ComponentCallbacks;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.util.Log;
 
 import any.audio.Activity.Home;
 import any.audio.SharedPreferences.StreamSharedPref;
+import any.audio.services.UpdateCheckService;
 
 /**
  * Created by Ankit on 11/27/2016.
@@ -24,7 +26,7 @@ public class AnyAudio extends Application {
 
         StreamSharedPref.getInstance(this).resetStreamInfo();
         StreamSharedPref.getInstance(this).setStreamUrlFetchedStatus(false);
-
+        startService(new Intent(this, UpdateCheckService.class));
         Log.d("AnyAudioApp","reset shared pref. for stream status");
         super.onCreate();
     }

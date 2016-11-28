@@ -1,22 +1,48 @@
 package any.audio.Activity;
 
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.net.Uri;
+import android.support.v4.widget.TextViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 
+import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.Config.URLS;
 
 public class UpdateThemedActivity extends AppCompatActivity {
 
+    TextView tvUpdateMessage;
+    TextView tvUpdateMessageAppName;
+    TextView btnCancel;
+    TextView btnDownload;
+    Typeface tf;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_themed);
+
+        tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        tvUpdateMessage = (TextView) findViewById(R.id.updateMsg);
+        tvUpdateMessageAppName = (TextView) findViewById(R.id.updateMsgAppName);
+        btnCancel = (TextView) findViewById(R.id.cancel_update_msg_dialog);
+        btnDownload = (TextView) findViewById(R.id.download_btn_update_msg);
+
+        //Regular TypeFace
+        btnDownload.setTypeface(tf);
+        btnCancel.setTypeface(tf);
+        tvUpdateMessage.setTypeface(tf);
+        tvUpdateMessageAppName.setTypeface(tf);
+
+
+
+
     }
 
     @Override

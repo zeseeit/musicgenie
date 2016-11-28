@@ -61,7 +61,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:lines="1"
-                        android:maxLength="35"
+                        android:maxLength="32"
                         android:paddingLeft="2dp"
                         android:paddingRight="16dp"
                         android:paddingTop="16dp"

@@ -2,11 +2,15 @@ package any.audio.services;
 
 import android.app.ActivityManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -29,8 +33,9 @@ import any.audio.helpers.L;
 public class UpdateCheckService extends Service {
 
     private static final long CHECK_UPDATE_INTERVAL = 6 * 60 * 60 * 1000;     // 6 hrs interval
-    private static final int SERVER_TIMEOUT_LIMIT = 10000;
-    private Timer mTimer;
+    //private static final long CHECK_UPDATE_INTERVAL = 20 * 1000;     // 6 hrs interval
+    private static final int SERVER_TIMEOUT_LIMIT = 10 * 1000; // 10 sec
+    private static Timer mTimer;
     Handler mHandler = new Handler();
     private final String url = URLS.URL_LATEST_APP_VERSION;
 
@@ -45,7 +50,7 @@ public class UpdateCheckService extends Service {
 
 
         if (mTimer != null) {
-            //mTimer.cancel();
+            mTimer.cancel();
         } else {
             mTimer = new Timer();
         }
@@ -54,57 +59,63 @@ public class UpdateCheckService extends Service {
 
     }
 
+    private void checkForUpdate() {
+
+        Log.d("UpdateServiceAnyAudio", " UpdateCheck........" + isForeground("any.audio"));
+
+
+        StringRequest updateCheckReq = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+
+                        double currentVersion = Double.parseDouble(s);
+
+                        if (currentVersion > getCurrentAppVersionCode()) {
+
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String homeActivityPackage = "any.audio";
+                                    //launch activity when : home is in foreground & no previous launch of this
+                                    L.m("UpdateService", "check for foreground");
+                                    if (isForeground(homeActivityPackage)) {
+
+                                        Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
+                                        updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(updateIntent);
+
+                                    }
+
+
+                                }
+                            });
+                        }
+
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError volleyError) {
+
+                    }
+                });
+
+        updateCheckReq.setRetryPolicy(new DefaultRetryPolicy(
+                SERVER_TIMEOUT_LIMIT,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        VolleyUtils.getInstance().addToRequestQueue(updateCheckReq, "checkUpdateReq", getApplicationContext());
+    }
+
     class RegularUpdateTimerTask extends TimerTask {
 
         @Override
         public void run() {
-
-
-            StringRequest updateCheckReq = new StringRequest(
-                    Request.Method.GET,
-                    url,
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String s) {
-
-                            double currentVersion = Double.parseDouble(s);
-
-                            if (currentVersion > getCurrentAppVersionCode()) {
-
-                                mHandler.post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        String homeActivityPackage = "any.audio";
-                                        //launch activity when : home is in foreground & no previous launch of this
-                                        L.m("UpdateService", "check for foreground");
-                                        if (isForeground(homeActivityPackage)) {
-
-                                            Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
-                                            updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                            startActivity(updateIntent);
-                                        }
-
-
-                                    }
-                                });
-                            }
-
-                        }
-                    },
-                    new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError volleyError) {
-
-                        }
-                    });
-
-            updateCheckReq.setRetryPolicy(new DefaultRetryPolicy(
-                    SERVER_TIMEOUT_LIMIT,
-                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-            VolleyUtils.getInstance().addToRequestQueue(updateCheckReq, "checkUpdateReq", getApplicationContext());
-
+            checkForUpdate();
         }
     }
 
@@ -124,6 +135,5 @@ public class UpdateCheckService extends Service {
     private int getCurrentAppVersionCode() {
         return SharedPrefrenceUtils.getInstance(getApplicationContext()).getCurrentVersionCode();
     }
-
 
 }
