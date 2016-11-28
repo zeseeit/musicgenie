@@ -22,15 +22,22 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:id="@+id/design_bottom_sheet"
         android:layout_width="match_parent"
-        android:layout_height="78dp"
-        android:background="@color/PrimaryColor"
+        android:layout_height="80dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:elevation="20dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
 
+
+        <FrameLayout
+            android:id="@+id/dropShadow"
+            android:background="@drawable/streaming_bottom_strip_elevation_drawable"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"></FrameLayout>
+
         <RelativeLayout
+            android:layout_below="@+id/dropShadow"
             android:layout_width="match_parent"
             android:layout_height="78dp"
             android:background="@color/stream_fragment_background">
@@ -38,11 +45,11 @@
 
             <ImageView
                 android:id="@+id/streaming_item_thumb"
-                android:layout_width="72dp"
-                android:layout_height="72dp"
-                android:paddingLeft="12dp"
+                android:layout_width="78dp"
+                android:layout_height="78dp"
+                android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:paddingTop="8dp"
+                android:paddingTop="2dp"
                 />
 
             <RelativeLayout
@@ -62,7 +69,7 @@
                         android:layout_height="wrap_content"
                         android:lines="1"
                         android:maxLength="32"
-                        android:paddingLeft="2dp"
+                        android:paddingLeft="4dp"
                         android:paddingRight="16dp"
                         android:paddingTop="16dp"
                         android:text="helldfaaaaaaaaaaeeaaaaaaaaaaaaaaadfaaaaadfo"
@@ -75,8 +82,9 @@
                         android:layout_below="@+id/streaming_item_title"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="50dp"
-                        android:paddingLeft="6dp"
+                        android:paddingLeft="4dp"
                         android:progress="0"
+                        android:layout_marginTop="2dp"
                         android:secondaryProgressTint="@color/secondaryProgressTint"
                         android:visibility="invisible" />
 
@@ -85,12 +93,12 @@
                         style="?android:attr/progressBarStyleHorizontal"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_below="@+id/streaming_item_title"
                         android:layout_marginRight="56dp"
-                        android:layout_marginTop="4dp"
-                        android:layout_marginLeft="4dp"
+                        android:layout_marginLeft="6dp"
                         android:indeterminateOnly="true"
-                        android:paddingRight="4dp" />
+                        android:paddingRight="4dp"
+                        android:layout_alignBottom="@+id/streaming_item_audio_seekbar"
+                        android:layout_alignParentStart="true" />
 
 
                 </RelativeLayout>
@@ -129,16 +137,19 @@
                 <TextView
                     android:id="@+id/streaming_item_play_pauseBtn"
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
-                    android:visibility="gone"
-                    android:gravity="center_vertical|end"
-                    android:paddingBottom="2dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:paddingTop="6dp"
+                    android:layout_alignParentBottom="true"
+                    android:paddingLeft="12dp"
+                    android:paddingRight="12dp"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginRight="2dp"
+                    android:visibility="visible"
                     android:text="@string/streaming_pause_btn"
+
                     android:textColor="@color/TitleColor"
                     android:textSize="36sp" />
 

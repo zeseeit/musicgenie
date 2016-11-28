@@ -50,7 +50,7 @@ public class TaskHandler {
     private ProgressDialog progressDialog;
     public boolean isCanceled = false;
     private String dwnd_url;
-    private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000 ; // 1 min
+    private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000; // 1 min
     private DownloadItemInvalidatedListener itemInvalidatedListener;
 
     public TaskHandler(Context context) {
@@ -72,7 +72,7 @@ public class TaskHandler {
         mHandler = new Handler(Looper.getMainLooper()) {
             @Override
             public void handleMessage(Message message) {
-                L.m("TaskHandler","Handling Msg On Main Thread");
+                L.m("TaskHandler", "Handling Msg On Main Thread");
                 initiate();
             }
         };
@@ -90,10 +90,10 @@ public class TaskHandler {
                             @Override
                             public void run() {
 //                                log("succ: dispatched " + taskID);
-                                L.m("TaskHandler","dispatched Task ["+taskID+"]");
+                                L.m("TaskHandler", "dispatched Task [" + taskID + "]");
                                 dispatch(taskID);
 
-                                L.m("TaskHandler","Sending Message For Last Round Check up");
+                                L.m("TaskHandler", "Sending Message For Last Round Check up");
                                 // last round check up
                                 Message message = mHandler.obtainMessage();
                                 message.sendToTarget();
@@ -106,11 +106,11 @@ public class TaskHandler {
                 }
             }
         } else {
-            L.m("TaskHandler","Task Handler Running.... Your Task is enqued");
+            L.m("TaskHandler", "Task Handler Running.... Your Task is enqued");
         }
     }
 
-    public void setItemInvalidatedListener(DownloadItemInvalidatedListener itemInvalidatedListener){
+    public void setItemInvalidatedListener(DownloadItemInvalidatedListener itemInvalidatedListener) {
         this.itemInvalidatedListener = itemInvalidatedListener;
     }
 
@@ -167,32 +167,32 @@ public class TaskHandler {
             isHandlerRunning = false;
             //  last-round check up for any residue task taken-in in beetween
             //initiate();
-            L.m("TaskHandler","Thread Joined");
+            L.m("TaskHandler", "Thread Joined");
 
         } catch (InterruptedException e) {
             log("thread join Interrupted");
         }
     }
 
-    public void setCancelled(Boolean status){
+    public void setCancelled(Boolean status) {
         this.isCanceled = status;
-        L.m("TaskHandler","isCancelled set to "+status);
+        L.m("TaskHandler", "isCancelled set to " + status);
     }
 
     private void deleteFile(String taskID) {
 
         SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
-        L.m("TaskHandler","callback: download error");
+        L.m("TaskHandler", "callback: download error");
 
         String fn = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
         File dest_file = new File(Constants.FILES_DIR + "/" + fn + ".m4a");
         if (dest_file.exists()) {
             if (dest_file.delete()) {
-                if(itemInvalidatedListener!=null)
+                if (itemInvalidatedListener != null)
                     itemInvalidatedListener.onItemsInvalidated();
-                L.m("TaskHandler","Successfully Deleted File" + dest_file.getName());
+                L.m("TaskHandler", "Successfully Deleted File" + dest_file.getName());
             } else {
-                L.m("TaskHandler","Failed To Delete File " + dest_file.getName());
+                L.m("TaskHandler", "Failed To Delete File " + dest_file.getName());
             }
         }
     }
@@ -318,7 +318,18 @@ public class TaskHandler {
         Log.d(TAG, msg);
     }
 
-    public void cancelCurrentDownload(){
+    public String reformatFileName(String oldName) {
+
+        String newName = "";
+        // remove '|'
+        newName += oldName.replaceAll("\\|", " ");
+        newName = newName.replaceAll("\\,","");
+        newName = newName.replaceAll("\\-","");
+
+        return newName;
+    }
+
+    public void cancelCurrentDownload() {
         this.isCanceled = true;
     }
 
@@ -358,14 +369,14 @@ public class TaskHandler {
             File dest_dir = null;
             subscribeDownloadCancelListener();
             if (!isCanceled) {
-                L.m("TaskHandler"," isCancelled "+isCanceled);
+                L.m("TaskHandler", " isCancelled " + isCanceled);
                 try {
 
                     downloadListener.onDownloadTaskProcessStart();
 
                     String _url = Constants.SERVER_URL + "/api/v1/g?url=" + t_v_id;
 //                    log("for dwnd url requesting on " + _url);
-                    L.m("TaskHandler"," Request For Download Url - on - "+_url);
+                    L.m("TaskHandler", " Request For Download Url - on - " + _url);
                     URL u = new URL(_url);
                     URLConnection dconnection = u.openConnection();
                     dconnection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
@@ -387,7 +398,7 @@ public class TaskHandler {
 
                             t_url += obj.getString("url");
 //                            log("download url:" + t_url);
-                            L.m("TaskHandler","Download Url "+t_url);
+                            L.m("TaskHandler", "Download Url " + t_url);
                         } else {
                             downloadListener.onError(taskID);
                             return;
@@ -403,7 +414,7 @@ public class TaskHandler {
                     connection.connect();
                     fileLength = connection.getContentLength();
 //                    log("content len " + fileLength);
-                    L.m("TaskHandler"," Content Length "+fileLength);
+                    L.m("TaskHandler", " Content Length " + fileLength);
                     if (fileLength == -1 || fileLength == 24) {
                         downloadListener.onError(taskID);
                         return;
@@ -415,9 +426,9 @@ public class TaskHandler {
                     }
 
                     dest_dir = new File(Constants.FILES_DIR);
-                    dest_file = new File(dest_dir, t_file_name.trim() + ".m4a");
+                    dest_file = new File(dest_dir, reformatFileName(t_file_name.trim()) + ".m4a");
 //                    log("writing to " + dest_file.toString());
-                    L.m("TaskHandler","Writing to "+dest_file.toString());
+                    L.m("TaskHandler", "Writing to " + dest_file.toString());
                     InputStream inputStream = new BufferedInputStream(url.openStream());
                     OutputStream outputStream = new FileOutputStream(dest_file);
                     byte data[] = new byte[1024];
@@ -427,11 +438,11 @@ public class TaskHandler {
                     while (!isCanceled && (count = inputStream.read(data)) != -1) {
                         //L.m("TaskHandler","[Downloading.....] isCancelled "+isCanceled);
                         total += count;
-  //                      Log.d("Sending filelength", fileLength + "");
-                        progressPercentage =((int) total * 100 / fileLength);//, fileLength;
+                        //                      Log.d("Sending filelength", fileLength + "");
+                        progressPercentage = ((int) total * 100 / fileLength);//, fileLength;
 
-                        if(progressSent<progressPercentage) {
-                            publishProgress(progressPercentage,String.valueOf(fileLength));
+                        if (progressSent < progressPercentage) {
+                            publishProgress(progressPercentage, String.valueOf(fileLength));
                             progressSent = progressPercentage;
                         }
 
@@ -442,7 +453,7 @@ public class TaskHandler {
                     if (total < fileLength) {
                         if (downloadListener != null) {
                             downloadListener.onInterruptted(taskID);
-                            L.m("TaskHandler","Download Interrupted");
+                            L.m("TaskHandler", "Download Interrupted");
                         }
                     }
 
@@ -452,12 +463,12 @@ public class TaskHandler {
 
                 } catch (MalformedURLException e) {
                     downloadListener.onError(taskID);
-                    broadcastUpdate(String.valueOf(0),"0",false);
-                    L.m("TaskHandler"," URL exception");
+                    broadcastUpdate(String.valueOf(0), "0", false);
+                    L.m("TaskHandler", " URL exception");
                 } catch (IOException e) {
                     downloadListener.onError(taskID);
-                    broadcastUpdate(String.valueOf(0),"0",false);
-                    L.m("TaskHandler"," IO exception");
+                    broadcastUpdate(String.valueOf(0), "0", false);
+                    L.m("TaskHandler", " IO exception " + e.toString());
                 }
 
             }
@@ -470,11 +481,11 @@ public class TaskHandler {
                 SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
                 downloadListener.onDownloadFinish();
 //                log("downloaded task " + taskID);
-                L.m("TaskHandler","downloaded task "+taskID);
+                L.m("TaskHandler", "downloaded task " + taskID);
             }
-            L.m("TaskHandler","prog "+progress);
+            L.m("TaskHandler", "prog " + progress);
 
-            broadcastUpdate(String.valueOf(progress), cl,true);
+            broadcastUpdate(String.valueOf(progress), cl, true);
             if (currentProgress < progress) {
                 LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);
             }
@@ -483,12 +494,12 @@ public class TaskHandler {
 
         // broadcast is for progress update to download activity
 
-        public void broadcastUpdate(String progressPercentage, String contentLen,boolean currentDownloadStatus) {
+        public void broadcastUpdate(String progressPercentage, String contentLen, boolean currentDownloadStatus) {
             Intent intent = new Intent(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
             intent.putExtra(Constants.EXTRA_PROGRESS, progressPercentage);
             intent.putExtra(Constants.EXTRA_CONTENT_SIZE, contentLen);
-            intent.putExtra(Constants.EXTRAA_FLAG_DOWNLOAD_STATE,currentDownloadStatus);
+            intent.putExtra(Constants.EXTRAA_FLAG_DOWNLOAD_STATE, currentDownloadStatus);
             context.sendBroadcast(intent);
         }
 

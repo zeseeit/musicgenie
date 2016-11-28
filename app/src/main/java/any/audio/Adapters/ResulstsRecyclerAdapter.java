@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arlib.floatingsearchview.util.Util;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import any.audio.Config.Constants;
@@ -320,8 +322,8 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
-
                     adapter.requestDownload(v_id, file_name);
+
                 }
             });
 
@@ -348,5 +350,9 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
 
+
+
     }
+
+
 }

@@ -48,6 +48,7 @@ import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -149,6 +150,7 @@ public class Home extends AppCompatActivity {
         }
         if (!mStreamUpdateReceiverRegistered) {
             registerForStreamProgressUpdateBroadcastListen(this);
+
             if (StreamSharedPref.getInstance(this).getStreamState()) {
                 Log.d("StreamingHome", " current state for Streaming is : True");
                 prepareBottomStreamSheet();
@@ -390,7 +392,8 @@ public class Home extends AppCompatActivity {
                 };
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setMessage(Html.fromHtml("Do You Want To " + "<b> " + " Stream " + "</b>" + " ?") + "\n" + stuff).setPositiveButton("Yes", streamDialogClickListener)
+                builder.setTitle("Stream");
+                builder.setMessage(stuff).setPositiveButton("Yes", streamDialogClickListener)
                         .setNegativeButton("No", streamDialogClickListener).show();
 
                 break;
@@ -401,11 +404,48 @@ public class Home extends AppCompatActivity {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
-                                TaskHandler
-                                        .getInstance(Home.this)
-                                        .addTask(stuff, v_id);
+                                if (!checkForExistingFile(stuff)) {
 
-                                Toast.makeText(Home.this, stuff + " Added To Download", Toast.LENGTH_LONG).show();
+                                    TaskHandler
+                                            .getInstance(Home.this)
+                                            .addTask(stuff, v_id);
+
+                                    Toast.makeText(Home.this, stuff + " Added To Download", Toast.LENGTH_LONG).show();
+
+                                } else {
+
+                                    DialogInterface.OnClickListener reDownloadTaskAlertDialog = new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                            switch (which) {
+                                                case DialogInterface.BUTTON_POSITIVE:
+
+                                                    TaskHandler
+                                                            .getInstance(Home.this)
+                                                            .addTask(stuff, v_id);
+
+                                                    Toast.makeText(Home.this, stuff + " Added To Download", Toast.LENGTH_LONG).show();
+                                                    break;
+
+                                                case DialogInterface.BUTTON_NEGATIVE:
+                                                    //dismiss dialog
+                                                    dialog.dismiss();
+                                                    break;
+                                            }
+
+                                        }
+                                    };
+
+
+                                    AlertDialog.Builder builderReDownloadAlert = new AlertDialog.Builder(Home.this);
+                                    builderReDownloadAlert.setTitle("File Already Exists !!! ");
+                                    builderReDownloadAlert.
+                                            setMessage(stuff)
+                                            .setPositiveButton("Yes", reDownloadTaskAlertDialog)
+                                            .setNegativeButton("No", reDownloadTaskAlertDialog).show();
+
+                                }
 
                                 break;
 
@@ -418,9 +458,11 @@ public class Home extends AppCompatActivity {
                 };
 
                 AlertDialog.Builder builderDownloadAlert = new AlertDialog.Builder(this);
-                builderDownloadAlert.setMessage(Html.fromHtml("Do You Want To " + "<b>" + "Download " + "</b>" + "?") + "\n" + stuff).setPositiveButton("Yes", downloaDialogClickListener)
+                builderDownloadAlert.setTitle("Download");
+                builderDownloadAlert.setMessage(stuff).setPositiveButton("Yes", downloaDialogClickListener)
                         .setNegativeButton("No", downloaDialogClickListener).show();
         }
+
 
     }
 
@@ -477,6 +519,35 @@ public class Home extends AppCompatActivity {
         } else {
             return Constants.SCREEN_MODE_MOBILE;
         }
+    }
+
+
+    public boolean checkForExistingFile(String fileNameToCheck) {
+        // assumes that fileNameToCheck is reformatted
+
+        fileNameToCheck = reformatFileName(fileNameToCheck)+".m4a";
+
+        File dir = new File(Constants.FILES_DIR);
+        File[] _files = dir.listFiles();
+
+        for (File f : _files) {
+         Log.d("HomeFileDuplicate"," checking "+(f.toString().substring(f.toString().lastIndexOf("/") + 1))+" against "+fileNameToCheck);
+            if ((f.toString().substring(f.toString().lastIndexOf("/") + 1)).equals(fileNameToCheck))
+                return true;
+        }
+
+        return false;
+    }
+
+    public String reformatFileName(String oldName) {
+
+        String newName = "";
+        // remove '|'
+        newName += oldName.replaceAll("\\|", " ");
+        newName = newName.replaceAll("\\,","");
+        newName = newName.replaceAll("\\-","");
+
+        return newName;
     }
 
     private void plugAdapter() {

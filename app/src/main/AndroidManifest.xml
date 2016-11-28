@@ -19,11 +19,11 @@
 
         <service android:name=".services.UpdateCheckService" />
 
-        <receiver android:name=".Activity.ErrorSplash$NetworkChangeReceiver" >
-            <intent-filter>
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver android:name=".Activity.ErrorSplash$NetworkChangeReceiver" >-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
 
         <activity

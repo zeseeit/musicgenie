@@ -73,5 +73,11 @@ Issues:
        [[[Fixed]]] sol: cancelled pending reqs. for suggestions
 
 
+     There is activity transition while network state change............unregister it after one use in error splash
+      [[[Removed]]]
+
+
+
+
 
 
