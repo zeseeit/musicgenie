@@ -1,8 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/DownloadingPageBackground"
-    tools:context="musicgenie.com.musicgenie.fragments.ActiveTaskFragment">
+    android:background="@color/DownloadingPageBackground">
 
     <ListView
         android:paddingTop="4dp"
@@ -10,6 +9,8 @@
         android:dividerHeight="2dp"
         android:id="@+id/liveDownloadListView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></ListView>
+        android:layout_height="match_parent"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"></ListView>
 
 </FrameLayout>

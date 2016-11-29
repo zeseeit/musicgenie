@@ -25,6 +25,7 @@ public class StreamSharedPref {
     private String KEY_IS_STREAMER_PLAYING = "streamer_play_state";
     private String KEY_STREAM_CONTENT_LENGTH = "stream_content_length";
     private String KEY_STREAMING_PLAYING_POSITION = "curr_pos_stream";
+    private String KEY_IS_STREAM_URL_FETCHED = "stream_url_fetched";
 
     public StreamSharedPref(Context context) {
         this.context = context;
@@ -45,6 +46,7 @@ public class StreamSharedPref {
         Log.d("StreamSharedPref"," setting stream state "+isStreaming);
         editor.putBoolean(KEY_IS_STREAMING, isStreaming);
         editor.commit();
+
         if(!isStreaming){
             setStreamerPlayState(false);
         }
@@ -56,6 +58,23 @@ public class StreamSharedPref {
         return preferences.getBoolean(KEY_IS_STREAMING, false);
     }
 
+    // stream status
+    public void setStreamUrlFetchedStatus(boolean fetched) {
+
+        Log.d("StreamSharedPref"," setting fetched state "+fetched);
+        editor.putBoolean(KEY_IS_STREAM_URL_FETCHED, fetched);
+        editor.commit();
+
+    }
+
+    public boolean getStreamUrlFetchedStatus() {
+        Log.d("StreamSharedPref"," getting fetched state "+ preferences.getBoolean(KEY_IS_STREAM_URL_FETCHED,false));
+        return preferences.getBoolean(KEY_IS_STREAM_URL_FETCHED, false);
+    }
+
+
+
+
     // stream info
     public void setStreamTitle(String title) {
         //Log.d("StreamSharedPref"," item title "+title);
@@ -66,18 +85,6 @@ public class StreamSharedPref {
     public void setStreamThumbnailUrl(String url) {
         //Log.d("StreamSharedPref"," item thumbnail "+url);
         editor.putString(KEY_STREAMING_THUMBNAIL_URL, url);
-        editor.commit();
-    }
-
-    public void setStreamingProgress(int progress) {
-        //Log.d("StreamSharedPref"," stream progress "+progress);
-        editor.putInt(KEY_STREAMING_PROGRESS, progress);
-        editor.commit();
-    }
-
-    public void setStreamigZBuffer(int buffer) {
-      //  Log.d("StreamSharedPref"," buffered "+buffer);
-        editor.putInt(KEY_STREAMING_BUFFER, buffer);
         editor.commit();
     }
 
@@ -99,26 +106,14 @@ public class StreamSharedPref {
         return preferences.getBoolean(KEY_IS_STREAMER_PLAYING, false);
     }
 
-    public void setStreamContentLength(int length) {
-  //      Log.d("StreamSharedPref"," content Len "+length);
-        editor.putInt(KEY_STREAM_CONTENT_LENGTH, length);
-    }
-
     public int getStreamContentLength() {
 
         return preferences.getInt(KEY_STREAM_CONTENT_LENGTH, 0);
     }
 
-    public void setStreamCurrentPlayingPosition(int position) {
-//        Log.d("StreamSharedPref"," play position "+position);
-        editor.putInt(KEY_STREAMING_PLAYING_POSITION, position);
-        editor.commit();
-    }
-
     public int getStreamCurrentPlayingPosition() {
         return preferences.getInt(KEY_STREAMING_PLAYING_POSITION, 0);
     }
-
 
     public String getStreamThumbnailUrl() {
         return preferences.getString(KEY_STREAMING_THUMBNAIL_URL, "");

@@ -49,6 +49,35 @@ Issues:
 
     Play-Pause Button is not working
 
+    [[[Fixed]]]
+
+    Update is so frequent
+    Update dialog should be clean
+    [[[Fixed]]]
+
+    On Next Stream Previous Song persist on Sheet
+    [[[Fixed]]] sol: ExoPlayer was still broadcasting previous streaming data.so restricted broadcasting when player is actually playing
+
+    change icon with different version support
+     [[[Fixed]]]
+
+     impl. touch state for stream button on card
+     [[Not req. yet]]
+
+    [[Not req. yet ]] inhance the layout of each item in suggestion list
+
+    On Trying Stream before one requested Stream before cause multiple streaming at a time:
+    [[[Fixed]]] sol: Cancelled all pending Request related to Stream URl Fetching
+
+     on search cancel suggestion request
+       [[[Fixed]]] sol: cancelled pending reqs. for suggestions
+
+
+     There is activity transition while network state change............unregister it after one use in error splash
+      [[[Removed]]]
+
+
+
 
 
 

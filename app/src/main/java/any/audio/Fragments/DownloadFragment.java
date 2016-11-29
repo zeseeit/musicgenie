@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,12 +29,16 @@ public class DownloadFragment extends Fragment implements DownloadItemInvalidate
     }
 
     private static void setUpAdapter() {
+
         ArrayList<String> files = new ArrayList<>();
         File dir = new File(Constants.FILES_DIR);
         File[] _files = dir.listFiles();
         for (File f : _files) {
-            files.add(0, f.toString());
+            String path = f.toString();
+            Log.d("Downloaded",""+path.toString());
+            files.add(0,path);
         }
+
         DownloadedSongsAdapter adapter = new DownloadedSongsAdapter(context);
         adapter.setItemList(files);
         downloadedItemListView.setAdapter(adapter);
@@ -69,6 +74,10 @@ public class DownloadFragment extends Fragment implements DownloadItemInvalidate
 
     @Override
     public void onItemsInvalidated() {
+        setUpAdapter();
+    }
+
+    public void refreshDownloadedList() {
         setUpAdapter();
     }
 }

@@ -22,7 +22,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:src="@drawable/hqdefault"
+                android:background="@color/secondaryProgressTint"
                 android:id="@+id/Videothumbnail"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/song_thumb_height"

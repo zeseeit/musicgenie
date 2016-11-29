@@ -17,7 +17,8 @@
 
     <color name="black_overlay">#66000000</color>
     <color name="secondaryProgressTint">#66f44336</color>
-
     <color name="stream_fragment_background">#fefefe</color>
+
+
 
 </resources>

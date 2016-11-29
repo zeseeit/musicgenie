@@ -47,7 +47,7 @@ public class DownloadTab extends TabLayout {
         for (int i = 0; i < tabChildCount; i++) {
             View tabViewChild = tabView.getChildAt(i);
             if (tabViewChild instanceof TextView) {
-                ((TextView) tabViewChild).setTypeface(mTypeface,Typeface.BOLD);
+                ((TextView) tabViewChild).setTypeface(mTypeface,Typeface.NORMAL);
                 ((TextView) tabViewChild).setHeight(60);
                 ((TextView) tabViewChild).setTextSize(TypedValue.COMPLEX_UNIT_SP,60);
                 ((TextView) tabViewChild).setTextColor(getResources().getColor(R.color.White));
@@ -56,8 +56,8 @@ public class DownloadTab extends TabLayout {
     }
 
     public void setUpTab(DownloadTab tab){
-        String downloadingTab = " \uE2C4 ";
-        String downloadedTab =" \uE149 ";
+        String downloadingTab = " \uE2C4 DOWNLOADING";
+        String downloadedTab =" \uE149 DOWNLOADED";
         addTab(tab.newTab().setText(downloadingTab));
         addTab(tab.newTab().setText(downloadedTab));
 

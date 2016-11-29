@@ -2,6 +2,8 @@ package any.audio.Managers;
 
 import android.app.NotificationManager;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.support.v7.app.NotificationCompat;
 
@@ -36,7 +38,9 @@ public class LocalNotificationManager {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setContentTitle("AnyAudio");
-        mBuilder.setSmallIcon(R.drawable.head);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.downloaded);
+        mBuilder.setLargeIcon(bitmap);
+        mBuilder.setSmallIcon(R.drawable.downloaded);
         mBuilder.setContentText(msg);
 //        mBuilder.setContentIntent(pendingIntent);
         mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
@@ -50,7 +54,9 @@ public class LocalNotificationManager {
 
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setContentTitle("AnyAudio");
-        mBuilder.setSmallIcon(R.drawable.head);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.drawable.downloaded);
+        mBuilder.setLargeIcon(bitmap);
+        mBuilder.setSmallIcon(R.drawable.downloaded);
         mBuilder.setContentText(item_name);
         mNotificationId = 0; // single notificationId is enough as there is single downoad at a time
 
