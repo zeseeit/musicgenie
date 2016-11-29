@@ -31,14 +31,11 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
     //Views
     private TextView mTitle;
     private ImageView mAlbumArt;
-    private TextView overFlowIcon;
-    private Typeface tf;
 
     public DownloadedSongsAdapter(Context context) {
         super(context, 0);
         DownloadedSongsAdapter.context = context;
         fileList = new ArrayList<>();
-        tf = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
     }
 
     public static DownloadedSongsAdapter getInstance(Context context) {
@@ -69,8 +66,6 @@ public class DownloadedSongsAdapter extends ArrayAdapter<String> {
         // ins
         mTitle = (TextView) view.findViewById(R.id.downloaded_item_title);
         mAlbumArt = (ImageView) view.findViewById(R.id.downloaded_item_thumb);
-        overFlowIcon = (TextView) view.findViewById(R.id.secondaryActionDots);
-        overFlowIcon.setTypeface(tf);
 
         mAlbumArt.setImageResource(R.drawable.downloaded);
         String fileName = fileList.get(position);
