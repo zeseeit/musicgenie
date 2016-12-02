@@ -51,7 +51,6 @@ public class UpdateCheckService extends Service {
     @Override
     public void onCreate() {
 
-
         if (mTimer != null) {
             mTimer.cancel();
         } else {
