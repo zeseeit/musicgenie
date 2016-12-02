@@ -18,13 +18,19 @@ import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
-public class UserPreferenceSetting extends AppCompatActivity{
+public class UserPreferenceSetting extends AppCompatActivity {
 
     TextView thumbnailTxtView;
     TextView issueTxtView;
     TextView issueBtnTxt;
     Switch thumbnailSwitch;
     Toolbar toolbar;
+
+    TextView updateTextView;
+    TextView suggestTextView;
+    TextView suggestBtn;
+    TextView updateBtn;
+
     private TextView termsOfUse;
 
     @Override
@@ -54,10 +60,10 @@ public class UserPreferenceSetting extends AppCompatActivity{
         thumbnailSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
-                SharedPrefrenceUtils  utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
-                if(state){
+                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
+                if (state) {
                     utils.setOptionsForThumbnailLoad(true);
-                }else{
+                } else {
                     utils.setOptionsForThumbnailLoad(false);
                 }
             }
@@ -77,6 +83,22 @@ public class UserPreferenceSetting extends AppCompatActivity{
             }
         });
 
+        updateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                checkForUpdate();
+                SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this).setDoNotRemindMeAgainForAppUpdate(false);
+            }
+        });
+
+        suggestBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                suggestOther();
+            }
+        });
+
+
         termsOfUse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -86,6 +108,31 @@ public class UserPreferenceSetting extends AppCompatActivity{
                 startActivity(i);
             }
         });
+
+    }
+
+
+    public void checkForUpdate() {
+
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+
+        if (utils.getNewVersionAvailibility() && !utils.getDoNotRemindMeAgainForAppUpdate()) {
+
+            Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
+            updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
+            updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(updateIntent);
+
+        }
+    }
+
+    private void suggestOther() {
+        String textToShare = "AnyAudio a tool to download/stream Any Audio from Internet. Download it from <Link>";
+
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, textToShare);
+        startActivity(share);
 
     }
 
@@ -99,10 +146,15 @@ public class UserPreferenceSetting extends AppCompatActivity{
     private void init() {
 
         thumbnailTxtView = (TextView) findViewById(R.id.loadThumbnailTextMessage);
-        issueTxtView= (TextView) findViewById(R.id.issuesTextMessage);
+        issueTxtView = (TextView) findViewById(R.id.issuesTextMessage);
         issueBtnTxt = (TextView) findViewById(R.id.issueBtn);
         thumbnailSwitch = (Switch) findViewById(R.id.loadThumbnailSwitch);
-        termsOfUse  = (TextView) findViewById(R.id.termsOfUse);
+        updateTextView = (TextView) findViewById(R.id.UpdateTextMessage);
+        suggestTextView = (TextView) findViewById(R.id.SuggestTextMessage);
+        updateBtn = (TextView) findViewById(R.id.updateBtn);
+        suggestBtn = (TextView) findViewById(R.id.suggestBtn);
+
+        termsOfUse = (TextView) findViewById(R.id.termsOfUse);
 
 
         Typeface tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
@@ -110,7 +162,11 @@ public class UserPreferenceSetting extends AppCompatActivity{
         thumbnailTxtView.setTypeface(tf);
         issueTxtView.setTypeface(tf);
         termsOfUse.setTypeface(tf);
+        updateTextView.setTypeface(tf);
+        suggestTextView.setTypeface(tf);
         issueBtnTxt.setTypeface(materialIconFont);
+        suggestBtn.setTypeface(materialIconFont);
+        updateBtn.setTypeface(materialIconFont);
 
     }
 
@@ -118,7 +174,7 @@ public class UserPreferenceSetting extends AppCompatActivity{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-       // getMenuInflater().inflate(R.menu.menu_user_preference_setting, menu);
+        // getMenuInflater().inflate(R.menu.menu_user_preference_setting, menu);
         return true;
     }
 

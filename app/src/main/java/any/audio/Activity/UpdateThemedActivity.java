@@ -9,19 +9,24 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
+import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.Config.URLS;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
 public class UpdateThemedActivity extends AppCompatActivity {
 
     TextView tvUpdateMessage;
-    TextView tvUpdateMessageAppName;
+    TextView tvUpdateDescription;
     TextView btnCancel;
     TextView btnDownload;
     Typeface tf;
+    CheckBox mUpdateCheckBox;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +35,34 @@ public class UpdateThemedActivity extends AppCompatActivity {
 
         tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
         tvUpdateMessage = (TextView) findViewById(R.id.updateMsg);
-        tvUpdateMessageAppName = (TextView) findViewById(R.id.updateMsgAppName);
+        tvUpdateDescription = (TextView) findViewById(R.id.updateDescription);
         btnCancel = (TextView) findViewById(R.id.cancel_update_msg_dialog);
         btnDownload = (TextView) findViewById(R.id.download_btn_update_msg);
+        mUpdateCheckBox = (CheckBox) findViewById(R.id.checkedConfirmation);
+
+        mUpdateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean byUser) {
+                if (byUser) {
+                    if (compoundButton.isChecked()) {
+                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(true);
+                    } else {
+                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(false);
+                    }
+                }
+            }
+        });
 
         //Regular TypeFace
         btnDownload.setTypeface(tf);
         btnCancel.setTypeface(tf);
         tvUpdateMessage.setTypeface(tf);
-        tvUpdateMessageAppName.setTypeface(tf);
+        tvUpdateDescription.setTypeface(tf);
+
+        // data setters
+
+        String updateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
+        tvUpdateDescription.setText(updateDescription);
 
 
 

@@ -117,7 +117,7 @@ public class UpdateCheckService extends Service {
         return SharedPrefrenceUtils.getInstance(getApplicationContext()).getCurrentVersionCode();
     }
 
-    public void handleNewUpdateResponse(String response){
+    public void handleNewUpdateResponse(String response) {
         /*
         * New Update Message Format
         *
@@ -133,9 +133,9 @@ public class UpdateCheckService extends Service {
             int newVersion = updateResp.getInt("version");
             String updateDescription = updateResp.getString("newInThisUpdate");
 
-            if(newVersion>getCurrentAppVersionCode()){
-             // write update to shared pref..
-                Log.d("UpdateService"," writing response to shared Pref..");
+            if (newVersion > getCurrentAppVersionCode()) {
+                // write update to shared pref..
+                Log.d("UpdateService", " writing response to shared Pref..");
                 SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionAvailibility(true);
                 SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionDescription(updateDescription);
 

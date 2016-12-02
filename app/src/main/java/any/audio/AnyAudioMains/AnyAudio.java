@@ -29,18 +29,23 @@ public class AnyAudio extends Application {
 
         StreamSharedPref.getInstance(this).resetStreamInfo();
         StreamSharedPref.getInstance(this).setStreamUrlFetchedStatus(false);
+        Log.d("AnyAudioApp", "reset shared pref. for stream status..&");
+
         startService(new Intent(this, UpdateCheckService.class));
         checkForUpdate();
-        Log.d("AnyAudioApp", "reset shared pref. for stream status");
+        Log.d("AnyAudioApp", " started Update Service");
+
         super.onCreate();
     }
 
     public void checkForUpdate() {
 
-        if (SharedPrefrenceUtils.getInstance(this).getNewVersionAvailibility()) {
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+
+        if (utils.getNewVersionAvailibility() && !utils.getDoNotRemindMeAgainForAppUpdate()) {
 
             Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
-            updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC,SharedPrefrenceUtils.getInstance(this).getNewVersionDescription());
+            updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
             updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(updateIntent);
 

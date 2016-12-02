@@ -14,6 +14,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
         android:elevation="2dp"
         >
 
@@ -62,6 +63,68 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:padding="10dp"
+        android:layout_below="@+id/IssuesTextFrame"
+        android:id="@+id/UpdateTextFrame"
+        android:layout_width="match_parent"
+        android:background="@color/White"
+        android:layout_margin="8dp"
+        android:elevation="2dp"
+        android:layout_height="72dp">
+
+        <TextView
+            android:id="@+id/UpdateTextMessage"
+            android:layout_gravity="center_vertical"
+            android:text=" Update AnyAudio"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_gravity="right|center_vertical"
+            android:id="@+id/updateBtn"
+            android:textColor="@color/PrimaryColor"
+            android:text=""
+            android:textSize="25sp"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+
+    <FrameLayout
+        android:padding="10dp"
+        android:layout_below="@+id/UpdateTextFrame"
+        android:id="@+id/suggestAppTextFrame"
+        android:layout_width="match_parent"
+        android:background="@color/White"
+        android:layout_margin="8dp"
+        android:elevation="2dp"
+        android:layout_height="72dp">
+
+        <TextView
+            android:id="@+id/SuggestTextMessage"
+            android:layout_gravity="center_vertical"
+            android:text="Suggest AnyAudio"
+            android:textSize="16sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_gravity="right|center_vertical"
+            android:id="@+id/suggestBtn"
+            android:textColor="@color/PrimaryColor"
+            android:text=""
+            android:textSize="25sp"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </FrameLayout>
+
+
     <TextView
         android:id="@+id/termsOfUse"
         android:text="Terms Of Use"
@@ -71,8 +134,6 @@
         android:textColor="@color/PrimaryColor"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />w
-
-
+        android:layout_height="wrap_content" />
 
 </RelativeLayout>
