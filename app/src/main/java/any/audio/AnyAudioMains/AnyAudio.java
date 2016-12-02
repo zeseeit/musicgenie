@@ -1,12 +1,9 @@
 package any.audio.AnyAudioMains;
 
 import android.app.Application;
-import android.content.ComponentCallbacks;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.util.Log;
 
-import any.audio.Activity.Home;
 import any.audio.Activity.UpdateThemedActivity;
 import any.audio.Config.Constants;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
@@ -30,24 +27,22 @@ public class AnyAudio extends Application {
         StreamSharedPref.getInstance(this).resetStreamInfo();
         StreamSharedPref.getInstance(this).setStreamUrlFetchedStatus(false);
         Log.d("AnyAudioApp", "reset shared pref. for stream status..&");
-
         startService(new Intent(this, UpdateCheckService.class));
-        checkForUpdate();
+        setForUpdate();
         Log.d("AnyAudioApp", " started Update Service");
 
         super.onCreate();
     }
 
-    public void checkForUpdate() {
+    public void setForUpdate() {
 
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
 
+        Log.d("AnyAudio"," is New Version "+utils.getNewVersionAvailibility()+" is dnd active "+utils.getDoNotRemindMeAgainForAppUpdate());
+
         if (utils.getNewVersionAvailibility() && !utils.getDoNotRemindMeAgainForAppUpdate()) {
 
-            Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
-            updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
-            updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(updateIntent);
+            utils.setNotifiedForUpdate(false);
 
         }
     }

@@ -2,7 +2,6 @@ package any.audio.SharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.Bitmap;
 
 import any.audio.Config.Constants;
 
@@ -121,19 +120,14 @@ public class SharedPrefrenceUtils {
         return preferences.getInt(Constants.KEY_CURRENT_VERSION,1);
     }
 
-    public void setNewVersionAvailibility(boolean status){
-        editor.putBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE,status);
-        editor.commit();
-    }
-
     public boolean getNewVersionAvailibility(){
 
         return preferences.getBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE,false);
 
     }
 
-    public void setNewVersionDescription(String description){
-        editor.putString(Constants.KEY_NEW_APP_VERSION_DESCRIPTION,description);
+    public void setNewVersionAvailibility(boolean status) {
+        editor.putBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE, status);
         editor.commit();
     }
 
@@ -143,8 +137,8 @@ public class SharedPrefrenceUtils {
 
     }
 
-    public void setDoNotRemindMeAgainForAppUpdate(boolean status){
-        editor.putBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN,status);
+    public void setNewVersionDescription(String description) {
+        editor.putString(Constants.KEY_NEW_APP_VERSION_DESCRIPTION, description);
         editor.commit();
     }
 
@@ -154,6 +148,18 @@ public class SharedPrefrenceUtils {
 
     }
 
+    public void setDoNotRemindMeAgainForAppUpdate(boolean status) {
+        editor.putBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN, status);
+        editor.commit();
+    }
 
+    public void setNotifiedForUpdate(boolean state){
+        editor.putBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,state);
+        editor.commit();
+    }
+
+    public boolean getNotifiedForUpdate(){
+        return preferences.getBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,false);
+    }
 
 }

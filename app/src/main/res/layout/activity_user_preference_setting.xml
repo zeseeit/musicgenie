@@ -1,139 +1,148 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <include layout="@layout/toolbar" android:id="@+id/toolbar"/>
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/toolbar" />
 
     <FrameLayout
-        android:padding="10dp"
-        android:layout_below="@+id/toolbar"
         android:id="@+id/thumbnailChoiceFrame"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:background="@color/White"
+        android:layout_below="@+id/toolbar"
+        android:layout_marginBottom="2dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"
+        android:background="@color/White"
         android:elevation="2dp"
-        >
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/loadThumbnailTextMessage"
-            android:layout_gravity="center_vertical"
-            android:text="Load Thumbnail\n(Slow Internet Connection)"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Load Thumbnail\n(Slow Internet Connection)"
+            android:textSize="16sp" />
+
+        <Switch
             android:id="@+id/loadThumbnailSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="right|center_vertical" />
 
     </FrameLayout>
 
     <FrameLayout
-        android:padding="10dp"
-        android:layout_below="@+id/thumbnailChoiceFrame"
         android:id="@+id/IssuesTextFrame"
         android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@+id/thumbnailChoiceFrame"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
         android:background="@color/White"
-        android:layout_margin="8dp"
         android:elevation="2dp"
-        android:layout_height="72dp">
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/issuesTextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Have Issues With AnyAudio ? "
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="16sp" />
 
         <TextView
-            android:layout_gravity="right|center_vertical"
             android:id="@+id/issueBtn"
-            android:textColor="@color/PrimaryColor"
-            android:text=""
-            android:textSize="25sp"
-            android:layout_marginRight="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:text=""
+            android:textColor="@color/PrimaryColor"
+            android:textSize="25sp" />
 
     </FrameLayout>
 
     <FrameLayout
-        android:padding="10dp"
-        android:layout_below="@+id/IssuesTextFrame"
         android:id="@+id/UpdateTextFrame"
         android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@+id/IssuesTextFrame"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
         android:background="@color/White"
-        android:layout_margin="8dp"
         android:elevation="2dp"
-        android:layout_height="72dp">
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/UpdateTextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text=" Update AnyAudio"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="16sp" />
 
         <TextView
-            android:layout_gravity="right|center_vertical"
             android:id="@+id/updateBtn"
-            android:textColor="@color/PrimaryColor"
-            android:text=""
-            android:textSize="25sp"
-            android:layout_marginRight="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:text=""
+            android:textColor="@color/PrimaryColor"
+            android:textSize="25sp" />
 
     </FrameLayout>
 
-
     <FrameLayout
-        android:padding="10dp"
-        android:layout_below="@+id/UpdateTextFrame"
         android:id="@+id/suggestAppTextFrame"
         android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@+id/UpdateTextFrame"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
         android:background="@color/White"
-        android:layout_margin="8dp"
         android:elevation="2dp"
-        android:layout_height="72dp">
+        android:padding="10dp">
 
         <TextView
             android:id="@+id/SuggestTextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Suggest AnyAudio"
-            android:textSize="16sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="16sp" />
 
         <TextView
-            android:layout_gravity="right|center_vertical"
             android:id="@+id/suggestBtn"
-            android:textColor="@color/PrimaryColor"
-            android:text=""
-            android:textSize="25sp"
-            android:layout_marginRight="8dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:text=""
+            android:textColor="@color/PrimaryColor"
+            android:textSize="25sp" />
 
     </FrameLayout>
 
-
     <TextView
         android:id="@+id/termsOfUse"
-        android:text="Terms Of Use"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:padding="16dp"
-        android:textColor="@color/PrimaryColor"
-        android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="Terms Of Use"
+        android:textColor="@color/PrimaryColor"
+        android:textSize="14sp" />
 
 </RelativeLayout>

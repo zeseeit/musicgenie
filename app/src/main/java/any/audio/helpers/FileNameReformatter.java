@@ -12,7 +12,7 @@ public class FileNameReformatter {
     private static FileNameReformatter mInstance;
 
     public FileNameReformatter(Context context) {
-        this.context = context;
+        FileNameReformatter.context = context;
     }
 
     public static FileNameReformatter getInstance(Context context) {

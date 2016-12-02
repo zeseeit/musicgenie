@@ -6,13 +6,10 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 
-import any.audio.Config.Constants;
-import any.audio.SharedPreferences.StreamSharedPref;
-import any.audio.Views.DownloadTab;
-import any.audio.R;
 import any.audio.Adapters.SectionsPagerAdapter;
+import any.audio.R;
+import any.audio.Views.DownloadTab;
 
 /**
  * Created by Ankit on 9/25/2016.
@@ -78,5 +75,4 @@ public class DowloadsActivity extends AppCompatActivity {
         super.onBackPressed();
         finish();
     }
-
 }

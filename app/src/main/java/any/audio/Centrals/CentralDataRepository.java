@@ -4,13 +4,13 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
 
-import any.audio.Managers.CloudManager;
 import any.audio.Config.Constants;
 import any.audio.Database.DbHelper;
-import any.audio.helpers.L;
+import any.audio.Managers.CloudManager;
 import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Models.SectionModel;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.helpers.L;
 
 /**
  * call addAction()
@@ -38,12 +38,12 @@ public class CentralDataRepository {
     /**
      * Result type
      */
-    public static final int TYPE_TRENDING = 405;
+    private static final int TYPE_TRENDING = 405;
 
     /**
      * Result type
      */
-    public static final int TYPE_RESULT = 406;
+    private static final int TYPE_RESULT = 406;
     private static Context context;
     private static CentralDataRepository mInstance;
    // private ActionCompletedListener mActionCompletdListener;
@@ -184,7 +184,7 @@ public class CentralDataRepository {
      * (Restore State)
      * Checks Last Loaded
      * gets from DB and submits to registered adapters
-     * After submittion must setLastLoaded
+     * After submition must setLastLoaded
      */
     private void submitLastLoaded() {
 

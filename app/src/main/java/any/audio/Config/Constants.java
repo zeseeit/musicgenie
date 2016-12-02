@@ -56,4 +56,5 @@ public class Constants {
     public static String KEY_DONOT_REMIND_ME_AGAIN = "donot_remind_me_again_for_update";
     public static String EXTRAA_NEW_UPDATE_DESC = "extraa_new_update_des";
 
+    public static String KEY_APP_UPDATE_NOTIFIED = "app_update_notified";
 }

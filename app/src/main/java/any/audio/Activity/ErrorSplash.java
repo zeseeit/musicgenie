@@ -12,20 +12,30 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import any.audio.Fragments.ActiveTaskFragment;
-import any.audio.Network.ConnectivityUtils;
 import any.audio.Managers.FontManager;
+import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 
 public class ErrorSplash extends AppCompatActivity {
 
+    private static Context mContext;
     private TextView tv;
     private TextView conError;
     private TextView contBtn;
     private TextView poweredBy;
-    private static Context mContext;
     private NetworkChangeReceiver receiver;
     private boolean mReceiverRegistered = false;
+
+    private static void redirectIfConnected() {
+
+        if (ConnectivityUtils.getInstance(mContext).isConnectedToNet())
+            navigateToHome();
+    }
+
+    private static void navigateToHome() {
+        mContext.startActivity(new Intent(mContext, Home.class));
+        ((Activity) mContext).finish();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,17 +92,6 @@ public class ErrorSplash extends AppCompatActivity {
         });
 
 
-    }
-
-    private static void redirectIfConnected() {
-
-        if (ConnectivityUtils.getInstance(mContext).isConnectedToNet())
-            navigateToHome();
-    }
-
-    private static void navigateToHome(){
-        mContext.startActivity(new Intent(mContext, Home.class));
-        ((Activity) mContext).finish();
     }
 
     public void unRegisterNetworkStateBroadcastListener(){

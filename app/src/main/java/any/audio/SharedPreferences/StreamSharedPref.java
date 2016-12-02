@@ -2,7 +2,6 @@ package any.audio.SharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.opengl.EGLDisplay;
 import android.util.Log;
 
 /**
@@ -11,9 +10,9 @@ import android.util.Log;
 
 public class StreamSharedPref {
 
+    private static final String PREF_NAME = "any_audio_stream";
     private static Context context;
     private static StreamSharedPref mInstance;
-    private static final String PREF_NAME = "any_audio_stream";
     private static int MODE = 0;
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
@@ -28,7 +27,7 @@ public class StreamSharedPref {
     private String KEY_IS_STREAM_URL_FETCHED = "stream_url_fetched";
 
     public StreamSharedPref(Context context) {
-        this.context = context;
+        StreamSharedPref.context = context;
         preferences = context.getSharedPreferences(PREF_NAME, MODE);
         editor = preferences.edit();
     }
@@ -38,6 +37,11 @@ public class StreamSharedPref {
             mInstance = new StreamSharedPref(context);
         }
         return mInstance;
+    }
+
+    public boolean getStreamState() {
+        Log.d("StreamSharedPref", " getting stream  state " + preferences.getBoolean(KEY_IS_STREAMING, false));
+        return preferences.getBoolean(KEY_IS_STREAMING, false);
     }
 
     // stream status
@@ -53,9 +57,9 @@ public class StreamSharedPref {
 
     }
 
-    public boolean getStreamState() {
-        Log.d("StreamSharedPref"," getting stream  state "+ preferences.getBoolean(KEY_IS_STREAMING,false));
-        return preferences.getBoolean(KEY_IS_STREAMING, false);
+    public boolean getStreamUrlFetchedStatus() {
+        Log.d("StreamSharedPref", " getting fetched state " + preferences.getBoolean(KEY_IS_STREAM_URL_FETCHED, false));
+        return preferences.getBoolean(KEY_IS_STREAM_URL_FETCHED, false);
     }
 
     // stream status
@@ -67,27 +71,6 @@ public class StreamSharedPref {
 
     }
 
-    public boolean getStreamUrlFetchedStatus() {
-        Log.d("StreamSharedPref"," getting fetched state "+ preferences.getBoolean(KEY_IS_STREAM_URL_FETCHED,false));
-        return preferences.getBoolean(KEY_IS_STREAM_URL_FETCHED, false);
-    }
-
-
-
-
-    // stream info
-    public void setStreamTitle(String title) {
-        //Log.d("StreamSharedPref"," item title "+title);
-        editor.putString(KEY_STREAMING_TITLE, title);
-        editor.commit();
-    }
-
-    public void setStreamThumbnailUrl(String url) {
-        //Log.d("StreamSharedPref"," item thumbnail "+url);
-        editor.putString(KEY_STREAMING_THUMBNAIL_URL, url);
-        editor.commit();
-    }
-
     public int getStreamingProgress() {
         return preferences.getInt(KEY_STREAMING_PROGRESS, 0);
     }
@@ -96,14 +79,14 @@ public class StreamSharedPref {
         return preferences.getInt(KEY_STREAMING_BUFFER, 0);
     }
 
+    public boolean getStreamerPlayState() {
+        return preferences.getBoolean(KEY_IS_STREAMER_PLAYING, false);
+    }
+
     public void setStreamerPlayState(boolean streamerPlayState) {
     //    Log.d("StreamSharedPref"," play State "+streamerPlayState);
         editor.putBoolean(KEY_IS_STREAMER_PLAYING, streamerPlayState);
         editor.commit();
-    }
-
-    public boolean getStreamerPlayState() {
-        return preferences.getBoolean(KEY_IS_STREAMER_PLAYING, false);
     }
 
     public int getStreamContentLength() {
@@ -119,9 +102,22 @@ public class StreamSharedPref {
         return preferences.getString(KEY_STREAMING_THUMBNAIL_URL, "");
     }
 
+    public void setStreamThumbnailUrl(String url) {
+        //Log.d("StreamSharedPref"," item thumbnail "+url);
+        editor.putString(KEY_STREAMING_THUMBNAIL_URL, url);
+        editor.commit();
+    }
+
     public String getStreamTitle() {
         return preferences.getString(KEY_STREAMING_TITLE, "");
 
+    }
+
+    // stream info
+    public void setStreamTitle(String title) {
+        //Log.d("StreamSharedPref"," item title "+title);
+        editor.putString(KEY_STREAMING_TITLE, title);
+        editor.commit();
     }
 
     public void resetStreamInfo(){

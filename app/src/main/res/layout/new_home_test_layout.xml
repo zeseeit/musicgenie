@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:elevation="20dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
@@ -47,9 +47,9 @@
                 android:id="@+id/streaming_item_thumb"
                 android:layout_width="78dp"
                 android:layout_height="78dp"
-                android:paddingLeft="8dp"
+                android:paddingLeft="10dp"
                 android:paddingRight="8dp"
-                android:paddingTop="2dp"
+                android:paddingTop="0dp"
                 />
 
             <RelativeLayout
@@ -61,6 +61,8 @@
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_marginLeft="0dp"
+                    android:layout_marginRight="4dp"
                     android:gravity="center_vertical">
 
                     <TextView
@@ -69,8 +71,9 @@
                         android:layout_height="wrap_content"
                         android:lines="1"
                         android:maxLength="32"
-                        android:paddingLeft="4dp"
                         android:paddingRight="16dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginBottom="4dp"
                         android:paddingTop="16dp"
                         android:text="helldfaaaaaaaaaaeeaaaaaaaaaaaaaaadfaaaaadfo"
                         android:textColor="@color/TitleColor" />
@@ -82,11 +85,12 @@
                         android:layout_below="@+id/streaming_item_title"
                         android:layout_gravity="center_vertical"
                         android:layout_marginRight="50dp"
-                        android:paddingLeft="4dp"
                         android:progress="0"
-                        android:layout_marginTop="2dp"
+                        android:paddingLeft="6dp"
+                        android:paddingTop="0dp"
+                        android:layout_marginTop="0dp"
                         android:secondaryProgressTint="@color/secondaryProgressTint"
-                        android:visibility="invisible" />
+                        android:visibility="visible" />
 
                     <ProgressBar
                         android:id="@+id/stream_indeterminate_progress"
@@ -94,12 +98,11 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="56dp"
-                        android:layout_marginLeft="6dp"
+                        android:layout_marginLeft="4dp"
                         android:indeterminateOnly="true"
                         android:paddingRight="4dp"
-                        android:layout_alignBottom="@+id/streaming_item_audio_seekbar"
-                        android:layout_alignParentStart="true" />
-
+                        android:layout_marginTop="6dp"
+                        android:layout_below="@+id/streaming_item_title"/>
 
                 </RelativeLayout>
 

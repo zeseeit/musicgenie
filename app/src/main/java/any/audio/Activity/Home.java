@@ -1,6 +1,5 @@
 package any.audio.Activity;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,12 +9,12 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
-import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.design.widget.Snackbar;
@@ -24,12 +23,10 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.text.Html;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
@@ -49,41 +46,38 @@ import com.google.android.exoplayer.util.Util;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
 
-import any.audio.Config.AppConfig;
+import any.audio.Adapters.ResulstsRecyclerAdapter;
 import any.audio.Centrals.CentralDataRepository;
-import any.audio.Managers.FontManager;
-import any.audio.Network.ConnectivityUtils;
+import any.audio.Config.AppConfig;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.FeatureRequestListener;
-import any.audio.SharedPreferences.StreamSharedPref;
-import any.audio.helpers.CircularImageTransformer;
-import any.audio.helpers.FileNameReformatter;
-import any.audio.helpers.L;
-import any.audio.helpers.MusicStreamer;
-import any.audio.R;
-import any.audio.Adapters.ResulstsRecyclerAdapter;
+import any.audio.Managers.FontManager;
 import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Models.SearchSuggestion;
-import any.audio.helpers.SearchSuggestionHelper;
 import any.audio.Models.SectionModel;
-import any.audio.SharedPreferences.SharedPrefrenceUtils;
-import any.audio.Fragments.StreamFragment;
 import any.audio.Models.StreamMessageObjectModel;
-import any.audio.Interfaces.StreamPrepareFailedListener;
+import any.audio.Network.ConnectivityUtils;
+import any.audio.R;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.SharedPreferences.StreamSharedPref;
+import any.audio.helpers.CircularImageTransformer;
+import any.audio.helpers.L;
+import any.audio.helpers.MusicStreamer;
+import any.audio.helpers.SearchSuggestionHelper;
 import any.audio.helpers.TaskHandler;
-import any.audio.services.UpdateCheckService;
 
 public class Home extends AppCompatActivity {
 
-    private static WeakReference<Home> wrActivity = null;
-
     private static final int MAX_DATABASE_RESPONSE_TIME = 5 * 1000; // 5 secs
-
+    private static ExoPlayer exoPlayer;
+    int mBuffered = -1;
+    MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
+        @Override
+        public void onUriAvailable(String uri) {
+        }
+    };
     private ProgressBar indeterminateProgressBar;
     private ImageView streamingThumbnail;
     private TextView streamDuration;
@@ -99,15 +93,12 @@ public class Home extends AppCompatActivity {
     private SwipeRefreshLayout swipeRefressLayout;
     // non-static handlers : We don`t have
     private Handler mCDRMessageHandler;
-
     private SharedPrefrenceUtils utils;
     private ProgressBar progressBar;
     private TextView progressBarMsgPanel;
     private StreamUriBroadcastReceiver receiver;
     private boolean mReceiverRegistered = false;
     private MusicGenieMediaPlayer mPlayerThread;
-    private static ExoPlayer exoPlayer;
-    int mBuffered = -1;
     private boolean mStreamUpdateReceiverRegistered = false;
     private StreamProgressUpdateBroadcastReceiver streamProgressUpdateReceiver;
     private boolean streamBottomSheetsVisible = false;
@@ -115,6 +106,19 @@ public class Home extends AppCompatActivity {
     private BottomSheetBehavior mStreamingBottomSheetBehavior;
     private ProgressDialog progressDialog;
     private boolean isStreaming = false;
+    private long DELAYED_POST_APP_UPDATE = 1 * 1000;
+
+    private Runnable resumeContentCheckTask = new Runnable() {
+        @Override
+        public void run() {
+            if (mRecyclerView.getVisibility() != View.VISIBLE) {
+                progressBar.setVisibility(View.INVISIBLE);
+                progressBarMsgPanel.setVisibility(View.VISIBLE);
+                progressBarMsgPanel.setText("No Cached Data . Plz Have Working Internet Connection.");
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,7 +130,32 @@ public class Home extends AppCompatActivity {
         instantiateViews();
         handleMessages();   // message handler on UI thread
         subscribeToFeatureRequestListener();
-        wrActivity = new WeakReference<Home>(this);
+        loadInitials();
+        postHandlerForUpdate();
+
+    }
+
+    private void postHandlerForUpdate() {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+
+                if (!SharedPrefrenceUtils.getInstance(Home.this).getNotifiedForUpdate()) {
+
+                    Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
+                    updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
+                    updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Log.d("AnyAudio"," starting activity for update");
+                    startActivity(updateIntent);
+                    SharedPrefrenceUtils.getInstance(Home.this).setNotifiedForUpdate(true);
+
+                }
+            }
+        }, DELAYED_POST_APP_UPDATE);
+    }
+
+    private void loadInitials() {
+
         utils = SharedPrefrenceUtils.getInstance(this);
 
         if (!utils.getFirstPageLoadedStatus()) {
@@ -207,7 +236,6 @@ public class Home extends AppCompatActivity {
 //        }
     }
 
-
     private void handleMessages() {
         mCDRMessageHandler = new Handler() {
             @Override
@@ -252,17 +280,6 @@ public class Home extends AppCompatActivity {
             }
         };
     }
-
-    private Runnable resumeContentCheckTask = new Runnable() {
-        @Override
-        public void run() {
-            if (mRecyclerView.getVisibility() != View.VISIBLE) {
-                progressBar.setVisibility(View.INVISIBLE);
-                progressBarMsgPanel.setVisibility(View.VISIBLE);
-                progressBarMsgPanel.setText("No Cached Data . Plz Have Working Internet Connection.");
-            }
-        }
-    };
 
     /**
      * @param actionType type of action to invoke
@@ -360,12 +377,6 @@ public class Home extends AppCompatActivity {
         });
     }
 
-    MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
-        @Override
-        public void onUriAvailable(String uri) {
-        }
-    };
-
     private void showAlertForAssuringFeatureRequest(String forType, final String stuff, final String v_id) {
 
         switch (forType) {
@@ -390,8 +401,8 @@ public class Home extends AppCompatActivity {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle("Stream");
-                builder.setMessage(stuff).setPositiveButton("Yes", streamDialogClickListener)
-                        .setNegativeButton("No", streamDialogClickListener).show();
+                builder.setMessage(stuff).setPositiveButton("Stream", streamDialogClickListener)
+                        .setNegativeButton("Cancel", streamDialogClickListener).show();
 
                 break;
             case Constants.FEATURE_DOWNLOAD:
@@ -401,51 +412,61 @@ public class Home extends AppCompatActivity {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
-                                if(!ConnectivityUtils.getInstance(Home.this).isConnectedToNet()){
-                                    Snackbar.make(searchView, "Download ! No Internet Connection ", Snackbar.LENGTH_LONG).show();
-                                    }else{
-                                if (!checkForExistingFile(stuff)) {
+                                if (!ConnectivityUtils.getInstance(Home.this).isConnectedToNet()) {
+                                    Snackbar.make(searchView, "Download ! No Internet Connection ", Snackbar.LENGTH_LONG)
+                                            .setAction("Connect", new View.OnClickListener() {
+                                                @Override
+                                                public void onClick(View view) {
 
-                                    TaskHandler
-                                            .getInstance(Home.this)
-                                            .addTask(stuff, v_id);
-
-                                    Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
+                                                    startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+                                                }
+                                            })
+                                            .setActionTextColor(getResources().getColor(R.color.PrimaryColorDark))
+                                            .show();
 
                                 } else {
+                                    if (!checkForExistingFile(stuff)) {
 
-                                    DialogInterface.OnClickListener reDownloadTaskAlertDialog = new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialog, int which) {
+                                        TaskHandler
+                                                .getInstance(Home.this)
+                                                .addTask(stuff, v_id);
 
-                                            switch (which) {
-                                                case DialogInterface.BUTTON_POSITIVE:
+                                        Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
 
-                                                    TaskHandler
-                                                            .getInstance(Home.this)
-                                                            .addTask(stuff, v_id);
+                                    } else {
 
-                                                    Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
-                                                    break;
+                                        DialogInterface.OnClickListener reDownloadTaskAlertDialog = new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
 
-                                                case DialogInterface.BUTTON_NEGATIVE:
-                                                    //dismiss dialog
-                                                    dialog.dismiss();
-                                                    break;
+                                                switch (which) {
+                                                    case DialogInterface.BUTTON_POSITIVE:
+
+                                                        TaskHandler
+                                                                .getInstance(Home.this)
+                                                                .addTask(stuff, v_id);
+
+                                                        Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
+                                                        break;
+
+                                                    case DialogInterface.BUTTON_NEGATIVE:
+                                                        //dismiss dialog
+                                                        dialog.dismiss();
+                                                        break;
+                                                }
+
                                             }
-
-                                        }
-                                    };
+                                        };
 
 
-                                    AlertDialog.Builder builderReDownloadAlert = new AlertDialog.Builder(Home.this);
-                                    builderReDownloadAlert.setTitle("File Already Exists !!! ");
-                                    builderReDownloadAlert.
-                                            setMessage(stuff)
-                                            .setPositiveButton("Re-Download", reDownloadTaskAlertDialog)
-                                            .setNegativeButton("Cancel", reDownloadTaskAlertDialog).show();
+                                        AlertDialog.Builder builderReDownloadAlert = new AlertDialog.Builder(Home.this);
+                                        builderReDownloadAlert.setTitle("File Already Exists !!! ");
+                                        builderReDownloadAlert.
+                                                setMessage(stuff)
+                                                .setPositiveButton("Re-Download", reDownloadTaskAlertDialog)
+                                                .setNegativeButton("Cancel", reDownloadTaskAlertDialog).show();
 
-                                }
+                                    }
                                 }
 
                                 break;
@@ -460,8 +481,8 @@ public class Home extends AppCompatActivity {
 
                 AlertDialog.Builder builderDownloadAlert = new AlertDialog.Builder(this);
                 builderDownloadAlert.setTitle("Download");
-                builderDownloadAlert.setMessage(stuff).setPositiveButton("Yes", downloaDialogClickListener)
-                        .setNegativeButton("No", downloaDialogClickListener).show();
+                builderDownloadAlert.setMessage(stuff).setPositiveButton("Download", downloaDialogClickListener)
+                        .setNegativeButton("Cancel", downloaDialogClickListener).show();
         }
 
 
@@ -510,7 +531,18 @@ public class Home extends AppCompatActivity {
                     .initProcess();
 
         } else {
-            Snackbar.make(searchView, "Stream ! No Internet Connection ", Snackbar.LENGTH_LONG).show();
+            Snackbar.make(searchView, "Stream ! No Internet Connection ", Snackbar.LENGTH_LONG)
+                    .setAction("Connect", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
+
+                        }
+                    })
+                    .setActionTextColor(getResources().getColor(R.color.PrimaryColorDark))
+                    .show();
+
         }
 
     }
@@ -530,11 +562,10 @@ public class Home extends AppCompatActivity {
         }
     }
 
-
     public boolean checkForExistingFile(String fileNameToCheck) {
         // assumes that fileNameToCheck is reformatted
 
-       // fileNameToCheck = FileNameReformatter.getInstance(this).getFormattedName(fileNameToCheck) + ".m4a";
+        // fileNameToCheck = FileNameReformatter.getInstance(this).getFormattedName(fileNameToCheck) + ".m4a";
 
         File dir = new File(Constants.FILES_DIR);
         File[] _files = dir.listFiles();
@@ -546,17 +577,6 @@ public class Home extends AppCompatActivity {
         }
 
         return false;
-    }
-
-    public String reformatFileName(String oldName) {
-
-        String newName = "";
-        // remove '|'
-        newName += oldName.replaceAll("\\|", " ");
-        newName = newName.replaceAll("\\,", "");
-        newName = newName.replaceAll("\\-", "");
-
-        return newName;
     }
 
     private void plugAdapter() {
@@ -741,37 +761,6 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    public class StreamUriBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
-
-                L.m("Home", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
-                StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(true);
-
-                if (!isStreaming) {
-
-                    String uri = intent.getStringExtra(Constants.EXTRAA_URI);
-
-                    if (uri.equals(Constants.STREAM_PREPARE_FAILED_URL_FLAG)) {
-                        // WID: close the bottomSheets with a toast error
-                        hideStreamSheet("Something is Wrong !! Please Try Again.");
-                        return;
-                    }
-
-
-                    mPlayerThread = new MusicGenieMediaPlayer(Home.this, uri);
-                    mPlayerThread.start();
-
-                }
-
-            }
-        }
-
-    }
-
     private void hideStreamSheet(String msg) {
 
         try {
@@ -800,68 +789,11 @@ public class Home extends AppCompatActivity {
         }
     }
 
-    public class StreamProgressUpdateBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            if (intent.getAction().equals(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST)) {
-
-                int contentLen = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_CONTENT_LEN));
-                int buffered = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS));
-                int progress = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_PROGRESS));
-
-//                if (!streamBottomSheetsVisible) {
-//                    prepareBottomStreamSheet();
-//                    streamBottomSheetsVisible = true;
-//                }
-
-                if (streamBottomSheetsVisible) {
-
-                    if (contentLen > 0) {
-
-                        try {
-
-                            if (contentLen > 0 && buffered > 0) {
-
-                                indeterminateProgressBar.setVisibility(View.INVISIBLE);
-                                seekbar.setVisibility(View.VISIBLE);
-                                playPauseStreamBtn.setVisibility(View.VISIBLE);
-
-                            }
-
-                            currentStreamPosition.setText(getTimeFromMillisecond(progress));
-                            seekbar.setProgress(progress);
-                            streamDuration.setText(" |  " + getTimeFromMillisecond(contentLen));
-                            seekbar.setMax(contentLen);
-
-                            if (mBuffered < buffered) {
-                                seekbar.setSecondaryProgress(buffered);
-                                mBuffered = buffered;
-                            }
-
-                        } catch (Exception e) {
-                            Log.d("StreamFragment", "something went wrong " + e);
-                        }
-                    }
-                }
-
-                //WTD: hide stream bar when player reached last of track
-                if (contentLen <= progress && contentLen >= 0) {
-                    hideStreamSheet("Thank You");
-                }
-
-
-            }
-        }
-
-    }
-
     private String getTimeFromMillisecond(int millis) {
-        String hr = "";
-        String min = "";
-        String sec = "";
-        String time = "";
+        String hr;
+        String min;
+        String sec;
+        String time;
         int i_hr = (millis / 1000) / 3600;
         int i_min = (millis / 1000) / 60;
         int i_sec = (millis / 1000) % 60;
@@ -1045,14 +977,29 @@ public class Home extends AppCompatActivity {
 
     }
 
+    private void resetPlayer() {
+
+        if (exoPlayer != null) {
+
+
+            exoPlayer.setPlayWhenReady(false);
+            exoPlayer.stop();
+            exoPlayer.release();
+            streamBottomSheetsVisible = false;
+            L.m("StreamingHome", "Player Reset Done");
+        }
+        StreamSharedPref.getInstance(Home.this).setStreamState(false);
+
+    }
+
     public class MusicGenieMediaPlayer extends Thread {
 
         private static final String TAG = "MusicGenieMediaPlayer";
+        private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
+        private static final int BUFFER_SEGMENT_COUNT = 256;
         private Context context;
         private MusicGenieMediaPlayer mInstance;
         private MediaPlayer player;
-        private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
-        private static final int BUFFER_SEGMENT_COUNT = 256;
         private MediaCodecAudioTrackRenderer audioRenderer;
         private Uri mUri;
         private Handler mUIHandler;
@@ -1075,29 +1022,29 @@ public class Home extends AppCompatActivity {
             useExoplayer();
             Looper.loop();
         }
-
-        private void useNativeMediaPlayer() {
-
-            Uri mUri = Uri.parse("https://redirector.googlevideo.com/videoplayback?ip=2405%3A204%3Aa108%3Ad941%3Ac1a6%3Aee19%3Ab91e%3A2212&requiressl=yes&lmt=1475255327003268&itag=43&id=o-AEwHFbPb9W4VvmStnHurqdnMuVo-XQif-0oAXbXuVoed&dur=0.000&pcm2cms=yes&source=youtube&upn=gA6OYhdD4fs&mime=video%2Fwebm&ratebypass=yes&ipbits=0&initcwndbps=320000&expire=1475706999&gcr=in&sparams=dur%2Cei%2Cgcr%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpcm2cms%2Cpl%2Cratebypass%2Crequiressl%2Csource%2Cupn%2Cexpire&key=yt6&mn=sn-gwpa-qxae&mm=31&ms=au&ei=Fyz1V4KYDImEoAPRwLjwCQ&pl=36&mv=m&mt=1475684495&signature=A8B6FD2BC32B05B17E0C62DA1E36967B72E84E3A.3515AE79C436E6A1B1A42BC9E3E14892C5C2C95A&title=%E0%A4%B2%E0%A4%B2%E0%A4%95%E0%A5%80+%E0%A4%9A%E0%A5%81%E0%A4%A8%E0%A4%B0%E0%A4%BF%E0%A4%AF%E0%A4%BE+%E0%A4%93%E0%A5%9D+%E0%A4%95%E0%A5%87+-+Pawan+Singh+%26+Akshara+Singh+-+Dular+Devi+Maiya+Ke+-+Bhojpuri+Devi+Geet+2016");
-            MediaPlayer mediaPlayer = MediaPlayer.create(context, mUri);
-            mediaPlayer.start();
-
-            if (mediaPlayer != null) {
-                while (mediaPlayer.isPlaying()) {
-
-                    StreamMessageObjectModel objectModel = new StreamMessageObjectModel(
-                            mediaPlayer.getCurrentPosition(),
-                            mediaPlayer.getDuration(),
-                            0);
-
-                    Message msg = Message.obtain();
-                    msg.obj = objectModel;
-                    mUIHandler.sendMessage(msg);
-
-                }
-            }
-
-        }
+//
+//        private void useNativeMediaPlayer() {
+//
+//            Uri mUri = Uri.parse("https://redirector.googlevideo.com/videoplayback?ip=2405%3A204%3Aa108%3Ad941%3Ac1a6%3Aee19%3Ab91e%3A2212&requiressl=yes&lmt=1475255327003268&itag=43&id=o-AEwHFbPb9W4VvmStnHurqdnMuVo-XQif-0oAXbXuVoed&dur=0.000&pcm2cms=yes&source=youtube&upn=gA6OYhdD4fs&mime=video%2Fwebm&ratebypass=yes&ipbits=0&initcwndbps=320000&expire=1475706999&gcr=in&sparams=dur%2Cei%2Cgcr%2Cid%2Cinitcwndbps%2Cip%2Cipbits%2Citag%2Clmt%2Cmime%2Cmm%2Cmn%2Cms%2Cmv%2Cpcm2cms%2Cpl%2Cratebypass%2Crequiressl%2Csource%2Cupn%2Cexpire&key=yt6&mn=sn-gwpa-qxae&mm=31&ms=au&ei=Fyz1V4KYDImEoAPRwLjwCQ&pl=36&mv=m&mt=1475684495&signature=A8B6FD2BC32B05B17E0C62DA1E36967B72E84E3A.3515AE79C436E6A1B1A42BC9E3E14892C5C2C95A&title=%E0%A4%B2%E0%A4%B2%E0%A4%95%E0%A5%80+%E0%A4%9A%E0%A5%81%E0%A4%A8%E0%A4%B0%E0%A4%BF%E0%A4%AF%E0%A4%BE+%E0%A4%93%E0%A5%9D+%E0%A4%95%E0%A5%87+-+Pawan+Singh+%26+Akshara+Singh+-+Dular+Devi+Maiya+Ke+-+Bhojpuri+Devi+Geet+2016");
+//            MediaPlayer mediaPlayer = MediaPlayer.create(context, mUri);
+//            mediaPlayer.start();
+//
+//            if (mediaPlayer != null) {
+//                while (mediaPlayer.isPlaying()) {
+//
+//                    StreamMessageObjectModel objectModel = new StreamMessageObjectModel(
+//                            mediaPlayer.getCurrentPosition(),
+//                            mediaPlayer.getDuration(),
+//                            0);
+//
+//                    Message msg = Message.obtain();
+//                    msg.obj = objectModel;
+//                    mUIHandler.sendMessage(msg);
+//
+//                }
+//            }
+//
+//        }
 
         private void resetExoPlayer() {
 
@@ -1185,20 +1132,92 @@ public class Home extends AppCompatActivity {
 
     }
 
-    private void resetPlayer() {
+    public class StreamUriBroadcastReceiver extends BroadcastReceiver {
 
-        if (exoPlayer != null) {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
+
+                L.m("Home", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
+                StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(true);
+
+                if (!isStreaming) {
+
+                    String uri = intent.getStringExtra(Constants.EXTRAA_URI);
+
+                    if (uri.equals(Constants.STREAM_PREPARE_FAILED_URL_FLAG)) {
+                        // WID: close the bottomSheets with a toast error
+                        hideStreamSheet("Something is Wrong !! Please Try Again.");
+                        return;
+                    }
 
 
-            exoPlayer.setPlayWhenReady(false);
-            exoPlayer.stop();
-            exoPlayer.release();
-            streamBottomSheetsVisible = false;
-            L.m("StreamingHome", "Player Reset Done");
+                    mPlayerThread = new MusicGenieMediaPlayer(Home.this, uri);
+                    mPlayerThread.start();
+
+                }
+
+            }
         }
-        StreamSharedPref.getInstance(Home.this).setStreamState(false);
 
     }
 
+    public class StreamProgressUpdateBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if (intent.getAction().equals(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST)) {
+
+                int contentLen = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_CONTENT_LEN));
+                int buffered = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS));
+                int progress = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_PROGRESS));
+
+//                if (!streamBottomSheetsVisible) {
+//                    prepareBottomStreamSheet();
+//                    streamBottomSheetsVisible = true;
+//                }
+
+                if (streamBottomSheetsVisible) {
+
+                    if (contentLen > 0) {
+
+                        try {
+
+                            if (contentLen > 0 && buffered > 0) {
+
+                                indeterminateProgressBar.setVisibility(View.INVISIBLE);
+                                seekbar.setVisibility(View.VISIBLE);
+                                playPauseStreamBtn.setVisibility(View.VISIBLE);
+
+                            }
+
+                            currentStreamPosition.setText(getTimeFromMillisecond(progress));
+                            seekbar.setProgress(progress);
+                            streamDuration.setText(" |  " + getTimeFromMillisecond(contentLen));
+                            seekbar.setMax(contentLen);
+
+                            if (mBuffered < buffered) {
+                                seekbar.setSecondaryProgress(buffered);
+                                mBuffered = buffered;
+                            }
+
+                        } catch (Exception e) {
+                            Log.d("StreamFragment", "something went wrong " + e);
+                        }
+                    }
+                }
+
+                //WTD: hide stream bar when player reached last of track
+                if (contentLen <= progress && contentLen >= 0) {
+                    hideStreamSheet("Thank You");
+                }
+
+
+            }
+        }
+
+    }
 
 }
