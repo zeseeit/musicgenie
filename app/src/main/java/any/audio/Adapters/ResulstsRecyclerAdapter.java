@@ -13,10 +13,12 @@ import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arlib.floatingsearchview.util.Util;
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import any.audio.Config.Constants;
@@ -30,6 +32,7 @@ import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
+import any.audio.helpers.FileNameReformatter;
 
 public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -178,7 +181,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             //            ((SongViewHolder) holder).popMenuBtn.setText("\uF142");
             ((SongViewHolder) holder).content_length.setText(song.TrackDuration);
             // loads thumbnail in async fashion
-            if (connected()) Picasso.with(context)
+            if (connected() && SharedPrefrenceUtils.getInstance(context).getOptionsForThumbnailLoad()) Picasso.with(context)
                     .load(song.Thumbnail_url)
                     .into(((SongViewHolder) holder).thumbnail);
 
@@ -319,9 +322,9 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     ResulstsRecyclerAdapter adapter = ResulstsRecyclerAdapter.getInstance(context);
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
-                    String file_name = adapter.songs.get(pos).Title;
-
+                    String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.songs.get(pos).Title);
                     adapter.requestDownload(v_id, file_name);
+
                 }
             });
 
@@ -348,5 +351,9 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
 
+
+
     }
+
+
 }

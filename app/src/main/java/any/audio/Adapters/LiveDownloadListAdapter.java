@@ -29,7 +29,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
     private DownloadCancelListener downloadCancelListener;
     private Typeface tfIcon;
     private Typeface raleway;
-    //private Handler cance
+    //private Handler cancel
     public LiveDownloadListAdapter(Context context) {
         super(context, 0);
         LiveDownloadListAdapter.context = context;

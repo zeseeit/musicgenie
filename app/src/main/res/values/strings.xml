@@ -11,9 +11,6 @@
     <string name="overflow_icon_text_unicode">⋮</string>
     <string name="action_trending_request">Trending</string>
     <string name="audio_streaming_wait_request_msg">Requesting Audio For You....</string>
-    <string name="alert_message_download">Want To <b>Download</b> \n\"</string>
-    <string name="alert_message_stream">Do You Want To <b>Stream</b> \n\"</string>
-    <string name="app_update_msg">"AnyAudio`s Update Available !"</string>
     <string name="title_activity_update_themed">AnyAudio</string>
 
     <string name="streaming_play_btn"></string>

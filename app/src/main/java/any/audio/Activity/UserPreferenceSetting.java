@@ -1,6 +1,8 @@
 package any.audio.Activity;
 
+import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -11,18 +13,19 @@ import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
 public class UserPreferenceSetting extends AppCompatActivity{
-    TextView trendingTxtView;
+
     TextView thumbnailTxtView;
     TextView issueTxtView;
     TextView issueBtnTxt;
-    Switch trendingSwitch;
     Switch thumbnailSwitch;
     Toolbar toolbar;
+    private TextView termsOfUse;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,17 +49,6 @@ public class UserPreferenceSetting extends AppCompatActivity{
     }
 
     private void attachListeners() {
-        trendingSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
-                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
-                if (state) {
-                    utils.setOptionsForTrendingAudio(true);
-                } else {
-                    utils.setOptionsForTrendingAudio(false);
-                }
-            }
-        });
 
 
         thumbnailSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -74,40 +66,54 @@ public class UserPreferenceSetting extends AppCompatActivity{
         issueBtnTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: open email intent with our support email-id as TO field
+
+                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                intent.setType("text/html");
+                intent.putExtra(Intent.EXTRA_EMAIL, "anyaudio.in@gmail.com");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Issue/Report");
+                intent.putExtra(Intent.EXTRA_TEXT, "");
+
+                startActivity(Intent.createChooser(intent, "Send Email"));
+            }
+        });
+
+        termsOfUse.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = Constants.TERM_OF_USE_URL;
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
             }
         });
 
     }
 
     private void loadSettings() {
+
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
-
-        // get trending choice
-        trendingSwitch.setChecked(utils.getOptionForTrendingAudio());
-
         // get thumbnail choice
         thumbnailSwitch.setChecked(utils.getOptionsForThumbnailLoad());
     }
 
     private void init() {
 
-        trendingTxtView = (TextView) findViewById(R.id.loadTrendingTextMessage);
         thumbnailTxtView = (TextView) findViewById(R.id.loadThumbnailTextMessage);
         issueTxtView= (TextView) findViewById(R.id.issuesTextMessage);
         issueBtnTxt = (TextView) findViewById(R.id.issueBtn);
-        trendingSwitch = (Switch) findViewById(R.id.loadTrendingSwitch);
         thumbnailSwitch = (Switch) findViewById(R.id.loadThumbnailSwitch);
+        termsOfUse  = (TextView) findViewById(R.id.termsOfUse);
 
 
         Typeface tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
         Typeface materialIconFont = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
-        trendingTxtView.setTypeface(tf);
         thumbnailTxtView.setTypeface(tf);
         issueTxtView.setTypeface(tf);
+        termsOfUse.setTypeface(tf);
         issueBtnTxt.setTypeface(materialIconFont);
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

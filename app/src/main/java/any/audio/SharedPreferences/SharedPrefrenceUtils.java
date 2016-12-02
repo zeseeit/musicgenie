@@ -2,6 +2,7 @@ package any.audio.SharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 
 import any.audio.Config.Constants;
 
@@ -31,15 +32,6 @@ public class SharedPrefrenceUtils {
         return mInstance;
     }
 
-    public String getFileSavingLocation() {
-        return preferences.getString("saveLocation", Constants.PHONE);
-    }
-
-    public void setFileSavingLocation(String location) {
-        editor.putString("saveLocation", location);
-        editor.commit();
-    }
-
     public void setTasksSequence(String sequence) {
         editor.putString("task_seq", sequence);
         editor.commit();
@@ -50,7 +42,6 @@ public class SharedPrefrenceUtils {
         return preferences.getString("task_seq", "");
     }
 
-
     public void setDispatchTasksSequence(String sequence) {
         editor.putString("dis_task_seq", sequence);
         editor.commit();
@@ -60,7 +51,6 @@ public class SharedPrefrenceUtils {
         //Log.d("SF-d", preferences.getString("dis_task_seq", ""));
         return preferences.getString("dis_task_seq", "");
     }
-
 
     public void setTaskVideoID(String taskID, String v_id) {
         // taskID : key and download_url : value
@@ -90,31 +80,10 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public boolean getActiveFragmentAttachedState() {
-        return preferences.getBoolean("isActive", false);
-    }
 
     public void setActiveFragmentAttachedState(boolean yesOrNo) {
         editor.putBoolean("isActive", yesOrNo);
         editor.commit();
-    }
-
-    public void setOptionsForTrendingAudio(boolean needTrending) {
-        editor.putBoolean("needTrending", needTrending);
-        editor.commit();
-    }
-
-    public boolean getOptionForTrendingAudio() {
-        return preferences.getBoolean("needTrending", false);
-    }
-
-    public void setSuggestionsList(String currStack) {
-        editor.putString("sugg", currStack);
-        editor.commit();
-    }
-
-    public String getSuggestionList() {
-        return preferences.getString("sugg", "");
     }
 
     public boolean getOptionsForThumbnailLoad() {
@@ -128,20 +97,6 @@ public class SharedPrefrenceUtils {
 
     public String getCurrentStreamingItem() {
         return preferences.getString("streaming", "");
-    }
-
-    public void setCurrentStreamingItem(String file_name) {
-        editor.putString("streaming", file_name);
-        editor.commit();
-    }
-
-    public boolean getFlagForContinuedStreaming() {
-        return preferences.getBoolean(Constants.FLAG_STREAMING_CONTINUED, false);
-    }
-
-    public void setFlagForContinuedStreaming(boolean b) {
-        editor.putBoolean(Constants.FLAG_STREAMING_CONTINUED, b);
-        editor.commit();
     }
 
     public String getLastSearchTerm() {
@@ -162,22 +117,43 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public void setCurrentVersionCode(int currentVersion) {
-        editor.putInt(Constants.KEY_CURRENT_VERSION, currentVersion);
-        editor.commit();
-
-    }
-
     public int getCurrentVersionCode(){
         return preferences.getInt(Constants.KEY_CURRENT_VERSION,1);
     }
 
-    public void setStreamingThumbnailUrl(String thumbnail_url) {
-        editor.putString(Constants.KEY_STREAMING_THUMB_URL,thumbnail_url);
+    public void setNewVersionAvailibility(boolean status){
+        editor.putBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE,status);
         editor.commit();
     }
 
-    public String getStreamingThumbnailUrl(){
-        return preferences.getString(Constants.KEY_STREAMING_THUMB_URL,"");
+    public boolean getNewVersionAvailibility(){
+
+        return preferences.getBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE,false);
+
     }
+
+    public void setNewVersionDescription(String description){
+        editor.putString(Constants.KEY_NEW_APP_VERSION_DESCRIPTION,description);
+        editor.commit();
+    }
+
+    public String getNewVersionDescription(){
+
+        return preferences.getString(Constants.KEY_NEW_APP_VERSION_DESCRIPTION,"");
+
+    }
+
+    public void setDoNotRemindMeAgainForAppUpdate(boolean status){
+        editor.putBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN,status);
+        editor.commit();
+    }
+
+    public boolean getDoNotRemindMeAgainForAppUpdate(){
+
+        return preferences.getBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN,false);
+
+    }
+
+
+
 }

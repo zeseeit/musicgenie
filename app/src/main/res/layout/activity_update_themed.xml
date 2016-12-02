@@ -1,42 +1,89 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
+    android:layout_gravity="center_horizontal"
     android:layout_height="wrap_content"
     tools:context="any.audio.Activity.UpdateThemedActivity">
 
 
     <TextView
-        android:padding="12dp"
+        android:padding="24dp"
         android:id="@+id/updateMsg"
-        android:textSize="18sp"
-        android:layout_width="wrap_content"
+        android:textSize="14sp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="New Update Available !"/>
+        android:gravity="center"
+        android:text="New Version Of                     is Available."/>
 
     <TextView
-        android:padding="12sp"
-        android:layout_below="@+id/updateMsg"
-        android:layout_toLeftOf="@+id/download_btn_update_msg"
-        android:id="@+id/cancel_update_msg_dialog"
-        android:text="Cancel"
-        android:textSize="20sp"
-        android:textColor="@color/PrimaryColorDark"
+        android:padding="24dp"
+        android:id="@+id/updateMsgAppName"
+        android:textSize="14sp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:onClick="cancel"/>
+        android:layout_marginLeft="136dp"
+        android:textColor="@color/PrimaryColor"
+        android:text="AnyAudio"/>
 
-    <TextView
-        android:onClick="download"
-        android:id="@+id/download_btn_update_msg"
-        android:padding="12dp"
-        android:layout_alignParentEnd="true"
-        android:textColor="@color/PrimaryColorDark"
+
+
+
+    <FrameLayout
         android:layout_below="@+id/updateMsg"
-        android:textSize="20sp"
-        android:text="Download"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
-        />
+        android:layout_width="match_parent"
+        android:background="@drawable/update_dialog_divider"
+        android:layout_height="0.5dp">
+
+    </FrameLayout>
+
+
+    <LinearLayout
+        android:layout_below="@+id/updateMsg"
+        android:weightSum="2"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/cancel_update_msg_dialog"
+            android:text="Cancel"
+            android:textSize="16sp"
+            android:textColor="@color/PrimaryColorDark"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_horizontal"
+            android:onClick="cancel"/>
+
+        <FrameLayout
+            android:layout_below="@+id/updateMsg"
+            android:layout_width="1dp"
+            android:background="@drawable/update_dialog_divider_vertical"
+            android:layout_height="match_parent">
+
+        </FrameLayout>
+
+        <TextView
+            android:onClick="download"
+            android:id="@+id/download_btn_update_msg"
+            android:layout_alignParentEnd="true"
+            android:textColor="@color/PrimaryColorDark"
+            android:layout_below="@+id/updateMsg"
+            android:textSize="16sp"
+            android:text="Download"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:paddingTop="8dp"
+            android:paddingBottom="10dp"
+            android:gravity="center_horizontal"
+            android:layout_height="wrap_content"
+            />
+
+    </LinearLayout>
+
+
+
 
 </RelativeLayout>
