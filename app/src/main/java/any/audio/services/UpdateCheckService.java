@@ -130,8 +130,10 @@ public class UpdateCheckService extends Service {
 
         try {
             JSONObject updateResp = new JSONObject(response);
-            int newVersion = updateResp.getInt("version");
+
+            double newVersion = updateResp.getDouble("version");
             String updateDescription = updateResp.getString("newInThisUpdate");
+            Log.d("UpdateServiceTest"," Version "+newVersion+" update Des "+updateDescription);
 
             if (newVersion > getCurrentAppVersionCode()) {
                 // write update to shared pref..
