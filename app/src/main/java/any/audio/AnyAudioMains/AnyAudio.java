@@ -7,6 +7,9 @@ import android.content.res.Configuration;
 import android.util.Log;
 
 import any.audio.Activity.Home;
+import any.audio.Activity.UpdateThemedActivity;
+import any.audio.Config.Constants;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.services.UpdateCheckService;
 
@@ -22,41 +25,26 @@ public class AnyAudio extends Application {
 
     @Override
     public void onCreate() {
-        Log.d("AnyAudioApp","[Application] onCreate()");
+        Log.d("AnyAudioApp", "[Application] onCreate()");
 
         StreamSharedPref.getInstance(this).resetStreamInfo();
         StreamSharedPref.getInstance(this).setStreamUrlFetchedStatus(false);
         startService(new Intent(this, UpdateCheckService.class));
-        Log.d("AnyAudioApp","reset shared pref. for stream status");
+        checkForUpdate();
+        Log.d("AnyAudioApp", "reset shared pref. for stream status");
         super.onCreate();
     }
 
-    @Override
-    public void registerActivityLifecycleCallbacks(ActivityLifecycleCallbacks callback) {
-        super.registerActivityLifecycleCallbacks(callback);
+    public void checkForUpdate() {
+
+        if (SharedPrefrenceUtils.getInstance(this).getNewVersionAvailibility()) {
+
+            Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
+            updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC,SharedPrefrenceUtils.getInstance(this).getNewVersionDescription());
+            updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(updateIntent);
+
+        }
     }
-
-    @Override
-    public void onTerminate() {
-        StreamSharedPref.getInstance(this).setStreamState(false);
-        super.onTerminate();
-
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-    }
-
-    @Override
-    public void onLowMemory() {
-        super.onLowMemory();
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
-        super.onTrimMemory(level);
-    }
-
 
 }

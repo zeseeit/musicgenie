@@ -40,7 +40,7 @@ public class LocalNotificationManager {
         mBuilder.setContentTitle("AnyAudio");
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_rnd);
         mBuilder.setLargeIcon(bitmap);
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher_rnd);
+        mBuilder.setSmallIcon(R.drawable.ic_launcher_rnd);
 
         mBuilder.setContentText(msg);
 //        mBuilder.setContentIntent(pendingIntent);

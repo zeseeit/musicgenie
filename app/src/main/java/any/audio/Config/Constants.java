@@ -51,4 +51,9 @@ public class Constants {
     public static String STREAM_PREPARE_FAILED_URL_FLAG = "failed_url";
     public static String EXTRAA_FLAG_STREAM_WILL_CONTINUE = "streamin_will_continue";
     public static String EXTRAA_FLAG_DOWNLOAD_STATE = "healthy_download_status";
+    public static String KEY_NEW_APP_VERSION_AVAILABLE = "new_version_available";
+    public static String KEY_NEW_APP_VERSION_DESCRIPTION = "new_app_version_desc";
+    public static String KEY_DONOT_REMIND_ME_AGAIN = "donot_remind_me_again_for_update";
+    public static String EXTRAA_NEW_UPDATE_DESC = "extraa_new_update_des";
+
 }

@@ -18,6 +18,9 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -61,7 +64,7 @@ public class UpdateCheckService extends Service {
 
     private void checkForUpdate() {
 
-        Log.d("UpdateServiceAnyAudio", " UpdateCheck........" + isForeground("any.audio"));
+        Log.d("UpdateServiceAnyAudio", " UpdateCheck....");
 
 
         StringRequest updateCheckReq = new StringRequest(
@@ -71,28 +74,7 @@ public class UpdateCheckService extends Service {
                     @Override
                     public void onResponse(String s) {
 
-                        double currentVersion = Double.parseDouble(s);
-
-                        if (currentVersion > getCurrentAppVersionCode()) {
-
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    String homeActivityPackage = "any.audio";
-                                    //launch activity when : home is in foreground & no previous launch of this
-                                    L.m("UpdateService", "check for foreground");
-                                    if (isForeground(homeActivityPackage)) {
-
-                                        Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
-                                        updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                                        startActivity(updateIntent);
-
-                                    }
-
-
-                                }
-                            });
-                        }
+                        handleNewUpdateResponse(s);
 
                     }
                 },
@@ -135,5 +117,37 @@ public class UpdateCheckService extends Service {
     private int getCurrentAppVersionCode() {
         return SharedPrefrenceUtils.getInstance(getApplicationContext()).getCurrentVersionCode();
     }
+
+    public void handleNewUpdateResponse(String response){
+        /*
+        * New Update Message Format
+        *
+        * {
+        *   version:1.0,
+        *   newInThisUpdate:"v1.0:  bug fixes"
+        * }
+        *
+        * */
+
+        try {
+            JSONObject updateResp = new JSONObject(response);
+            int newVersion = updateResp.getInt("version");
+            String updateDescription = updateResp.getString("newInThisUpdate");
+
+            if(newVersion>getCurrentAppVersionCode()){
+             // write update to shared pref..
+                Log.d("UpdateService"," writing response to shared Pref..");
+                SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionAvailibility(true);
+                SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionDescription(updateDescription);
+
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
 
 }

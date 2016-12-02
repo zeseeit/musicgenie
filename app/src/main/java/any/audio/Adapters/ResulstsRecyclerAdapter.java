@@ -32,6 +32,7 @@ import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
+import any.audio.helpers.FileNameReformatter;
 
 public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -321,7 +322,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     ResulstsRecyclerAdapter adapter = ResulstsRecyclerAdapter.getInstance(context);
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;
-                    String file_name = adapter.songs.get(pos).Title;
+                    String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.songs.get(pos).Title);
                     adapter.requestDownload(v_id, file_name);
 
                 }

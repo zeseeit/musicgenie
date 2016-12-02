@@ -62,6 +62,7 @@ import any.audio.Config.Constants;
 import any.audio.Interfaces.FeatureRequestListener;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
+import any.audio.helpers.FileNameReformatter;
 import any.audio.helpers.L;
 import any.audio.helpers.MusicStreamer;
 import any.audio.R;
@@ -256,10 +257,9 @@ public class Home extends AppCompatActivity {
         @Override
         public void run() {
             if (mRecyclerView.getVisibility() != View.VISIBLE) {
-                // mRecyclerView.setVisibility(RecyclerView.GONE);
                 progressBar.setVisibility(View.INVISIBLE);
                 progressBarMsgPanel.setVisibility(View.VISIBLE);
-                progressBarMsgPanel.setText("No Cached Data . Plz Connect");
+                progressBarMsgPanel.setText("No Cached Data . Plz Have Working Internet Connection.");
             }
         }
     };
@@ -279,26 +279,23 @@ public class Home extends AppCompatActivity {
 
         switch (actionType) {
 
-
             case Constants.ACTION_TYPE_TRENDING:
-                //  showProgress("Presenting Trending...");
+
                 if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
                     mRecyclerView.setVisibility(RecyclerView.GONE);
                     progressBar.setVisibility(View.INVISIBLE);
                     progressBarMsgPanel.setVisibility(View.VISIBLE);
-                    //  L.m("Home", "setting msg");
-                    //Toast.makeText(this, "hello", Toast.LENGTH_SHORT).show();
-                    progressBarMsgPanel.setText("Troubling Getting Data . Check Your Working Data Connection");
+                    progressBarMsgPanel.setText("Troubling Getting Data. Check Your Working Internet Connection");
                     return;
                 }
 
-                progressBarMsgPanel.setText("Loading Trending");
+                progressBarMsgPanel.setText("Loading Trending....");
                 repository.submitAction(CentralDataRepository.FLAG_FIRST_LOAD, mCDRMessageHandler);
                 break;
 
             case Constants.ACTION_TYPE_RESUME:
                 //showProgress("Presenting Your Items");
-                progressBarMsgPanel.setText("Resuming Contents");
+                progressBarMsgPanel.setText("Loading Cached Data....");
                 repository.submitAction(CentralDataRepository.FLAG_RESTORE, mCDRMessageHandler);
                 new Handler().postDelayed(resumeContentCheckTask, MAX_DATABASE_RESPONSE_TIME);
                 break;
@@ -313,7 +310,7 @@ public class Home extends AppCompatActivity {
                     return;
                 }// or continue the same
 
-                progressBarMsgPanel.setText("Refressing Content");
+                progressBarMsgPanel.setText("Refreshing Content....");
 
                 repository.submitAction(CentralDataRepository.FLAG_REFRESS, mCDRMessageHandler);
                 break;
@@ -404,13 +401,16 @@ public class Home extends AppCompatActivity {
                         switch (which) {
                             case DialogInterface.BUTTON_POSITIVE:
 
+                                if(!ConnectivityUtils.getInstance(Home.this).isConnectedToNet()){
+                                    Snackbar.make(searchView, "Download ! No Internet Connection ", Snackbar.LENGTH_LONG).show();
+                                    }else{
                                 if (!checkForExistingFile(stuff)) {
 
                                     TaskHandler
                                             .getInstance(Home.this)
                                             .addTask(stuff, v_id);
 
-                                    Toast.makeText(Home.this, stuff + " Added To Download", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
 
                                 } else {
 
@@ -425,7 +425,7 @@ public class Home extends AppCompatActivity {
                                                             .getInstance(Home.this)
                                                             .addTask(stuff, v_id);
 
-                                                    Toast.makeText(Home.this, stuff + " Added To Download", Toast.LENGTH_LONG).show();
+                                                    Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
                                                     break;
 
                                                 case DialogInterface.BUTTON_NEGATIVE:
@@ -442,9 +442,10 @@ public class Home extends AppCompatActivity {
                                     builderReDownloadAlert.setTitle("File Already Exists !!! ");
                                     builderReDownloadAlert.
                                             setMessage(stuff)
-                                            .setPositiveButton("Yes", reDownloadTaskAlertDialog)
-                                            .setNegativeButton("No", reDownloadTaskAlertDialog).show();
+                                            .setPositiveButton("Re-Download", reDownloadTaskAlertDialog)
+                                            .setNegativeButton("Cancel", reDownloadTaskAlertDialog).show();
 
+                                }
                                 }
 
                                 break;
@@ -469,6 +470,8 @@ public class Home extends AppCompatActivity {
     private void onYesStreamRequested(String v_id, String stuff) {        // called after user confirms pop-up
 
         /* WID: after confirmation of user
+                check working internet connection and then perform the action.
+                if true:
                 reset the player if already playing another songs
                 > set Streaming State to true
                 > hide bottom Sheets if already visible
@@ -481,28 +484,34 @@ public class Home extends AppCompatActivity {
          */
 
 
-        Log.d("StreamingHome", " Resetting Player");
-        resetPlayer();
+        if (ConnectivityUtils.getInstance(this).isConnectedToNet()) {
 
-        Log.d("Home", "setting stream state to true");
-        StreamSharedPref.getInstance(this).setStreamState(true);
+            Log.d("StreamingHome", " Resetting Player");
+            resetPlayer();
 
-        if (!streamBottomSheetsVisible) {
-            Log.d("StreamingHome", "debut initing streaming view");
-            prepareBottomStreamSheet();
-            streamBottomSheetsVisible = true;
+            Log.d("Home", "setting stream state to true");
+            StreamSharedPref.getInstance(this).setStreamState(true);
+
+            if (!streamBottomSheetsVisible) {
+                Log.d("StreamingHome", "debut initing streaming view");
+                prepareBottomStreamSheet();
+                streamBottomSheetsVisible = true;
+            } else {
+                Log.d("StreamingHome", "disabling and re-initing streaming view");
+                mStreamingBottomSheetBehavior.setPeekHeight(0);
+                prepareBottomStreamSheet();
+            }
+
+
+            MusicStreamer
+                    .getInstance(Home.this)
+                    .setData(v_id, stuff)
+                    .setOnStreamUriFetchedListener(streamUriFetchedListener)
+                    .initProcess();
+
         } else {
-            Log.d("StreamingHome", "disabling and re-initing streaming view");
-            mStreamingBottomSheetBehavior.setPeekHeight(0);
-            prepareBottomStreamSheet();
+            Snackbar.make(searchView, "Stream ! No Internet Connection ", Snackbar.LENGTH_LONG).show();
         }
-
-
-        MusicStreamer
-                .getInstance(Home.this)
-                .setData(v_id, stuff)
-                .setOnStreamUriFetchedListener(streamUriFetchedListener)
-                .initProcess();
 
     }
 
@@ -525,13 +534,13 @@ public class Home extends AppCompatActivity {
     public boolean checkForExistingFile(String fileNameToCheck) {
         // assumes that fileNameToCheck is reformatted
 
-        fileNameToCheck = reformatFileName(fileNameToCheck)+".m4a";
+       // fileNameToCheck = FileNameReformatter.getInstance(this).getFormattedName(fileNameToCheck) + ".m4a";
 
         File dir = new File(Constants.FILES_DIR);
         File[] _files = dir.listFiles();
 
         for (File f : _files) {
-         Log.d("HomeFileDuplicate"," checking "+(f.toString().substring(f.toString().lastIndexOf("/") + 1))+" against "+fileNameToCheck);
+            Log.d("HomeFileDuplicate", " checking " + (f.toString().substring(f.toString().lastIndexOf("/") + 1)) + " against " + fileNameToCheck);
             if ((f.toString().substring(f.toString().lastIndexOf("/") + 1)).equals(fileNameToCheck))
                 return true;
         }
@@ -544,8 +553,8 @@ public class Home extends AppCompatActivity {
         String newName = "";
         // remove '|'
         newName += oldName.replaceAll("\\|", " ");
-        newName = newName.replaceAll("\\,","");
-        newName = newName.replaceAll("\\-","");
+        newName = newName.replaceAll("\\,", "");
+        newName = newName.replaceAll("\\-", "");
 
         return newName;
     }

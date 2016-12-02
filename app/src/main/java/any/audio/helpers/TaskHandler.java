@@ -184,8 +184,15 @@ public class TaskHandler {
         SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
         L.m("TaskHandler", "callback: download error");
 
-        String fn = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
-        File dest_file = new File(Constants.FILES_DIR + "/" + fn + ".m4a");
+        String file_to_delete = FileNameReformatter
+                .getInstance(context)
+                .getFormattedName(
+                        SharedPrefrenceUtils
+                                .getInstance(context)
+                                .getTaskTitle(taskID)
+                );
+
+        File dest_file = new File(Constants.FILES_DIR + "/" + file_to_delete + ".m4a");
         if (dest_file.exists()) {
             if (dest_file.delete()) {
                 if (itemInvalidatedListener != null)
@@ -318,17 +325,6 @@ public class TaskHandler {
         Log.d(TAG, msg);
     }
 
-    public String reformatFileName(String oldName) {
-
-        String newName = "";
-        // remove '|'
-        newName += oldName.replaceAll("\\|", " ");
-        newName = newName.replaceAll("\\,","");
-        newName = newName.replaceAll("\\-","");
-
-        return newName;
-    }
-
     public void cancelCurrentDownload() {
         this.isCanceled = true;
     }
@@ -426,7 +422,8 @@ public class TaskHandler {
                     }
 
                     dest_dir = new File(Constants.FILES_DIR);
-                    dest_file = new File(dest_dir, reformatFileName(t_file_name.trim()) + ".m4a");
+                    String fileName = FileNameReformatter.getInstance(context).getFormattedName(t_file_name.trim());
+                    dest_file = new File(dest_dir, fileName + ".m4a");
 //                    log("writing to " + dest_file.toString());
                     L.m("TaskHandler", "Writing to " + dest_file.toString());
                     InputStream inputStream = new BufferedInputStream(url.openStream());
