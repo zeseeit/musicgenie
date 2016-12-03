@@ -5,6 +5,8 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Handler;
@@ -35,8 +37,8 @@ import any.audio.helpers.L;
  */
 public class UpdateCheckService extends Service {
 
-//    private static final long CHECK_UPDATE_INTERVAL = 6 * 60 * 60 * 1000;     // 6 hrs interval
-    private static final long CHECK_UPDATE_INTERVAL = 20 * 1000;     // 20 sec interval
+    private static final long CHECK_UPDATE_INTERVAL = 6 * 60 * 60 * 1000;     // 6 hrs interval
+    //private static final long CHECK_UPDATE_INTERVAL = 20 * 1000;     // 20 sec interval
     private static final int SERVER_TIMEOUT_LIMIT = 10 * 1000; // 10 sec
     private static Timer mTimer;
     Handler mHandler = new Handler();
@@ -64,8 +66,6 @@ public class UpdateCheckService extends Service {
     private void checkForUpdate() {
 
         Log.d("UpdateServiceAnyAudio", " UpdateCheck....");
-
-
         StringRequest updateCheckReq = new StringRequest(
                 Request.Method.GET,
                 url,
@@ -104,17 +104,35 @@ public class UpdateCheckService extends Service {
 
         ActivityManager mActivityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
         String mpackageName = "";
+
         if (Build.VERSION.SDK_INT > 20) {
+
             mpackageName = String.valueOf(mActivityManager.getRunningAppProcesses().get(0).processName);
+
         } else {
+
             mpackageName = String.valueOf(mActivityManager.getRunningTasks(1).get(0).topActivity.getClassName());
+
         }
+
         L.m("UpdateService", "found " + mpackageName);
         return mpackageName.equals(myPackage);
+
     }
 
     private int getCurrentAppVersionCode() {
-        return SharedPrefrenceUtils.getInstance(getApplicationContext()).getCurrentVersionCode();
+
+        try {
+
+            PackageInfo _info = this.getPackageManager().getPackageInfo(this.getPackageName(), 0);
+            return _info.versionCode;
+
+        } catch (PackageManager.NameNotFoundException e) {
+
+            e.printStackTrace();
+            return -1;
+
+        }
     }
 
     public void handleNewUpdateResponse(String response) {
@@ -130,12 +148,12 @@ public class UpdateCheckService extends Service {
         * */
 
         try {
-            JSONObject updateResp = new JSONObject(response);
 
+            JSONObject updateResp = new JSONObject(response);
             double newVersion = updateResp.getDouble("version");
             String updateDescription = updateResp.getString("newInThisUpdate");
             String downloadUrl = updateResp.getString("appDownloadUrl");
-            Log.d("UpdateServiceTest"," new Version "+newVersion+" old version "+getCurrentAppVersionCode()+" update Des "+updateDescription);
+            Log.d("UpdateServiceTest", " new Version " + newVersion + " old version " + getCurrentAppVersionCode() + " update Des " + updateDescription);
 
             if (newVersion > getCurrentAppVersionCode()) {
                 // write update to shared pref..
@@ -149,9 +167,5 @@ public class UpdateCheckService extends Service {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
-
     }
-
-
 }
