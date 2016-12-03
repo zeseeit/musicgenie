@@ -39,7 +39,7 @@ public class DownloadFragment extends Fragment implements DownloadItemInvalidate
     private static void setUpAdapter() {
 
         ArrayList<String> files = new ArrayList<>();
-        File dir = new File(Constants.FILES_DIR);
+        File dir = new File(Constants.DOWNLOAD_FILE_DIR);
         File[] _files = dir.listFiles();
         for (File f : _files) {
             String path = f.toString();
@@ -125,7 +125,7 @@ public class DownloadFragment extends Fragment implements DownloadItemInvalidate
     private void deleteItem(int pos){
 
         ArrayList<String> files = new ArrayList<>();
-        File dir = new File(Constants.FILES_DIR);
+        File dir = new File(Constants.DOWNLOAD_FILE_DIR);
         File[] _files = dir.listFiles();
         for (File f : _files) {
             String path = f.toString();

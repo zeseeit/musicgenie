@@ -567,7 +567,7 @@ public class Home extends AppCompatActivity {
 
         // fileNameToCheck = FileNameReformatter.getInstance(this).getFormattedName(fileNameToCheck) + ".m4a";
 
-        File dir = new File(Constants.FILES_DIR);
+        File dir = new File(Constants.DOWNLOAD_FILE_DIR);
         File[] _files = dir.listFiles();
 
         for (File f : _files) {

@@ -65,9 +65,7 @@ public class AppConfig extends Application {
             PermissionManager.getInstance(context).seek();
         }
 
-        File root = Environment.getExternalStorageDirectory();
-        File dir = new File(Constants.FILES_DIR);
-
+        File dir = new File(Constants.DOWNLOAD_FILE_DIR);
         boolean s = false;
         if (dir.exists() == false) {
             s = dir.mkdirs();
@@ -77,40 +75,4 @@ public class AppConfig extends Application {
 
     }
 
-    public void checkUpdates(final Handler mRefHandler) {
-        final String url = URLS.URL_LATEST_APP_VERSION;
-
-        StringRequest updateCheckReq = new StringRequest(
-                Request.Method.GET,
-                url,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String s) {
-
-                        double currentVersion = Double.parseDouble(s);
-
-                        if (currentVersion>getCurrentAppVersionCode()){
-                            //  new version is available
-                            Message msg = Message.obtain();
-                            msg.arg1 = Constants.FLAG_NEW_VERSION;
-                            mRefHandler.sendMessage(msg);
-                        }
-
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError volleyError) {
-
-                    }
-                });
-
-        updateCheckReq.setRetryPolicy(new DefaultRetryPolicy(
-                SERVER_TIMEOUT_LIMIT,
-                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
-                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        VolleyUtils.getInstance().addToRequestQueue(updateCheckReq, "checkUpdateReq", context);
-
-    }
 }

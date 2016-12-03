@@ -192,7 +192,7 @@ public class TaskHandler {
                                 .getTaskTitle(taskID)
                 );
 
-        File dest_file = new File(Constants.FILES_DIR + "/" + file_to_delete + ".m4a");
+        File dest_file = new File(Constants.DOWNLOAD_FILE_DIR + "/" + file_to_delete + ".m4a");
         if (dest_file.exists()) {
             if (dest_file.delete()) {
                 if (itemInvalidatedListener != null)
@@ -421,10 +421,9 @@ public class TaskHandler {
                         PermissionManager.getInstance(context).seek();
                     }
 
-                    dest_dir = new File(Constants.FILES_DIR);
+                    dest_dir = new File(Constants.DOWNLOAD_FILE_DIR);
                     String fileName = FileNameReformatter.getInstance(context).getFormattedName(t_file_name.trim());
                     dest_file = new File(dest_dir, fileName + ".m4a");
-//                    log("writing to " + dest_file.toString());
                     L.m("TaskHandler", "Writing to " + dest_file.toString());
                     InputStream inputStream = new BufferedInputStream(url.openStream());
                     OutputStream outputStream = new FileOutputStream(dest_file);
@@ -433,9 +432,7 @@ public class TaskHandler {
                     int progressPercentage = 0;
                     int progressSent = 0;
                     while (!isCanceled && (count = inputStream.read(data)) != -1) {
-                        //L.m("TaskHandler","[Downloading.....] isCancelled "+isCanceled);
                         total += count;
-                        //                      Log.d("Sending filelength", fileLength + "");
                         progressPercentage = ((int) total * 100 / fileLength);//, fileLength;
 
                         if (progressSent < progressPercentage) {
