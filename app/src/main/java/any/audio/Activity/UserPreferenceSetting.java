@@ -127,7 +127,8 @@ public class UserPreferenceSetting extends AppCompatActivity {
     }
 
     private void suggestOther() {
-        String textToShare = "AnyAudio a tool to download/stream Any Audio from Internet. Download it from <Link>";
+        String dndUrl = SharedPrefrenceUtils.getInstance(this).getNewUpdateUrl();
+        String textToShare = "AnyAudio a tool to download/stream Any Audio from Internet. Download it from "+dndUrl;
 
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("text/plain");

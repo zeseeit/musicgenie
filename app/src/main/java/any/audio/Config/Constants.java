@@ -57,4 +57,5 @@ public class Constants {
     public static String EXTRAA_NEW_UPDATE_DESC = "extraa_new_update_des";
 
     public static String KEY_APP_UPDATE_NOTIFIED = "app_update_notified";
+    public static String KEY_NEW_UPDATE_URL = "new_update_url";
 }

@@ -122,8 +122,9 @@ public class UpdateCheckService extends Service {
         * New Update Message Format
         *
         * {
-        *   version:1.0,
-        *   newInThisUpdate:"v1.0:  bug fixes"
+        *   "version":1.0,
+        *   "newInThisUpdate":"v1.0:  bug fixes",
+        *   "appDownloadUrl":"..."
         * }
         *
         * */
@@ -133,6 +134,7 @@ public class UpdateCheckService extends Service {
 
             double newVersion = updateResp.getDouble("version");
             String updateDescription = updateResp.getString("newInThisUpdate");
+            String downloadUrl = updateResp.getString("appDownloadUrl");
             Log.d("UpdateServiceTest"," Version "+newVersion+" update Des "+updateDescription);
 
             if (newVersion > getCurrentAppVersionCode()) {
@@ -140,6 +142,7 @@ public class UpdateCheckService extends Service {
                 Log.d("UpdateService", " writing response to shared Pref..");
                 SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionAvailibility(true);
                 SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionDescription(updateDescription);
+                SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewUpdateUrl(downloadUrl);
 
             }
 

@@ -162,4 +162,13 @@ public class SharedPrefrenceUtils {
         return preferences.getBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,true);
     }
 
+    public void setNewUpdateUrl(String url){
+        editor.putString(Constants.KEY_NEW_UPDATE_URL,url);
+        editor.commit();
+    }
+
+    public String getNewUpdateUrl(){
+        return preferences.getString(Constants.KEY_NEW_UPDATE_URL,"");
+    }
+
 }

@@ -94,7 +94,8 @@ public class UpdateThemedActivity extends AppCompatActivity {
     public void download(View view) {
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(URLS.URL_LATEST_APP_DOWNLOAD));
+        String downloadUrl = SharedPrefrenceUtils.getInstance(this).getNewUpdateUrl();
+        intent.setData(Uri.parse(downloadUrl));
         startActivity(intent);
         finish();
 
