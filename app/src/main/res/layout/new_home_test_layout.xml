@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="100dp"
+        app:behavior_peekHeight="0dp"
         app:elevation="20dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 

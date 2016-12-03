@@ -159,7 +159,7 @@ public class SharedPrefrenceUtils {
     }
 
     public boolean getNotifiedForUpdate(){
-        return preferences.getBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,false);
+        return preferences.getBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,true);
     }
 
 }
