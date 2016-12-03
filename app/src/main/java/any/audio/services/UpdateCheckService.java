@@ -35,8 +35,8 @@ import any.audio.helpers.L;
  */
 public class UpdateCheckService extends Service {
 
-    private static final long CHECK_UPDATE_INTERVAL = 6 * 60 * 60 * 1000;     // 6 hrs interval
-    //private static final long CHECK_UPDATE_INTERVAL = 20 * 1000;     // 6 hrs interval
+//    private static final long CHECK_UPDATE_INTERVAL = 6 * 60 * 60 * 1000;     // 6 hrs interval
+    private static final long CHECK_UPDATE_INTERVAL = 20 * 1000;     // 20 sec interval
     private static final int SERVER_TIMEOUT_LIMIT = 10 * 1000; // 10 sec
     private static Timer mTimer;
     Handler mHandler = new Handler();
@@ -135,7 +135,7 @@ public class UpdateCheckService extends Service {
             double newVersion = updateResp.getDouble("version");
             String updateDescription = updateResp.getString("newInThisUpdate");
             String downloadUrl = updateResp.getString("appDownloadUrl");
-            Log.d("UpdateServiceTest"," Version "+newVersion+" update Des "+updateDescription);
+            Log.d("UpdateServiceTest"," new Version "+newVersion+" old version "+getCurrentAppVersionCode()+" update Des "+updateDescription);
 
             if (newVersion > getCurrentAppVersionCode()) {
                 // write update to shared pref..

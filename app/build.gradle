@@ -9,8 +9,7 @@ android {
         minSdkVersion 17
         targetSdkVersion 24
         versionCode 3
-        versionName "0.0.4"
-
+        versionName "0.0.3"
         generatedDensities = []
 
     }
