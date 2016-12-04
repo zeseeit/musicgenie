@@ -337,11 +337,11 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                     String v_id = adapter.songs.get(pos).Video_id;
                     String file_name = adapter.songs.get(pos).Title;
                     String thumb_uri = adapter.songs.get(pos).Thumbnail_url;
-
+                    String subTitle = adapter.songs.get(pos).UploadedBy;
                     StreamSharedPref.getInstance(context).setStreamTitle(file_name);
                     Log.d("StreamingHome"," setting thumb uri "+thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
-
+                    StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
                     adapter.requestStream(v_id, file_name);
 
                 }

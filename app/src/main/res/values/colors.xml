@@ -19,6 +19,8 @@
     <color name="secondaryProgressTint">#66f44336</color>
     <color name="stream_fragment_background">#fefefe</color>
 
+    <color name="thumbnail_placeholder_color">#22f44336</color>
+
 
 
 </resources>

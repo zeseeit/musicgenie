@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import any.audio.Config.Constants;
+
 /**
  * Created by Ankit on 11/19/2016.
  */
@@ -47,11 +49,11 @@ public class StreamSharedPref {
     // stream status
     public void setStreamState(boolean isStreaming) {
 
-        Log.d("StreamSharedPref"," setting stream state "+isStreaming);
+        Log.d("StreamSharedPref", " setting stream state " + isStreaming);
         editor.putBoolean(KEY_IS_STREAMING, isStreaming);
         editor.commit();
 
-        if(!isStreaming){
+        if (!isStreaming) {
             setStreamerPlayState(false);
         }
 
@@ -65,7 +67,7 @@ public class StreamSharedPref {
     // stream status
     public void setStreamUrlFetchedStatus(boolean fetched) {
 
-        Log.d("StreamSharedPref"," setting fetched state "+fetched);
+        Log.d("StreamSharedPref", " setting fetched state " + fetched);
         editor.putBoolean(KEY_IS_STREAM_URL_FETCHED, fetched);
         editor.commit();
 
@@ -84,7 +86,7 @@ public class StreamSharedPref {
     }
 
     public void setStreamerPlayState(boolean streamerPlayState) {
-    //    Log.d("StreamSharedPref"," play State "+streamerPlayState);
+        //    Log.d("StreamSharedPref"," play State "+streamerPlayState);
         editor.putBoolean(KEY_IS_STREAMER_PLAYING, streamerPlayState);
         editor.commit();
     }
@@ -120,7 +122,7 @@ public class StreamSharedPref {
         editor.commit();
     }
 
-    public void resetStreamInfo(){
+    public void resetStreamInfo() {
 
         // title
         setStreamTitle("");
@@ -131,4 +133,14 @@ public class StreamSharedPref {
         //current playing
 
     }
+
+    public void setStreamSubTitle(String subTitle) {
+        editor.putString(Constants.PLAYER.AUDIO_SUBTITLE, subTitle);
+        editor.commit();
+    }
+
+    public String getStreamSubTitle() {
+        return preferences.getString(Constants.PLAYER.AUDIO_SUBTITLE, "");
+    }
+
 }

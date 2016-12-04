@@ -489,12 +489,14 @@ public class TaskHandler {
         // broadcast is for progress update to download activity
 
         public void broadcastUpdate(String progressPercentage, String contentLen, boolean currentDownloadStatus) {
+
             Intent intent = new Intent(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST);
             intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
             intent.putExtra(Constants.EXTRA_PROGRESS, progressPercentage);
             intent.putExtra(Constants.EXTRA_CONTENT_SIZE, contentLen);
             intent.putExtra(Constants.EXTRAA_FLAG_DOWNLOAD_STATE, currentDownloadStatus);
             context.sendBroadcast(intent);
+
         }
 
         private void subscribeDownloadCancelListener() {

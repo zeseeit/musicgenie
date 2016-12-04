@@ -8,13 +8,13 @@ public class Constants {
     public static final String TERM_OF_USE_URL = "http://anyaudio.in/terms-of-use";
     public static final String SDCARD = "sdcard";
     public static final String PHONE = "phone";
-    public static final int SCREEN_MODE_TABLET = 0 ;
+    public static final int SCREEN_MODE_TABLET = 0;
     public static final int SCREEN_MODE_MOBILE = 1;
     public static final String ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST = "action_progress_update";
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_PROGRESS = "progress";
-//    public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AnyAudio/YourSongs";
-    public static final String DOWNLOAD_FILE_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath()+"/AnyAudio";
+    //    public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AnyAudio/YourSongs";
+    public static final String DOWNLOAD_FILE_DIR = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_MUSIC).getAbsolutePath() + "/AnyAudio";
     public static final String ACTION_NETWORK_CONNECTED = "android.net.conn.CONNECTIVITY_CHANGE";
     public static final int SCREEN_ORIENTATION_PORTRAIT = 0;
     public static final int SCREEN_ORIENTATION_LANDSCAPE = 1;
@@ -56,7 +56,35 @@ public class Constants {
     public static String KEY_NEW_APP_VERSION_DESCRIPTION = "new_app_version_desc";
     public static String KEY_DONOT_REMIND_ME_AGAIN = "donot_remind_me_again_for_update";
     public static String EXTRAA_NEW_UPDATE_DESC = "extraa_new_update_des";
-
     public static String KEY_APP_UPDATE_NOTIFIED = "app_update_notified";
     public static String KEY_NEW_UPDATE_URL = "new_update_url";
+    public static java.lang.String EXTRAA_STREAM_TITLE = "stream_title";
+    public static java.lang.String EXTRAA_STREAM_THUMBNAIL_URL = "stream_thumbnail_url";
+
+    public interface ACTIONS {
+
+        public static String PLAY_TO_PAUSE = "com.anyaudio.in.action.play_to_pause";
+        public static String PAUSE_TO_PLAY = "com.anyaudio.in.action.pause_to_play";
+        public static String MAIN_ACTION = "com.anyaudio.in.action.main";
+        public static String INIT_ACTION = "com.anyaudio.in.action.init";
+        public static String PLAY_ACTION = "com.anyaudio.in.action.play";
+        public static String START_FOREGROUND_ACTION = "com.anyaudio.in.action.startforeground";
+        public static String STOP_FOREGROUND_ACTION = "com.anyaudio.in.action.stopforeground";
+
+        public static String PLAYING = "notification_state_player";
+        public static String STOP_PLAYER = "notification_stop_player";
+        String STOP_FOREGROUND_ACTION_BY_STREAMSHEET = "com.anyaudio.in.action.stopforeground_from_user";
+    }
+
+    public interface NOTIFICATION_ID {
+        public static int FOREGROUND_SERVICE = 101;
+    }
+
+    public interface PLAYER{
+        public static boolean PLAYING = false;
+        public static String AUDIO_TITLE = "";
+        public static String THUMBNAIL_URL = "";
+        String AUDIO_SUBTITLE = "audio_subtitle";
+    }
+
 }

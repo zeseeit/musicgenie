@@ -16,5 +16,10 @@
     <string name="streaming_play_btn"></string>
     <string name="streaming_pause_btn"></string>
     <string name="streaming_cancel_btn"></string>
+    <string name="stop_music">Stop Music</string>
+    <string name="play_pause_music">Play/Pause Music</string>
+    <string name="music_title">Music Title</string>
+    <string name="music_thumbnail">Music Thumbnail</string>
+    <string name="offstream_message">Thank You</string>
 
 </resources>

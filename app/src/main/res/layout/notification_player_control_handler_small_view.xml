@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="64dp"
+    android:background="@color/PrimaryColorDark"
+    android:orientation="vertical">
+
+
+    <ImageView
+        android:id="@+id/notification_player_thumbnail"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
+        android:contentDescription="@string/music_thumbnail"
+        android:padding="8dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_toRightOf="@+id/notification_player_thumbnail"
+        android:weightSum="6">
+
+
+        <TextView
+            android:id="@+id/notification_player_title"
+            android:layout_width="0dp"
+            android:layout_weight="4"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@+id/notification_player_thumbnail"
+            android:contentDescription="@string/music_title"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:padding="8dp"
+            android:text="Sanam dfsaaaaaaaaaaaadsfsdfdfddfRe"
+            android:textColor="#ffffff"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:id="@+id/notification_player_play_pauseBtn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_centerHorizontal="true"
+            android:contentDescription="@string/play_pause_music"
+            android:padding="12dp"
+            android:src="@drawable/ic_action_play" />
+
+        <ImageView
+            android:id="@+id/notification_player_stopBtn"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="64dp"
+            android:layout_alignParentEnd="true"
+            android:contentDescription="@string/stop_music"
+            android:padding="12dp"
+            android:src="@drawable/ic_action_stop" />
+
+    </LinearLayout>
+
+</RelativeLayout>
