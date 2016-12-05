@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 
 import any.audio.Config.Constants;
 
+import static any.audio.Centrals.CentralDataRepository.TYPE_TRENDING;
+
 /**
  * Created by Ankit on 9/13/2016.
  */
@@ -108,21 +110,21 @@ public class SharedPrefrenceUtils {
     }
 
     public boolean getFirstPageLoadedStatus() {
-        return preferences.getBoolean(Constants.KEY_FIRST_PAGE_LOADED,false);
+        return preferences.getBoolean(Constants.KEY_FIRST_PAGE_LOADED, false);
     }
 
     public void setFirstPageLoadedStatus(boolean firstPageLoadedStatus) {
-        editor.putBoolean(Constants.KEY_FIRST_PAGE_LOADED,firstPageLoadedStatus);
+        editor.putBoolean(Constants.KEY_FIRST_PAGE_LOADED, firstPageLoadedStatus);
         editor.commit();
     }
 
-    public int getCurrentVersionCode(){
-        return preferences.getInt(Constants.KEY_CURRENT_VERSION,1);
+    public int getCurrentVersionCode() {
+        return preferences.getInt(Constants.KEY_CURRENT_VERSION, 1);
     }
 
-    public boolean getNewVersionAvailibility(){
+    public boolean getNewVersionAvailibility() {
 
-        return preferences.getBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE,false);
+        return preferences.getBoolean(Constants.KEY_NEW_APP_VERSION_AVAILABLE, false);
 
     }
 
@@ -131,9 +133,9 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public String getNewVersionDescription(){
+    public String getNewVersionDescription() {
 
-        return preferences.getString(Constants.KEY_NEW_APP_VERSION_DESCRIPTION,"");
+        return preferences.getString(Constants.KEY_NEW_APP_VERSION_DESCRIPTION, "");
 
     }
 
@@ -142,9 +144,9 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public boolean getDoNotRemindMeAgainForAppUpdate(){
+    public boolean getDoNotRemindMeAgainForAppUpdate() {
 
-        return preferences.getBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN,false);
+        return preferences.getBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN, false);
 
     }
 
@@ -153,22 +155,30 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public void setNotifiedForUpdate(boolean state){
-        editor.putBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,state);
+    public void setNotifiedForUpdate(boolean state) {
+        editor.putBoolean(Constants.KEY_APP_UPDATE_NOTIFIED, state);
         editor.commit();
     }
 
-    public boolean getNotifiedForUpdate(){
-        return preferences.getBoolean(Constants.KEY_APP_UPDATE_NOTIFIED,true);
+    public boolean getNotifiedForUpdate() {
+        return preferences.getBoolean(Constants.KEY_APP_UPDATE_NOTIFIED, true);
     }
 
-    public void setNewUpdateUrl(String url){
-        editor.putString(Constants.KEY_NEW_UPDATE_URL,url);
+    public void setNewUpdateUrl(String url) {
+        editor.putString(Constants.KEY_NEW_UPDATE_URL, url);
         editor.commit();
     }
 
-    public String getNewUpdateUrl(){
-        return preferences.getString(Constants.KEY_NEW_UPDATE_URL,"");
+    public String getNewUpdateUrl() {
+        return preferences.getString(Constants.KEY_NEW_UPDATE_URL, "");
     }
 
+    public int getLastLoadedType() {
+        return preferences.getInt(Constants.KEY_LAST_LOADED_TYPE, TYPE_TRENDING);
+    }
+
+    public void setLastLoadedType(int type) {
+        editor.putInt(Constants.KEY_LAST_LOADED_TYPE, type);
+        editor.commit();
+    }
 }

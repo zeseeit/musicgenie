@@ -1,4 +1,4 @@
-package any.audio.Managers;
+package any.audio.Notification;
 
 import android.app.NotificationManager;
 import android.content.Context;

@@ -60,6 +60,7 @@ public class Constants {
     public static String KEY_NEW_UPDATE_URL = "new_update_url";
     public static java.lang.String EXTRAA_STREAM_TITLE = "stream_title";
     public static java.lang.String EXTRAA_STREAM_THUMBNAIL_URL = "stream_thumbnail_url";
+    public static String KEY_LAST_LOADED_TYPE = "last_loaded_type";
 
     public interface ACTIONS {
 

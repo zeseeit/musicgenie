@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="80dp"
         app:behavior_hideable="true"
-        app:behavior_peekHeight="0dp"
+        app:behavior_peekHeight="100dp"
         app:elevation="20dp"
         app:layout_behavior="@string/bottom_sheet_behavior">
 
@@ -105,7 +105,7 @@
                         android:layout_below="@+id/streaming_item_title"/>
 
                 </RelativeLayout>
-
+                
                 <RelativeLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -152,7 +152,6 @@
                     android:layout_marginRight="2dp"
                     android:visibility="visible"
                     android:text="@string/streaming_pause_btn"
-
                     android:textColor="@color/TitleColor"
                     android:textSize="36sp" />
 

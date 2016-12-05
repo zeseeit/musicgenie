@@ -26,6 +26,8 @@ public class AnyAudio extends Application {
 
         StreamSharedPref.getInstance(this).resetStreamInfo();
         StreamSharedPref.getInstance(this).setStreamUrlFetchedStatus(false);
+        //SharedPrefrenceUtils.getInstance(this).setFirstPageLoadedStatus(false);
+
         Log.d("AnyAudioApp", "reset shared pref. for stream status..&");
         startService(new Intent(this, UpdateCheckService.class));
         setForUpdate();

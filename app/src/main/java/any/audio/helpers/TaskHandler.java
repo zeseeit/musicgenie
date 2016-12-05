@@ -30,7 +30,7 @@ import java.util.Date;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.DownloadItemInvalidatedListener;
 import any.audio.Interfaces.DownloadListener;
-import any.audio.Managers.LocalNotificationManager;
+import any.audio.Notification.LocalNotificationManager;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.Managers.PermissionManager;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;

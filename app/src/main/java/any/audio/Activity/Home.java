@@ -162,9 +162,11 @@ public class Home extends AppCompatActivity {
         if (!utils.getFirstPageLoadedStatus()) {
             invokeAction(Constants.ACTION_TYPE_TRENDING);
             utils.setFirstPageLoadedStatus(true);
+            Log.d("HomeTest"," loadInit() Trending ");
             // start only once
 
         } else {
+            Log.d("HomeTest"," loadInit() Resuming ");
             invokeAction(Constants.ACTION_TYPE_RESUME);
         }
 
@@ -778,6 +780,7 @@ public class Home extends AppCompatActivity {
     private void unRegisterStreamProgressUpdateBroadcast() {
         if (mStreamUpdateReceiverRegistered) {
             this.unregisterReceiver(streamProgressUpdateReceiver);
+            //this.unregisterReceiver(notificationPlayerStateReceiver);
             mStreamUpdateReceiverRegistered = false;
         }
     }
@@ -790,9 +793,10 @@ public class Home extends AppCompatActivity {
         if (!mStreamUpdateReceiverRegistered) {
 
             context.registerReceiver(streamProgressUpdateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
-            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
-            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
-            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
+
+                context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
+                context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
+                context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
 
             mStreamUpdateReceiverRegistered = true;
 

@@ -3,6 +3,7 @@ package any.audio.Centrals;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 
 import any.audio.Config.Constants;
 import any.audio.Database.DbHelper;
@@ -38,21 +39,22 @@ public class CentralDataRepository {
     /**
      * Result type
      */
-    private static final int TYPE_TRENDING = 405;
+    public static final int TYPE_TRENDING = 405;
 
     /**
      * Result type
      */
-    private static final int TYPE_RESULT = 406;
+    public static final int TYPE_RESULT = 406;
     private static Context context;
     private static CentralDataRepository mInstance;
-   // private ActionCompletedListener mActionCompletdListener;
+    // private ActionCompletedListener mActionCompletdListener;
     //private DataReadyToSubmitListener dataReadyToSubmitListener;
     private DbHelper mDBHelper;
     private CloudManager mCloudManager;
     private Handler mHandler;
     private int mLastLoadedType = TYPE_TRENDING;
     private String MESSAGE_TO_PASS = "";
+    private SharedPrefrenceUtils sharedPrefrenceUtils;
 
     /**
      * Default constructor
@@ -68,7 +70,7 @@ public class CentralDataRepository {
         CentralDataRepository.context = context;
         this.mDBHelper = DbHelper.getInstance(context);
         this.mCloudManager = CloudManager.getInstance(context);
-
+        sharedPrefrenceUtils = SharedPrefrenceUtils.getInstance(context);
     }
 
     /**
@@ -83,16 +85,16 @@ public class CentralDataRepository {
     }
 
     /**
-     * @param type Action Type
-     * @param handler   Main Thread Handler
+     * @param type    Action Type
+     * @param handler Main Thread Handler
      */
-    public void submitAction(final int type, Handler handler){
+    public void submitAction(final int type, Handler handler) {
 
-        L.m("CDR","Action Invoke Type:"+type);
+        L.m("CDR", "Action Invoke Type:" + type);
 
         this.mHandler = handler;
 
-        new Thread(){
+        new Thread() {
             @Override
             public void run() {
 
@@ -116,7 +118,7 @@ public class CentralDataRepository {
             }
         }.start();
 
-        L.m("CDR","started thread for action");
+        L.m("CDR", "started thread for action");
 
     }
 
@@ -127,17 +129,19 @@ public class CentralDataRepository {
      */
     private void refressAndSubmit() {
 
+        mLastLoadedType = sharedPrefrenceUtils.getLastLoadedType();
+
         if (mLastLoadedType == TYPE_TRENDING) {
 
             mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
                 @Override
                 public void onTrendingLoad(SectionModel trendingItem) {
                     // Create Message Object
-                   dispatchMessage(
-                           Constants.MESSAGE_STATUS_OK,
-                           MESSAGE_TO_PASS,
-                           trendingItem
-                           );
+                    dispatchMessage(
+                            Constants.MESSAGE_STATUS_OK,
+                            MESSAGE_TO_PASS,
+                            trendingItem
+                    );
 
                 }
             });
@@ -176,7 +180,7 @@ public class CentralDataRepository {
         String searchTerm = utils.getLastSearchTerm();
         mCloudManager.requestSearch(searchTerm);
 
-        mLastLoadedType = TYPE_RESULT;
+        sharedPrefrenceUtils.setLastLoadedType(TYPE_RESULT);
 
     }
 
@@ -188,9 +192,11 @@ public class CentralDataRepository {
      */
     private void submitLastLoaded() {
 
-       // L.m("CDR ", " last loaded was " + mLastLoadedType);
-
+        // L.m("CDR ", " last loaded was " + mLastLoadedType);
+        mLastLoadedType = sharedPrefrenceUtils.getLastLoadedType();
         if (mLastLoadedType == TYPE_TRENDING) {
+
+            Log.d("DBHelper", " last loaded trending");
 
             mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
                 @Override
@@ -207,9 +213,11 @@ public class CentralDataRepository {
 
             mDBHelper.pokeForTrending();
 
-            mLastLoadedType = TYPE_TRENDING;
+            sharedPrefrenceUtils.setLastLoadedType(TYPE_TRENDING);
 
         } else {
+
+            Log.d("DBHelper", " last loaded result");
 
             mDBHelper.setResultLoadListener(new DbHelper.ResultLoadListener() {
                 @Override
@@ -226,7 +234,8 @@ public class CentralDataRepository {
 
             mDBHelper.pokeForResults();
 
-            mLastLoadedType = TYPE_RESULT;
+            sharedPrefrenceUtils.setLastLoadedType(TYPE_RESULT);
+
         }
 
 
@@ -244,7 +253,7 @@ public class CentralDataRepository {
 
         //  check for available cache
         boolean isAnyCache = mDBHelper.isTrendingsCached();
-
+        Log.d("Database", " Cached " + isAnyCache);
         // subscribe for callback from database
         mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
             @Override
@@ -269,13 +278,13 @@ public class CentralDataRepository {
             mDBHelper.pokeForTrending();
         }
 
-        mLastLoadedType = TYPE_TRENDING;
+        sharedPrefrenceUtils.setLastLoadedType(TYPE_TRENDING);
 
     }
 
-    private void dispatchMessage(int status,String message,SectionModel data){
+    private void dispatchMessage(int status, String message, SectionModel data) {
 
-        L.m("CDR","dispatching Message");
+        L.m("CDR", "dispatching Message");
         Message msg = Message.obtain();
         msg.obj = new ResultMessageObjectModel(
                 status,
@@ -287,44 +296,5 @@ public class CentralDataRepository {
         mHandler.sendMessage(msg);
     }
 
-//    /**
-//     * @param listener callback from data seekers adapters
-//     */
-//    public void registerForDataLoadListener(DataReadyToSubmitListener listener) {
-//        this.dataReadyToSubmitListener = listener;
-//    }
 
-//    /**
-//     * @param mListener callback for action complete to operation initiater
-//     */
-//    public void setListener(ActionCompletedListener mListener) {
-//        this.mActionCompletdListener = mListener;
-//    }
-
-    public int getLastLoadedType() {
-        return this.mLastLoadedType;
-    }
-
-    public void setLastLoadedType(int mLastLoadedType) {
-        this.mLastLoadedType = mLastLoadedType;
-    }
-
-//    public interface ActionCompletedListener {      // these listeners will be summitted by Operation Initiater
-//        void onActionCompleted();
-//    }
-
-//    public interface DataReadyToSubmitListener {    // these listeners will be summitted by Adapter who are waiting for our data
-//
-//        // for Result  there will be single item
-//        // for Trending there will be list of items
-//        void onDataSubmit(SectionModel item);
-//    }
-
-//    public class InvalidCallbackException extends Exception {
-//        public InvalidCallbackException(String detailMessage) {
-//            super(detailMessage);
-//            System.out.println(detailMessage);
-//            Log.e("CentralDataRepository", detailMessage);
-//        }
-
-    }
+}

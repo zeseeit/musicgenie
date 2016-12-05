@@ -169,6 +169,7 @@ public class NotificationPlayerService extends Service {
         status.bigContentView = bigView;
         status.flags = Notification.FLAG_ONGOING_EVENT;
         status.icon = R.drawable.ic_launcher_rnd;
+        status.tickerText = title;
         status.contentIntent = pendingIntent;
 
         Picasso.with(this).load(streamThumbnailUrl).transform(new CircularImageTransformer()).into(view, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);

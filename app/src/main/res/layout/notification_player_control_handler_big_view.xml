@@ -58,7 +58,8 @@
         android:layout_height="48dp"
         android:padding="8dp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_alignParentEnd="true"
+        />
 
 
     <ImageView
@@ -68,7 +69,9 @@
         android:layout_height="48dp"
         android:padding="8dp"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"/>
+        android:layout_centerHorizontal="true"
+
+        />
 
 
     </RelativeLayout>
