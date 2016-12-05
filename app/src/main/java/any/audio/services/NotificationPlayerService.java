@@ -4,6 +4,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -51,15 +52,25 @@ public class NotificationPlayerService extends Service {
             case Constants.ACTIONS.PLAY_ACTION:
                 Log.d(LOG, "clicked play/pause");
 
-                if (PLAYING) {
-                    PLAYING = false;
+                Bundle bundle = intent.getExtras();
+
+                if (bundle == null) {
+                    Log.d("NotificationService", " action from notification bar buttons");
+                    if (PLAYING) {
+                        PLAYING = false;
+                    } else {
+                        PLAYING = true;
+                    }
+                    sendPlayerStateBroadcast();
+                    showNotification();
+
                 } else {
-                    PLAYING = true;
+
+                    Log.d("NotificationService", " action from bottom streamsheet");
+                    PLAYING = bundle.getBoolean(Constants.PLAYER.EXTRAA_PLAYER_STATE);
+                    showNotification();
+
                 }
-
-                sendPlayerStateBroadcast();
-                showNotification();
-
                 break;
             case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
 
@@ -122,6 +133,7 @@ public class NotificationPlayerService extends Service {
         String streamThumbnailUrl = StreamSharedPref.getInstance(this).getStreamThumbnailUrl();
         String title = StreamSharedPref.getInstance(this).getStreamTitle();
         String subtitle = StreamSharedPref.getInstance(this).getStreamSubTitle();
+        String contentLen = StreamSharedPref.getInstance(this).getStreamingContentLength();
 
         if (PLAYING) {
             //  show pause btn
@@ -135,6 +147,7 @@ public class NotificationPlayerService extends Service {
             view.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_pause);
             view.setImageViewResource(R.id.notification_player_stopBtn, R.drawable.ic_action_stop);
             view.setTextViewText(R.id.notification_player_title, title);
+            view.setTextViewText(R.id.notification_player_track_length, contentLen);
 
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
@@ -144,6 +157,7 @@ public class NotificationPlayerService extends Service {
             bigView.setImageViewResource(R.id.notification_player_stopBtn, R.drawable.ic_action_stop);
             bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);
             bigView.setTextViewText(R.id.notification_player_title, title);
+            bigView.setTextViewText(R.id.notification_player_track_length, contentLen);
 
         } else {
 

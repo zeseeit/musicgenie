@@ -61,6 +61,7 @@ public class Constants {
     public static java.lang.String EXTRAA_STREAM_TITLE = "stream_title";
     public static java.lang.String EXTRAA_STREAM_THUMBNAIL_URL = "stream_thumbnail_url";
     public static String KEY_LAST_LOADED_TYPE = "last_loaded_type";
+    public static String KEY_STREAM_CONTENT_LEN = "stream_content_len";
 
     public interface ACTIONS {
 
@@ -86,6 +87,8 @@ public class Constants {
         public static String AUDIO_TITLE = "";
         public static String THUMBNAIL_URL = "";
         String AUDIO_SUBTITLE = "audio_subtitle";
+        public String EXTRAA_PLAYER_STATE = "player_state_extraa";
+
     }
 
 }

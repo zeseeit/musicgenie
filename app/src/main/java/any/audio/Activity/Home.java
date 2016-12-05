@@ -73,6 +73,10 @@ public class Home extends AppCompatActivity {
     private static final int MAX_DATABASE_RESPONSE_TIME = 20 * 1000; // 5 secs
     private static ExoPlayer exoPlayer;
     int mBuffered = -1;
+
+    final String playBtn = "\uE039";
+    final String pauseBtn = "\uE036";
+
     MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
         @Override
         public void onUriAvailable(String uri) {
@@ -840,8 +844,6 @@ public class Home extends AppCompatActivity {
 
     public void prepareBottomStreamSheet() {
 
-        final String playBtn = getString(R.string.streaming_play_btn);
-        final String pauseBtn = getString(R.string.streaming_pause_btn);
         mBottomSheet = findViewById(R.id.design_bottom_sheet);
         mStreamingBottomSheetBehavior = BottomSheetBehavior.from(mBottomSheet);
         mStreamingBottomSheetBehavior.setPeekHeight(10);
@@ -978,9 +980,7 @@ public class Home extends AppCompatActivity {
                                                               playPauseStreamBtn.setText(pauseBtn);
                                                           }
 
-                                                          Intent playIntent = new Intent(Home.this, NotificationPlayerService.class);
-                                                          playIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
-                                                          sendBroadcast(playIntent);
+                                                         sendPlayerStateToNotificationService(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
 
                                                           exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
                                                       } else {
@@ -1009,6 +1009,14 @@ public class Home extends AppCompatActivity {
         notificationIntent.setAction(Constants.ACTIONS.STOP_FOREGROUND_ACTION_BY_STREAMSHEET);
         startService(notificationIntent);
 
+    }
+
+    private void sendPlayerStateToNotificationService(boolean streamerPlayState){
+
+        Intent notificationIntent = new Intent(this, NotificationPlayerService.class);
+        notificationIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
+        notificationIntent.putExtra(Constants.PLAYER.EXTRAA_PLAYER_STATE,streamerPlayState);
+        startService(notificationIntent);
     }
 
     private void resetPlayer() {
@@ -1219,11 +1227,14 @@ public class Home extends AppCompatActivity {
 
                         try {
 
+                            String trackLen = getTimeFromMillisecond(contentLen);
                             if (contentLen > 0 && buffered > 0) {
                                 if (indeterminateProgressBar.getVisibility() == View.VISIBLE) {
                                     indeterminateProgressBar.setVisibility(View.INVISIBLE);
                                     seekbar.setVisibility(View.VISIBLE);
                                     playPauseStreamBtn.setVisibility(View.VISIBLE);
+
+                                    StreamSharedPref.getInstance(Home.this).setStreamContentLength(trackLen);
                                     startNotificationService();
                                 }
 
@@ -1231,7 +1242,7 @@ public class Home extends AppCompatActivity {
 
                             currentStreamPosition.setText(getTimeFromMillisecond(progress));
                             seekbar.setProgress(progress);
-                            streamDuration.setText(" |  " + getTimeFromMillisecond(contentLen));
+                            streamDuration.setText(" |  " + trackLen);
                             seekbar.setMax(contentLen);
 
                             if (mBuffered < buffered) {
@@ -1269,12 +1280,14 @@ public class Home extends AppCompatActivity {
                 if (intent.getAction().equals(Constants.ACTIONS.PLAY_TO_PAUSE)) {
 
                     // pause
+                    playPauseStreamBtn.setText(playBtn);
                     StreamSharedPref.getInstance(Home.this).setStreamerPlayState(false);
                     exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
                 }
                 if (intent.getAction().equals(Constants.ACTIONS.PAUSE_TO_PLAY)) {
 
                     // play
+                    playPauseStreamBtn.setText(pauseBtn);
                     StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
                     exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
                 }

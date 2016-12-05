@@ -143,4 +143,12 @@ public class StreamSharedPref {
         return preferences.getString(Constants.PLAYER.AUDIO_SUBTITLE, "");
     }
 
+    public void setStreamContentLength(String trackLen) {
+        editor.putString(Constants.KEY_STREAM_CONTENT_LEN,trackLen);
+        editor.commit();
+    }
+
+    public String getStreamingContentLength(){
+        return preferences.getString(Constants.KEY_STREAM_CONTENT_LEN,"00:00");
+    }
 }
