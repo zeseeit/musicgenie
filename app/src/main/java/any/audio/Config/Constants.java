@@ -33,13 +33,13 @@ public class Constants {
     public static final String KEY_BUNDLE_FIRST_LOAD_DONE = "key_first_load_done";
     public static final String KEY_FIRST_PAGE_LOADED = "first_page_loaded";
     public static final int MESSAGE_STATUS_OK = 200;
-    private static final String TAG = "AppConfig";
     public static final String FEATURE_STREAM = "stream";
     public static final String FEATURE_DOWNLOAD = "download";
     public static final int FLAG_STOP_MEDIA_PLAYER = 303;
     public static final int FLAG_CANCEL_STREAM = 304;
     public static final int FLAG_PASSING_HANDLER_REF = 101;
     public static final long FLAG_STREAM_END = -1;
+    private static final String TAG = "AppConfig";
     public static int FLAG_NEW_VERSION = 1;
     public static String KEY_CURRENT_VERSION = "currentVersion";
     public static String KEY_STREAMING_THUMB_URL = "streamingThumbUrl";
@@ -62,6 +62,15 @@ public class Constants {
     public static java.lang.String EXTRAA_STREAM_THUMBNAIL_URL = "stream_thumbnail_url";
     public static String KEY_LAST_LOADED_TYPE = "last_loaded_type";
     public static String KEY_STREAM_CONTENT_LEN = "stream_content_len";
+    public static int NOTIFICATION_ID_BIG_IMAGE = 104;
+
+    public interface FIREBASE {
+        String TOPIC_UPDATE = "update";
+        String TOPIC_RECOMMEND = "recommend";
+        String TOPIC_EVE = "eve";
+        String KEY_UPDATE_SUBS = "updateSubs";
+        String KEY_DEFAULT_SUBS = "defaultSubs";
+    }
 
     public interface ACTIONS {
 
@@ -89,6 +98,16 @@ public class Constants {
         String AUDIO_SUBTITLE = "audio_subtitle";
         public String EXTRAA_PLAYER_STATE = "player_state_extraa";
 
+    }
+
+    public interface PUSH {
+        public String PUSH_TYPE_UPDATE = "update";
+        public String PUSH_TYPE_EVE_WISHER = "eve";
+        public String PUSH_TYPE_RECOMMENDATIONS = "recommendation";
+        String EXTRAA_PUSH_TYPE_RECOMMENDATION = "com.anyaudio.push.recommendation";
+        int TYPE_RECOM = 1;
+        int TYPE_UPDATE = 2;
+        int TYPE_EVE = 3;
     }
 
 }

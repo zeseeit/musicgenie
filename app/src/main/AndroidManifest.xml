@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    android:versionCode="5"
-    android:versionName="0.1.0"
-    package="any.audio" >
+    package="any.audio"
+    android:versionCode="7"
+    android:versionName="1.0">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -17,54 +17,69 @@
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher_rnd"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@mipmap/ic_launcher_rnd" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_color"
+            android:resource="@color/PrimaryColorDark" />
 
         <service android:name=".services.UpdateCheckService" />
-        <service android:name=".services.NotificationPlayerService"/>
-        <!--<receiver android:name=".Activity.ErrorSplash$NetworkChangeReceiver" >-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />-->
-            <!--</intent-filter>-->
-        <!--</receiver>-->
-
+        <service android:name=".services.NotificationPlayerService" />
+        <service android:name=".services.AnyAudioFirebaseMessageService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".services.AnyAudioInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
 
         <activity
-            android:screenOrientation="portrait"
             android:name=".Activity.ErrorSplash"
-            android:label="AnyAudio" >
-
+            android:label="AnyAudio"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
-            android:screenOrientation="portrait"
             android:name=".Activity.Home"
             android:hardwareAccelerated="true"
-            android:label="@string/title_activity_home" >
-
-        </activity>
+            android:label="@string/title_activity_home"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".Activity.DowloadsActivity"
             android:label="@string/activity_downloads"
-            android:parentActivityName=".Activity.Home" >
-        </activity>
+            android:parentActivityName=".Activity.Home"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
             android:name=".Activity.UserPreferenceSetting"
             android:label="@string/activity_preferences"
-            android:parentActivityName=".Activity.Home" >
-        </activity>
+            android:parentActivityName=".Activity.Home"
+            android:screenOrientation="portrait" />
         <activity
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.Dialog"
             android:name=".Activity.UpdateThemedActivity"
-            android:label="@string/title_activity_update_themed" >
+            android:label="@string/title_activity_update_themed"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity
+            android:name=".Activity.EveWisherThemedActivity"
+            android:label="@string/title_activity_update_themed"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+        <activity
+            android:name=".Activity.RecommendationThemed"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Dialog">
         </activity>
+
     </application>
 
 </manifest>

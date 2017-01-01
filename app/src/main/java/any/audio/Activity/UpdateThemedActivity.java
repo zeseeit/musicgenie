@@ -3,9 +3,8 @@ package any.audio.Activity;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
-import android.support.v4.widget.TextViewCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,7 +15,6 @@ import android.widget.TextView;
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
-import any.audio.Config.URLS;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
 public class UpdateThemedActivity extends AppCompatActivity {
@@ -27,6 +25,8 @@ public class UpdateThemedActivity extends AppCompatActivity {
     TextView btnDownload;
     Typeface tf;
     CheckBox mUpdateCheckBox;
+    private String newInThisUpdateDescription;
+    private String newAppDownloadUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +61,9 @@ public class UpdateThemedActivity extends AppCompatActivity {
 
         // data setters
 
-        String updateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
-        tvUpdateDescription.setText(updateDescription);
+        newInThisUpdateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
+        newAppDownloadUrl = getIntent().getExtras().getString(Constants.KEY_NEW_UPDATE_URL);
+        tvUpdateDescription.setText(newInThisUpdateDescription);
 
 
 
@@ -94,8 +95,7 @@ public class UpdateThemedActivity extends AppCompatActivity {
     public void download(View view) {
 
         Intent intent = new Intent(Intent.ACTION_VIEW);
-        String downloadUrl = SharedPrefrenceUtils.getInstance(this).getNewUpdateUrl();
-        intent.setData(Uri.parse(downloadUrl));
+        intent.setData(Uri.parse(newAppDownloadUrl));
         startActivity(intent);
         finish();
 

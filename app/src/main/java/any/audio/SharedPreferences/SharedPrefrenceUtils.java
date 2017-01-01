@@ -144,7 +144,7 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public boolean getDoNotRemindMeAgainForAppUpdate() {
+    public boolean donotRemindForAppUpdate() {
 
         return preferences.getBoolean(Constants.KEY_DONOT_REMIND_ME_AGAIN, false);
 
@@ -180,5 +180,46 @@ public class SharedPrefrenceUtils {
     public void setLastLoadedType(int type) {
         editor.putInt(Constants.KEY_LAST_LOADED_TYPE, type);
         editor.commit();
+    }
+
+    public boolean subscribedForUpdate() {
+        return preferences.getBoolean(Constants.FIREBASE.KEY_UPDATE_SUBS, false);
+    }
+
+    public void setSubscribedForUpdate(boolean isSubscribed) {
+        editor.putBoolean(Constants.FIREBASE.KEY_UPDATE_SUBS, isSubscribed);
+        editor.commit();
+    }
+
+    public boolean subscribeForDefaults_get() {
+        return preferences.getBoolean(Constants.FIREBASE.KEY_DEFAULT_SUBS, true);
+    }
+
+    public void subscribeForDefaults_set(boolean isSubscribed) {
+        editor.putBoolean(Constants.FIREBASE.KEY_DEFAULT_SUBS, isSubscribed);
+        editor.commit();
+    }
+
+    public void setOptionsForPushNotification(boolean shouldAllow) {
+        editor.putBoolean("pushNotificationAllowance", shouldAllow);
+        editor.commit();
+    }
+
+
+    public boolean getOptionsForPushNotificationSound() {
+        return preferences.getBoolean("pushSoundAllowance", true);
+    }
+
+    public boolean getOptionsForPushNotification() {
+        return preferences.getBoolean("pushNotificationAllowance", true);
+    }
+
+    public void setOptionsForPushNotificationSound(boolean shouldAllow) {
+        editor.putBoolean("pushSoundAllowance", shouldAllow);
+        editor.commit();
+    }
+
+    public boolean getOptionsForPushNotificationSound() {
+        return preferences.getBoolean("pushSoundAllowance", true);
     }
 }

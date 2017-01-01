@@ -21,6 +21,10 @@ import any.audio.SharedPreferences.SharedPrefrenceUtils;
 public class UserPreferenceSetting extends AppCompatActivity {
 
     TextView thumbnailTxtView;
+    TextView pushNotificationTxtView;
+    TextView pushNotificationSoundTxtView;
+    Switch pushNotificationSwitch;
+    Switch pushNotificationSoundSwitch;
     TextView issueTxtView;
     TextView issueBtnTxt;
     Switch thumbnailSwitch;
@@ -65,6 +69,31 @@ public class UserPreferenceSetting extends AppCompatActivity {
                     utils.setOptionsForThumbnailLoad(true);
                 } else {
                     utils.setOptionsForThumbnailLoad(false);
+                }
+            }
+        });
+
+        pushNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
+                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
+                if (state) {
+                    utils.setOptionsForPushNotification(true);
+                } else {
+                    utils.setOptionsForPushNotification(false);
+                }
+            }
+        });
+
+        pushNotificationSoundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
+
+                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
+                if (state) {
+                    utils.setOptionsForPushNotificationSound(true);
+                } else {
+                    utils.setOptionsForPushNotificationSound(false);
                 }
             }
         });
@@ -116,7 +145,7 @@ public class UserPreferenceSetting extends AppCompatActivity {
 
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
 
-        if (utils.getNewVersionAvailibility() && !utils.getDoNotRemindMeAgainForAppUpdate()) {
+        if (utils.getNewVersionAvailibility() && !utils.donotRemindForAppUpdate()) {
 
             Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
             updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
@@ -142,11 +171,19 @@ public class UserPreferenceSetting extends AppCompatActivity {
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
         // get thumbnail choice
         thumbnailSwitch.setChecked(utils.getOptionsForThumbnailLoad());
+        pushNotificationSwitch.setChecked(utils.getOptionsForPushNotification());
+        pushNotificationSoundSwitch.setChecked(utils.getOptionsForPushNotificationSound());
+
     }
 
     private void init() {
 
         thumbnailTxtView = (TextView) findViewById(R.id.loadThumbnailTextMessage);
+        pushNotificationTxtView = (TextView) findViewById(R.id.pushNotificationTextMessage);
+        pushNotificationSoundTxtView = (TextView) findViewById(R.id.pushNotificationSoundTextMessage);
+        pushNotificationSwitch = (Switch) findViewById(R.id.pushNotificationSwitch);
+        pushNotificationSoundSwitch = (Switch) findViewById(R.id.pushNotificationSoundSwitch);
+
         issueTxtView = (TextView) findViewById(R.id.issuesTextMessage);
         issueBtnTxt = (TextView) findViewById(R.id.issueBtn);
         thumbnailSwitch = (Switch) findViewById(R.id.loadThumbnailSwitch);
@@ -161,6 +198,8 @@ public class UserPreferenceSetting extends AppCompatActivity {
         Typeface tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
         Typeface materialIconFont = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
         thumbnailTxtView.setTypeface(tf);
+        pushNotificationSoundTxtView.setTypeface(tf);
+        pushNotificationTxtView.setTypeface(tf);
         issueTxtView.setTypeface(tf);
         termsOfUse.setTypeface(tf);
         updateTextView.setTypeface(tf);

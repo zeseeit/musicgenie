@@ -25,6 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Load Thumbnail\n(Slow Internet Connection)"
+            android:textColor="@color/AccentColor"
             android:textSize="16sp" />
 
         <Switch
@@ -39,7 +40,7 @@
         android:id="@+id/IssuesTextFrame"
         android:layout_width="match_parent"
         android:layout_height="72dp"
-        android:layout_below="@+id/thumbnailChoiceFrame"
+        android:layout_below="@+id/notification_soundChoiceFrame"
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -54,6 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Have Issues With AnyAudio ? "
+            android:textColor="@color/AccentColor"
             android:textSize="16sp" />
 
         <TextView
@@ -87,6 +89,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text=" Update AnyAudio"
+            android:textColor="@color/AccentColor"
             android:textSize="16sp" />
 
         <TextView
@@ -120,6 +123,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Share AnyAudio Via Link"
+            android:textColor="@color/AccentColor"
             android:textSize="16sp" />
 
         <TextView
@@ -131,6 +135,68 @@
             android:text=""
             android:textColor="@color/PrimaryColor"
             android:textSize="25sp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/push_notificationChoiceFrame"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@+id/thumbnailChoiceFrame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/White"
+        android:elevation="2dp"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/pushNotificationTextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Allow Notifications"
+            android:textColor="@color/AccentColor"
+            android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/pushNotificationSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:checked="true" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/notification_soundChoiceFrame"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_below="@+id/push_notificationChoiceFrame"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="2dp"
+        android:background="@color/White"
+        android:elevation="2dp"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/pushNotificationSoundTextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Notification Sounds"
+            android:textColor="@color/AccentColor"
+            android:textSize="16sp" />
+
+        <Switch
+            android:id="@+id/pushNotificationSoundSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:checked="true" />
 
     </FrameLayout>
 

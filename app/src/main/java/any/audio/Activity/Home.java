@@ -72,11 +72,9 @@ public class Home extends AppCompatActivity {
 
     private static final int MAX_DATABASE_RESPONSE_TIME = 20 * 1000; // 5 secs
     private static ExoPlayer exoPlayer;
-    int mBuffered = -1;
-
     final String playBtn = "\uE039";
     final String pauseBtn = "\uE036";
-
+    int mBuffered = -1;
     MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
         @Override
         public void onUriAvailable(String uri) {
@@ -111,6 +109,8 @@ public class Home extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private boolean isStreaming = false;
     private long DELAYED_POST_APP_UPDATE = 1 * 1000;
+    private NotificationPlayerStateBroadcastReceiver notificationPlayerStateReceiver;
+    private long STREAMING_PAUSED_WAIT_TIMEOUT = 2 * 60 * 1000;     // 2 minutes
 
     private Runnable resumeContentCheckTask = new Runnable() {
         @Override
@@ -122,7 +122,21 @@ public class Home extends AppCompatActivity {
             }
         }
     };
-    private NotificationPlayerStateBroadcastReceiver notificationPlayerStateReceiver;
+
+    private Handler pauseWaitHandler = new Handler();
+    private Runnable pauseWaitRunnable = new Runnable() {
+        @Override
+        public void run() {
+
+            //safe check for streaming state [not required...]
+            if (!StreamSharedPref.getInstance(Home.this).getStreamerPlayState()) {
+                resetPlayer();
+                mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+
+            }
+
+        }
+    };
 
 
     @Override
@@ -130,13 +144,12 @@ public class Home extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         Log.d("AnyAudioApp", " [Home] onCreate()");
         setContentView(R.layout.new_home_test_layout);
-
         configureStorageDirectory(savedInstanceState);
         instantiateViews();
         handleMessages();   // message handler on UI thread
         subscribeToFeatureRequestListener();
         loadInitials();
-        postHandlerForUpdate();
+        //postHandlerForUpdate();
 
     }
 
@@ -147,8 +160,11 @@ public class Home extends AppCompatActivity {
 
                 if (!SharedPrefrenceUtils.getInstance(Home.this).getNotifiedForUpdate()) {
 
+                    String downloadUrl = SharedPrefrenceUtils.getInstance(Home.this).getNewUpdateUrl();
+
                     Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
                     updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
+                    updateIntent.putExtra(Constants.KEY_NEW_UPDATE_URL, downloadUrl);
                     updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     Log.d("AnyAudio", " starting activity for update");
                     startActivity(updateIntent);
@@ -166,11 +182,11 @@ public class Home extends AppCompatActivity {
         if (!utils.getFirstPageLoadedStatus()) {
             invokeAction(Constants.ACTION_TYPE_TRENDING);
             utils.setFirstPageLoadedStatus(true);
-            Log.d("HomeTest"," loadInit() Trending ");
+            Log.d("HomeTest", " loadInit() Trending ");
             // start only once
 
         } else {
-            Log.d("HomeTest"," loadInit() Resuming ");
+            Log.d("HomeTest", " loadInit() Resuming ");
             invokeAction(Constants.ACTION_TYPE_RESUME);
         }
 
@@ -798,9 +814,9 @@ public class Home extends AppCompatActivity {
 
             context.registerReceiver(streamProgressUpdateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
 
-                context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
-                context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
-                context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
+            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
+            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
+            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
 
             mStreamUpdateReceiverRegistered = true;
 
@@ -974,13 +990,25 @@ public class Home extends AppCompatActivity {
                                                               // pause
                                                               StreamSharedPref.getInstance(Home.this).setStreamerPlayState(false);
                                                               playPauseStreamBtn.setText(playBtn);
+
+                                                              //handle: On Long time pause: stop streaming
+                                                              pauseWaitHandler.postDelayed(
+                                                                      pauseWaitRunnable,
+                                                                      STREAMING_PAUSED_WAIT_TIMEOUT
+                                                              );
+
+
                                                           } else {
                                                               //play
                                                               StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
                                                               playPauseStreamBtn.setText(pauseBtn);
+
+                                                              //remove callbacks for pause handler(if any)
+                                                              pauseWaitHandler.removeCallbacks(pauseWaitRunnable);
+
                                                           }
 
-                                                         sendPlayerStateToNotificationService(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
+                                                          sendPlayerStateToNotificationService(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
 
                                                           exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
                                                       } else {
@@ -1011,11 +1039,11 @@ public class Home extends AppCompatActivity {
 
     }
 
-    private void sendPlayerStateToNotificationService(boolean streamerPlayState){
+    private void sendPlayerStateToNotificationService(boolean streamerPlayState) {
 
         Intent notificationIntent = new Intent(this, NotificationPlayerService.class);
         notificationIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
-        notificationIntent.putExtra(Constants.PLAYER.EXTRAA_PLAYER_STATE,streamerPlayState);
+        notificationIntent.putExtra(Constants.PLAYER.EXTRAA_PLAYER_STATE, streamerPlayState);
         startService(notificationIntent);
     }
 
@@ -1181,7 +1209,7 @@ public class Home extends AppCompatActivity {
 
             if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
 
-                L.m("Home", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
+                //              L.m("Home", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
                 StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(true);
 
                 if (!isStreaming) {

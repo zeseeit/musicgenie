@@ -77,7 +77,14 @@ Issues:
       [[[Removed]]]
 
 
+[[[[[[[[    FIXED   ]]]]]]]]
+
+2016:12:06
+Whenever a download fails:
+
+        Progress Notification Should Collapse and Error Notification should sustain.
 
 
-
-
+2016:12:19
+When Streaming is paused for long interval, collapse the and stop the player.
+[Fixed]

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_recommendation_themed"
+    android:layout_width="248dp"
+    android:layout_height="248dp"
+    android:layout_gravity="center"
+    android:background="@drawable/recommendations_bg"
+    android:elevation="4dp"
+    tools:context="any.audio.Activity.RecommendationThemed">
+
+    <TextView
+        android:id="@+id/fixedText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="47dp"
+        android:gravity="center_horizontal"
+        android:padding="8dp"
+        android:text="Enjoy Latest"
+        android:textColor="@color/PrimaryColor"
+        android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/recommendationText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/fixedText"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:padding="8dp"
+        android:text="Sanam Re..."
+        android:textColor="@color/AccentColor"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/recommendation_ok_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="16dp"
+        android:background="@drawable/ok_btn_bg"
+        android:gravity="center"
+        android:padding="16dp"
+        android:text="OK"
+        android:textColor="@color/PrimaryColor"
+        android:textSize="16sp" />
+
+</RelativeLayout>

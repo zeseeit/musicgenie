@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "93619712247",
+    "firebase_url": "https://anyaudio-20420.firebaseio.com",
+    "project_id": "anyaudio-20420",
+    "storage_bucket": "anyaudio-20420.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:93619712247:android:5f936ad019fef0f7",
+        "android_client_info": {
+          "package_name": "any.audio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "93619712247-dveg7rqe8e0qcnh9jgj2k4elvvcmo8uc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZdqpWfrmCbteaP3RdHr_XNEje3MItVJ8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
