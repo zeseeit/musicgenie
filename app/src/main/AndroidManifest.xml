@@ -28,11 +28,16 @@
 
         <service android:name=".services.UpdateCheckService" />
         <service android:name=".services.NotificationPlayerService" />
-        <service android:name=".services.AnyAudioFirebaseMessageService">
+
+        <service android:name=".services.AnyAudioFirebaseMessageService"
+            android:enabled="true"
+            android:exported="true">
+
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <service android:name=".services.AnyAudioInstanceIdService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
@@ -42,18 +47,20 @@
         <activity
             android:name=".Activity.ErrorSplash"
             android:label="AnyAudio"
+            android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".Activity.Home"
+            android:hardwareAccelerated="true"
+            android:label="@string/title_activity_home"
             android:screenOrientation="portrait">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <activity
-            android:name=".Activity.Home"
-            android:hardwareAccelerated="true"
-            android:label="@string/title_activity_home"
-            android:screenOrientation="portrait" />
         <activity
             android:name=".Activity.DowloadsActivity"
             android:label="@string/activity_downloads"
@@ -77,9 +84,8 @@
         <activity
             android:name=".Activity.RecommendationThemed"
             android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Dialog">
-        </activity>
-
+            android:theme="@android:style/Theme.Holo.Dialog"></activity>
+        <activity android:name=".Activity.TermsConditionsAcceptance"></activity>
     </application>
 
 </manifest>

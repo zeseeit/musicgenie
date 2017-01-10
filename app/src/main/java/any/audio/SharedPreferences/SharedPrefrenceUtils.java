@@ -206,10 +206,6 @@ public class SharedPrefrenceUtils {
     }
 
 
-    public boolean getOptionsForPushNotificationSound() {
-        return preferences.getBoolean("pushSoundAllowance", true);
-    }
-
     public boolean getOptionsForPushNotification() {
         return preferences.getBoolean("pushNotificationAllowance", true);
     }
@@ -221,5 +217,23 @@ public class SharedPrefrenceUtils {
 
     public boolean getOptionsForPushNotificationSound() {
         return preferences.getBoolean("pushSoundAllowance", true);
+    }
+
+    public void setTermsAccepted(boolean accepted) {
+        editor.putBoolean("terms_acceptance",accepted);
+        editor.commit();
+    }
+
+    public boolean getTermsAccepted() {
+        return preferences.getBoolean("terms_acceptance",false);
+    }
+
+    public void setFcmToken(String token){
+        editor.putString("fcmToken",token);
+        editor.commit();
+    }
+
+    public String getFcmToken(){
+        return preferences.getString("fcmToken","");
     }
 }

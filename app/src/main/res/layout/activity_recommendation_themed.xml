@@ -19,7 +19,8 @@
         android:layout_marginTop="47dp"
         android:gravity="center_horizontal"
         android:padding="8dp"
-        android:text="Enjoy Latest"
+        android:maxLines="4"
+        android:text="Enjoy The Latest Song"
         android:textColor="@color/PrimaryColor"
         android:textSize="14sp" />
 
@@ -29,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/fixedText"
         android:layout_centerVertical="true"
+        android:maxLines="2"
         android:gravity="center"
         android:padding="8dp"
         android:text="Sanam Re..."

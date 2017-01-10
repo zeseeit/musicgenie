@@ -1,4 +1,7 @@
 <resources>
+
+    <string name="banner_ad_unit_id">ca-app-pub-6848758347511349/3530419313</string>
+
     <string name="app_name">AnyAudio</string>
     <string name="break_line">&lt;br /&gt;</string>
     <string name="action_settings">Settings</string>
@@ -21,5 +24,6 @@
     <string name="music_title">Music Title</string>
     <string name="music_thumbnail">Music Thumbnail</string>
     <string name="offstream_message">Thank You</string>
+    <string name="regular_font">regular.ttf</string>
 
 </resources>

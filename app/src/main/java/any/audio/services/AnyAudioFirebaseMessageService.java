@@ -14,7 +14,7 @@ import any.audio.helpers.AnyAudioPushHandler;
 public class AnyAudioFirebaseMessageService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-
+        super.onMessageReceived(remoteMessage);
         Log.d("AnyAudioFirebase", "message rec");
 
         // if payloads available

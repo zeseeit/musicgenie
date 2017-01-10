@@ -1,5 +1,6 @@
 package any.audio.Activity;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -43,6 +44,9 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -112,6 +116,8 @@ public class Home extends AppCompatActivity {
     private NotificationPlayerStateBroadcastReceiver notificationPlayerStateReceiver;
     private long STREAMING_PAUSED_WAIT_TIMEOUT = 2 * 60 * 1000;     // 2 minutes
 
+    private boolean backPressedOnce = false;
+
     private Runnable resumeContentCheckTask = new Runnable() {
         @Override
         public void run() {
@@ -143,6 +149,7 @@ public class Home extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("AnyAudioApp", " [Home] onCreate()");
+        checkPreRequisites();
         setContentView(R.layout.new_home_test_layout);
         configureStorageDirectory(savedInstanceState);
         instantiateViews();
@@ -150,7 +157,22 @@ public class Home extends AppCompatActivity {
         subscribeToFeatureRequestListener();
         loadInitials();
         //postHandlerForUpdate();
+    }
 
+    private void checkPreRequisites() {
+        //Accepted Terms & Conditions
+        if(!SharedPrefrenceUtils.getInstance(this).getTermsAccepted()){
+            startActivity(new Intent(this,TermsConditionsAcceptance.class));
+            finish();
+            return;
+        }
+
+        //Have Working Internet Connection
+        if (!ConnectivityUtils.getInstance(this).isConnectedToNet()){
+            startActivity(new Intent(this,ErrorSplash.class));
+            finish();
+            return;
+        }
     }
 
     private void postHandlerForUpdate() {
@@ -177,6 +199,17 @@ public class Home extends AppCompatActivity {
 
     private void loadInitials() {
 
+        //ads
+        String android_id = Settings.Secure.getString(getContentResolver(),
+                Settings.Secure.ANDROID_ID);
+
+        MobileAds.initialize(this,"ca-app-pub-6848758347511349/3530419313");
+        AdView mAdView = (AdView) findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder()
+                .build();
+
+        mAdView.loadAd(adRequest);
+
         utils = SharedPrefrenceUtils.getInstance(this);
 
         if (!utils.getFirstPageLoadedStatus()) {
@@ -196,6 +229,7 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        backPressedOnce = false;
 
         if (!mReceiverRegistered) {
             registerForStreamUriFetchedBroadcastListen(this);
@@ -210,9 +244,21 @@ public class Home extends AppCompatActivity {
                 streamBottomSheetsVisible = true;
             }
 
+            mStreamUpdateReceiverRegistered = true;
             L.m("Home", "Register Receiver");
         }
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if(!backPressedOnce) {
+            Toast.makeText(this,"Press Back Once More to Exit",Toast.LENGTH_LONG).show();
+            backPressedOnce = true;
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -238,7 +284,11 @@ public class Home extends AppCompatActivity {
     @Override
     protected void onPause() {
         L.m("StreamingHome", "onPause()");
-        super.onPause();
+        if (mStreamUpdateReceiverRegistered) {
+            registerForStreamProgressUpdateBroadcastListen(this);
+            mStreamUpdateReceiverRegistered = false;
+        }
+            super.onPause();
 
 
     }
