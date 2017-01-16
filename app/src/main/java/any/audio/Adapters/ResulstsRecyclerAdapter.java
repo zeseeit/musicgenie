@@ -4,21 +4,28 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Typeface;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.arlib.floatingsearchview.util.Util;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdSize;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Picasso;
 
-import java.io.File;
 import java.util.ArrayList;
 
 import any.audio.Config.Constants;
@@ -26,6 +33,7 @@ import any.audio.Interfaces.FeatureRequestListener;
 import any.audio.Managers.FontManager;
 import any.audio.Models.BaseSong;
 import any.audio.Models.ItemModel;
+import any.audio.Models.PlaylistItem;
 import any.audio.Models.SectionModel;
 import any.audio.Models.ViewTypeModel;
 import any.audio.Network.ConnectivityUtils;
@@ -33,6 +41,7 @@ import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.FileNameReformatter;
+import any.audio.helpers.PlaylistGenerator;
 
 public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -48,6 +57,8 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     private int viewToInflate;
     private FeatureRequestListener featureRequestListener;
     private int mLastAnimatedItemPosition = -1;
+    private static final int TYPE_ADS = 2;
+    private static final int TYPE_BLANK = 3;
 
     public ResulstsRecyclerAdapter(Context context) {
         ResulstsRecyclerAdapter.context = context;
@@ -96,12 +107,27 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private void addItem(BaseSong song, String section) {   //     create view list
 
+        int index = typeViewList.size();
+        int adsPosition = (this.screenMode==Constants.SCREEN_MODE_MOBILE)?4:5;
+
+        if(index==0) {
+            typeViewList.add(new ViewTypeModel(TYPE_BLANK, "", -1));
+            songs.add(null);
+        }
+
+        if (index == adsPosition) {
+            typeViewList.add(new ViewTypeModel(TYPE_ADS, "", -1));
+            songs.add(null);
+        }
+
         if (section.equals("")) {
-            int index = songs.size();
+            int s = songs.size();
+            Log.d("ResultListAdapter","adding songs at index "+s);
             songs.add(song);
-            typeViewList.add(new ViewTypeModel(TYPE_SONG, " ", index));
+            typeViewList.add(new ViewTypeModel(TYPE_SONG, " ", s));
         } else {
             //L.m("Result Adapter"," TypeViewList Addition ->"+section);
+            songs.add(null);
             typeViewList.add(new ViewTypeModel(TYPE_SECTION_TITLE, section, -1));
         }
 
@@ -138,17 +164,47 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         View view;
-        if (viewType == TYPE_SECTION_TITLE) {
-            int hvti = getHeaderViewToInflate();
-            view = LayoutInflater.from(context).inflate(hvti, parent, false);
-            //          L.m("Result Adapter"," sectionTitle");
-            return new SectionTitleViewHolder(view);
-        } else {
-            int vti = getViewToInflate();   // getView depending on screen screen sizes
-            view = LayoutInflater.from(context).inflate(vti, parent, false);
+
+        switch (viewType) {
+
+            case TYPE_SECTION_TITLE:
+                int hvti = getHeaderViewToInflate();
+                view = LayoutInflater.from(context).inflate(hvti, parent, false);
+                //          L.m("Result Adapter"," sectionTitle");
+                return new SectionTitleViewHolder(view);
+            case TYPE_SONG:
+                int vti = getViewToInflate();   // getView depending on screen screen sizes
+                view = LayoutInflater.from(context).inflate(vti, parent, false);
 //            log("returning song item");
-            return new SongViewHolder(view);
+                return new SongViewHolder(view);
+
+            case TYPE_ADS:
+
+                int adi = getAdLayoutToInflate();   // getView depending on screen screen sizes
+                view = LayoutInflater.from(context).inflate(adi, parent, false);
+                return new AdViewHolder(view);
+
+            case TYPE_BLANK:
+
+                int bla = getBlankHeaderViewToInflate();   // getView depending on screen screen sizes
+                view = LayoutInflater.from(context).inflate(bla, parent, false);
+                return new BlankHeaderViewHolder(view);
+
+            default:
+                return null;
         }
+//
+//        if (viewType == TYPE_SECTION_TITLE) {
+//            int hvti = getHeaderViewToInflate();
+//            view = LayoutInflater.from(context).inflate(hvti, parent, false);
+//            //          L.m("Result Adapter"," sectionTitle");
+//            return new SectionTitleViewHolder(view);
+//        } else {
+//            int vti = getViewToInflate();   // getView depending on screen screen sizes
+//            view = LayoutInflater.from(context).inflate(vti, parent, false);
+////            log("returning song item");
+//            return new SongViewHolder(view);
+//        }
     }
 
     private int getViewToInflate() {
@@ -164,16 +220,42 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
+    private int getBlankHeaderViewToInflate() {
+
+        int _temp_header_viewID = R.layout.results_blank_header;
+        return _temp_header_viewID;
+
+    }
+
+    private int getAdLayoutToInflate() {
+        return R.layout.adview_item;
+    }
+
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
 
         Typeface fontawesome = FontManager.getInstance(context).getTypeFace(FontManager.FONT_AWESOME);
         Typeface ralewayTfRegular = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
 
+        if (holder instanceof AdViewHolder) {
+
+            StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
+            layoutParams.setFullSpan(true);
+
+            MobileAds.initialize(context, "ca-app-pub-6848758347511349/3530419313");
+            AdRequest adRequest = new AdRequest.Builder()
+                    .build();
+            ((AdViewHolder) holder).adView.loadAd(adRequest);
+
+        }
+
         if (holder instanceof SongViewHolder) {
 
             // bind section data
             //  log("binding song " + position);
+
+            Log.d("ResultListAdapter","bind songs index "+position);
+
             BaseSong song = songs.get(typeViewList.get(position).index);
             ((SongViewHolder) holder).title.setText(song.Title);
             ((SongViewHolder) holder).uploader.setText(song.UploadedBy);
@@ -181,9 +263,10 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             //            ((SongViewHolder) holder).popMenuBtn.setText("\uF142");
             ((SongViewHolder) holder).content_length.setText(song.TrackDuration);
             // loads thumbnail in async fashion
-            if (connected() && SharedPrefrenceUtils.getInstance(context).getOptionsForThumbnailLoad()) Picasso.with(context)
-                    .load(song.Thumbnail_url)
-                    .into(((SongViewHolder) holder).thumbnail);
+            if (connected() && SharedPrefrenceUtils.getInstance(context).getOptionsForThumbnailLoad())
+                Picasso.with(context)
+                        .load(song.Thumbnail_url)
+                        .into(((SongViewHolder) holder).thumbnail);
 
             // setting typeface to fonta
             ((SongViewHolder) holder).downloadBtn.setTypeface(fontawesome);
@@ -196,7 +279,9 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             ((SongViewHolder) holder).uploader.setTypeface(ralewayTfRegular);
             ((SongViewHolder) holder).views.setTypeface(ralewayTfRegular);
 
-        } else {
+        }
+
+        if(holder instanceof SectionTitleViewHolder){
             // binnd song data
             //log("binding header " + position);
             StaggeredGridLayoutManager.LayoutParams layoutParams = (StaggeredGridLayoutManager.LayoutParams) holder.itemView.getLayoutParams();
@@ -231,6 +316,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     public int getItemViewType(int position) {
 
         return typeViewList.get(position).viewType;
+
     }
 
     public void setOnFeatureRequestListener(FeatureRequestListener listener) {
@@ -283,9 +369,19 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         TextView title;
         TextView views;
         ImageView thumbnail;
+        CardView songCard;
+
 
         public SongViewHolder(View itemView) {
             super(itemView);
+
+            songCard = (CardView) itemView.findViewById(R.id.song_card);
+            int widthPx = (int) SharedPrefrenceUtils.getInstance(context).getScreenWidthPx();
+            int thumbnailHeight = (int) (0.75*widthPx);
+            FrameLayout.LayoutParams thumbnailParams = new FrameLayout.LayoutParams(widthPx,thumbnailHeight);
+
+            songCard.setLayoutParams(new RelativeLayout.LayoutParams(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT));
+
             Typeface fontawesome = FontManager.getInstance(context).getTypeFace(FontManager.FONT_AWESOME);
             Typeface ralewayTfRegular = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
             Typeface ralewayTfBold = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_BOLD);
@@ -297,6 +393,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             views_icon = (TextView) itemView.findViewById(R.id.views_icon);
             // popMenuBtn = (TextView) itemView.findViewById(R.id.popUpMenuIcon);
             thumbnail = (ImageView) itemView.findViewById(R.id.Videothumbnail);
+            thumbnail.setLayoutParams(thumbnailParams);
             streamBtn = (TextView) itemView.findViewById(R.id.stream_btn_card);
 
             streamBtn.setTypeface(material);
@@ -333,13 +430,18 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
                 public void onClick(View view) {
 
                     ResulstsRecyclerAdapter adapter = ResulstsRecyclerAdapter.getInstance(context);
-                    int pos = getAdapterPosition() - 1;
+                    int pos = getAdapterPosition();
+                    Log.d("ResultListAdapter","stream req for index "+pos);
                     String v_id = adapter.songs.get(pos).Video_id;
+
+                    PlaylistGenerator.getInstance(context).preparePlaylist(v_id);
+
                     String file_name = adapter.songs.get(pos).Title;
                     String thumb_uri = adapter.songs.get(pos).Thumbnail_url;
                     String subTitle = adapter.songs.get(pos).UploadedBy;
                     StreamSharedPref.getInstance(context).setStreamTitle(file_name);
-                    Log.d("StreamingHome"," setting thumb uri "+thumb_uri);
+                    Log.d("StreamHome","v_id "+v_id);
+                    Log.d("StreamingHome", " setting thumb uri " + thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
                     adapter.requestStream(v_id, file_name);
@@ -351,9 +453,25 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
         }
 
 
-
-
     }
 
+    public static class AdViewHolder extends RecyclerView.ViewHolder {
+
+        AdView adView;
+
+        public AdViewHolder(View itemView) {
+            super(itemView);
+            adView = (AdView) itemView.findViewById(R.id.adView);
+
+        }
+    }
+
+    public static class BlankHeaderViewHolder extends RecyclerView.ViewHolder {
+
+        public BlankHeaderViewHolder(View itemView) {
+            super(itemView);
+
+        }
+    }
 
 }

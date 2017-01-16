@@ -2,18 +2,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#f4f4f4"
     xmlns:ads="http://schemas.android.com/apk/res-auto">
-
-    <FrameLayout
-        android:id="@+id/wrapper"
-        android:background="@color/PrimaryColor"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/searchview_wrapper_height">
-    </FrameLayout>
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/content_refresser"
-        android:layout_below="@+id/wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -29,6 +22,13 @@
         />
 
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <FrameLayout
+        android:id="@+id/wrapper"
+        android:background="@color/PrimaryColor"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/searchview_wrapper_height">
+    </FrameLayout>
 
     <ProgressBar
         android:indeterminateBehavior="cycle"

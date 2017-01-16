@@ -1,0 +1,6 @@
+> check for end of streaming
+> check point of start streaming on uri fetched
+> there should not be long wait while starting next audio
+> so start fetching upNext url if time-to-end is < 5-10 sec
+> store the next url and as soon as first stream ends, play next one.
+> if next is clicked by force, perform normal stream over upNext url.

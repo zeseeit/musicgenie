@@ -7,25 +7,6 @@
 
     <include layout="@layout/content_layout_main"/>
 
-    <LinearLayout
-        android:background="#009988"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/linearLayout">
-
-        <com.google.android.gms.ads.AdView
-            android:id="@+id/adView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            ads:adSize="280x100"
-            ads:adUnitId="@string/banner_ad_unit_id">
-        </com.google.android.gms.ads.AdView>
-
-    </LinearLayout>
-
     <com.arlib.floatingsearchview.FloatingSearchView
         android:paddingTop="4dp"
         android:layout_marginLeft="4dp"

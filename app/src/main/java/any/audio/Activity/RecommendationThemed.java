@@ -61,6 +61,7 @@ public class RecommendationThemed extends Activity {
         bundle.putString("push_type", Constants.PUSH.PUSH_TYPE_RECOMMENDATIONS);
         bundle.putString("search_term", term);
         homeItent.putExtras(bundle);
+        homeItent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(homeItent);
         finish();
 

@@ -1,15 +1,16 @@
 package any.audio.Activity;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
+import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -26,10 +27,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.Display;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.DecelerateInterpolator;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,13 +51,11 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Map;
 
 import any.audio.Adapters.ResulstsRecyclerAdapter;
 import any.audio.Centrals.CentralDataRepository;
@@ -58,6 +63,7 @@ import any.audio.Config.AppConfig;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.FeatureRequestListener;
 import any.audio.Managers.FontManager;
+import any.audio.Models.PlaylistItem;
 import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Models.SearchSuggestion;
 import any.audio.Models.SectionModel;
@@ -68,6 +74,7 @@ import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.L;
 import any.audio.helpers.MusicStreamer;
+import any.audio.helpers.PlaylistGenerator;
 import any.audio.helpers.SearchSuggestionHelper;
 import any.audio.helpers.TaskHandler;
 import any.audio.services.NotificationPlayerService;
@@ -110,6 +117,7 @@ public class Home extends AppCompatActivity {
     private boolean streamBottomSheetsVisible = false;
     private View mBottomSheet;
     private BottomSheetBehavior mStreamingBottomSheetBehavior;
+    private FrameLayout wrapper;
     private ProgressDialog progressDialog;
     private boolean isStreaming = false;
     private long DELAYED_POST_APP_UPDATE = 1 * 1000;
@@ -143,12 +151,13 @@ public class Home extends AppCompatActivity {
 
         }
     };
-
+    private int UP_NEXT_PREPARE_TIME_OFFSET = 50000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("AnyAudioApp", " [Home] onCreate()");
+        handleIntent();
         checkPreRequisites();
         setContentView(R.layout.new_home_test_layout);
         configureStorageDirectory(savedInstanceState);
@@ -159,17 +168,24 @@ public class Home extends AppCompatActivity {
         //postHandlerForUpdate();
     }
 
+    private void handleIntent() {
+        if (getIntent().getExtras() != null) {
+            String search_term = getIntent().getExtras().getString("search_term");
+            fireSearch(search_term);
+        }
+    }
+
     private void checkPreRequisites() {
         //Accepted Terms & Conditions
-        if(!SharedPrefrenceUtils.getInstance(this).getTermsAccepted()){
-            startActivity(new Intent(this,TermsConditionsAcceptance.class));
+        if (!SharedPrefrenceUtils.getInstance(this).getTermsAccepted()) {
+            startActivity(new Intent(this, TermsConditionsAcceptance.class));
             finish();
             return;
         }
 
         //Have Working Internet Connection
-        if (!ConnectivityUtils.getInstance(this).isConnectedToNet()){
-            startActivity(new Intent(this,ErrorSplash.class));
+        if (!ConnectivityUtils.getInstance(this).isConnectedToNet()) {
+            startActivity(new Intent(this, ErrorSplash.class));
             finish();
             return;
         }
@@ -202,13 +218,6 @@ public class Home extends AppCompatActivity {
         //ads
         String android_id = Settings.Secure.getString(getContentResolver(),
                 Settings.Secure.ANDROID_ID);
-
-        MobileAds.initialize(this,"ca-app-pub-6848758347511349/3530419313");
-        AdView mAdView = (AdView) findViewById(R.id.adView);
-        AdRequest adRequest = new AdRequest.Builder()
-                .build();
-
-        mAdView.loadAd(adRequest);
 
         utils = SharedPrefrenceUtils.getInstance(this);
 
@@ -253,8 +262,8 @@ public class Home extends AppCompatActivity {
     @Override
     public void onBackPressed() {
 
-        if(!backPressedOnce) {
-            Toast.makeText(this,"Press Back Once More to Exit",Toast.LENGTH_LONG).show();
+        if (!backPressedOnce) {
+            Toast.makeText(this, "Press Back Once More to Exit", Toast.LENGTH_LONG).show();
             backPressedOnce = true;
             return;
         }
@@ -288,7 +297,7 @@ public class Home extends AppCompatActivity {
             registerForStreamProgressUpdateBroadcastListen(this);
             mStreamUpdateReceiverRegistered = false;
         }
-            super.onPause();
+        super.onPause();
 
 
     }
@@ -599,6 +608,7 @@ public class Home extends AppCompatActivity {
 
             MusicStreamer
                     .getInstance(Home.this)
+                    .setBroadcastMode(true)
                     .setData(v_id, stuff)
                     .setOnStreamUriFetchedListener(streamUriFetchedListener)
                     .initProcess();
@@ -658,13 +668,44 @@ public class Home extends AppCompatActivity {
         mRecyclerView.setAdapter(mRecyclerAdapter);
     }
 
+    private void recordScreenProp(int cols) {
+
+        Display display = getWindowManager().getDefaultDisplay();
+        DisplayMetrics outMetrics = new DisplayMetrics();
+        display.getMetrics(outMetrics);
+        float density = getResources().getDisplayMetrics().density;
+        float screenWidthDP = outMetrics.widthPixels / density;
+        Log.i("Home", "Screen Width " + screenWidthDP);
+
+        Resources r = getResources();
+        float card_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenWidthDP, r.getDisplayMetrics());
+        float space_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, r.getDisplayMetrics());
+        float songCardWidth = 0;
+
+        if (cols == 2) {
+            songCardWidth = (card_px - space_px * 3) / 2; // 3*4dp for spaces
+        }
+        if (cols == 3) {
+            songCardWidth = (card_px - space_px * 4) / 3; // 4 * 4dp for spaces
+        }
+
+        SharedPrefrenceUtils.getInstance(this).setSongCardWidthDp(songCardWidth);
+        SharedPrefrenceUtils.getInstance(this).setCols(cols);
+        SharedPrefrenceUtils.getInstance(this).setAdWidth(screenWidthDP);
+    }
+
     private void instantiateViews() {
 
         int maxCols = (isPortrait(getOrientation())) ? ((screenMode() == Constants.SCREEN_MODE_MOBILE) ? 2 : 3) : 4;
+        recordScreenProp(maxCols);
+
+        wrapper = (FrameLayout) findViewById(R.id.wrapper);
         swipeRefressLayout = (SwipeRefreshLayout) findViewById(R.id.content_refresser);
         mRecyclerView = (RecyclerView) findViewById(R.id.trendingRecylerView);
         layoutManager = new StaggeredGridLayoutManager(maxCols, 1);
+        layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         mRecyclerAdapter = ResulstsRecyclerAdapter.getInstance(this);
+        mRecyclerAdapter.setScreenMode(screenMode());
         mRecyclerView.setLayoutManager(layoutManager);
         progressBar = (ProgressBar) findViewById(R.id.homeProgressBar);
         progressBarMsgPanel = (TextView) findViewById(R.id.ProgressMsgPanel);
@@ -679,6 +720,34 @@ public class Home extends AppCompatActivity {
 
         plugAdapter();
         setSearchView();
+        setHideAnimation();
+
+    }
+
+    private void setHideAnimation() {
+
+        final RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+
+        mRecyclerView.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+
+                if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+
+                    recyclerView.setLayoutParams(params);
+                    searchView.animate().translationY(0).setDuration(300).setInterpolator(new DecelerateInterpolator(0.3f));
+                    wrapper.animate().translationY(0).setDuration(300).setInterpolator(new DecelerateInterpolator(0.3f));
+
+                } else {
+
+                    recyclerView.setLayoutParams(params);
+
+                    searchView.animate().translationY(-wrapper.getHeight()).setDuration(100);
+                    wrapper.animate().translationY(-wrapper.getHeight()).setDuration(100);
+                }
+
+            }
+        });
     }
 
     private boolean isPortrait(int orientation) {
@@ -701,6 +770,7 @@ public class Home extends AppCompatActivity {
     }
 
     public void setSearchView() {
+
         searchView = (FloatingSearchView) findViewById(R.id.floating_search_view);
         searchView.setOnQueryChangeListener(new FloatingSearchView.OnQueryChangeListener() {
 
@@ -754,8 +824,8 @@ public class Home extends AppCompatActivity {
                 //stop futhur suggestion requests
 
                 SearchSuggestionHelper.getInstance(Home.this).cancelFuthurRequestUntilQueryChange();
-
                 fireSearch(searchSuggestion.getBody());
+
             }
 
             @Override
@@ -985,7 +1055,7 @@ public class Home extends AppCompatActivity {
         String uri = StreamSharedPref.getInstance(Home.this).getStreamThumbnailUrl();
         String streamFileName = StreamSharedPref.getInstance(Home.this).getStreamTitle();
 
-        Log.d("StreamingHome", " thumb from " + uri);
+        Log.d("PlaylistTest", " thumb from " + uri);
         Picasso.with(Home.this).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
         streamingSongTitle.setText(streamFileName);
         streamDuration.setText(" | 00:00");
@@ -1002,6 +1072,13 @@ public class Home extends AppCompatActivity {
         streamingSongTitle.setTypeface(mTypefaceRaleway);
         // material icons
         playPauseStreamBtn.setTypeface(mTypefaceMaterial);
+
+        streamingThumbnail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                streamNext();
+            }
+        });
 
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -1135,7 +1212,6 @@ public class Home extends AppCompatActivity {
 
         }
 
-
         @Override
         public void run() {
             Looper.prepare();
@@ -1194,6 +1270,7 @@ public class Home extends AppCompatActivity {
 
             audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
             // Prepare ExoPlayer
+
             exoPlayer.prepare(audioRenderer);
             exoPlayer.setPlayWhenReady(true);
             StreamSharedPref.getInstance(context).setStreamerPlayState(true);
@@ -1225,6 +1302,26 @@ public class Home extends AppCompatActivity {
                 playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
                 playerContentDuration = (int) exoPlayer.getDuration();
 
+
+                if (playerContentDuration != -1) {
+                    if (playerCurrentPositon >= playerContentDuration) {
+                        Log.d("PlaylistText"," releasing and stoping exoplayer");
+                        exoPlayer.setPlayWhenReady(false);
+                        exoPlayer.release();
+                        exoPlayer.stop();
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                playNext();
+                            }
+                        });
+
+                        StreamSharedPref.getInstance(Home.this).setStreamState(false);
+                        break;
+                    }
+                }
+
                 if (exoPlayer.getPlayWhenReady()) {
                     Log.d("ExoPlayer", " broadcasting progress");
                     broadcastStreamProgresUpdate(
@@ -1238,11 +1335,6 @@ public class Home extends AppCompatActivity {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }
-
-
-                if (playerContentDuration != -1) {
-                    if (playerCurrentPositon >= playerContentDuration) break;
                 }
 
             }
@@ -1259,7 +1351,7 @@ public class Home extends AppCompatActivity {
 
             if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
 
-                //              L.m("Home", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
+                L.m("PlaylistTest", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
                 StreamSharedPref.getInstance(Home.this).setStreamUrlFetchedStatus(true);
 
                 if (!isStreaming) {
@@ -1306,14 +1398,58 @@ public class Home extends AppCompatActivity {
                         try {
 
                             String trackLen = getTimeFromMillisecond(contentLen);
+
                             if (contentLen > 0 && buffered > 0) {
+
                                 if (indeterminateProgressBar.getVisibility() == View.VISIBLE) {
                                     indeterminateProgressBar.setVisibility(View.INVISIBLE);
                                     seekbar.setVisibility(View.VISIBLE);
                                     playPauseStreamBtn.setVisibility(View.VISIBLE);
-
                                     StreamSharedPref.getInstance(Home.this).setStreamContentLength(trackLen);
                                     startNotificationService();
+                                }
+                                // for preparing upNext
+//                                Log.d("PlaylistTest", " diff : " + (contentLen - progress));
+//                                Log.d("PlaylistTest", " nextStreamUrl " + utils.getNextStreamUrl());
+//                                Log.d("PlaylistTest", " streamFetchInProgress " + utils.isStreamUrlFetcherInProgress());
+
+                                if (utils.getNextStreamUrl().length() == 0 && !utils.isStreamUrlFetcherInProgress() && (contentLen - progress) < UP_NEXT_PREPARE_TIME_OFFSET) {
+
+                                    Log.d("PlaylistTest", "pre-ready:>starting fetching next Stream Url");
+                                    utils.setStreamUrlFetcherInProgress(true);
+
+                                    // get next play details
+
+                                    PlaylistItem nxtItem = PlaylistGenerator.getInstance(Home.this).getUpNext();
+
+                                    String nextVid = nxtItem.videoId;
+                                    String nextVidTitle = nxtItem.title;
+                                    String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
+                                    String upNextArtist = nxtItem.uploader;
+
+
+                                    utils.setNextVId(nextVid);
+                                    utils.setNextStreamTitle(nextVidTitle);
+
+                                    // set data ready for notification and bottom sheets
+                                    StreamSharedPref.getInstance(Home.this).setStreamThumbnailUrl(upNextThumbnailUrl);
+                                    StreamSharedPref.getInstance(Home.this).setStreamTitle(nextVidTitle);
+                                    StreamSharedPref.getInstance(Home.this).setStreamSubTitle(upNextArtist);
+
+                                    MusicStreamer
+                                            .getInstance(Home.this)
+                                            .setData(nextVid, nextVidTitle)
+                                            .setBroadcastMode(false)
+                                            .setOnStreamUriFetchedListener(new MusicStreamer.OnStreamUriFetchedListener() {
+                                                @Override
+                                                public void onUriAvailable(String uri) {
+                                                    Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);
+                                                        //this is first time stream url fetch
+                                                        utils.setStreamUrlFetcherInProgress(false);
+                                                        utils.setNextStreamUrl(uri);
+                                                }
+                                            })
+                                            .initProcess();
                                 }
 
                             }
@@ -1333,14 +1469,6 @@ public class Home extends AppCompatActivity {
                         }
                     }
                 }
-
-                //WTD: hide stream bar when player reached last of track
-                if (contentLen <= progress && contentLen >= 0) {
-                    hideStreamSheet(getString(R.string.offstream_message));
-                    // hide notification
-
-                }
-
 
             }
         }
@@ -1378,6 +1506,91 @@ public class Home extends AppCompatActivity {
                 }
             }
 
+        }
+    }
+
+    private void playNext() {
+
+        String nextStreamUrl = utils.getNextStreamUrl();
+        Log.d("PlaylistTest", "normal upNext:> restarting next");
+
+        mStreamingBottomSheetBehavior.setPeekHeight(0);
+        prepareBottomStreamSheet();
+
+        Log.d("PlaylistTest"," starting next stream url "+nextStreamUrl);
+        if (nextStreamUrl.length() > 0) {
+
+            utils.resetPlaylistData();
+            new MusicGenieMediaPlayer(Home.this, nextStreamUrl).start();
+
+        } else {
+            hideStreamSheet("Thanks...");
+        }
+
+    }
+
+    private String getImageUrl(String vid) {
+        //return "https://i.ytimg.com/vi/kVgKfScL5yk/hqdefault.jpg";
+        return "https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";  // additional query params => ?custom=true&w=240&h=256
+    }
+
+    private void streamNext() {
+
+        long diff;
+        if (exoPlayer != null) {
+
+            exoPlayer.setPlayWhenReady(false);
+            exoPlayer.stop();
+            exoPlayer.release();
+            L.m("PlaylistTest", "Player Released");
+
+            StreamSharedPref.getInstance(Home.this).setStreamState(false);
+
+            PlaylistItem nxtItem = PlaylistGenerator.getInstance(this).getUpNext();
+
+            String upNextVid = nxtItem.videoId;
+            String upNextTitle = nxtItem.title;
+            String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
+            String upNextArtist = nxtItem.uploader;
+
+            Log.d("PlaylistTest", "nextVid:=" + upNextVid + " nextTitle:=" + upNextTitle);
+
+            utils.setNextVId(upNextVid);
+            utils.setNextStreamTitle(upNextTitle);
+
+            diff = exoPlayer.getDuration() - exoPlayer.getCurrentPosition();
+
+            if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
+                L.m("PlaylistTest", "diff : " + diff);
+                // means stream fetcher not in progress
+                StreamSharedPref.getInstance(Home.this).setStreamThumbnailUrl(upNextThumbnailUrl);
+                StreamSharedPref.getInstance(Home.this).setStreamTitle(upNextTitle);
+                StreamSharedPref.getInstance(Home.this).setStreamSubTitle(upNextArtist);
+
+                Log.d("PlaylistTest", "starting normal stream..");
+                onYesStreamRequested(upNextVid, upNextTitle);
+
+            } else {
+
+                // means stream fetcher is in progress or has finished
+                boolean isFetcherInProgress = utils.isStreamUrlFetcherInProgress();
+                String nextStreamUrl = utils.getNextStreamUrl();
+
+                if (nextStreamUrl.length() > 0) {
+
+                    playNext();
+
+                } else {
+
+                    if (!isFetcherInProgress) {
+                        // some network issue caused the url fetcher to stop its fetching task
+                        onYesStreamRequested(upNextVid, upNextTitle);
+
+                    }else{
+                        // no cases possible
+                    }
+                }
+            }
         }
     }
 

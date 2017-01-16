@@ -40,6 +40,7 @@ public class MusicStreamer {
     private OnStreamUriFetchedListener onStreamUriFetchedListener;
     private int SERVER_TIMEOUT_LIMIT = 1 * 60 * 1000;       // 1 min
     private String STREAM_URL_REQUEST_TAG_VOLLEY = "volley_request_tag";
+    private boolean doBroadcast = false;
 
 
     public MusicStreamer(Context context) {
@@ -82,64 +83,72 @@ public class MusicStreamer {
         Log.d(TAG, "log " + s);
     }
 
+    public MusicStreamer setBroadcastMode(boolean shouldBroadcast) {
+        this.doBroadcast = shouldBroadcast;
+        return this;
+    }
+
     public interface OnStreamUriFetchedListener {
         void onUriAvailable(String uri);
     }
 
-    private class StreamThread extends Thread {
-
-        private String v_id;
-        private String file;
-
-        public StreamThread(String v_id, String file) {
-            this.v_id = v_id;
-            this.file = file;
-        }
-
-        @Override
-        public void run() {
-
-            final String t_v_id = this.v_id;
-            String streaming_url_pref = Constants.SERVER_URL;
-
-            try {
-
-                String _url = Constants.SERVER_URL + "/api/v1/stream?url=" + t_v_id;
-                L.m("MusicStream", " Requesting for stream url - req on -" + _url);
-                URL u = new URL(_url);
-                URLConnection dconnection = u.openConnection();
-                dconnection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
-                dconnection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
-                dconnection.connect();
-                StringBuilder result = new StringBuilder();
-                InputStream in = new BufferedInputStream(dconnection.getInputStream());
-                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    result.append(line);
-                }
-                try {
-                    JSONObject obj = new JSONObject(result.toString());
-                    if (obj.getInt("status") == 200) {
-                        streaming_url_pref += obj.getString("url");
-                        L.m("MusicStream", "stream Url " + streaming_url_pref);
-                        onStreamUriFetchedListener.onUriAvailable(streaming_url_pref);
-                        broadcastURI(streaming_url_pref, file);
-                    } else {
-
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (MalformedURLException e) {
-                //                   log("URL exception " + e);
-                L.m("MusicStream", "URL exc");
-            } catch (IOException e) {
-                L.m("MusicStream", "IO exc " + e.toString());
-                broadcastURI(Constants.STREAM_PREPARE_FAILED_URL_FLAG, file);
-            }
-        }
-    }
+//    private class StreamThread extends Thread {
+//
+//        private String v_id;
+//        private String file;
+//
+//        public StreamThread(String v_id, String file) {
+//            this.v_id = v_id;
+//            this.file = file;
+//        }
+//
+//        @Override
+//        public void run() {
+//
+//            final String t_v_id = this.v_id;
+//            String streaming_url_pref = Constants.SERVER_URL;
+//
+//            try {
+//
+//                String _url = Constants.SERVER_URL + "/api/v1/stream?url=" + t_v_id;
+//                L.m("MusicStream", " Requesting for stream url - req on -" + _url);
+//                URL u = new URL(_url);
+//                URLConnection dconnection = u.openConnection();
+//                dconnection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
+//                dconnection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
+//                dconnection.connect();
+//                StringBuilder result = new StringBuilder();
+//                InputStream in = new BufferedInputStream(dconnection.getInputStream());
+//                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+//                String line;
+//                while ((line = reader.readLine()) != null) {
+//                    result.append(line);
+//                }
+//                try {
+//                    JSONObject obj = new JSONObject(result.toString());
+//                    if (obj.getInt("status") == 200) {
+//                        streaming_url_pref += obj.getString("url");
+//                        L.m("MusicStream", "stream Url " + streaming_url_pref);
+//                        onStreamUriFetchedListener.onUriAvailable(streaming_url_pref);
+//
+//                        if(doBroadcast)
+//                            broadcastURI(streaming_url_pref, file);
+//
+//                    } else {
+//
+//                    }
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            } catch (MalformedURLException e) {
+//                //                   log("URL exception " + e);
+//                L.m("MusicStream", "URL exc");
+//            } catch (IOException e) {
+//                L.m("MusicStream", "IO exc " + e.toString());
+//                broadcastURI(Constants.STREAM_PREPARE_FAILED_URL_FLAG, file);
+//            }
+//        }
+//    }
 
     private void requestStreamUrlUsingVolley(final String v_id) {
 
@@ -154,7 +163,7 @@ public class MusicStreamer {
         final String t_v_id = v_id;
         final String streaming_url_pref = Constants.SERVER_URL;
         String url = Constants.SERVER_URL + "/api/v1/stream?url=" + t_v_id;
-
+        Log.d("MusicStream"," requesting url for stream on:"+url) ;
         StringRequest updateCheckReq = new StringRequest(
                 Request.Method.GET,
                 url,
@@ -168,8 +177,10 @@ public class MusicStreamer {
                             if (obj.getInt("status") == 200) {
 
                                 L.m("MusicStream", "stream Url " + streaming_url_pref);
-                                onStreamUriFetchedListener.onUriAvailable(streaming_url_pref);
-                                broadcastURI(streaming_url_pref + obj.getString("url"), file);
+                                onStreamUriFetchedListener.onUriAvailable(streaming_url_pref+obj.getString("url"));
+
+                                if(doBroadcast)
+                                   broadcastURI(streaming_url_pref + obj.getString("url"), file);
 
                             }
                         } catch (JSONException e) {

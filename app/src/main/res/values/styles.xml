@@ -17,6 +17,11 @@
         <item name="metaButtonBarButtonStyle">@style/ButtonBarButton</item>
     </style>
 
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/anyaudio_theme_splash</item>
+    </style>
+
+
     <!--<style name="Theme.Transparent" parent="android:Theme">-->
         <!--<item name="android:windowIsTranslucent">true</item>-->
         <!--<item name="android:windowBackground">@android:color/transparent</item>-->

@@ -236,4 +236,113 @@ public class SharedPrefrenceUtils {
     public String getFcmToken(){
         return preferences.getString("fcmToken","");
     }
+
+    public void setSongCardWidthDp(float screenWidthDP) {
+        editor.putFloat("screenWidth",screenWidthDP);
+        editor.commit();
+    }
+
+    public float getScreenWidthPx(){
+        return preferences.getFloat("screenWidth",0);
+    }
+
+    public void setCols(int cols) {
+        editor.putInt("cols",cols);
+        editor.commit();
+    }
+
+    public int getCols(){
+        return preferences.getInt("cols",2);
+    }
+
+    public void setAdWidth(float screenWidthDP) {
+        editor.putFloat("adWidth",screenWidthDP);
+        editor.commit();
+    }
+
+    public float getAdWidth(){
+        return preferences.getFloat("adWidth",0);
+    }
+
+    public String getPlaylistVideoId() {
+        return preferences.getString("playlist","");
+    }
+
+    public void setPlaylistVideoId(String playlistVideoIds){
+        editor.putString("playlist",playlistVideoIds);
+        editor.commit();
+    }
+
+    public boolean isStreamUrlFetcherInProgress() {
+        return preferences.getBoolean("fetcherAtWork",false);
+    }
+
+    public void setStreamUrlFetcherInProgress(boolean state){
+
+        editor.putBoolean("fetcherAtWork",state);
+        editor.commit();
+
+    }
+
+    public String getNextStreamUrl() {
+        return preferences.getString("upNextStreamUrl","");
+    }
+
+    public void setNextStreamUrl(String url){
+        editor.putString("upNextStreamUrl",url);
+        editor.commit();
+    }
+
+    public String getNextVId() {
+        return preferences.getString("nvid","");
+    }
+
+    public void setNextVId(String vId){
+        editor.putString("nvid",vId);
+        editor.commit();
+    }
+
+
+    public String getNextStreamTitle() {
+        return preferences.getString("nvt","");
+    }
+
+    public void setNextStreamTitle(String title){
+        editor.putString("nvt",title);
+        editor.commit();
+    }
+
+    public void resetPlaylistData() {
+        setNextStreamUrl("");
+        setNextStreamTitle("");
+        setNextVId("");
+    }
+
+    public String getPlaylistVideoTitles() {
+        return preferences.getString("vtitles","");
+    }
+
+    public void setPlaylistVideoTitles(String titles){
+        editor.putString("vtitles",titles);
+        editor.commit();
+    }
+
+    public String getPlaylistYoutubeId() {
+        return preferences.getString("yids","");
+    }
+
+    public void setPlaylistYoutubeId(String newIds){
+        editor.putString("yids",newIds);
+        editor.commit();
+    }
+
+    public String getPlaylistUploaders() {
+        return preferences.getString("uploaders","");
+    }
+
+    public void setPlaylistUploaders(String uploaders){
+        editor.putString("uploaders",uploaders);
+        editor.commit();
+    }
 }
+

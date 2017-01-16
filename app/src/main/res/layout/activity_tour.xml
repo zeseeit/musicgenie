@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_tour"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#008888"
+    tools:context="any.audio.Activity.TourActivity">
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/tourPager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+
+        <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:progress="100"
+            android:max="400"
+            android:progressTint="@color/PrimaryColorDark"
+            android:id="@+id/progressBar"
+            android:layout_above="@+id/btn_next"
+            android:layout_weight="1" />
+
+
+    <Button
+        android:id="@+id/btn_next"
+        android:padding="4dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:background="@null"
+        android:text="NEXT"
+        android:textColor="@android:color/white" />
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="wrap_content"
+        android:padding="4dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:background="@null"
+        android:text="BACK"
+        android:textColor="@android:color/white" />
+
+
+</RelativeLayout>

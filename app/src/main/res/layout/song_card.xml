@@ -1,191 +1,146 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:cardView="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/song_card"
-    android:layout_width="@dimen/song_card_width"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/song_card_margin_bottom"
-    android:layout_marginLeft="@dimen/song_card_margin_left"
-    android:layout_marginRight="@dimen/song_card_margin_right"
-    android:background="@color/PrimaryColor"
-    android:elevation="0dp"
-    cardView:cardCornerRadius="1dp">
+    android:background="@drawable/song_card_bg"
+    android:elevation="2dp">
 
     <RelativeLayout
+        android:id="@+id/song_card_wrapper"
+        android:layout_width="@dimen/song_card_width"
+        android:layout_marginBottom="@dimen/song_card_margin_bottom"
+        android:layout_marginLeft="@dimen/song_card_margin_left"
+        android:layout_marginRight="@dimen/song_card_margin_right"
+        android:layout_height="wrap_content">
+
+    <FrameLayout
+        android:id="@+id/topWrapper"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <RelativeLayout
-            android:id="@+id/thumbnailFrame"
-            android:layout_width="@dimen/song_card_width"
-            android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/Videothumbnail"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/song_thumb_height"
+            android:background="@color/thumbnail_placeholder_color" />
 
-            <ImageView
-                android:id="@+id/Videothumbnail"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/song_thumb_height" />
+        <TextView
+            android:id="@+id/download_btn_card"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_gravity="center"
+            android:background="@drawable/download_btn_on_card"
+            android:gravity="center"
+            android:text=""
+            android:textColor="#ffffff"
+            android:textSize="@dimen/download_button_text_size" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/song_thumb_height">
+        <TextView
+            android:id="@+id/song_time_length"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginBottom="8dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/DownloadButtonColor"
+            android:paddingBottom="@dimen/time_stamp_padding_bottom"
+            android:paddingLeft="@dimen/time_stamp_padding_left"
+            android:paddingRight="@dimen/time_stamp_margin_right"
+            android:text="02:10"
+            android:textColor="@color/White"
+            android:textSize="@dimen/time_stamp_text_size" />
 
-                <TextView
-                    android:id="@+id/stream_btn_card"
-                    android:layout_width="@dimen/stream_button_text_height"
-                    android:layout_height="@dimen/stream_button_text_width"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="30dp"
-                    android:background="@drawable/stream_btn_on_card"
-                    android:gravity="center"
-                    android:text=""
-                    android:textColor="#ffffff"
-                    android:textSize="@dimen/stream_button_text_size" />
 
-                <TextView
-                    android:id="@+id/download_btn_card"
-                    android:layout_width="@dimen/download_button_dimen"
-                    android:layout_height="@dimen/download_button_dimen"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="@dimen/donwload_button_margin_left"
-                    android:background="@drawable/download_btn_on_card"
-                    android:gravity="center"
-                    android:text=""
-                    android:textColor="#ffffff"
-                    android:textSize="@dimen/download_button_text_size" />
+    </FrameLayout>
 
-                <TextView
-                    android:id="@+id/song_time_length"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|bottom"
-                    android:layout_marginBottom="@dimen/time_stamp_margin_bottom"
-                    android:layout_marginRight="@dimen/time_stamp_margin_right"
-                    android:background="@color/DownloadButtonColor"
-                    android:paddingBottom="@dimen/time_stamp_padding_bottom"
-                    android:paddingLeft="@dimen/time_stamp_padding_left"
-                    android:paddingRight="@dimen/time_stamp_margin_right"
-                    android:text="02:10"
-                    android:textColor="@color/White"
-                    android:textSize="@dimen/time_stamp_text_size" />
+    <RelativeLayout
+        android:id="@+id/bottomWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/topWrapper"
+        android:layout_marginTop="4dp"
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="4dp">
 
-            </FrameLayout>
-
-        </RelativeLayout>
-        <LinearLayout
+        <TextView
+            android:id="@+id/song_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/thumbnailFrame"
-            android:orientation="vertical"
-            android:padding="@dimen/song_card_meta_data_holder_padding">
+            android:layout_marginBottom="4dp"
+            android:gravity="center_vertical"
+            android:lines="2"
+            android:maxLines="2"
+            android:padding="4dp"
+            android:text="Set Fire To Rain\n - Adele"
+            android:textColor="@color/TitleColor"
+            android:textSize="@dimen/song_card_tittle_text_size" />
 
-            <FrameLayout
-                android:layout_marginTop="@dimen/song_card_title_frame_margin_top"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:paddingLeft="@dimen/song_card_title_frame_padding_left"
-                android:paddingRight="@dimen/song_card_title_frame_padding_right"
-                >
+        <TextView
+            android:id="@+id/uploader_icon"
+            android:layout_width="@dimen/song_card_uploader_icon_width"
+            android:layout_height="@dimen/song_card_uploader_icon_width"
+            android:layout_below="@+id/song_title"
+            android:layout_marginRight="@dimen/song_card_uploader_icon_margin_right"
+            android:padding="2dp"
+            android:text=""
+            android:textColor="@color/DownloadButtonColor"
+            android:textSize="@dimen/song_card_uploader_icon_text_size" />
 
-                <TextView
-                    android:id="@+id/song_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:lines="2"
-                    android:maxLines="2"
-                    android:text="Set Fire To Rain\n - Adele"
-                    android:textColor="@color/TitleColor"
-                    android:textSize="@dimen/song_card_tittle_text_size" />
+        <TextView
+            android:id="@+id/uploader_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/song_title"
+            android:layout_toRightOf="@+id/uploader_icon"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:maxLength="8"
+            android:maxLines="1"
+            android:text="Adele"
+            android:textColor="@color/PrimaryColor"
+            android:textSize="@dimen/song_card_uploader_text_size" />
 
-            </FrameLayout>
+        <TextView
+            android:id="@+id/views_icon"
+            android:layout_width="@dimen/song_card_views_icon_dimen"
+            android:layout_height="@dimen/song_card_views_icon_dimen"
+            android:layout_below="@+id/uploader_icon"
+            android:layout_marginRight="@dimen/song_card_views_icon_margin_right"
+            android:layout_marginTop="2dp"
+            android:padding="2dp"
+            android:text=""
+            android:textColor="@color/DownloadButtonColor"
+            android:textSize="@dimen/song_card_views_icon_text_size" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:orientation="horizontal"
-                android:weightSum="6">
+        <TextView
+            android:id="@+id/views_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/uploader_name"
+            android:layout_marginTop="2dp"
+            android:layout_toRightOf="@+id/views_icon"
+            android:lines="1"
+            android:maxLines="1"
+            android:text="100,000 views"
+            android:textColor="@color/PrimaryColor"
+            android:textSize="@dimen/song_card_views_text_size" />
 
-                <LinearLayout
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="5"
-                    android:orientation="vertical"
-                    android:weightSum="2">
+        <TextView
+            android:id="@+id/stream_btn_card"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/song_title"
+            android:paddingBottom="4dp"
+            android:paddingRight="6dp"
+            android:text=""
+            android:textColor="@color/TitleColor"
+            android:textSize="32sp" />
 
-                    <RelativeLayout
-                        android:layout_marginBottom="@dimen/song_card_uploader_icon_wrapper_margin_bottom"
-                        android:layout_marginTop="@dimen/song_card_uploader_icon_wrapper_margin_top"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <TextView
-                            android:id="@+id/uploader_icon"
-                            android:layout_width="@dimen/song_card_uploader_icon_width"
-                            android:layout_height="@dimen/song_card_uploader_icon_width"
-                            android:layout_marginRight="@dimen/song_card_uploader_icon_margin_right"
-                            android:gravity="bottom|center_horizontal"
-                            android:text=""
-                            android:textColor="@color/DownloadButtonColor"
-                            android:textSize="@dimen/song_card_uploader_icon_text_size" />
-
-                        <TextView
-                            android:id="@+id/uploader_name"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/uploader_icon"
-                            android:gravity="center_vertical"
-                            android:text="Adele"
-                            android:lines="1"
-                            android:maxLines="1"
-                            android:textColor="@color/PrimaryColor"
-                            android:textSize="@dimen/song_card_uploader_text_size" />
-
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                        android:layout_marginTop="@dimen/song_card_views_wrapper_margin_top"
-                        android:layout_marginBottom="@dimen/song_card_views_wrapper_margin_bottom"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1">
-
-                        <TextView
-                            android:id="@+id/views_icon"
-                            android:layout_width="@dimen/song_card_views_icon_dimen"
-                            android:layout_height="@dimen/song_card_views_icon_dimen"
-                            android:layout_marginRight="@dimen/song_card_views_icon_margin_right"
-                            android:gravity="bottom|center_horizontal"
-                            android:text=""
-                            android:textColor="@color/DownloadButtonColor"
-                            android:textSize="@dimen/song_card_views_icon_text_size" />
-
-                        <TextView
-                            android:id="@+id/views_text"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_toRightOf="@+id/views_icon"
-                            android:gravity="center_vertical"
-                            android:text="100,000 views"
-                            android:lines="1"
-                            android:maxLines="1"
-                            android:textColor="@color/PrimaryColor"
-                            android:textSize="@dimen/song_card_views_text_size" />
-
-                    </RelativeLayout>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-
-
-        </LinearLayout>
 
     </RelativeLayout>
 
-</android.support.v7.widget.CardView>
-
+    </RelativeLayout>
+</RelativeLayout>
