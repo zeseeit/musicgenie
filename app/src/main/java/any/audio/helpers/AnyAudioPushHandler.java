@@ -121,7 +121,7 @@ public class AnyAudioPushHandler {
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
                 .setSound(alarmSound)
-                .setSmallIcon(R.mipmap.ic_launcher_rnd)
+                .setSmallIcon(R.drawable.notifications_bar_small)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
                 .setContentText(message)
                 .build();

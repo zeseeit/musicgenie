@@ -182,7 +182,7 @@ public class NotificationPlayerService extends Service {
         status.contentView = view;
         status.bigContentView = bigView;
         status.flags = Notification.FLAG_ONGOING_EVENT;
-        status.icon = R.drawable.ic_launcher_rnd;
+        status.icon = R.drawable.notifications_bar_small;
         status.tickerText = title;
         status.contentIntent = pendingIntent;
 

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    
     <color name="PrimaryColor">#f44336</color>
+    <color name="Orange">#FFA726</color>
+    <color name="DarkChocolate">#1A0907</color>
+    <color name="Gray">#9e9e9e</color>
+
+
     <color name="PrimaryColorDark">#d32f2f</color>
     <color name="White">#ffffff</color>
     <color name="ContinueBtnPressedColor">#aaf44336</color>

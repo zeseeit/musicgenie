@@ -1,7 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:background="#ae9330"
     android:layout_height="match_parent">
 
-</LinearLayout>
+
+    <ImageView
+        android:src="@drawable/main_bg"
+        android:scaleType="centerCrop"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <TextView
+        android:id="@+id/termsHeader"
+        android:layout_marginTop="42dp"
+        android:gravity="center_horizontal"
+        android:textSize="24sp"
+        android:textColor="@color/Gray"
+        android:text="Terms &amp; Conditions"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <any.audio.Views.ScrollViewExt
+        android:id="@+id/termsScrollView"
+        android:background="@drawable/terms_of_use_text_bg"
+        android:layout_margin="24dp"
+        android:paddingTop="14dp"
+        android:paddingBottom="14dp"
+        android:layout_below="@+id/termsHeader"
+        android:layout_width="match_parent"
+        android:layout_height="430dp"
+        android:scrollbarThumbVertical="@drawable/scroll_bar_scroller"
+        android:scrollbars="vertical"
+        >
+
+        <TextView
+            android:id="@+id/termsContent"
+            android:padding="12dp"
+            android:textColor="@color/Gray"
+            android:text="@string/terms"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+    </any.audio.Views.ScrollViewExt>
+
+
+    <TextView
+        android:enabled="false"
+        android:clickable="false"
+        android:id="@+id/acceptTermsConditionBtn"
+        android:background="@drawable/terms_accept_btn"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textSize="20dp"
+        android:layout_centerInParent="true"
+        android:layout_below="@+id/termsScrollView"
+        android:textColor="@color/White"
+        android:text="Accept"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</RelativeLayout>

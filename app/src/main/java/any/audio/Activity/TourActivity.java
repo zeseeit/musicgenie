@@ -13,9 +13,12 @@ import android.view.animation.Transformation;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import any.audio.Adapters.TourPagerAdapter;
+import any.audio.Interfaces.ScrollViewListener;
 import any.audio.R;
+import any.audio.Views.ScrollViewExt;
 
 
 public class TourActivity extends AppCompatActivity {
@@ -26,6 +29,11 @@ public class TourActivity extends AppCompatActivity {
     private TourPagerAdapter tourPagerAdapter;
     private int viewPagerPosition = 1 ;
 
+    private ScrollViewExt scrollView;
+    private TextView acceptBtn;
+    private TextView termsHeader;
+    private TextView termsText;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +42,19 @@ public class TourActivity extends AppCompatActivity {
             getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         }
         setContentView(R.layout.activity_tour);
+
+        initView();
+        attachListeners();
+
+    }
+
+    private void initView(){
+
+        scrollView = (ScrollViewExt) findViewById(R.id.termsScrollView);
+        termsHeader = (TextView) findViewById(R.id.termsHeader);
+        termsText = (TextView) findViewById(R.id.termsContent);
+        termsText.setText(Html.fromHtml(getResources().getString(R.string.terms)));
+        acceptBtn = (TextView) findViewById(R.id.acceptTermsConditionBtn);
 
         viewPager = (ViewPager) findViewById(R.id.tourPager);
         tourProgress = (ProgressBar) findViewById(R.id.progressBar);
@@ -45,12 +66,30 @@ public class TourActivity extends AppCompatActivity {
         viewPager.setOnPageChangeListener(pageChangeListener);
         viewPager.setCurrentItem(0);
 
+    }
+
+    private void attachListeners(){
+
+        scrollView.setScrollViewListener(new ScrollViewListener() {
+            @Override
+            public void onScrollChanged(ScrollViewExt scrollView, int x, int y, int oldx, int oldy) {
+                View view = (View) scrollView.getChildAt(scrollView.getChildCount() - 1);
+                int diff = (view.getBottom() - (scrollView.getHeight() + scrollView.getScrollY()));
+
+                // if diff is zero, then the bottom has been reached
+                if (diff == 0) {
+                    acceptBtn.setEnabled(true);
+                }
+            }
+        });
+
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //todo
                 if(viewPager.getCurrentItem()==3){
-                    startActivity(new Intent(TourActivity.this,Home.class));
+                    btnNext.setEnabled(false);
+                    btnNext.setVisibility(View.INVISIBLE);
                 }else {
                     btnBack.setVisibility(View.VISIBLE);
                     viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
@@ -66,6 +105,8 @@ public class TourActivity extends AppCompatActivity {
                     viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
                     btnBack.setVisibility(View.GONE);
                 }else {
+                    btnNext.setEnabled(true);
+                    btnNext.setVisibility(View.VISIBLE);
                     btnBack.setVisibility(View.VISIBLE);
                     viewPager.setCurrentItem(viewPager.getCurrentItem()-1);
                 }

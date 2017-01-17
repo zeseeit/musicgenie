@@ -1,10 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@color/AccentColor"/>
-
-    <item android:height="100dp">
-        <bitmap android:src="@drawable/ic_launcher_rnd" android:gravity="center"/>
+    <item>
+        <bitmap android:src="@drawable/splash_screen" android:gravity="center"/>
     </item>
 
 </layer-list>
