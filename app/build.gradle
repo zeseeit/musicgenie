@@ -1,13 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 24
-    buildToolsVersion "24.0.0"
+    compileSdkVersion 25
+    buildToolsVersion "25.0.0"
 
     defaultConfig {
         applicationId "any.audio"
         minSdkVersion 17
-        targetSdkVersion 24
+        targetSdkVersion 25
         versionCode 7
         versionName "1.0"
         generatedDensities = []
@@ -40,13 +40,14 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
 
-    compile 'com.android.support:appcompat-v7:24.2.1'
-    compile 'com.android.support:design:24.2.1'
+    compile 'com.android.support:appcompat-v7:25.0.1'
+    compile 'com.android.support:design:25.0.1'
+    compile 'com.sothree.slidinguppanel:library:3.3.1'
     compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.android.support:recyclerview-v7:24.2.1'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
     compile 'com.github.arimorty:floatingsearchview:2.0.3'
-    compile 'com.android.support:cardview-v7:24.2.1'
-    compile 'com.android.support:support-v4:24.2.1'
+    compile 'com.android.support:cardview-v7:25.0.1'
+    compile 'com.android.support:support-v4:25.0.1'
     compile 'com.google.android.exoplayer:exoplayer:r1.5.3'
     compile 'com.google.firebase:firebase-messaging:10.0.1'
     compile 'com.google.firebase:firebase-ads:10.0.1'

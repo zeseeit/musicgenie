@@ -16,7 +16,7 @@ import any.audio.Config.Constants;
 import any.audio.Models.ItemModel;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.L;
-import any.audio.Models.SectionModel;
+import any.audio.Models.ExploreItemModel;
 
 import static any.audio.Centrals.CentralDataRepository.TYPE_RESULT;
 
@@ -152,7 +152,7 @@ public class DbHelper extends SQLiteOpenHelper {
         L.m("DBHelper", "Wiped Out Trending Data");
     }
 
-    public void addTrendingList(SectionModel list, boolean doReset) {
+    public void addTrendingList(ExploreItemModel list, boolean doReset) {
 
         SQLiteDatabase database = getWritableDatabase();
         ContentValues values;
@@ -183,20 +183,22 @@ public class DbHelper extends SQLiteOpenHelper {
 
     private void passFlagToReset() {
 
-        SectionModel tModel = new SectionModel(Constants.FLAG_RESET_ADAPTER_DATA, null);
+        ExploreItemModel tModel = new ExploreItemModel(Constants.FLAG_RESET_ADAPTER_DATA, null);
+
         if (SharedPrefrenceUtils.getInstance(context).getLastLoadedType() == TYPE_RESULT) {
             mResultLoadListener.onResultLoadListener(tModel);
         } else {
             mTrendingLoadListener.onTrendingLoad(tModel);
         }
+
     }
 
     /**
      * @return Read Trending From database
      */
-    private ArrayList<SectionModel> getTrendingList() {
+    private ArrayList<ExploreItemModel> getTrendingList() {
 
-        ArrayList<SectionModel> trendingFromDbList = new ArrayList<>();
+        ArrayList<ExploreItemModel> trendingFromDbList = new ArrayList<>();
 
         String[] cols = {COL_THUMB_URL,
                 COL_USER_VIEWS,
@@ -251,7 +253,7 @@ public class DbHelper extends SQLiteOpenHelper {
             Map.Entry pair = (Map.Entry) iterator.next();
             //L.m("DBHelper", " Iterator " + pair.getKey().toString());
             //  L.m("DBH","type - >"+pair.getKey().toString()+" size - "+trendingMap.get(pair.getKey()).size());
-            trendingFromDbList.add(new SectionModel(pair.getKey().toString(), trendingMap.get(pair.getKey())));
+            trendingFromDbList.add(new ExploreItemModel(pair.getKey().toString(), trendingMap.get(pair.getKey())));
         }
 
         L.m("DBHelper", " collected total " + trendingFromDbList.size());
@@ -284,7 +286,7 @@ public class DbHelper extends SQLiteOpenHelper {
     //              Callback Interface
     ///////////////////////////////////////////////////////////////////////////
 
-    public void addResultsList(SectionModel modelItem) {        // actually Overwrite the old data
+    public void addResultsList(ExploreItemModel modelItem) {        // actually Overwrite the old data
 
         // clear back storage
         clearResultsIfAny();
@@ -315,9 +317,9 @@ public class DbHelper extends SQLiteOpenHelper {
 
     }
 
-    private SectionModel getResultList() {
+    private ExploreItemModel getResultList() {
 
-        SectionModel returnSectionModel = null;
+        ExploreItemModel returnExploreItemModel = null;
 
         String[] cols = {
                 COL_THUMB_URL,
@@ -352,9 +354,9 @@ public class DbHelper extends SQLiteOpenHelper {
             itemModelArrayList.add(itemModelObj);
             hasNext = cr.moveToNext();
         }
-        returnSectionModel = new SectionModel(SECTION_TYPE_RESULTS, itemModelArrayList);
+        returnExploreItemModel = new ExploreItemModel(SECTION_TYPE_RESULTS, itemModelArrayList);
         Log.d("DBHelper", " returning Results " + itemModelArrayList.size());
-        return returnSectionModel;
+        return returnExploreItemModel;
     }
 
     public void setTrendingLoadListener(TrendingLoadListener mTrendingLoadListener) {
@@ -364,7 +366,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void pokeForTrending() {
 
         if (mTrendingLoadListener != null) {
-            ArrayList<SectionModel> tempTrendingList = getTrendingList();
+            ArrayList<ExploreItemModel> tempTrendingList = getTrendingList();
             passFlagToReset();
             for (int i = 0; i < tempTrendingList.size(); i++) {
                 mTrendingLoadListener.onTrendingLoad(tempTrendingList.get(i));
@@ -388,11 +390,11 @@ public class DbHelper extends SQLiteOpenHelper {
     }
 
     public interface TrendingLoadListener {
-        void onTrendingLoad(SectionModel trendingItem);
+        void onTrendingLoad(ExploreItemModel trendingItem);
     }
 
     public interface ResultLoadListener {
-        void onResultLoadListener(SectionModel result);
+        void onResultLoadListener(ExploreItemModel result);
     }
 
 }

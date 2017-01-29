@@ -19,12 +19,9 @@ import any.audio.R;
 public class ErrorSplash extends AppCompatActivity {
 
     private static Context mContext;
-    private TextView tv;
-    private TextView conError;
-    private TextView contBtn;
-    private TextView poweredBy;
     private NetworkChangeReceiver receiver;
     private boolean mReceiverRegistered = false;
+    private TextView contBtn;
 
     private static void redirectIfConnected() {
 
@@ -69,19 +66,9 @@ public class ErrorSplash extends AppCompatActivity {
     private void setUpWarningPage() {
 
         // xml -> java objects
-        tv = (TextView) findViewById(R.id.no_con_text);
-        conError = (TextView) findViewById(R.id.no_connection_wifi_icon);
         contBtn = (TextView) findViewById(R.id.continueBtn);
-        poweredBy = (TextView) findViewById(R.id.poweredBy);
 
-        // set Type faces
-        tv.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
-        conError.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL));
-        contBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
-        poweredBy.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
-
-        // set Text Colors
-        conError.setTextColor(getResources().getColor(R.color.NoWifiColor));
+         contBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
 
         // attach Click Listener
         contBtn.setOnClickListener(new View.OnClickListener() {

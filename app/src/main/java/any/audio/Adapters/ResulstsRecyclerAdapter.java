@@ -8,20 +8,17 @@ import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.arlib.floatingsearchview.util.Util;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import com.squareup.picasso.Picasso;
@@ -33,8 +30,7 @@ import any.audio.Interfaces.FeatureRequestListener;
 import any.audio.Managers.FontManager;
 import any.audio.Models.BaseSong;
 import any.audio.Models.ItemModel;
-import any.audio.Models.PlaylistItem;
-import any.audio.Models.SectionModel;
+import any.audio.Models.ExploreItemModel;
 import any.audio.Models.ViewTypeModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
@@ -90,16 +86,16 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
     }
 
 
-    public void enque(SectionModel sectionModel) {
+    public void enque(ExploreItemModel exploreItemModel) {
 
-        if (sectionModel.sectionTitle.equals(Constants.FLAG_RESET_ADAPTER_DATA)) {
+        if (exploreItemModel.sectionTitle.equals(Constants.FLAG_RESET_ADAPTER_DATA)) {
             //reset previous data
             //   L.m("Result Adapter[enque]","Data wiping out!");
             resetData();
         } else {
             //append
             // L.m("Result Adapter[enque] ","Section Title : "+sectionModel.sectionTitle);
-            appendSongs(sectionModel.sectionTitle, sectionModel.getList());
+            appendSongs(exploreItemModel.sectionTitle, exploreItemModel.getList());
         }
 
     }
@@ -337,7 +333,6 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     }
 
-
     public void setScreenMode(int mode) {
         this.screenMode = mode;
     }
@@ -416,6 +411,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
             downloadBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     ResulstsRecyclerAdapter adapter = ResulstsRecyclerAdapter.getInstance(context);
                     int pos = getAdapterPosition() - 1;
                     String v_id = adapter.songs.get(pos).Video_id;

@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="false"
+    android:background="#1a0907"
+    android:id="@+id/dragView"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <FrameLayout
+        android:id="@+id/playerBgFrame"
+        android:background="@color/BottomPlayerColor"
+        android:layout_width="match_parent"
+        android:layout_height="64dp" />
+
+    <ProgressBar
+        android:progressDrawable="@drawable/progress_bar_bg"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:progress="70"
+        android:secondaryProgress="80"
+        android:max="100"
+        android:id="@+id/progressBar" />
+
+
+    <FrameLayout
+        android:layout_marginTop="2dp"
+        android:id="@+id/thumbnail_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/thumbnail"
+            android:padding="10dp"
+            android:src="@drawable/circle"
+            android:layout_width="64dp"
+            android:layout_height="64dp" />
+
+    </FrameLayout>
+
+    <RelativeLayout
+        android:id="@+id/info_wrapper"
+        android:layout_marginLeft="64dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title"
+            android:textSize="16sp"
+            android:textColor="#ffffff"
+            android:text="Sajan Sath nibhana"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_below="@+id/title"
+            android:id="@+id/artist"
+            android:textColor="#ffffff"
+            android:text="T-series"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_marginTop="6dp"
+        android:paddingRight="36dp"
+        android:paddingLeft="36dp"
+        android:layout_below="@+id/thumbnail_wrapper"
+        android:id="@+id/info_wrapper_below"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_second"
+            android:textSize="16sp"
+            android:textColor="@color/PlayerInfoColor"
+            android:text="Sajan Sath nibhana"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_below="@+id/title_second"
+            android:id="@+id/artist_second"
+            android:textColor="@color/PlayerInfoColor"
+            android:text="T-series"
+            android:gravity="center_horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+    <FrameLayout
+        android:layout_toLeftOf="@+id/nextWrapper"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:gravity="center_vertical|end"
+            android:id="@+id/pauseBtn"
+            android:text=""
+            android:textSize="28sp"
+            android:textColor="@color/PlayerInfoColor"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/nextWrapper"
+        android:layout_toLeftOf="@+id/playlistWrapper"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:gravity="center_vertical"
+            android:id="@+id/nextBtn"
+            android:text=""
+            android:textSize="28sp"
+            android:textColor="@color/PrimaryColor"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/playlistWrapper"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:gravity="center"
+            android:id="@+id/playlistBtn"
+            android:textColor="@color/PlayerInfoColor"
+            android:text=""
+            android:textSize="28sp"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:paddingTop="8dp"
+        android:paddingRight="8dp"
+        android:layout_alignParentEnd="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/pushDown"
+            android:text=""
+            android:alpha="0"
+            android:gravity="center"
+            android:textSize="36sp"
+            android:textColor="@color/CollapsePlayerBtnColor"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
+    </FrameLayout>
+
+    <!--new part from here-->
+
+    <SeekBar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/info_wrapper_below"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="4dp"
+        android:progress="20"
+        android:max="100"
+        android:thumbTint="@color/PrimaryColor"
+        android:progressDrawable="@drawable/seekbar_bg"
+        android:id="@+id/seekBar" />
+
+    <RelativeLayout
+        android:layout_margin="16dp"
+        android:id="@+id/autoplay_switch_wrapper"
+        android:layout_below="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/autoplay_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"/>
+
+        <TextView
+            android:layout_marginLeft="6dp"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@+id/autoplay_switch"
+            android:text="Autoplay"
+            android:textColor="@color/Gray"
+            android:textSize="12sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <FrameLayout
+        android:padding="8dp"
+        android:layout_below="@+id/autoplay_switch_wrapper"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <android.support.v7.widget.RecyclerView
+            android:visibility="gone"
+            android:id="@+id/autoplay_or_queue_recycler_view"
+            android:padding="8dp"
+            android:layout_below="@+id/autoplay_switch_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <ProgressBar
+            android:layout_gravity="center"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/auto_play_or_queue_progress_bar" />
+
+    </FrameLayout>
+
+
+
+
+
+</RelativeLayout>

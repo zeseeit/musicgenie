@@ -63,6 +63,7 @@ public class Constants {
     public static String KEY_LAST_LOADED_TYPE = "last_loaded_type";
     public static String KEY_STREAM_CONTENT_LEN = "stream_content_len";
     public static int NOTIFICATION_ID_BIG_IMAGE = 104;
+    public static int INTENT_TYPE_SEARCH = 1001;
 
     public interface FIREBASE {
         String TOPIC_UPDATE = "update";

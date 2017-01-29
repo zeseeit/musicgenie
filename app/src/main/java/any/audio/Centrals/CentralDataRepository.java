@@ -9,7 +9,7 @@ import any.audio.Config.Constants;
 import any.audio.Database.DbHelper;
 import any.audio.Managers.CloudManager;
 import any.audio.Models.ResultMessageObjectModel;
-import any.audio.Models.SectionModel;
+import any.audio.Models.ExploreItemModel;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.L;
 
@@ -65,12 +65,13 @@ public class CentralDataRepository {
     /**
      * @param context Subscriber`s context
      */
-    private CentralDataRepository(Context context) {
+    public CentralDataRepository(Context context) {
 
         CentralDataRepository.context = context;
         this.mDBHelper = DbHelper.getInstance(context);
         this.mCloudManager = CloudManager.getInstance(context);
         sharedPrefrenceUtils = SharedPrefrenceUtils.getInstance(context);
+
     }
 
     /**
@@ -78,10 +79,12 @@ public class CentralDataRepository {
      * @return
      */
     public static CentralDataRepository getInstance(Context context) {
+
         if (mInstance == null) {
             mInstance = new CentralDataRepository(context);
         }
         return mInstance;
+
     }
 
     /**
@@ -135,7 +138,7 @@ public class CentralDataRepository {
 
             mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
                 @Override
-                public void onTrendingLoad(SectionModel trendingItem) {
+                public void onTrendingLoad(ExploreItemModel trendingItem) {
                     // Create Message Object
                     dispatchMessage(
                             Constants.MESSAGE_STATUS_OK,
@@ -164,7 +167,7 @@ public class CentralDataRepository {
 
         mDBHelper.setResultLoadListener(new DbHelper.ResultLoadListener() {
             @Override
-            public void onResultLoadListener(SectionModel result) {
+            public void onResultLoadListener(ExploreItemModel result) {
 
                 dispatchMessage(
                         Constants.MESSAGE_STATUS_OK,
@@ -200,7 +203,7 @@ public class CentralDataRepository {
 
             mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
                 @Override
-                public void onTrendingLoad(SectionModel trendingItem) {
+                public void onTrendingLoad(ExploreItemModel trendingItem) {
 
                     dispatchMessage(
                             Constants.MESSAGE_STATUS_OK,
@@ -221,7 +224,7 @@ public class CentralDataRepository {
 
             mDBHelper.setResultLoadListener(new DbHelper.ResultLoadListener() {
                 @Override
-                public void onResultLoadListener(SectionModel result) {
+                public void onResultLoadListener(ExploreItemModel result) {
 
                     dispatchMessage(
                             Constants.MESSAGE_STATUS_OK,
@@ -257,7 +260,7 @@ public class CentralDataRepository {
         // subscribe for callback from database
         mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
             @Override
-            public void onTrendingLoad(SectionModel trendingItem) {
+            public void onTrendingLoad(ExploreItemModel trendingItem) {
 
 
                 dispatchMessage(
@@ -282,7 +285,7 @@ public class CentralDataRepository {
 
     }
 
-    private void dispatchMessage(int status, String message, SectionModel data) {
+    private void dispatchMessage(int status, String message, ExploreItemModel data) {
 
         L.m("CDR", "dispatching Message");
         Message msg = Message.obtain();

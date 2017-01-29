@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_search"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.Toolbar
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/search_toolbar"
+        contentInsetLeft="72dp"
+        contentInsetStart="72dp"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/PrimaryColor"
+        android:elevation="4dp"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="@style/SuggestionToolbarTheme"
+        app:contentInsetLeft="72dp"
+        app:contentInsetStart="72dp"
+        >
+
+        <LinearLayout
+            android:id="@+id/search_container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/search_view"
+                android:layout_width="0dp"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_weight="1"
+                android:background="@android:color/transparent"
+                android:gravity="center_vertical"
+                android:hint="Search"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:maxLines="1"
+                android:paddingLeft="2dp"
+                android:singleLine="true"
+                android:textColor="#ffffff"
+                android:textColorHint="#b3ffffff" />
+
+            <TextView
+                android:id="@+id/search_clear"
+                android:layout_width="56dp"
+                android:layout_height="56dp"
+               android:gravity="center"
+                android:textColor="#ffffff"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:textSize="20sp"
+                android:text="" />
+
+        </LinearLayout>
+
+    </android.support.v7.widget.Toolbar>
+
+
+
+
+    <ListView
+        android:id="@+id/search_suggestions_listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:dividerHeight="0dp"
+        android:divider="@null"
+        android:layout_below="@+id/search_toolbar" />
+
+
+</RelativeLayout>

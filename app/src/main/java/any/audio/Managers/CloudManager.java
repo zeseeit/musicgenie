@@ -19,7 +19,7 @@ import java.util.ArrayList;
 import any.audio.Database.DbHelper;
 import any.audio.Models.ItemModel;
 import any.audio.helpers.L;
-import any.audio.Models.SectionModel;
+import any.audio.Models.ExploreItemModel;
 import any.audio.helpers.Segmentor;
 import any.audio.Config.URLS;
 import any.audio.Network.VolleyUtils;
@@ -95,7 +95,7 @@ public class CloudManager {
      */
     private void handleTrending(String response) {
 
-        SectionModel trendingResult = null;
+        ExploreItemModel trendingResult = null;
         ItemModel item;
 
         try {
@@ -134,7 +134,7 @@ public class CloudManager {
                 }
 
 
-                trendingResult = new SectionModel(playlists.get(playlistNum), itemModelArrayList);
+                trendingResult = new ExploreItemModel(playlists.get(playlistNum), itemModelArrayList);
                 dbHelper.addTrendingList(trendingResult, doReset);
                 doReset = false;
 
@@ -262,7 +262,7 @@ public class CloudManager {
         }
 
         // database write test
-        dbHelper.addResultsList(new SectionModel("Results", songs));
+        dbHelper.addResultsList(new ExploreItemModel("Results", songs));
 
     }
 

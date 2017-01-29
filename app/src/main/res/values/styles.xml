@@ -8,6 +8,21 @@
         <item name="colorPrimary">@color/PrimaryColor</item>
         <item name="colorPrimaryDark">@color/PrimaryColorDark</item>
         <item name="colorAccent">@color/AccentColor</item>
+
+        <item name="android:windowActionBarOverlay">true</item>
+
+        <!-- active thumb & track color (30% transparency) -->
+        <item name="colorControlActivated">@color/PrimaryColor</item>
+
+        <!-- inactive thumb color -->
+        <item name="colorSwitchThumbNormal">@color/Gray</item>
+
+        <!-- inactive track color (30% transparency) -->
+        <item name="android:colorForeground">@color/Gray</item>
+
+
+
+
     </style>
 
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
@@ -18,20 +33,10 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:windowBackground">@drawable/anyaudio_theme_splash</item>
+        <item name="android:windowBackground">@drawable/splash_screen</item>
+
     </style>
 
-
-    <!--<style name="Theme.Transparent" parent="android:Theme">-->
-        <!--<item name="android:windowIsTranslucent">true</item>-->
-        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
-        <!--<item name="android:windowContentOverlay">@null</item>-->
-        <!--<item name="android:windowNoTitle">true</item>-->
-        <!--<item name="android:windowIsFloating">true</item>-->
-        <!--<item name="android:backgroundDimEnabled">false</item>-->
-    <!--</style>-->
-
-    <!-- Backward-compatible version of ?android:attr/buttonBarStyle -->
     <style name="ButtonBar">
         <item name="android:paddingLeft">2dp</item>
         <item name="android:paddingTop">5dp</item>
@@ -42,6 +47,11 @@
 
     <!-- Backward-compatible version of ?android:attr/buttonBarButtonStyle -->
     <style name="ButtonBarButton" />
+
+
+    <style name="SuggestionToolbarTheme" parent="ThemeOverlay.AppCompat.Dark">
+
+    </style>
 
 
 </resources>

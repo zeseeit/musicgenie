@@ -1,7 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    
+    <color name="BottomPlayerColor">#571e18</color>
+    <color name="PlayerInfoColor">#bdbdbd</color>
+    <color name="CollapsePlayerBtnColor">#ff6e2c</color>
+
+    <color name="colorPrimary">#1A0907</color>
+    <color name="colorPrimaryDark">#1a0907</color>
+    <color name="colorAccent">#FFA726</color>
+    <color name="pendingProgressColor">#80ff6e2c</color>
+    <color name="lightOrange">#80ffa726</color>
+
+
+
     <color name="PrimaryColor">#f44336</color>
     <color name="Orange">#FFA726</color>
     <color name="DarkChocolate">#1A0907</color>

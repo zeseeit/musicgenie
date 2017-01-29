@@ -3,18 +3,18 @@ package any.audio.Models;
 
 import java.util.ArrayList;
 
-public class SectionModel {
+public class ExploreItemModel {
 
     public String sectionTitle;
     ArrayList<ItemModel> list;
 
-    public SectionModel(String sectionTitle) {
+    public ExploreItemModel(String sectionTitle) {
 
         this.sectionTitle = sectionTitle;
 
     }
 
-    public SectionModel(String sectionTitle, ArrayList<ItemModel> list) {
+    public ExploreItemModel(String sectionTitle, ArrayList<ItemModel> list) {
         this.sectionTitle = sectionTitle;
         this.list = list;
     }

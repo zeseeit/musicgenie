@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="57dp">
+
+    <LinearLayout
+        android:id="@+id/suggestionWrapper"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:orientation="horizontal"
+        android:weightSum="10">
+
+        <TextView
+            android:id="@+id/saveToHistory"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:textColor="#dddddd"
+            android:text=""
+            android:textSize="24sp" />
+
+        <TextView
+            android:id="@+id/suggestion_title"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="7"
+            android:gravity="center_vertical"
+            android:lines="1"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:text="TextView"
+            android:textColor="@color/BottomPlayerColor"
+            android:textSize="18sp" />
+
+        <TextView
+            android:rotation="-90"
+            android:id="@+id/optOption"
+            android:layout_width="0dp"
+            android:layout_height="56dp"
+            android:layout_weight="1.5"
+            android:gravity="center"
+            android:textColor="#dddddd"
+            android:text=""
+            android:textSize="24sp" />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_marginLeft="56dp"
+        android:layout_below="@+id/suggestionWrapper"
+        android:background="#eeeeee"
+        android:layout_width="match_parent"
+        android:layout_height="1dp">
+
+    </FrameLayout>
+
+</RelativeLayout>

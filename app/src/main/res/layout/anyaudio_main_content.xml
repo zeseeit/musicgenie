@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:background="@drawable/explore_bg_header"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="128dp">
+
+        <include
+            android:id="@+id/home_toolbar"
+            layout="@layout/home_toolbar" />
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="56dp">
+
+            <TextView
+                android:layout_marginTop="16dp"
+                android:textSize="22sp"
+                android:textColor="@color/Gray"
+                android:gravity="center_horizontal"
+                android:text="EXPLORE"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <FrameLayout
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/explore_text_under_tip"
+                android:layout_width="36dp"
+                android:layout_height="3dp">
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:background="@color/DarkChocolate"
+        android:id="@+id/fragmentPlaceHolder"
+        android:layout_marginBottom="64dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+    </FrameLayout>
+
+</LinearLayout>

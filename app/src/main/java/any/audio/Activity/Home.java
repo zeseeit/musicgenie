@@ -10,7 +10,6 @@ import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.media.MediaPlayer;
-import android.media.session.PlaybackState;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -55,7 +54,6 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Map;
 
 import any.audio.Adapters.ResulstsRecyclerAdapter;
 import any.audio.Centrals.CentralDataRepository;
@@ -66,7 +64,7 @@ import any.audio.Managers.FontManager;
 import any.audio.Models.PlaylistItem;
 import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Models.SearchSuggestion;
-import any.audio.Models.SectionModel;
+import any.audio.Models.ExploreItemModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
@@ -333,7 +331,7 @@ public class Home extends AppCompatActivity {
 
                 hideProgress();
                 ResultMessageObjectModel object = (ResultMessageObjectModel) msg.obj;
-                SectionModel item = object.data;
+                ExploreItemModel item = object.data;
 
                 if (object.Status == Constants.MESSAGE_STATUS_OK) {
 

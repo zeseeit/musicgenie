@@ -1,7 +1,5 @@
 package any.audio.Models;
 
-import any.audio.Models.SectionModel;
-
 /**
  * Created by Ankit on 10/3/2016.
  */
@@ -9,9 +7,9 @@ public class ResultMessageObjectModel {
 
     public int Status;
     String Message;
-    public SectionModel data;
+    public ExploreItemModel data;
 
-    public ResultMessageObjectModel(int status, String message, SectionModel data) {
+    public ResultMessageObjectModel(int status, String message, ExploreItemModel data) {
         Status = status;
         Message = message;
         this.data = data;
@@ -33,11 +31,11 @@ public class ResultMessageObjectModel {
         Message = message;
     }
 
-    public SectionModel getData() {
+    public ExploreItemModel getData() {
         return data;
     }
 
-    public void setData(SectionModel data) {
+    public void setData(ExploreItemModel data) {
         this.data = data;
     }
 
