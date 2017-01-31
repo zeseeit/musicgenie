@@ -72,8 +72,7 @@ public class ExploreFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //WID: invoke Action for get trending and a handler instance
         topDownAdapter = ExploreTopDownAdapter.getInstance(context);
-        topDownAdapter.setExploreActionListener(exploreActionListener);
-
+        topDownAdapter.setExploreActionListener(this.exploreActionListener);
 
     }
 
@@ -155,6 +154,7 @@ public class ExploreFragment extends Fragment {
     //set by Home Activity
     public void setActionListener(ExploreLeftToRightAdapter.ExploreActionListener actionListener){
         this.exploreActionListener = actionListener;
+
     }
 
 }

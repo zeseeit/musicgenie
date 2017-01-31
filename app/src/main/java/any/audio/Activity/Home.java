@@ -119,7 +119,7 @@ public class Home extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private boolean isStreaming = false;
     private long DELAYED_POST_APP_UPDATE = 1 * 1000;
-    private NotificationPlayerStateBroadcastReceiver notificationPlayerStateReceiver;
+   // private NotificationPlayerStateBroadcastReceiver notificationPlayerStateReceiver;
     private long STREAMING_PAUSED_WAIT_TIMEOUT = 2 * 60 * 1000;     // 2 minutes
 
     private boolean backPressedOnce = false;
@@ -926,15 +926,15 @@ public class Home extends AppCompatActivity {
     private void registerForStreamProgressUpdateBroadcastListen(Context context) {
 
         streamProgressUpdateReceiver = new StreamProgressUpdateBroadcastReceiver();
-        notificationPlayerStateReceiver = new NotificationPlayerStateBroadcastReceiver();
+        //notificationPlayerStateReceiver = new NotificationPlayerStateBroadcastReceiver();
 
         if (!mStreamUpdateReceiverRegistered) {
 
             context.registerReceiver(streamProgressUpdateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
-
-            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
-            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
-            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
+//
+//            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
+//            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
+//            context.registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
 
             mStreamUpdateReceiverRegistered = true;
 
@@ -1055,6 +1055,7 @@ public class Home extends AppCompatActivity {
 
         Log.d("PlaylistTest", " thumb from " + uri);
         Picasso.with(Home.this).load(uri).transform(new CircularImageTransformer()).into(streamingThumbnail);
+
         streamingSongTitle.setText(streamFileName);
         streamDuration.setText(" | 00:00");
         currentStreamPosition.setText("00:00");
@@ -1473,39 +1474,6 @@ public class Home extends AppCompatActivity {
 
     }
 
-    public class NotificationPlayerStateBroadcastReceiver extends BroadcastReceiver {
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            Log.d("HomeStream", " onReceive() Notification ");
-            if (exoPlayer != null) {
-
-                if (intent.getAction().equals(Constants.ACTIONS.PLAY_TO_PAUSE)) {
-
-                    // pause
-                    playPauseStreamBtn.setText(playBtn);
-                    StreamSharedPref.getInstance(Home.this).setStreamerPlayState(false);
-                    exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
-                }
-                if (intent.getAction().equals(Constants.ACTIONS.PAUSE_TO_PLAY)) {
-
-                    // play
-                    playPauseStreamBtn.setText(pauseBtn);
-                    StreamSharedPref.getInstance(Home.this).setStreamerPlayState(true);
-                    exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(Home.this).getStreamerPlayState());
-                }
-
-                if (intent.getAction().equals(Constants.ACTIONS.STOP_PLAYER)) {
-
-                    resetPlayer();
-                    mStreamingBottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-
-                }
-            }
-
-        }
-    }
 
     private void playNext() {
 

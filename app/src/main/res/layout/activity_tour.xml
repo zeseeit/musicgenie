@@ -18,7 +18,7 @@
             android:layout_height="5dp"
             android:progress="100"
             android:max="400"
-            android:id="@+id/progressBar"
+            android:id="@+id/progressBarStreamProgress"
             android:layout_above="@+id/btn_next"
             android:layout_weight="1"
             android:progressDrawable="@drawable/tour_progressbar_color"

@@ -8,7 +8,7 @@
         android:background="@drawable/explore_bg_header"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="128dp">
+        android:layout_height="108dp">
 
         <include
             android:id="@+id/home_toolbar"
@@ -20,7 +20,9 @@
             android:layout_height="56dp">
 
             <TextView
-                android:layout_marginTop="16dp"
+                android:id="@+id/homePanelTitle"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="4dp"
                 android:textSize="22sp"
                 android:textColor="@color/Gray"
                 android:gravity="center_horizontal"

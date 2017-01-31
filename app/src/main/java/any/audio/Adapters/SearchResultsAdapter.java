@@ -78,6 +78,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         holder.uploader.setText(model.UploadedBy);
         holder.views.setText(model.UserViews);
 
+        holder.addbtn.setTypeface(materialFace);
         holder.downloadBtn.setTypeface(materialFace);
         holder.playBtn.setTypeface(materialFace);
 

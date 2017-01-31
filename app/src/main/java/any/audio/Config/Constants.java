@@ -64,7 +64,6 @@ public class Constants {
     public static String KEY_STREAM_CONTENT_LEN = "stream_content_len";
     public static int NOTIFICATION_ID_BIG_IMAGE = 104;
     public static int INTENT_TYPE_SEARCH = 1001;
-
     public interface FIREBASE {
         String TOPIC_UPDATE = "update";
         String TOPIC_RECOMMEND = "recommend";
@@ -86,6 +85,11 @@ public class Constants {
         public static String PLAYING = "notification_state_player";
         public static String STOP_PLAYER = "notification_stop_player";
         String STOP_FOREGROUND_ACTION_BY_STREAMSHEET = "com.anyaudio.in.action.stopforeground_from_user";
+
+        public static String AUDIO_OPTIONS = "com.anyaudio.in.action.songplayoncard";
+        public static String SONG_DOWNLOAD_ON_CARD = "com.anyaudio.in.action.downloadoncard";
+        public static String SONG_SHOWALL_ON_CARD = "com.anyaudio.in.action.showalloncard";
+
     }
 
     public interface NOTIFICATION_ID {

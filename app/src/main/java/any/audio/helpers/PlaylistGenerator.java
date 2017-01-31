@@ -50,6 +50,7 @@ public class PlaylistGenerator {
     private ArrayList<String> videoTitles;
     private ArrayList<String> youtubeIds;
     private ArrayList<String> uploadersList;
+    private PlaylistGenerateListener playlistGeneraterListener;
 
 
     public PlaylistGenerator(Context context) {
@@ -71,6 +72,7 @@ public class PlaylistGenerator {
 
     public void resetPlaylist(String currentVideoId) {
 
+        sendPreparingFeedback();
         deletePlaylist();
         fetchVideoIds(currentVideoId);   //by default 10 items
 
@@ -156,9 +158,26 @@ public class PlaylistGenerator {
             Log.d("PlaylistGen", " final uploaders :=" + utils.getPlaylistUploaders());
 
 
+            sendGeneratedFeedback();
 
         } catch (JSONException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private void sendPreparingFeedback(){
+
+        if(playlistGeneraterListener!=null){
+            playlistGeneraterListener.onPlaylistPreparing();
+        }
+
+    }
+
+    private void sendGeneratedFeedback() {
+
+        if(playlistGeneraterListener!=null){
+            playlistGeneraterListener.onPlaylistPrepared(getPlaylistItems(false));
         }
 
     }
@@ -188,6 +207,17 @@ public class PlaylistGenerator {
             resetPlaylist(videoIds.get(0)); // use top item for next refresh
 
         return playlistItems;
+    }
+
+    public void setPlaylistGenerationListener(PlaylistGenerateListener listener){
+        this.playlistGeneraterListener = listener;
+    }
+
+    public interface PlaylistGenerateListener{
+
+        void onPlaylistPreparing();
+        void onPlaylistPrepared(ArrayList<PlaylistItem> items);
+
     }
 
 }

@@ -185,11 +185,11 @@ public class DbHelper extends SQLiteOpenHelper {
 
         ExploreItemModel tModel = new ExploreItemModel(Constants.FLAG_RESET_ADAPTER_DATA, null);
 
-        if (SharedPrefrenceUtils.getInstance(context).getLastLoadedType() == TYPE_RESULT) {
-            mResultLoadListener.onResultLoadListener(tModel);
-        } else {
-            mTrendingLoadListener.onTrendingLoad(tModel);
-        }
+//        if (SharedPrefrenceUtils.getInstance(context).getLastLoadedType() == TYPE_RESULT) {
+//            mResultLoadListener.onResultLoadListener(tModel);
+//        } else {
+//            mTrendingLoadListener.onTrendingLoad(tModel);
+//        }
 
     }
 

@@ -22,7 +22,7 @@
         android:progress="70"
         android:secondaryProgress="80"
         android:max="100"
-        android:id="@+id/progressBar" />
+        android:id="@+id/progressBarStreamProgress" />
 
 
     <FrameLayout
@@ -31,9 +31,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/thumbnail"
-            android:padding="10dp"
+            android:padding="8dp"
             android:src="@drawable/circle"
             android:layout_width="64dp"
             android:layout_height="64dp" />
@@ -41,16 +41,19 @@
     </FrameLayout>
 
     <RelativeLayout
+        android:layout_toLeftOf="@+id/pauseWrapper"
         android:id="@+id/info_wrapper"
         android:layout_marginLeft="64dp"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/title"
             android:textSize="16sp"
             android:textColor="#ffffff"
-            android:text="Sajan Sath nibhana"
+            android:text="Hello World"
+            android:maxLines="1"
+            android:lines="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -67,8 +70,8 @@
 
     <RelativeLayout
         android:layout_marginTop="6dp"
-        android:paddingRight="36dp"
-        android:paddingLeft="36dp"
+        android:paddingRight="12dp"
+        android:paddingLeft="12dp"
         android:layout_below="@+id/thumbnail_wrapper"
         android:id="@+id/info_wrapper_below"
         android:layout_width="match_parent"
@@ -79,6 +82,7 @@
             android:textSize="16sp"
             android:textColor="@color/PlayerInfoColor"
             android:text="Sajan Sath nibhana"
+            android:maxLines="1"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -93,9 +97,20 @@
             android:layout_height="wrap_content" />
 
 
+        <TextView
+            android:id="@+id/stream_duration"
+            android:textColor="#fefefe"
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/artist_second"
+            android:text="01:40 / 06:22 "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
     </RelativeLayout>
 
     <FrameLayout
+        android:id="@+id/pauseWrapper"
         android:layout_toLeftOf="@+id/nextWrapper"
         android:padding="10dp"
         android:layout_width="wrap_content"
@@ -107,25 +122,6 @@
             android:text=""
             android:textSize="28sp"
             android:textColor="@color/PlayerInfoColor"
-            android:layout_width="36dp"
-            android:layout_height="36dp" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/nextWrapper"
-        android:layout_toLeftOf="@+id/playlistWrapper"
-        android:padding="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-
-        <TextView
-            android:gravity="center_vertical"
-            android:id="@+id/nextBtn"
-            android:text=""
-            android:textSize="28sp"
-            android:textColor="@color/PrimaryColor"
             android:layout_width="36dp"
             android:layout_height="36dp" />
 
@@ -177,9 +173,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/info_wrapper_below"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="4dp"
-        android:progress="20"
-        android:max="100"
+        android:layout_marginTop="0dp"
         android:thumbTint="@color/PrimaryColor"
         android:progressDrawable="@drawable/seekbar_bg"
         android:id="@+id/seekBar" />
@@ -233,8 +227,25 @@
 
     </FrameLayout>
 
+    <FrameLayout
+        android:id="@+id/nextWrapper"
+        android:padding="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/playlistWrapper">
 
 
+        <TextView
+            android:gravity="center_vertical"
+            android:id="@+id/nextBtn"
+            android:text=""
+            android:textSize="28sp"
+            android:textColor="@color/PrimaryColor"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
+    </FrameLayout>
 
 
 </RelativeLayout>

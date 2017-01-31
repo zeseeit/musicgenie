@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/PrimaryColor"
-    android:layout_height="72dp">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="12dp"
+    android:paddingRight="12dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:background="@color/colorPrimaryDark"
+    android:layout_height="96dp">
+
+    <RelativeLayout
+        android:background="@color/search_item_bgcolor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/search_item_thumbnail_wrapper"
-        android:layout_width="72dp"
-        android:layout_height="72dp">
+        android:layout_width="76dp"
+        android:layout_height="76dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_margin="6dp"
             android:id="@+id/search_item_thumbnail"
-            android:src="@drawable/circle"
+            app:civ_border_width="1dp"
+            app:civ_border_color="@color/PrimaryColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -22,35 +34,32 @@
             android:layout_width="36dp"
             android:layout_height="36dp"
             android:layout_centerInParent="true"
-            android:background="@drawable/play_btn_bg_card"
             android:gravity="center"
             android:text=""
-            android:textColor="#000000"
-            android:textSize="28sp" />
+            android:textColor="@color/PrimaryColor"
+            android:textSize="32sp" />
 
     </FrameLayout>
-
     <TextView
         android:textSize="12sp"
         android:id="@+id/search_item_duration"
-        android:layout_marginTop="6dp"
+        android:textColor="@color/PrimaryColor"
+        android:layout_marginTop="4dp"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="04:50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
     <TextView
         android:layout_below="@+id/search_item_duration"
         android:id="@+id/search_item_title"
+        android:layout_toLeftOf="@+id/addToQueue"
+        android:maxLines="1"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
-        android:text="Sanam Rdddddddddddddddddddddddddddddde..."
+        android:text="Sanam Rdddddddddddjhbbbbbbbbbbbbbbbbbbbbbjhbddddddddddddddddddde..."
         android:textColor="#ffffff"
         android:textStyle="bold"
-        android:maxLength="26"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content" />
-
-
     <TextView
         android:textSize="12sp"
         android:layout_below="@+id/search_item_title"
@@ -60,9 +69,6 @@
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-
-
     <TextView
         android:textSize="12sp"
         android:layout_below="@+id/search_item_artist"
@@ -72,33 +78,28 @@
         android:textColor="#ffffff"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-
-
     <TextView
+        android:layout_centerVertical="true"
         android:id="@+id/addToQueue"
         android:layout_toLeftOf="@+id/search_item_download_btn"
-        android:textColor="#ffffff"
+        android:textColor="@color/PrimaryColor"
         android:gravity="center"
-        android:text="+"
+        android:text=""
         android:textSize="24dp"
         android:layout_width="36dp"
-        android:layout_height="match_parent" />
-
-
+        android:layout_height="36dp" />
     <TextView
+        android:layout_centerVertical="true"
         android:id="@+id/search_item_download_btn"
         android:layout_width="36dp"
         android:layout_height="36dp"
-        android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
         android:layout_margin="8dp"
-        android:background="@drawable/explore_item_download_btn_bg"
-        android:gravity="center"
         android:text=""
-        android:textColor="@color/DarkChocolate"
-        android:textSize="18sp" />
+        android:textSize="24sp"
+        android:textColor="@color/PrimaryColor"
+        android:gravity="center" />
 
-
+    </RelativeLayout>
 
 </RelativeLayout>

@@ -181,7 +181,7 @@ public class NotificationPlayerService extends Service {
         status = new Notification.Builder(this).build();
         status.contentView = view;
         status.bigContentView = bigView;
-        status.flags = Notification.FLAG_ONGOING_EVENT;
+        status.flags = Notification.FLAG_AUTO_CANCEL;
         status.icon = R.drawable.notifications_bar_small;
         status.tickerText = title;
         status.contentIntent = pendingIntent;

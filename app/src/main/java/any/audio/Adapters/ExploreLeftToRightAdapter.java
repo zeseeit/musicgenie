@@ -1,9 +1,8 @@
 package any.audio.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
+import android.content.Intent;
 import android.graphics.Typeface;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,10 +14,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
+import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.Models.ItemModel;
 import any.audio.Network.ConnectivityUtils;
@@ -178,17 +177,11 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                     Log.d("StreamingHome", " setting thumb uri " + thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
-                    adapter.requestStream(v_id, file_name);
+                    adapter.broadcastStreamAction(v_id,file_name);
 
                 }
             });
 
-        }
-    }
-
-    private void requestStream(String v_id, String file_name) {
-        if(exploreActionListener!=null){
-            exploreActionListener.onPlayAction(v_id,file_name);
         }
     }
 
@@ -209,6 +202,16 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
         void onDownloadAction(String video_id,String title);
         void onAddToQueue(String video_id,String title);
         void onShowAll(String type);
+
+    }
+
+    private void broadcastStreamAction(String vid,String title){
+
+        Intent intent = new Intent(Constants.ACTIONS.AUDIO_OPTIONS);
+        intent.putExtra("actionType",101);
+        intent.putExtra("vid", vid);
+        intent.putExtra("title",title);
+        context.sendBroadcast(intent);
 
     }
 

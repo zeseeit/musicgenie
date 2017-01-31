@@ -69,7 +69,7 @@ public class LiveDownloadListAdapter extends ArrayAdapter<String> {
             v = LayoutInflater.from(context).inflate(R.layout.downloading_item, parent, false);
         }
 
-        progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
+        progressBar = (ProgressBar) v.findViewById(R.id.progressBarStreamProgress);
         progressText = (TextView) v.findViewById(R.id.progressText);
         progressBar.setIndeterminate(false);
         cancelBtn = (TextView) v.findViewById(R.id.cancel_btn_text);

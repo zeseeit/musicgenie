@@ -1,23 +1,17 @@
 package any.audio.Activity;
 
-import android.content.Intent;
 import android.os.Build;
-import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import any.audio.Adapters.TourPagerAdapter;
-import any.audio.Interfaces.ScrollViewListener;
 import any.audio.R;
 import any.audio.Views.ScrollViewExt;
 
@@ -70,7 +64,7 @@ public class TourActivity extends AppCompatActivity {
         acceptBtn = (TextView) findViewById(R.id.acceptTermsConditionBtn);
 
         viewPager = (ViewPager) findViewById(R.id.tourPager);
-        tourProgress = (ProgressBar) findViewById(R.id.progressBar);
+        tourProgress = (ProgressBar) findViewById(R.id.progressBarStreamProgress);
         btnNext = (Button) findViewById(R.id.btn_next);
         btnBack = (Button) findViewById(R.id.back);
         btnBack.setVisibility(View.GONE);
