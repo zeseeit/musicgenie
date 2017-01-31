@@ -209,6 +209,8 @@ public class PlaylistGenerator {
         return playlistItems;
     }
 
+
+
     public void setPlaylistGenerationListener(PlaylistGenerateListener listener){
         this.playlistGeneraterListener = listener;
     }

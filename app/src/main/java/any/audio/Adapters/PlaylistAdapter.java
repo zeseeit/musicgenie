@@ -81,6 +81,16 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         return "https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";  // additional query params => ?custom=true&w=240&h=256
     }
 
+    public void popItem() {
+        playlistItems.remove(0);
+        notifyItemRemoved(0);
+    }
+
+    public void appendItem(PlaylistItem item) {
+        playlistItems.add(item);
+        notifyItemInserted(playlistItems.size()-1);
+    }
+
     public static class PlaylistItemHolder extends RecyclerView.ViewHolder{
 
         CircleImageView thumbnail;

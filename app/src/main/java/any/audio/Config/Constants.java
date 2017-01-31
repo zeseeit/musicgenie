@@ -64,6 +64,10 @@ public class Constants {
     public static String KEY_STREAM_CONTENT_LEN = "stream_content_len";
     public static int NOTIFICATION_ID_BIG_IMAGE = 104;
     public static int INTENT_TYPE_SEARCH = 1001;
+    public static final String MODE_REPEAT_NONE = "norepeat";
+    public static final String MODE_REPEAT_ALL = "repeatall";
+    public static final String MODE_SUFFLE = "suffle";
+
     public interface FIREBASE {
         String TOPIC_UPDATE = "update";
         String TOPIC_RECOMMEND = "recommend";

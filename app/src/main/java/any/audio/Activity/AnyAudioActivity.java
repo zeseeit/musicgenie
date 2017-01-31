@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,6 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -51,6 +53,7 @@ import any.audio.Adapters.SearchResultsAdapter;
 import any.audio.Config.Constants;
 import any.audio.Fragments.ExploreFragment;
 import any.audio.Fragments.SearchFragment;
+import any.audio.Managers.FontManager;
 import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
@@ -60,23 +63,31 @@ import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.L;
 import any.audio.helpers.MusicStreamer;
 import any.audio.helpers.PlaylistGenerator;
+import any.audio.helpers.QueueManager;
+import any.audio.helpers.QueueManager.QueueEventListener;
 import any.audio.services.NotificationPlayerService;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AnyAudioActivity extends AppCompatActivity implements PlaylistGenerator.PlaylistGenerateListener, ExploreLeftToRightAdapter.ExploreActionListener, SearchResultsAdapter.SearchResultActionListener, PlaylistAdapter.PlaylistItemListener {
+public class AnyAudioActivity extends AppCompatActivity implements PlaylistGenerator.PlaylistGenerateListener, ExploreLeftToRightAdapter.ExploreActionListener, SearchResultsAdapter.SearchResultActionListener, PlaylistAdapter.PlaylistItemListener , QueueEventListener {
 
     private static final int FRAGMENT_EXPLORE = 1;
     private static final int FRAGMENT_SEARCH = 2;
 
     final String playBtnString = "\uE039";
     final String pauseBtnString = "\uE036";
+    final String suffleBtnString = "\uE043";
+    final String repeatAllBtnString = "\uE627";
+    final String noRepeatBtnString = "\uE628";
+    final String[] repeatModesList = {suffleBtnString,repeatAllBtnString,noRepeatBtnString};
 
     private CircleImageView thumbnail;
     private TextView nextBtn;
+    private SwitchCompat autoplaySwitch;
     private TextView pauseBtn;
     private TextView playlistBtn;
     private TextView pushDown;
     private TextView title;
+    private TextView repeatModeBtn;
     private TextView artist;
     private TextView title_second;
     private TextView artist_second;
@@ -103,6 +114,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private RecyclerView playlistRecyclerView;
     private PlaylistAdapter playlistAdapter;
     private PlaylistGenerator playlistGenerator;
+    private QueueManager queueManager;
+    private QueueEventListener queueEventListener;
+    private TextView playlistMessagePanel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,6 +156,10 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         if(!receiverRegistered){
             registerReceivers();
         }
+
+        queueManager = QueueManager.getInstance(this);
+        queueManager.setQueueEventListener(this);
+
     }
 
     @Override
@@ -209,7 +227,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-
     @Override
     public void onDownloadAction(String video_id, String title) {
 
@@ -224,7 +241,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     public void onShowAll(String type) {
 
     }
-
 
     @Override
     public void onPlaylistPreparing() {
@@ -252,6 +268,22 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         // stream current item
         initStream(item.videoId,item.getTitle());
+
+    }
+
+    @Override
+    public void onQueueItemPop() {
+        // remove the top item from adapter if queue is currently playing
+        if(!utils.getAutoPlayMode())
+            playlistAdapter.popItem();
+
+    }
+
+    @Override
+    public void onQueueItemPush(PlaylistItem item) {
+        // add new item to top of adapter if queue is currently playing
+        if(!utils.getAutoPlayMode())
+            playlistAdapter.appendItem(item);
 
     }
 
@@ -308,12 +340,17 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     }
 
     private void initView() {
+
         playlistGenerator = PlaylistGenerator.getInstance(AnyAudioActivity.this);
         playlistGenerator.setPlaylistGenerationListener(this);
 
-        typeface = Typeface.createFromAsset(getAssets(), "MaterialFont.ttf");
+        typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
         progressBarStream = (ProgressBar) findViewById(R.id.progressBarStreamProgress);
+        playlistMessagePanel =(TextView) findViewById(R.id.playlistMessagePanel);
         homePanelTitle = (TextView) findViewById(R.id.homePanelTitle);
+        repeatModeBtn = (TextView) findViewById(R.id.repeatModeBtn);
+        repeatModeBtn.setTypeface(typeface);
+        autoplaySwitch = (SwitchCompat) findViewById(R.id.autoplay_switch);
         playerBg = (FrameLayout) findViewById(R.id.playerBgFrame);
         thumbnail = (CircleImageView) findViewById(R.id.thumbnail);
         nextBtn = (TextView) findViewById(R.id.nextBtn);
@@ -350,6 +387,93 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         RelativeLayout.LayoutParams infoParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         infoParams.setMargins(0, (int) inPx(12), 0, 0);
         title.setLayoutParams(infoParams);
+
+        repeatModeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                repeatModeBtn.setText(repeatModesList[getNextRepeatMode()]);
+
+            }
+        });
+
+        autoplaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean fromUser) {
+
+                playlistPreparingProgressbar.setVisibility(View.VISIBLE);
+                playlistRecyclerView.setVisibility(View.INVISIBLE);
+
+                if(compoundButton.isChecked()){
+                    // disable repeat modes while autoplay
+                    repeatModeBtn.setClickable(false);
+                    repeatModeBtn.setVisibility(View.GONE);
+
+                    // get auto Playlist
+                    playlistAdapter = new PlaylistAdapter(AnyAudioActivity.this);
+                    ArrayList<PlaylistItem> items = PlaylistGenerator.getInstance(AnyAudioActivity.this).getPlaylistItems(false);
+                    if(items.size()==0){
+
+                        playlistMessagePanel.setVisibility(View.VISIBLE);
+                        playlistRecyclerView.setVisibility(View.GONE);
+                        playlistPreparingProgressbar.setVisibility(View.GONE);
+                        playlistMessagePanel.setVisibility(View.VISIBLE);
+                        playlistMessagePanel.setText("Cannot Fetch UpNext.. ! ");
+
+                    }else {
+
+                        repeatModeBtn.setClickable(true);
+                        repeatModeBtn.setVisibility(View.VISIBLE);
+
+                        playlistMessagePanel.setVisibility(View.GONE);
+                        playlistAdapter.setPlaylistItem(items);
+                        playlistRecyclerView.setAdapter(playlistAdapter);
+                        playlistPreparingProgressbar.setVisibility(View.GONE);
+                        playlistRecyclerView.setVisibility(View.VISIBLE);
+
+                    }
+                }else{
+                    // get Queued Items if no items present show the message to add queue
+                    ArrayList<PlaylistItem> queuedItems = queueManager.getQueue();
+                    if(queuedItems.size()==0){
+                        playlistMessagePanel.setVisibility(View.VISIBLE);
+                        playlistRecyclerView.setVisibility(View.GONE);
+                        playlistPreparingProgressbar.setVisibility(View.GONE);
+
+                        playlistMessagePanel.setText("Add Items To Queue And Enjoy");
+                    }else{
+
+                        playlistMessagePanel.setVisibility(View.GONE);
+                        playlistAdapter.setPlaylistItem(queuedItems);
+                        playlistRecyclerView.setAdapter(playlistAdapter);
+                        playlistPreparingProgressbar.setVisibility(View.GONE);
+                        playlistRecyclerView.setVisibility(View.VISIBLE);
+
+                    }
+
+                }
+
+
+            }
+        });
+
+    }
+
+    private int getNextRepeatMode(){
+
+        String mode = utils.getRepeatMode();
+
+        if(mode.equals(Constants.MODE_REPEAT_ALL)){
+            utils.setRepeatMode(Constants.MODE_SUFFLE);
+            return 0;//suffle
+        }else if(mode.equals(Constants.MODE_SUFFLE)){
+            utils.setRepeatMode(Constants.MODE_REPEAT_NONE);
+            return 2;// no repeat
+        }else {
+            utils.setRepeatMode(Constants.MODE_REPEAT_ALL);
+            return 1;// repeat all
+        }
+
     }
 
     private void recordScreenProp(int cols) {
@@ -507,6 +631,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
+
+
 //=============================================================================================================================================================//
 
     public class StreamProgressUpdateBroadcastReceiver extends BroadcastReceiver {
@@ -540,7 +666,14 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                                 utils.setStreamUrlFetcherInProgress(true);
 
                                 // get next play details
-                                PlaylistItem nxtItem = playlistGenerator.getUpNext();
+
+                                PlaylistItem nxtItem = null;
+
+                                if(utils.getAutoPlayMode()){
+                                    nxtItem = playlistGenerator.getUpNext();
+                                }else{
+                                    nxtItem = queueManager.getUpNext();
+                                }
 
                                 String nextVid = nxtItem.videoId;
                                 String nextVidTitle = nxtItem.title;
@@ -1032,8 +1165,13 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             L.m("PlaylistTest", "Player Released");
 
             StreamSharedPref.getInstance(this).setStreamState(false);
+            PlaylistItem nxtItem = null;
 
-            PlaylistItem nxtItem = PlaylistGenerator.getInstance(this).getUpNext();
+            if(utils.getAutoPlayMode()) {
+                 nxtItem = PlaylistGenerator.getInstance(this).getUpNext();
+            }else {
+                 nxtItem = QueueManager.getInstance(this).getUpNext();
+            }
 
             String upNextVid = nxtItem.videoId;
             String upNextTitle = nxtItem.title;

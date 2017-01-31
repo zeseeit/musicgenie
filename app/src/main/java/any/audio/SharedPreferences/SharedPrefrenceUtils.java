@@ -11,6 +11,7 @@ import static any.audio.Centrals.CentralDataRepository.TYPE_TRENDING;
  * Created by Ankit on 9/13/2016.
  */
 public class SharedPrefrenceUtils {
+
     private static final String PREF_NAME = "musicgenie_tasks";
     private static SharedPrefrenceUtils mInstance;
     private static int MODE = 0;
@@ -220,95 +221,95 @@ public class SharedPrefrenceUtils {
     }
 
     public void setTermsAccepted(boolean accepted) {
-        editor.putBoolean("terms_acceptance",accepted);
+        editor.putBoolean("terms_acceptance", accepted);
         editor.commit();
     }
 
     public boolean getTermsAccepted() {
-        return preferences.getBoolean("terms_acceptance",false);
+        return preferences.getBoolean("terms_acceptance", false);
     }
 
-    public void setFcmToken(String token){
-        editor.putString("fcmToken",token);
+    public void setFcmToken(String token) {
+        editor.putString("fcmToken", token);
         editor.commit();
     }
 
-    public String getFcmToken(){
-        return preferences.getString("fcmToken","");
+    public String getFcmToken() {
+        return preferences.getString("fcmToken", "");
     }
 
     public void setSongCardWidthDp(float screenWidthDP) {
-        editor.putFloat("screenWidth",screenWidthDP);
+        editor.putFloat("screenWidth", screenWidthDP);
         editor.commit();
     }
 
-    public float getScreenWidthPx(){
-        return preferences.getFloat("screenWidth",0);
+    public float getScreenWidthPx() {
+        return preferences.getFloat("screenWidth", 0);
     }
 
     public void setCols(int cols) {
-        editor.putInt("cols",cols);
+        editor.putInt("cols", cols);
         editor.commit();
     }
 
-    public int getCols(){
-        return preferences.getInt("cols",2);
+    public int getCols() {
+        return preferences.getInt("cols", 2);
     }
 
     public void setAdWidth(float screenWidthDP) {
-        editor.putFloat("adWidth",screenWidthDP);
+        editor.putFloat("adWidth", screenWidthDP);
         editor.commit();
     }
 
-    public float getAdWidth(){
-        return preferences.getFloat("adWidth",0);
+    public float getAdWidth() {
+        return preferences.getFloat("adWidth", 0);
     }
 
     public String getPlaylistVideoId() {
-        return preferences.getString("playlist","");
+        return preferences.getString("playlist", "");
     }
 
-    public void setPlaylistVideoId(String playlistVideoIds){
-        editor.putString("playlist",playlistVideoIds);
+    public void setPlaylistVideoId(String playlistVideoIds) {
+        editor.putString("playlist", playlistVideoIds);
         editor.commit();
     }
 
     public boolean isStreamUrlFetcherInProgress() {
-        return preferences.getBoolean("fetcherAtWork",false);
+        return preferences.getBoolean("fetcherAtWork", false);
     }
 
-    public void setStreamUrlFetcherInProgress(boolean state){
+    public void setStreamUrlFetcherInProgress(boolean state) {
 
-        editor.putBoolean("fetcherAtWork",state);
+        editor.putBoolean("fetcherAtWork", state);
         editor.commit();
 
     }
 
     public String getNextStreamUrl() {
-        return preferences.getString("upNextStreamUrl","");
+        return preferences.getString("upNextStreamUrl", "");
     }
 
-    public void setNextStreamUrl(String url){
-        editor.putString("upNextStreamUrl",url);
+    public void setNextStreamUrl(String url) {
+        editor.putString("upNextStreamUrl", url);
         editor.commit();
     }
 
     public String getNextVId() {
-        return preferences.getString("nvid","");
+        return preferences.getString("nvid", "");
     }
 
-    public void setNextVId(String vId){
-        editor.putString("nvid",vId);
+    public void setNextVId(String vId) {
+        editor.putString("nvid", vId);
         editor.commit();
     }
 
 
     public String getNextStreamTitle() {
-        return preferences.getString("nvt","");
+        return preferences.getString("nvt", "");
     }
 
-    public void setNextStreamTitle(String title){
-        editor.putString("nvt",title);
+    public void setNextStreamTitle(String title) {
+        editor.putString("nvt", title);
         editor.commit();
     }
 
@@ -319,30 +320,118 @@ public class SharedPrefrenceUtils {
     }
 
     public String getPlaylistVideoTitles() {
-        return preferences.getString("vtitles","");
+        return preferences.getString("vtitles", "");
     }
 
-    public void setPlaylistVideoTitles(String titles){
-        editor.putString("vtitles",titles);
+    public void setPlaylistVideoTitles(String titles) {
+        editor.putString("vtitles", titles);
         editor.commit();
     }
 
     public String getPlaylistYoutubeId() {
-        return preferences.getString("yids","");
+        return preferences.getString("yids", "");
     }
 
-    public void setPlaylistYoutubeId(String newIds){
-        editor.putString("yids",newIds);
+    public void setPlaylistYoutubeId(String newIds) {
+        editor.putString("yids", newIds);
         editor.commit();
     }
 
     public String getPlaylistUploaders() {
-        return preferences.getString("uploaders","");
+        return preferences.getString("uploaders", "");
     }
 
-    public void setPlaylistUploaders(String uploaders){
-        editor.putString("uploaders",uploaders);
+    public void setPlaylistUploaders(String uploaders) {
+        editor.putString("uploaders", uploaders);
+        editor.commit();
+    }
+
+
+    // Playlist Queue
+
+    public void setQueueYoutubId(String queue) {
+
+        editor.putString("queueyid", queue);
+        editor.commit();
+
+    }
+
+    public String getQueueYoutubeIds() {
+        return preferences.getString("queueyid", "");
+    }
+
+    public void setQueueVideoId(String queue) {
+
+        editor.putString("queuevid", queue);
+        editor.commit();
+
+    }
+
+    public String getQueueVideoId() {
+        return preferences.getString("queuevid", "");
+    }
+
+    public void setQueueTitle(String queue) {
+
+        editor.putString("queuetitle", queue);
+        editor.commit();
+
+    }
+
+    public String getQueueTitles() {
+        return preferences.getString("queuetitle", "");
+    }
+
+    public void setQueueUploaders(String queue) {
+
+        editor.putString("queueuploaders", queue);
+        editor.commit();
+
+    }
+
+    public String getQueueUploaders() {
+        return preferences.getString("queueuploaders", "");
+    }
+
+    public void clearQueue() {
+
+        editor.putString("queueuploaders", "");
+        editor.putString("queuetitle", "");
+        editor.putString("queuevid", "");
+        editor.putString("queueyid", "");
+
+        editor.commit();
+
+    }
+
+    public void setAutoPlayMode(boolean isAutoPlay) {
+
+        editor.putBoolean("autoPlay", isAutoPlay);
+        editor.commit();
+
+    }
+
+    public boolean getAutoPlayMode() {
+
+        return preferences.getBoolean("autoPlay", true);
+
+    }
+
+    public String getRepeatMode() {
+        return preferences.getString("repeatmode", Constants.MODE_REPEAT_NONE);
+    }
+
+    public void setRepeatMode(String mode) {
+        editor.putString("repeatmode", mode);
+        editor.commit();
+    }
+
+    public int getCurrentQueueIndex() {
+        return preferences.getInt("currentQueueIndex",0);
+    }
+
+    public void setCurrentQueueIndex(int currentQueueIndex){
+        editor.putInt("currentQueueIndex",currentQueueIndex);
         editor.commit();
     }
 }
-

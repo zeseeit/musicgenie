@@ -81,7 +81,7 @@
             android:id="@+id/title_second"
             android:textSize="16sp"
             android:textColor="@color/PlayerInfoColor"
-            android:text="Sajan Sath nibhana"
+            android:text="Seone Mix"
             android:maxLines="1"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
@@ -193,13 +193,28 @@
 
         <TextView
             android:layout_marginLeft="6dp"
-            android:layout_centerVertical="true"
             android:layout_toRightOf="@+id/autoplay_switch"
             android:text="Autoplay"
             android:textColor="@color/Gray"
             android:textSize="12sp"
+            android:layout_marginTop="8dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/repeatModeBtn"
+            android:paddingLeft="12dp"
+            android:paddingRight="12dp"
+            android:paddingTop="4dp"
+            android:paddingBottom="4dp"
+            android:layout_alignParentEnd="true"
+            android:textSize="36sp"
+            android:textColor="#ffffff"
+            android:text=""
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
     </RelativeLayout>
 
     <FrameLayout
@@ -217,6 +232,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
+
+        <TextView
+            android:id="@+id/playlistMessagePanel"
+            android:textSize="20sp"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            android:textColor="#ffffff"
+            android:text="No Item In Queue.Add and Enjoy !"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
 
         <ProgressBar
             android:layout_gravity="center"
