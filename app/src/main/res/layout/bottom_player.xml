@@ -13,7 +13,6 @@
         android:background="@color/BottomPlayerColor"
         android:layout_width="match_parent"
         android:layout_height="64dp" />
-
     <ProgressBar
         android:progressDrawable="@drawable/progress_bar_bg"
         style="?android:attr/progressBarStyleHorizontal"
@@ -23,8 +22,6 @@
         android:secondaryProgress="80"
         android:max="100"
         android:id="@+id/progressBarStreamProgress" />
-
-
     <FrameLayout
         android:layout_marginTop="2dp"
         android:id="@+id/thumbnail_wrapper"
@@ -39,7 +36,6 @@
             android:layout_height="64dp" />
 
     </FrameLayout>
-
     <RelativeLayout
         android:layout_toLeftOf="@+id/pauseWrapper"
         android:id="@+id/info_wrapper"
@@ -67,7 +63,6 @@
 
 
     </RelativeLayout>
-
     <RelativeLayout
         android:layout_marginTop="6dp"
         android:paddingRight="12dp"
@@ -108,7 +103,6 @@
 
 
     </RelativeLayout>
-
     <FrameLayout
         android:id="@+id/pauseWrapper"
         android:layout_toLeftOf="@+id/nextWrapper"
@@ -126,7 +120,6 @@
             android:layout_height="36dp" />
 
     </FrameLayout>
-
     <FrameLayout
         android:id="@+id/playlistWrapper"
         android:paddingTop="10dp"
@@ -146,7 +139,6 @@
             android:layout_height="36dp" />
 
     </FrameLayout>
-
     <FrameLayout
         android:paddingTop="8dp"
         android:paddingRight="8dp"
@@ -165,9 +157,6 @@
             android:layout_height="36dp" />
 
     </FrameLayout>
-
-    <!--new part from here-->
-
     <SeekBar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -177,7 +166,6 @@
         android:thumbTint="@color/PrimaryColor"
         android:progressDrawable="@drawable/seekbar_bg"
         android:id="@+id/seekBar" />
-
     <RelativeLayout
         android:layout_margin="16dp"
         android:id="@+id/autoplay_switch_wrapper"
@@ -208,7 +196,7 @@
             android:paddingTop="4dp"
             android:paddingBottom="4dp"
             android:layout_alignParentEnd="true"
-            android:textSize="36sp"
+            android:textSize="24sp"
             android:textColor="#ffffff"
             android:text=""
             android:layout_width="wrap_content"
@@ -216,7 +204,6 @@
 
 
     </RelativeLayout>
-
     <FrameLayout
         android:padding="8dp"
         android:layout_below="@+id/autoplay_switch_wrapper"
@@ -251,7 +238,6 @@
             android:id="@+id/auto_play_or_queue_progress_bar" />
 
     </FrameLayout>
-
     <FrameLayout
         android:id="@+id/nextWrapper"
         android:padding="10dp"
@@ -272,5 +258,10 @@
 
     </FrameLayout>
 
+    <include
+        android:layout_height="64dp"
+        android:layout_width="match_parent"
+        android:id="@+id/welcome_placeholderView"
+        layout="@layout/initial_player_placeholder_welocme_layout"/>
 
 </RelativeLayout>

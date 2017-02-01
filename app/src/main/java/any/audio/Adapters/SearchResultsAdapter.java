@@ -114,12 +114,27 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
             //attach click listeners
 
+            addbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    SearchResultsAdapter adapter = SearchResultsAdapter.getInstance(context);
+                    int pos = getAdapterPosition();
+                    String v_id = adapter.itemModels.get(pos).Video_id;
+                    String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.itemModels.get(pos).Title);
+                    String youtubId = adapter.itemModels.get(pos).Thumbnail_url.substring(26,adapter.itemModels.get(pos).Thumbnail_url.length()-6);
+                    String uploader = adapter.itemModels.get(pos).UploadedBy;
+                    adapter.addItemToQueue(v_id,youtubId,file_name,uploader);
+
+                }
+            });
+
             downloadBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
                     SearchResultsAdapter adapter = SearchResultsAdapter.getInstance(context);
-                    int pos = getAdapterPosition() - 1;
+                    int pos = getAdapterPosition();
                     String v_id = adapter.itemModels.get(pos).Video_id;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.itemModels.get(pos).Title);
                     adapter.requestDownload(v_id, file_name);
@@ -154,6 +169,15 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         }
     }
 
+    private void addItemToQueue(String v_id,String youtubeId ,String title,String uploader) {
+
+        if(searchActionListener!=null){
+
+            searchActionListener.onAddToQueue(v_id,youtubeId,title,uploader);
+
+        }
+    }
+
     private void requestStream(String v_id, String file_name) {
         if(searchActionListener!=null){
             searchActionListener.onPlayAction(v_id,file_name);
@@ -175,7 +199,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         void onPlayAction(String video_id,String title);
         void onDownloadAction(String video_id,String title);
-        void onAddToQueue(String video_id,String title);
+        void onAddToQueue(String video_id,String youtubeId,String title,String uploader);
 
     }
 

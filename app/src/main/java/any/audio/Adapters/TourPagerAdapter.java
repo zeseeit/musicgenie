@@ -20,16 +20,17 @@ public class TourPagerAdapter extends PagerAdapter {
     public TourPagerAdapter(Context context) {
         this.context = context;
         layouts = new int[]{
-                R.layout.first_tour_page,
-                R.layout.second_tour_page,
-                R.layout.third_tour_page,
-                R.layout.fourth_tour_page
+                R.layout.tour_first,
+                R.layout.tour_second,
+                R.layout.tour_third,
+                R.layout.tour_fourth
         };
     }
 
 
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
+
         layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(layouts[position], container, false);
         container.addView(view);

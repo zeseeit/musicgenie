@@ -16,6 +16,7 @@ import any.audio.R;
  * Created by Ankit on 9/13/2016.
  */
 public class LocalNotificationManager {
+
     public static LocalNotificationManager mInstance;
     private static Context context;
     private int mNotificationId = 0;

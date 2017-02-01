@@ -1,23 +1,10 @@
 Todo:
 
-> Player Streaming with title and Thumbnail 
-> Player Update
-> Player Control
-> Player Next (By user)
-> Auto-Pay
-> Playlist Generation
-> Notification Control
-> Add To Queue
 > Autoplay v/s Queue
-
 ====================
 
-> Search Item Views
-> Add To Queue
-> Play from Search
 > Download Queuing
 > Activity Transition Optimization
-> Home Dynamic Info
 > Theme and colors
 
 ===================

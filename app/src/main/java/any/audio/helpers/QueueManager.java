@@ -1,6 +1,7 @@
 package any.audio.helpers;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -100,11 +101,14 @@ public class QueueManager {
             }
         }
 
+        Log.d("QueueManager","Items "+utils.getQueueTitles());
+
     }
 
     public void removeQueueItem(String vid) {
         // no-callback require since action is from User
         // remove item from the adapter-done--
+
         ArrayList<PlaylistItem> oldList = getQueue();
         utils.clearQueue();
         for (PlaylistItem item : oldList) {

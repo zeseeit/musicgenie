@@ -24,7 +24,9 @@ import java.net.URLConnection;
 
 import any.audio.Activity.UpdateThemedActivity;
 import any.audio.Config.Constants;
+import any.audio.Config.URLS;
 import any.audio.Network.VolleyUtils;
+import any.audio.SharedPreferences.StreamSharedPref;
 
 /**
  * Created by Ankit on 8/26/2016.
@@ -152,6 +154,8 @@ public class MusicStreamer {
 
     private void requestStreamUrlUsingVolley(final String v_id) {
 
+        StreamSharedPref.getInstance(context).setLastStreamVid(v_id);
+
         try {
             VolleyUtils.getInstance().cancelPendingRequests(STREAM_URL_REQUEST_TAG_VOLLEY);
             Log.d("MusicStreamer", " Cancellig Pending Volley Requests For Stream Url");
@@ -162,7 +166,7 @@ public class MusicStreamer {
 
         final String t_v_id = v_id;
         final String streaming_url_pref = Constants.SERVER_URL;
-        String url = Constants.SERVER_URL + "/api/v1/stream?url=" + t_v_id;
+        String url = URLS.URL_SERVER_ROOT + "api/v1/stream?url=" + t_v_id;
         Log.d("MusicStream"," requesting url for stream on:"+url) ;
         StringRequest updateCheckReq = new StringRequest(
                 Request.Method.GET,

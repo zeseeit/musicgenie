@@ -1,8 +1,10 @@
 package any.audio.services;
 
 import android.app.Notification;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -74,8 +76,11 @@ public class NotificationPlayerService extends Service {
                 break;
             case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
 
-                collapsePlayerControl();
+                sendStopAction();
 
+                break;
+            case Constants.ACTIONS.SWIPE_TO_CANCEL:
+                swipeCancel();
                 break;
             case Constants.ACTIONS.STOP_FOREGROUND_ACTION_BY_STREAMSHEET:
 
@@ -92,6 +97,22 @@ public class NotificationPlayerService extends Service {
         return START_STICKY;
     }
 
+    private void swipeCancel() {
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            stopForeground(false);
+            stopSelf();
+        }else{
+
+            stopForeground(true);
+            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+
+        }
+
+        sendStopAction();
+    }
+
     private void sendPlayerStateBroadcast() {
 
         String action = PLAYING ? Constants.ACTIONS.PAUSE_TO_PLAY : Constants.ACTIONS.PLAY_TO_PAUSE;
@@ -100,7 +121,7 @@ public class NotificationPlayerService extends Service {
 
     }
 
-    private void collapsePlayerControl() {
+    private void sendStopAction() {
 
         String action = Constants.ACTIONS.STOP_PLAYER;
         Intent stateIntent = new Intent(action);
@@ -108,14 +129,13 @@ public class NotificationPlayerService extends Service {
 
     }
 
-    Notification status;
+    Notification notification;
     private final String LOG = "NotificationService";
 
     private void showNotification() {
 
         RemoteViews view = new RemoteViews(getPackageName(), R.layout.notification_player_control_handler_small_view);
         RemoteViews bigView = new RemoteViews(getPackageName(), R.layout.notification_player_control_handler_big_view);
-
 
         Intent notificationIntent = new Intent(this, Home.class);
         notificationIntent.setAction(Constants.ACTIONS.MAIN_ACTION);
@@ -125,6 +145,10 @@ public class NotificationPlayerService extends Service {
         Intent playIntent = new Intent(this, NotificationPlayerService.class);
         playIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
         PendingIntent pplayIntent = PendingIntent.getService(this, 0, playIntent, 0);
+
+        Intent deleteIntent = new Intent(this, NotificationPlayerService.class);
+        deleteIntent.setAction(Constants.ACTIONS.SWIPE_TO_CANCEL);
+        PendingIntent deletePedingIntent = PendingIntent.getService(this, 0, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 
         Intent closeIntent = new Intent(this, NotificationPlayerService.class);
         closeIntent.setAction(Constants.ACTIONS.STOP_FOREGROUND_ACTION);
@@ -178,17 +202,19 @@ public class NotificationPlayerService extends Service {
 
         }
 
-        status = new Notification.Builder(this).build();
-        status.contentView = view;
-        status.bigContentView = bigView;
-        status.flags = Notification.FLAG_AUTO_CANCEL;
-        status.icon = R.drawable.notifications_bar_small;
-        status.tickerText = title;
-        status.contentIntent = pendingIntent;
+        notification = new Notification.Builder(this).build();
+        notification.contentView = view;
+        notification.bigContentView = bigView;
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        notification.icon = R.drawable.notifications_bar_small;
+        notification.tickerText = title;
+        notification.deleteIntent = deletePedingIntent;
+        notification.contentIntent = pendingIntent;
 
-        Picasso.with(this).load(streamThumbnailUrl).transform(new CircularImageTransformer()).into(view, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
-        Picasso.with(this).load(streamThumbnailUrl).into(bigView, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
-        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, status);
+        Picasso.with(this).load(streamThumbnailUrl).transform(new CircularImageTransformer()).into(view, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+        Picasso.with(this).load(streamThumbnailUrl).into(bigView, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+
+        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
 
     }
 

@@ -210,7 +210,6 @@ public class CloudManager {
     // Results Section
     ///////////////////////////////////////////////////////////////////////////
 
-
     public void requestSearch(String term) {
 
         String url = URLS.URL_SEARCH_RESULT + "q=" + URLEncoder.encode(term);

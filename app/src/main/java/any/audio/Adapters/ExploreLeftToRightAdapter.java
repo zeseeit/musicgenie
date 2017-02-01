@@ -200,7 +200,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
 
         void onPlayAction(String video_id,String title);
         void onDownloadAction(String video_id,String title);
-        void onAddToQueue(String video_id,String title);
+        void onAddToQueue(String video_id,String youtubeId,String title,String uploader);
         void onShowAll(String type);
 
     }

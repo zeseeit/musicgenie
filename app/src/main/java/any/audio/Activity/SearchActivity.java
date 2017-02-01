@@ -38,6 +38,7 @@ import any.audio.Managers.FontManager;
 import any.audio.Models.SearchSuggestion;
 import any.audio.Network.VolleyUtils;
 import any.audio.R;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
 public class SearchActivity extends AppCompatActivity {
 
@@ -255,12 +256,7 @@ public class SearchActivity extends AppCompatActivity {
 
     private void finilizeSearch(String term) {
 
-        Intent homeIntent = new Intent(this, AnyAudioActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString("type","search");
-        bundle.putString("term",term.toString());
-        homeIntent.putExtras(bundle);
-        startActivity(homeIntent);
+        SharedPrefrenceUtils.getInstance(this).setLastSearchTerm(term);
         finish();
 
     }

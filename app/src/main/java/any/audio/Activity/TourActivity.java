@@ -54,7 +54,7 @@ public class TourActivity extends AppCompatActivity {
 
     private void initView(){
 
-        View view = LayoutInflater.from(this).inflate(R.layout.fourth_tour_page,null,false);
+        View view = LayoutInflater.from(this).inflate(R.layout.tour_fourth,null,false);
 
         scrollView = (ScrollViewExt) view.findViewById(R.id.termsScrollView);
         termsHeader = (TextView) view.findViewById(R.id.termsHeader);

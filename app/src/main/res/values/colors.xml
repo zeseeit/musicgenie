@@ -1,6 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+
+    <color name="AnyAudioPrimaryColor">#ff6e2c</color>
+    <color name="AnyAudioPrimaryGradietStart">#f44336</color>
+    <color name="AnyAudioPrimaryGradientEnd">#ffa726</color>
+    <color name="AnyAudioGrey189">#bdbdbd</color>
+    <color name="AnyAudioGrey224">#e0e0e0</color>
+    <color name="AnyAudioPrimaryBackground">#1A0907</color>
+    <color name="AnyAudioPlayerBackground">#571e18</color>
+
+    <color name="AnyAudioPrimaryGradientStart50">#80f44336</color>
+    <color name="AnyAudioPrimaryGradientEnd50">#80ffa726</color>
+    <color name="AnyAudioSearchItemBgColor">#19e0e0e0</color>
+    
+    <!--
+    >> explore card alpha 50% gradient primary gradient
+    >> search item bg color : 224 apha 8%
+
+    >> seekbar remaining progress :  ff6e2c alpha 40%
+    >> progress bar remaining progress  primary color alpha 40%
+    >> play btn primary gradient alpha 75%
+    >> explore duration bg prim-gradient :  50%
+    >>  home panel title : 224
+    >> toolbar text color :  224
+    >> autoplay :
+    -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <color name="BottomPlayerColor">#571e18</color>
     <color name="PlayerInfoColor">#bdbdbd</color>
     <color name="CollapsePlayerBtnColor">#ff6e2c</color>

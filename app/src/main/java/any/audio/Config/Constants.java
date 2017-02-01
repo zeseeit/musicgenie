@@ -78,6 +78,7 @@ public class Constants {
 
     public interface ACTIONS {
 
+        public static String SWIPE_TO_CANCEL = "com.anyaudio.in.action.swipe_to_cancel";
         public static String PLAY_TO_PAUSE = "com.anyaudio.in.action.play_to_pause";
         public static String PAUSE_TO_PLAY = "com.anyaudio.in.action.pause_to_play";
         public static String MAIN_ACTION = "com.anyaudio.in.action.main";

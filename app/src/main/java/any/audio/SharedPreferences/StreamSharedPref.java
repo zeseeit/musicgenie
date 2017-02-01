@@ -27,6 +27,8 @@ public class StreamSharedPref {
     private String KEY_STREAM_CONTENT_LENGTH = "stream_content_length";
     private String KEY_STREAMING_PLAYING_POSITION = "curr_pos_stream";
     private String KEY_IS_STREAM_URL_FETCHED = "stream_url_fetched";
+    private String lastStreamThumbnailUrl;
+    private String lastStreamTitle;
 
     public StreamSharedPref(Context context) {
         StreamSharedPref.context = context;
@@ -152,4 +154,30 @@ public class StreamSharedPref {
         return preferences.getString(Constants.KEY_STREAM_CONTENT_LEN,"00:00");
     }
 
+    public void setLastStreamThumbnailUrl(String lastStreamThumbnailUrl) {
+        editor.putString("lastStreamThumb",lastStreamThumbnailUrl);
+        editor.commit();
+    }
+
+    public void setLastStreamTitle(String lastStreamTitle) {
+        editor.putString("lastStreamTitle",lastStreamTitle);
+        editor.commit();
+    }
+
+    public String getLastStreamThumbnailUrl(){
+        return preferences.getString("lastStremThumb","");
+    }
+
+    public String getLastStreamTitle(){
+        return preferences.getString("lastStreamTitle","");
+    }
+
+    public void setLastStreamVid(String v_id) {
+        editor.putString("lstsvid",v_id);
+        editor.commit();
+    }
+
+    public String getLastStreamVid() {
+        return preferences.getString("lstsvid","");
+    }
 }

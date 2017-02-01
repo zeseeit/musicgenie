@@ -181,6 +181,7 @@ public class CentralDataRepository {
 
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
         String searchTerm = utils.getLastSearchTerm();
+        utils.setLastSearchTerm("");
         mCloudManager.requestSearch(searchTerm);
 
         sharedPrefrenceUtils.setLastLoadedType(TYPE_RESULT);

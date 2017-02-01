@@ -4,7 +4,7 @@
 
     <item android:id="@+id/action_search"
         android:title="Search"
-        android:icon="@android:drawable/ic_menu_search"
+        android:icon="@drawable/search_ic"
         app:showAsAction="always" />
 
     <item android:title="Trending"

@@ -17,6 +17,8 @@ import any.audio.Managers.FontManager;
 import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.helpers.QueueManager;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -29,17 +31,19 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     private static PlaylistAdapter mInstance;
     public ArrayList<PlaylistItem> playlistItems;
     private Typeface typeface;
+    static SharedPrefrenceUtils utils;
     private PlaylistItemListener playlistItemListener;
 
     public PlaylistAdapter(Context context) {
         this.context = context;
         playlistItems = new ArrayList<>();
+        utils = SharedPrefrenceUtils.getInstance(context);
         typeface = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
     }
 
-    public void setPlaylistItem(ArrayList<PlaylistItem> items){
+    public void setPlaylistItem(ArrayList<PlaylistItem> items) {
         this.playlistItems = items;
-         notifyDataSetChanged();
+        notifyDataSetChanged();
     }
 
     public static PlaylistAdapter getInstance(Context context) {
@@ -51,7 +55,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
     @Override
     public PlaylistItemHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View playlistView = LayoutInflater.from(context).inflate(R.layout.playlist_item,null,false);
+        View playlistView = LayoutInflater.from(context).inflate(R.layout.playlist_item, null, false);
         return new PlaylistItemHolder(playlistView);
 
     }
@@ -63,9 +67,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
         holder.title.setText(currentItem.getTitle());
         holder.artist.setText(currentItem.getUploader());
-        holder.removeBtn.setTypeface(typeface);
 
-        if(ConnectivityUtils.getInstance(context).isConnectedToNet()){
+        if (utils.getAutoPlayMode()) {
+            holder.removeBtn.setVisibility(View.GONE);
+        } else {
+            holder.removeBtn.setVisibility(View.VISIBLE);
+            holder.removeBtn.setTypeface(typeface);
+        }
+
+        if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
             Picasso.with(context).load(getImageUrl(currentItem.getYoutubeId())).into(holder.thumbnail);
         }
 
@@ -77,8 +87,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     }
 
     private String getImageUrl(String vid) {
-        //return "https://i.ytimg.com/vi/kVgKfScL5yk/hqdefault.jpg";
-        return "https://i.ytimg.com/vi/"+vid+"/hqdefault.jpg";  // additional query params => ?custom=true&w=240&h=256
+        //return "https://i.ytimg.com/vi/23 kVgKfScL5yk 35/hqdefault.jpg";
+        return "https://i.ytimg.com/vi/" + vid + "/0.jpg";  // additional query params => ?custom=true&w=240&h=256
     }
 
     public void popItem() {
@@ -88,10 +98,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
     public void appendItem(PlaylistItem item) {
         playlistItems.add(item);
-        notifyItemInserted(playlistItems.size()-1);
+        notifyItemInserted(playlistItems.size() - 1);
     }
 
-    public static class PlaylistItemHolder extends RecyclerView.ViewHolder{
+    public static class PlaylistItemHolder extends RecyclerView.ViewHolder {
 
         CircleImageView thumbnail;
         TextView title;
@@ -130,6 +140,16 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
                 @Override
                 public void onClick(View view) {
 
+                    if (!utils.getAutoPlayMode()) {   // auto-playlist are not cancellable
+                        // queue items are visible => items are cancellable
+                        PlaylistAdapter adapter = PlaylistAdapter.getInstance(context);
+                        int pos = getAdapterPosition();
+                        QueueManager.getInstance(context).removeQueueItem(adapter.playlistItems.get(pos).getVideoId());
+                        adapter.playlistItems.remove(pos);
+                        adapter.notifyItemRemoved(pos);
+
+                    }
+
                 }
             });
         }
@@ -138,17 +158,17 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
     private void streamItem(int adapterPosition) {
 
-        if(playlistItemListener!=null){
+        if (playlistItemListener != null) {
             playlistItemListener.onPlaylistItemTapped(playlistItems.get(adapterPosition));
         }
 
     }
 
-    public void setPlaylistItemListener(PlaylistItemListener listener){
+    public void setPlaylistItemListener(PlaylistItemListener listener) {
         this.playlistItemListener = listener;
     }
 
-    public interface PlaylistItemListener{
+    public interface PlaylistItemListener {
 
         void onPlaylistItemTapped(PlaylistItem item);
 
