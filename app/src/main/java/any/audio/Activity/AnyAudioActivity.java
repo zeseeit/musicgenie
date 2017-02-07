@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.res.Resources;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
@@ -17,13 +16,12 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SwitchCompat;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -54,7 +52,6 @@ import java.util.ArrayList;
 import any.audio.Adapters.ExploreLeftToRightAdapter;
 import any.audio.Adapters.PlaylistAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
-import any.audio.AnyAudioMains.AnyAudio;
 import any.audio.Config.Constants;
 import any.audio.Fragments.ExploreFragment;
 import any.audio.Fragments.SearchFragment;
@@ -63,10 +60,9 @@ import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
-import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.L;
-import any.audio.helpers.MusicStreamer;
+import any.audio.helpers.StreamUrlFetcher;
 import any.audio.helpers.PlaylistGenerator;
 import any.audio.helpers.QueueManager;
 import any.audio.helpers.QueueManager.QueueEventListener;
@@ -125,6 +121,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private QueueManager queueManager;
     private QueueEventListener queueEventListener;
     private TextView playlistMessagePanel;
+    private RelativeLayout playerPlaceHolderView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,6 +136,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         utils = SharedPrefrenceUtils.getInstance(this);
         mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.setEnabled(false);
+        mLayout.setClickable(false);
         mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
             @Override
             public void onPanelSlide(View panel, float slideOffset) {
@@ -180,7 +179,16 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         }
 
         playlistAdapter = PlaylistAdapter.getInstance(this);
-        prepareBottomPlayer();
+
+        if (utils.getLastItemThumbnail().length() > 0) {  // here param could be any thing among last item (artist,url,title)
+            //set visibility of placeholder GONE
+            playerPlaceHolderView.setVisibility(View.GONE);
+            //set Bottom Player Slidable
+            mLayout.setEnabled(true);
+            mLayout.setClickable(true);
+            // prepare the player according to last items
+            prepareBottomPlayer();
+        }
 
         if (utils.getAutoPlayMode()) {
             triggerAutoPlayMode();
@@ -205,15 +213,34 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_search:
+            case R.id.home_search:
 
                 Intent search = new Intent(this, SearchActivity.class);
                 startActivity(search);
 
                 break;
+
+            case R.id.home_popoup:
+                showHomePopUpMenu(findViewById(R.id.home_popoup));
+                break;
+
         }
 
         return true;
+    }
+
+    private void showHomePopUpMenu(View view) {
+
+        PopupMenu popup = new PopupMenu(this, view);
+        popup.getMenuInflater().inflate(R.menu.any_audio_menu_popup, popup.getMenu());
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                return false;
+            }
+        });
+
+        popup.show();
     }
 
     @Override
@@ -278,29 +305,46 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     @Override
     public void onPlaylistPreparing() {
 
-        // hide the current playlist items  and make the current progresh bar visible
-        playlistRecyclerView.setVisibility(View.GONE);
-        playlistPreparingProgressbar.setVisibility(View.VISIBLE);
+        // hide the current playlist items  and make the current progresh bar visible Only if AutoPlay is On
 
+        //Ensuring that it is called on Main UI Thread
+        if (utils.getAutoPlayMode()) {
+            new View(this).post(new Runnable() {
+                @Override
+                public void run() {
+                    playlistRecyclerView.setVisibility(View.GONE);
+                    playlistMessagePanel.setVisibility(View.GONE);
+                    playlistPreparingProgressbar.setVisibility(View.VISIBLE);
+                }
+            });
+        }
     }
 
     @Override
     public void onPlaylistPrepared(ArrayList<PlaylistItem> items) {
 
-        // dismiss the progress bar and reset the adapter data
-        playlistPreparingProgressbar.setVisibility(View.GONE);
-        playlistRecyclerView.setVisibility(View.VISIBLE);
-        playlistAdapter.setPlaylistItem(items);
-        playlistRecyclerView.setAdapter(playlistAdapter);
+        // dismiss the progress bar and reset the adapter data Only if AutoPlay is On
+        if (utils.getAutoPlayMode()) {
+            playlistPreparingProgressbar.setVisibility(View.GONE);
+            playlistMessagePanel.setVisibility(View.GONE);
+            playlistRecyclerView.setVisibility(View.VISIBLE);
+            playlistAdapter.setPlaylistItem(items);
+            playlistRecyclerView.setAdapter(playlistAdapter);
+        }
 
     }
-
 
     @Override
     public void onPlaylistItemTapped(PlaylistItem item) {
 
         // stream current item
         initStream(item.videoId, item.getTitle());
+
+        //set CurrentItem Info
+        utils.setCurrentItemStreamUrl(item.getVideoId());
+        utils.setCurrentItemTitle(item.getTitle());
+        utils.setCurrentItemThumbnailUrl(getImageUrl(item.getYoutubeId()));
+        utils.setCurrentItemArtist(item.getUploader());
 
     }
 
@@ -358,6 +402,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
         progressBarStream = (ProgressBar) findViewById(R.id.progressBarStreamProgress);
         playlistMessagePanel = (TextView) findViewById(R.id.playlistMessagePanel);
+        playerPlaceHolderView = (RelativeLayout) findViewById(R.id.welcome_placeholderView);
         homePanelTitle = (TextView) findViewById(R.id.homePanelTitle);
         repeatModeBtn = (TextView) findViewById(R.id.repeatModeBtn);
         view = findViewById(R.id.welcome_placeholderView);
@@ -411,18 +456,16 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         autoplaySwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean fromUser) {
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
 
                 playlistPreparingProgressbar.setVisibility(View.VISIBLE);
                 playlistRecyclerView.setVisibility(View.INVISIBLE);
-
-                utils.setAutoPlayMode(compoundButton.isChecked());
-                if (compoundButton.isChecked()) {
+                utils.setAutoPlayMode(checked);
+                if (checked) {
                     triggerAutoPlayMode();
                 } else {
                     triggerQueueMode();
                 }
-
 
             }
         });
@@ -430,12 +473,13 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     }
 
     private void triggerAutoPlayMode() {
+
         // disable repeat modes while autoplay
         repeatModeBtn.setClickable(false);
         repeatModeBtn.setVisibility(View.GONE);
 
         // get auto Playlist
-        ArrayList<PlaylistItem> items = PlaylistGenerator.getInstance(AnyAudioActivity.this).getPlaylistItems(false);
+        ArrayList<PlaylistItem> items = PlaylistGenerator.getInstance(AnyAudioActivity.this).getPlaylistItems();
         if (items.size() == 0) {
 
             playlistMessagePanel.setVisibility(View.VISIBLE);
@@ -446,10 +490,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         } else {
 
+            playlistMessagePanel.setVisibility(View.GONE);
             repeatModeBtn.setClickable(true);
             repeatModeBtn.setVisibility(View.VISIBLE);
-
-            playlistMessagePanel.setVisibility(View.GONE);
             playlistAdapter.setPlaylistItem(items);
             playlistRecyclerView.setAdapter(playlistAdapter);
             playlistPreparingProgressbar.setVisibility(View.GONE);
@@ -648,58 +691,13 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                             pauseBtn.setVisibility(View.VISIBLE);
                             nextBtn.setVisibility(View.VISIBLE);
-
-                            StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamContentLength(trackLen);
-                            startNotificationService();
-
-                            if (utils.getNextStreamUrl().length() == 0 && !utils.isStreamUrlFetcherInProgress() && (contentLen - progress) < UP_NEXT_PREPARE_TIME_OFFSET) {
-
-                                Log.d("PlaylistTest", "pre-ready:>starting fetching next Stream Url");
-                                utils.setStreamUrlFetcherInProgress(true);
-
-                                // get next play details
-
-                                PlaylistItem nxtItem = null;
-
-                                if (utils.getAutoPlayMode()) {
-                                    nxtItem = playlistGenerator.getUpNext();
-                                } else {
-                                    nxtItem = queueManager.getUpNext();
-                                }
-
-                                String nextVid = nxtItem.videoId;
-                                String nextVidTitle = nxtItem.title;
-                                String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
-                                String upNextArtist = nxtItem.uploader;
-
-
-                                utils.setNextVId(nextVid);
-                                utils.setNextStreamTitle(nextVidTitle);
-
-                                // set data ready for notification and bottom sheets
-                                StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamThumbnailUrl(upNextThumbnailUrl);
-                                StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamTitle(nextVidTitle);
-                                StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamSubTitle(upNextArtist);
-
-                                MusicStreamer
-                                        .getInstance(AnyAudioActivity.this)
-                                        .setData(nextVid, nextVidTitle)
-                                        .setBroadcastMode(false)
-                                        .setOnStreamUriFetchedListener(new MusicStreamer.OnStreamUriFetchedListener() {
-                                            @Override
-                                            public void onUriAvailable(String uri) {
-                                                Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);
-                                                //this is first time stream url fetch
-                                                utils.setStreamUrlFetcherInProgress(false);
-                                                utils.setNextStreamUrl(uri);
-                                            }
-                                        })
-                                        .initProcess();
-                            }
+                            utils.setStreamContentLength(trackLen);
+                            //startNotificationService();
 
                         }
 
-
+                        pauseBtn.setEnabled(true);
+                        nextBtn.setEnabled(true);
                         seekBar.setMax(contentLen);
                         progressBarStream.setMax(contentLen);
 
@@ -726,25 +724,35 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            Log.d("HomeStream", " onReceive() Notification ");
+            Log.i("NotificationPlayer", " onReceive() ");
             if (exoPlayer != null) {
 
                 if (intent.getAction().equals(Constants.ACTIONS.PLAY_TO_PAUSE)) {
-
+                    Log.i("NotificationPlayer", " onReceive() PLAY->PAUSE");
                     // pause
                     pauseBtn.setText(playBtnString);
-                    StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamerPlayState(false);
-                    exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(AnyAudioActivity.this).getStreamerPlayState());
+                    utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PAUSED);
+                    exoPlayer.setPlayWhenReady(false);
                 }
                 if (intent.getAction().equals(Constants.ACTIONS.PAUSE_TO_PLAY)) {
-
                     // play
+                    Log.i("NotificationPlayer", "onReceive() PAUSE->PLAY");
                     pauseBtn.setText(pauseBtnString);
-                    StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamerPlayState(true);
-                    exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(AnyAudioActivity.this).getStreamerPlayState());
+                    utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PLAYING);
+                    exoPlayer.setPlayWhenReady(true);
+                }
+
+                if (intent.getAction().equals(Constants.ACTIONS.NEXT_ACTION)) {
+                    // next
+                    Log.i("NotificationPlayer", "onReceive() NEXT");
+                    onNextRequested();
                 }
 
                 if (intent.getAction().equals(Constants.ACTIONS.STOP_PLAYER)) {
+
+                    Log.i("NotificationPlayer", "onReceive() STOP");
+
+                    utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
                     resetPlayer();
 
                 }
@@ -761,17 +769,18 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
 
                 L.m("PlaylistTest", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
-                StreamSharedPref.getInstance(AnyAudioActivity.this).setStreamUrlFetchedStatus(true);
+
+                utils.setStreamUrlFetchedStatus(true);
                 String uri = intent.getStringExtra(Constants.EXTRAA_URI);
+                utils.setNextStreamUrl(uri);
+                utils.setStreamUrlFetcherInProgress(false);
 
                 if (uri.equals(Constants.STREAM_PREPARE_FAILED_URL_FLAG)) {
-                    // WID: close the bottomSheets with a toast error
                     promptError("Something is Wrong !! Please Try Again.");
                     return;
                 }
 
-                mPlayerThread = new AnyAudioPlayer(AnyAudioActivity.this, uri);
-                mPlayerThread.start();
+                playNext(false);
 
             }
 
@@ -826,6 +835,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         registerReceiver(streamProgressUpdpateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
         registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
         registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
+        registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.NEXT_ACTION));
+        registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
         registerReceiver(streamUriReceiver, new IntentFilter(Constants.ACTION_STREAM_URL_FETCHED));
         registerReceiver(songActionReceiver, new IntentFilter(Constants.ACTIONS.AUDIO_OPTIONS));
         receiverRegistered = true;
@@ -849,26 +860,22 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         Toast.makeText(this, s, Toast.LENGTH_LONG).show();
     }
 
-    private void startNotificationService() {
-
-        Intent notificationIntent = new Intent(this, NotificationPlayerService.class);
-        notificationIntent.setAction(Constants.ACTIONS.START_FOREGROUND_ACTION);
-        startService(notificationIntent);
-
-    }
-
     private void initStream(String video_id, String title) {
+
+        if (playerPlaceHolderView.getVisibility() == View.VISIBLE) {
+            playerPlaceHolderView.setVisibility(View.GONE);
+        }
 
         if (ConnectivityUtils.getInstance(this).isConnectedToNet()) {
             resetPlayer();
-            StreamSharedPref.getInstance(this).setStreamState(true);
+            utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PLAYING);
             prepareBottomPlayer();
         } else {
             // re-init player
             prepareBottomPlayer();
         }
 
-        MusicStreamer
+        StreamUrlFetcher
                 .getInstance(this)
                 .setBroadcastMode(true)
                 .setData(video_id, title)
@@ -878,30 +885,53 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     private void prepareBottomPlayer() {
 
-        if(StreamSharedPref.getInstance(this).getLastStreamVid().length()==0){
-            return;
-        }else{
-            view.setVisibility(View.GONE);
-        }
-
-        String streamUri = StreamSharedPref.getInstance(this).getStreamThumbnailUrl();
-        String streamTitle = StreamSharedPref.getInstance(this).getStreamTitle();
-        //save for future ref
-        StreamSharedPref.getInstance(this).setLastStreamThumbnailUrl(streamUri);
-        StreamSharedPref.getInstance(this).setLastStreamTitle(streamTitle);
+        String streamUri = utils.getLastItemThumbnail();
+        String streamTitle = utils.getLastItemTitle();
+        String streamArtist = utils.getLastItemArtist();
 
         //Player-View Common
-        pauseBtn.setVisibility(View.GONE);
-        nextBtn.setVisibility(View.GONE);
-        Picasso.with(this).load(streamUri).transform(new CircularImageTransformer()).into(thumbnail);
+        switch (utils.getPlayerState()) {
 
+            case Constants.PLAYER.PLAYER_STATE_PLAYING:
+                Log.d("PlayerTest"," Playing State");
+                pauseBtn.setText(pauseBtnString);
+                pauseBtn.setVisibility(View.VISIBLE);
+                nextBtn.setVisibility(View.VISIBLE);
+                nextBtn.setEnabled(true);
+
+                break;
+            case Constants.PLAYER.PLAYER_STATE_PAUSED:
+
+                Log.d("PlayerTest"," Paushed State");
+                pauseBtn.setText(playBtnString);
+                pauseBtn.setVisibility(View.VISIBLE);
+                pauseBtn.setEnabled(true);
+
+                break;
+            case Constants.PLAYER.PLAYER_STATE_STOPPED:
+                Log.d("PlayerTest"," Stopped State");
+                pauseBtn.setText(playBtnString);
+                nextBtn.setVisibility(View.GONE);
+
+                break;
+        }
+
+        if (utils.getAutoPlayMode()) {
+            autoplaySwitch.setChecked(true);
+        } else {
+            autoplaySwitch.setChecked(false);
+        }
+
+        //thumbnail init
+        Picasso.with(this).load(streamUri).transform(new CircularImageTransformer()).into(thumbnail);
         //Player-View Visible
         title.setText(streamTitle);
+        artist.setText(streamArtist);
         progressBarStream.setProgress(0);
         progressBarStream.setSecondaryProgress(0);
-
         //Player-View Hidden
         title_second.setText(streamTitle);
+        artist_second.setText(streamArtist);
         streamDuration.setText("00:00/00:00");
         seekBar.setProgress(0);
         seekBar.setSecondaryProgress(0);
@@ -915,7 +945,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                streamNext();
+                onNextRequested();
             }
         });
 
@@ -948,15 +978,11 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             @Override
             public void onClick(View view) {
 
-                Log.d("StreamingHome", " clicked Play Pause Btn");
-
-                StreamSharedPref pref = StreamSharedPref.getInstance(AnyAudioActivity.this);
-
                 if (exoPlayer != null) {
 
-                    if (pref.getStreamerPlayState()) {
+                    if (utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING) {
                         // pause
-                        pref.setStreamerPlayState(false);
+                        utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PAUSED);
                         pauseBtn.setText(playBtnString);
 
                         //handle: On Long time pause: stop streaming
@@ -967,23 +993,19 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
 
                     } else {
-                        // case 1 : - streaming play/pause
                         //play
-
-                        pref.setStreamerPlayState(true);
+                        utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PLAYING);
                         pauseBtn.setText(pauseBtnString);
-
-                        // case 2 : - start stream the dead items
-
-//                        initStream(pref.getLastStreamVid(),pref.getLastStreamTitle());
-
                     }
 
-                    sendPlayerStateToNotificationService(StreamSharedPref.getInstance(AnyAudioActivity.this).getStreamerPlayState());
+                    //todo: handle player notification bar items
+                    //sendPlayerStateToNotificationService(utils.getPlayerState());
 
-                    exoPlayer.setPlayWhenReady(StreamSharedPref.getInstance(AnyAudioActivity.this).getStreamerPlayState());
+                    exoPlayer.setPlayWhenReady((utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING));
                 } else {
-                    Log.d("StreamingHome", " exoPlayer object null");
+
+                    pauseBtn.setText(pauseBtnString);
+                    initStream(utils.getLastItemStreamUrl(), utils.getLastItemTitle());
                 }
             }
         });
@@ -1009,7 +1031,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             L.m("StreamingHome", "Player Reset Done");
 
         }
-        StreamSharedPref.getInstance(this).setStreamState(false);
+        utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
 
     }
 
@@ -1138,6 +1160,14 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             mUri = Uri.parse(uri);
         }
 
+        private void startNotificationService() {
+
+            Intent notificationIntent = new Intent(context, NotificationPlayerService.class);
+            notificationIntent.setAction(Constants.ACTIONS.START_FOREGROUND_ACTION);
+            context.startService(notificationIntent);
+
+        }
+
         @Override
         public void run() {
             Looper.prepare();
@@ -1159,7 +1189,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         private void useExoplayer() {
 
             exoPlayer = ExoPlayer.Factory.newInstance(1);
-            // Settings for exoPlayer
             Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
             String userAgent = Util.getUserAgent(context, "AnyAudio");
             DataSource dataSource = new DefaultUriDataSource(context, null, userAgent);
@@ -1171,18 +1200,22 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                     BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
 
             audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
-            // Prepare ExoPlayer
 
             exoPlayer.prepare(audioRenderer);
             exoPlayer.setPlayWhenReady(true);
-            StreamSharedPref.getInstance(context).setStreamerPlayState(true);
+            utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PLAYING);
+
+            //start Notification Player
+            startNotificationService();
+
             exoPlayer.addListener(new ExoPlayer.Listener() {
                 @Override
                 public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
                     if (playbackState == 5) // 5 - > integer code for player end state
-                        StreamSharedPref.getInstance(context).setStreamState(false);
-
+                    {
+                        utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
+                    }
                 }
 
                 @Override
@@ -1193,10 +1226,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                 @Override
                 public void onPlayerError(ExoPlaybackException error) {
                     Log.d("ExoPlayer", "exo error setting stream state false");
-                    StreamSharedPref.getInstance(context).setStreamState(false);
+                    utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
                 }
             });
-
             while (exoPlayer != null) {
 
                 playerCurrentPositon = (int) exoPlayer.getCurrentPosition();
@@ -1209,26 +1241,38 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                         exoPlayer.setPlayWhenReady(false);
                         exoPlayer.release();
                         exoPlayer.stop();
+                        utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
 
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                streamNext();
+
+                                playNext(true);  // true param is flag for refreshing the playlist items
+
                             }
                         });
-
-                        StreamSharedPref.getInstance(context).setStreamState(false);
                         break;
                     }
                 }
 
                 if (exoPlayer.getPlayWhenReady()) {
-                    Log.d("ExoPlayer", " broadcasting progress");
+
+                    if (playerContentDuration != -1) {
+
+                        if (utils.getNextStreamUrl().length() == 0 && !utils.isStreamUrlFetcherInProgress() && (playerContentDuration - playerCurrentPositon) < UP_NEXT_PREPARE_TIME_OFFSET) {
+
+                            Log.d("PlaylistTest", " fetching Next Url");
+                            fetchNextUrl();
+
+                        }
+                    }
+
                     broadcastStreamProgresUpdate(
                             String.valueOf(playerCurrentPositon),
                             String.valueOf(playerContentDuration),
                             String.valueOf(exoPlayer.getBufferedPosition())
                     );
+
                 }
 
                 try {
@@ -1254,7 +1298,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private void streamNext() {
+    private void onNextRequested() {
 
         long diff;
         if (exoPlayer != null) {
@@ -1264,13 +1308,19 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             exoPlayer.release();
             L.m("PlaylistTest", "Player Released");
 
-            StreamSharedPref.getInstance(this).setStreamState(false);
+            utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
             PlaylistItem nxtItem = null;
 
             if (utils.getAutoPlayMode()) {
                 nxtItem = PlaylistGenerator.getInstance(this).getUpNext();
+                // refresh the list w.r.t top item.
+                PlaylistGenerator.getInstance(this).refreshPlaylist();
             } else {
                 nxtItem = QueueManager.getInstance(this).getUpNext();
+                if (nxtItem == null) {
+                    Toast.makeText(this, "No Item To Play Next.", Toast.LENGTH_LONG).show();
+                    return;
+                }
             }
 
             String upNextVid = nxtItem.videoId;
@@ -1280,6 +1330,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
             Log.d("PlaylistTest", "nextVid:=" + upNextVid + " nextTitle:=" + upNextTitle);
 
+
+            //todo: check for usage
             utils.setNextVId(upNextVid);
             utils.setNextStreamTitle(upNextTitle);
 
@@ -1288,10 +1340,10 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
                 L.m("PlaylistTest", "diff : " + diff);
                 // means stream fetcher not in progress
-                StreamSharedPref.getInstance(this).setStreamThumbnailUrl(upNextThumbnailUrl);
-                StreamSharedPref.getInstance(this).setStreamTitle(upNextTitle);
-                StreamSharedPref.getInstance(this).setStreamSubTitle(upNextArtist);
-
+                utils.setCurrentItemStreamUrl(upNextVid);
+                utils.setCurrentItemThumbnailUrl(upNextThumbnailUrl);
+                utils.setCurrentItemArtist(upNextArtist);
+                utils.setCurrentItemTitle(upNextTitle);
                 Log.d("PlaylistTest", "starting normal stream..");
                 initStream(upNextVid, upNextTitle);
 
@@ -1303,7 +1355,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                 if (nextStreamUrl.length() > 0) {
 
-                    streamNext();
+                    playNext(false);
 
                 } else {
 
@@ -1317,6 +1369,74 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                 }
             }
         }
+    }
+
+    private void fetchNextUrl() {
+
+        Log.d("PlaylistTest", "fetchNextUrl() - > ");
+        utils.setStreamUrlFetcherInProgress(true);
+        // get next play details
+        PlaylistItem nxtItem = null;
+
+        if (utils.getAutoPlayMode()) {
+            nxtItem = playlistGenerator.getUpNext();
+        } else {
+            nxtItem = queueManager.getUpNext();
+            if (nxtItem == null) {
+                Toast.makeText(this, "No Item To Play Next.", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+        }
+
+        String nextVid = nxtItem.videoId;
+        String nextVidTitle = nxtItem.title;
+        String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
+        String upNextArtist = nxtItem.uploader;
+        utils.setNextVId(nextVid);
+        utils.setNextStreamTitle(nextVidTitle);
+        // set data ready for notification and bottom sheets
+        utils.setCurrentItemStreamUrl(nextVid);
+        utils.setCurrentItemThumbnailUrl(upNextThumbnailUrl);
+        utils.setCurrentItemArtist(upNextArtist);
+        utils.setCurrentItemTitle(nextVidTitle);
+
+        StreamUrlFetcher
+                .getInstance(AnyAudioActivity.this)
+                .setData(nextVid, nextVidTitle)
+                .setBroadcastMode(false)
+                .setOnStreamUriFetchedListener(new StreamUrlFetcher.OnStreamUriFetchedListener() {
+                    @Override
+                    public void onUriAvailable(String uri) {
+                        Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);
+                        //this is first time stream url fetch
+                        utils.setStreamUrlFetcherInProgress(false);
+                        utils.setNextStreamUrl(uri);
+                    }
+                })
+                .initProcess();
+
+    }
+
+    private void playNext(boolean refresh) {
+
+        prepareBottomPlayer();
+        String nextStreamUrl = utils.getNextStreamUrl();
+
+        if (nextStreamUrl.length() > 0) {
+
+            mPlayerThread = new AnyAudioPlayer(AnyAudioActivity.this, nextStreamUrl);
+            mPlayerThread.start();
+            utils.setNextStreamUrl("");
+
+            if (refresh) {
+                PlaylistGenerator.getInstance(this).refreshPlaylist();
+            }
+
+        } else {
+            Log.d("PlaylistNext", " No UpNext Item");
+        }
+
     }
 
     private String getImageUrl(String vid) {

@@ -2,6 +2,7 @@ package any.audio.SharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 import any.audio.Config.Constants;
 
@@ -406,6 +407,7 @@ public class SharedPrefrenceUtils {
 
     public void setAutoPlayMode(boolean isAutoPlay) {
 
+        Log.d("SwitchTest", " turning " + isAutoPlay);
         editor.putBoolean("autoPlay", isAutoPlay);
         editor.commit();
 
@@ -413,6 +415,7 @@ public class SharedPrefrenceUtils {
 
     public boolean getAutoPlayMode() {
 
+        Log.d("SwitchTest", " returning " + preferences.getBoolean("autoPlay", true));
         return preferences.getBoolean("autoPlay", true);
 
     }
@@ -427,11 +430,151 @@ public class SharedPrefrenceUtils {
     }
 
     public int getCurrentQueueIndex() {
-        return preferences.getInt("currentQueueIndex",0);
+        return preferences.getInt("currentQueueIndex", -1);
     }
 
-    public void setCurrentQueueIndex(int currentQueueIndex){
-        editor.putInt("currentQueueIndex",currentQueueIndex);
+    public void setCurrentQueueIndex(int currentQueueIndex) {
+        editor.putInt("currentQueueIndex", currentQueueIndex);
         editor.commit();
+    }
+
+    // Last Item
+
+    public void setLastItemStreamUrl(String url) {
+        editor.putString("lastItemStream", url);
+        editor.commit();
+
+        Log.d("PrefCheck","setting Last Url : "+url);
+    }
+
+    public String getLastItemStreamUrl() {
+        Log.d("PrefCheck"," returning Last Url : "+preferences.getString("lastItemStream",""));
+        return preferences.getString("lastItemStream", "");
+    }
+
+    public void setLastItemThumbnailUrl(String url) {
+        editor.putString("lastItemThumbnail", url);
+        editor.commit();
+    }
+
+    public String getLastItemThumbnail() {
+        return preferences.getString("lastItemThumbnail", "");
+    }
+
+    public void setLastItemTitle(String title) {
+        editor.putString("lastItemTitle", title);
+        editor.commit();
+    }
+
+    public String getLastItemTitle() {
+        return preferences.getString("lastItemTitle", "");
+    }
+
+    public void setLastItemArtist(String artist) {
+        editor.putString("lastItemArtist", artist);
+        editor.commit();
+    }
+
+    public String getLastItemArtist() {
+        return preferences.getString("lastItemArtist", "");
+    }
+
+    // Current Item
+
+    public void setCurrentItemStreamUrl(String url) {
+        editor.putString("currentItemStream", url);
+        editor.commit();
+
+        if(url.length()>0){
+            setLastItemStreamUrl(url);
+        }
+
+    }
+
+    public String getCurrentItemStreamUrl() {
+        return preferences.getString("currentItemStream", "");
+    }
+
+    public void setCurrentItemThumbnailUrl(String url) {
+        editor.putString("currentItemThumbnail", url);
+        editor.commit();
+
+        //only if there is new item
+        if(url.length()>0)
+            setLastItemThumbnailUrl(url);
+
+    }
+
+    public String getCurrentItemThumbnail() {
+        return preferences.getString("currentItemThumbnail", "");
+    }
+
+    public void setCurrentItemTitle(String title) {
+        editor.putString("currentItemTitle", title);
+        editor.commit();
+
+        if(title.length()>0)
+            setLastItemTitle(title);
+
+    }
+
+    public String getCurrentItemTitle() {
+        return preferences.getString("currentItemTitle", "");
+    }
+
+    public void setCurrentItemArtist(String artist) {
+        editor.putString("currentItemArtist", artist);
+        editor.commit();
+
+        if(artist.length()>0)
+            setLastItemArtist(artist);
+
+    }
+
+    public String getCurrentItemArtist() {
+        return preferences.getString("currentItemArtist", "");
+    }
+
+    // Player State
+
+    public void setPlayerState(int state){
+
+        editor.putInt("AnyAudioPlayerState",state);
+        editor.commit();
+
+        if(state==Constants.PLAYER.PLAYER_STATE_STOPPED){
+
+            setCurrentItemTitle("");
+            setCurrentItemThumbnailUrl("");
+            setCurrentItemArtist("");
+
+        }
+
+    }
+
+    public int getPlayerState(){
+        return preferences.getInt("AnyAudioPlayerState",Constants.PLAYER.PLAYER_STATE_STOPPED);
+    }
+
+
+    //Notification Tray Player
+    public void setStreamContentLength(String trackLen) {
+        editor.putString("trackLen",trackLen);
+        editor.commit();
+    }
+
+    public String getStreamContentLength(){
+        return preferences.getString("trackLen","00:00");
+    }
+
+    public void setStreamUrlFetchedStatus(boolean fetchedStatus) {
+
+        editor.putBoolean("fetchedStatus",fetchedStatus);
+        editor.commit();
+
+    }
+
+    public boolean getStreamUrlFetchedStatus(){
+        return preferences.getBoolean("fetchedStatus",false);
     }
 }

@@ -14,10 +14,11 @@ import android.widget.RemoteViews;
 
 import com.squareup.picasso.Picasso;
 
+import any.audio.Activity.AnyAudioActivity;
 import any.audio.Activity.Home;
 import any.audio.Config.Constants;
 import any.audio.R;
-import any.audio.SharedPreferences.StreamSharedPref;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.CircularImageTransformer;
 
 /**
@@ -74,8 +75,15 @@ public class NotificationPlayerService extends Service {
 
                 }
                 break;
-            case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
 
+            case Constants.ACTIONS.NEXT_ACTION:
+
+                sendNextAction();
+
+                break;
+
+            case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
+                Log.i("NotificationPlayer"," Sending Stop Action");
                 sendStopAction();
 
                 break;
@@ -95,6 +103,14 @@ public class NotificationPlayerService extends Service {
         }
 
         return START_STICKY;
+    }
+
+    private void sendNextAction() {
+
+        String action = Constants.ACTIONS.NEXT_ACTION;
+        Intent stateIntent = new Intent(action);
+        sendBroadcast(stateIntent);
+
     }
 
     private void swipeCancel() {
@@ -137,7 +153,7 @@ public class NotificationPlayerService extends Service {
         RemoteViews view = new RemoteViews(getPackageName(), R.layout.notification_player_control_handler_small_view);
         RemoteViews bigView = new RemoteViews(getPackageName(), R.layout.notification_player_control_handler_big_view);
 
-        Intent notificationIntent = new Intent(this, Home.class);
+        Intent notificationIntent = new Intent(this, AnyAudioActivity.class);
         notificationIntent.setAction(Constants.ACTIONS.MAIN_ACTION);
         notificationIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
@@ -145,6 +161,10 @@ public class NotificationPlayerService extends Service {
         Intent playIntent = new Intent(this, NotificationPlayerService.class);
         playIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
         PendingIntent pplayIntent = PendingIntent.getService(this, 0, playIntent, 0);
+
+        Intent nextPlayIntent = new Intent(this, NotificationPlayerService.class);
+        nextPlayIntent.setAction(Constants.ACTIONS.NEXT_ACTION);
+        PendingIntent nextPendingIntent = PendingIntent.getService(this, 0, nextPlayIntent, 0);
 
         Intent deleteIntent = new Intent(this, NotificationPlayerService.class);
         deleteIntent.setAction(Constants.ACTIONS.SWIPE_TO_CANCEL);
@@ -154,50 +174,54 @@ public class NotificationPlayerService extends Service {
         closeIntent.setAction(Constants.ACTIONS.STOP_FOREGROUND_ACTION);
         PendingIntent pcloseIntent = PendingIntent.getService(this, 0, closeIntent, 0);
 
-        String streamThumbnailUrl = StreamSharedPref.getInstance(this).getStreamThumbnailUrl();
-        String title = StreamSharedPref.getInstance(this).getStreamTitle();
-        String subtitle = StreamSharedPref.getInstance(this).getStreamSubTitle();
-        String contentLen = StreamSharedPref.getInstance(this).getStreamingContentLength();
+        String streamThumbnailUrl = SharedPrefrenceUtils.getInstance(this).getLastItemThumbnail();
+        String title = SharedPrefrenceUtils.getInstance(this).getLastItemTitle();
+        String subtitle = SharedPrefrenceUtils.getInstance(this).getLastItemArtist();
 
         if (PLAYING) {
-            //  show pause btn
-            // show title
-            // load thumbnail
 
             //small view
             view.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            view.setOnClickPendingIntent(R.id.notification_player_stopBtn, pcloseIntent);
+            view.setOnClickPendingIntent(R.id.notification_player_nextBtn, nextPendingIntent);
 
             view.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_pause);
-            view.setImageViewResource(R.id.notification_player_stopBtn, R.drawable.ic_action_stop);
+            view.setImageViewResource(R.id.notification_player_nextBtn, R.drawable.ic_action_next);
             view.setTextViewText(R.id.notification_player_title, title);
-            view.setTextViewText(R.id.notification_player_track_length, contentLen);
+            view.setTextViewText(R.id.notification_player_subtitle, subtitle);
 
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            bigView.setOnClickPendingIntent(R.id.notification_player_stopBtn, pcloseIntent);
+            //bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent);
+            bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn,nextPendingIntent);
 
             bigView.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_pause);
-            bigView.setImageViewResource(R.id.notification_player_stopBtn, R.drawable.ic_action_stop);
+            //bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.notification_cancel);
+            bigView.setImageViewResource(R.id.notification_player_nextBtn,R.drawable.ic_action_next);
+
             bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);
             bigView.setTextViewText(R.id.notification_player_title, title);
-            bigView.setTextViewText(R.id.notification_player_track_length, contentLen);
 
         } else {
 
+            //small view
             view.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            view.setOnClickPendingIntent(R.id.notification_player_stopBtn, pcloseIntent);
+            view.setOnClickPendingIntent(R.id.notification_player_nextBtn, nextPendingIntent);
 
             view.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_play);
-            view.setImageViewResource(R.id.notification_player_stopBtn, R.drawable.ic_action_stop);
+            view.setImageViewResource(R.id.notification_player_nextBtn, R.drawable.ic_action_next);
             view.setTextViewText(R.id.notification_player_title, title);
+            view.setTextViewText(R.id.notification_player_subtitle, subtitle);
 
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            bigView.setOnClickPendingIntent(R.id.notification_player_stopBtn, pcloseIntent);
+            bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent);
+            bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn,nextPendingIntent);
 
             bigView.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_play);
-            bigView.setImageViewResource(R.id.notification_player_stopBtn, R.drawable.ic_action_stop);
+            bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.notification_cancel);
+            bigView.setImageViewResource(R.id.notification_player_nextBtn,R.drawable.ic_action_next);
+
+            bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);
             bigView.setTextViewText(R.id.notification_player_title, title);
 
         }
@@ -213,7 +237,6 @@ public class NotificationPlayerService extends Service {
 
         Picasso.with(this).load(streamThumbnailUrl).transform(new CircularImageTransformer()).into(view, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         Picasso.with(this).load(streamThumbnailUrl).into(bigView, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-
         startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
 
     }

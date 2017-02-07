@@ -1,0 +1,15 @@
+Issues:
+
+> too much lag in dragging view
+
+> bottom player holder should retain the info of last played item
+
+> items are not playing from playlist 
+
+> add visual feedback on add item to queue
+
+> on queue playing ,, if not item is in queue.. report with a message of emptiness.
+
+>notification player is not responsive
+
+> 

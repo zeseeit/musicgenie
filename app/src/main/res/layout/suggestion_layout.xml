@@ -16,7 +16,7 @@
             android:layout_height="56dp"
             android:layout_weight="1.5"
             android:gravity="center"
-            android:textColor="#dddddd"
+            android:textColor="@color/AnyAudioGrey189"
             android:text=""
             android:textSize="24sp" />
 
@@ -30,7 +30,7 @@
             android:maxLines="1"
             android:padding="8dp"
             android:text="TextView"
-            android:textColor="@color/BottomPlayerColor"
+            android:textColor="@color/AnyAudioPrimaryBackground"
             android:textSize="18sp" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_height="56dp"
             android:layout_weight="1.5"
             android:gravity="center"
-            android:textColor="#dddddd"
+            android:textColor="@color/AnyAudioGrey189"
             android:text=""
             android:textSize="24sp" />
 

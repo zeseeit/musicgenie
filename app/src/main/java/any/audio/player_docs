@@ -1,0 +1,12 @@
+[[[=== Where Current Items Are Set ===]]]
+ => @Override onPlaylistItemTapped : AnyAudioActivity
+ => SearchResultAdapter
+ => ExploreLeftToRightAdapter
+ => Exoplayer (For Stopped State Only)
+
+[[[=== How last Items are set ===]]]
+
+ => They are set Automatically after the current items are set
+
+            ======> CurrentItems ========> LastItems
+

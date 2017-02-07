@@ -2,6 +2,8 @@ package any.audio.helpers;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
@@ -30,8 +32,10 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import any.audio.Config.Constants;
+import any.audio.Config.URLS;
 import any.audio.Models.ItemModel;
 import any.audio.Models.PlaylistItem;
+import any.audio.Network.ConnectivityUtils;
 import any.audio.Network.VolleyUtils;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
@@ -90,7 +94,7 @@ public class PlaylistGenerator {
 
     private void fetchVideoIds(final String currentVideoId) {
 
-        String _url = Constants.SERVER_URL + "/api/v1/suggest?url=" + currentVideoId;
+        String _url = URLS.URL_SERVER_ROOT + "api/v1/suggest?url=" + currentVideoId;
         StringRequest playlistFetchReq = new StringRequest(Request.Method.GET, _url,
 
                 new Response.Listener<String>() {
@@ -177,18 +181,16 @@ public class PlaylistGenerator {
     private void sendGeneratedFeedback() {
 
         if(playlistGeneraterListener!=null){
-            playlistGeneraterListener.onPlaylistPrepared(getPlaylistItems(false));
+            playlistGeneraterListener.onPlaylistPrepared(getPlaylistItems());
         }
 
     }
 
     public PlaylistItem getUpNext() {
-
-        return getPlaylistItems(true).get(0);
-
+        return getPlaylistItems().get(0);
     }
 
-    public ArrayList<PlaylistItem> getPlaylistItems(boolean refresh) {
+    public ArrayList<PlaylistItem> getPlaylistItems() {
 
         ArrayList<PlaylistItem> playlistItems = new ArrayList<>();
 
@@ -203,13 +205,23 @@ public class PlaylistGenerator {
             playlistItems.add(upNextItem);
         }
 
-        if(refresh)
-            resetPlaylist(videoIds.get(0)); // use top item for next refresh
-
         return playlistItems;
     }
 
+    public void refreshPlaylist(){
 
+        //reset according to top items
+        if(ConnectivityUtils.isConnectedToNet()) {
+            resetPlaylist(getPlaylistItems().get(0).videoId);
+        }else{
+            new TextView(context).post(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context,"No Internet Connection!",Toast.LENGTH_LONG).show();
+                }
+            });
+        }
+    }
 
     public void setPlaylistGenerationListener(PlaylistGenerateListener listener){
         this.playlistGeneraterListener = listener;

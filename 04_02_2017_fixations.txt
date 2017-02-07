@@ -1,0 +1,7 @@
+> auto-play next
+> queue play next
+> restriction in lines of artist text.
+> playlist panel message text colors
+> Next Queue Item in Repeat-None Mode
+> 
+

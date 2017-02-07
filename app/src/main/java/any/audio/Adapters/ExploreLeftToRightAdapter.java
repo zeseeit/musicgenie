@@ -8,15 +8,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-
-import com.squareup.picasso.Picasso;
-
+import com.facebook.drawee.view.SimpleDraweeView;
 import java.util.ArrayList;
-
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.Models.ItemModel;
@@ -77,13 +73,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
 
             int widthPx = (int) SharedPrefrenceUtils.getInstance(context).getScreenWidthPx();
             int thumbnailHeight = (int) (0.56*widthPx);
-
-            Picasso.with(context)
-                    .load(model.Thumbnail_url)
-                    .transform(new RoundedCornerTransformer())
-                    .into(holder.thumbnail);
-            // .centerCrop()
-//            .resize(widthPx,thumbnailHeight)
+            holder.thumbnail.setImageURI(itemModels.get(position).Thumbnail_url);
 
         }
 
@@ -113,7 +103,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
         TextView uploader;
         TextView views;
         TextView duration;
-        ImageView thumbnail;
+        SimpleDraweeView thumbnail;
         LinearLayout cardWrapper;
         RelativeLayout thumbnailWrapper;
 
@@ -141,7 +131,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
             uploader = (TextView) itemView.findViewById(R.id.explore_item_uploader);
             views = (TextView) itemView.findViewById(R.id.explore_item_views);
             duration = (TextView) itemView.findViewById(R.id.explore_item_duration);
-            thumbnail = (ImageView) itemView.findViewById(R.id.explore_item_thumbnail);
+            thumbnail = (SimpleDraweeView) itemView.findViewById(R.id.explore_item_thumbnail);
 
             //attach click listeners
 
@@ -177,6 +167,12 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                     Log.d("StreamingHome", " setting thumb uri " + thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
+                    //todo: remove streamshared pref infos
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemTitle(file_name);
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemThumbnailUrl(thumb_uri);
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemArtist(subTitle);
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemStreamUrl(itemModels.get(pos).Video_id);
+
                     adapter.broadcastStreamAction(v_id,file_name);
 
                 }

@@ -4,21 +4,28 @@
     <style name="AppTheme.Base" parent="Theme.AppCompat.Light.NoActionBar">
     </style>
 
+    <style name="HomeToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/AnyAudioPrimaryBackground</item>
+        <item name="android:textColorSecondary">@color/AnyAudioGrey189</item>
+
+    </style>
+
+
     <style name="AppTheme" parent="AppTheme.Base">
-        <item name="colorPrimary">@color/PrimaryColor</item>
-        <item name="colorPrimaryDark">@color/PrimaryColorDark</item>
+        <item name="colorPrimary">@color/AnyAudioPrimaryColor</item>
+        <item name="colorPrimaryDark">@color/AnyAudioPrimaryColor</item>
         <item name="colorAccent">@color/AccentColor</item>
 
         <item name="android:windowActionBarOverlay">true</item>
 
         <!-- active thumb & track color (30% transparency) -->
-        <item name="colorControlActivated">@color/PrimaryColor</item>
+        <item name="colorControlActivated">@color/AnyAudioPrimaryColor</item>
 
         <!-- inactive thumb color -->
-        <item name="colorSwitchThumbNormal">@color/Gray</item>
+        <item name="colorSwitchThumbNormal">@color/AnyAudioGrey189</item>
 
         <!-- inactive track color (30% transparency) -->
-        <item name="android:colorForeground">@color/Gray</item>
+        <item name="android:colorForeground">@color/AnyAudioGrey189</item>
 
 
 

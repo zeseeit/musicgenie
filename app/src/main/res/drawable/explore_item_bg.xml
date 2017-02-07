@@ -2,7 +2,7 @@
 <shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
 
     <size android:width="10dp" android:height="10dp"/>
-    <corners android:radius="4dp"/>
-    <solid android:color="@color/BottomPlayerColor"/>
+    <corners android:radius="8dp"/>
+    <solid android:color="@color/AnyAudioPrimaryBackground"/>
 
 </shape>

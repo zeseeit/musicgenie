@@ -10,7 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="HOT"
-        android:textColor="@color/Gray"
+        android:textColor="@color/AnyAudioGrey224"
         android:textSize="18sp" />
 
     <FrameLayout
@@ -23,7 +23,7 @@
 
     <TextView
         android:layout_alignParentEnd="true"
-        android:textColor="@color/Gray"
+        android:textColor="@color/AnyAudioGrey224"
         android:text="ShowAll"
         android:id="@+id/explore_item_show_all"
         android:layout_width="wrap_content"

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-
     <color name="AnyAudioPrimaryColor">#ff6e2c</color>
     <color name="AnyAudioPrimaryGradietStart">#f44336</color>
     <color name="AnyAudioPrimaryGradientEnd">#ffa726</color>
@@ -10,8 +9,13 @@
     <color name="AnyAudioPrimaryBackground">#1A0907</color>
     <color name="AnyAudioPlayerBackground">#571e18</color>
 
+    <color name="AnyAudioPrimaryColor40">#64ff6e2c</color>
     <color name="AnyAudioPrimaryGradientStart50">#80f44336</color>
     <color name="AnyAudioPrimaryGradientEnd50">#80ffa726</color>
+
+    <color name="AnyAudioPrimaryGradientStart75">#bbf44336</color>
+    <color name="AnyAudioPrimaryGradientEnd75">#bbffa726</color>
+
     <color name="AnyAudioSearchItemBgColor">#19e0e0e0</color>
     
     <!--

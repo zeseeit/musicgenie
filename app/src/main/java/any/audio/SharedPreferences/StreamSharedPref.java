@@ -180,4 +180,5 @@ public class StreamSharedPref {
     public String getLastStreamVid() {
         return preferences.getString("lstsvid","");
     }
+
 }

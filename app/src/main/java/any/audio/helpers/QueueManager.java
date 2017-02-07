@@ -111,11 +111,10 @@ public class QueueManager {
 
         ArrayList<PlaylistItem> oldList = getQueue();
         utils.clearQueue();
+        utils.setCurrentQueueIndex(-1);
         for (PlaylistItem item : oldList) {
             if (!item.videoId.equals(vid)) {
-
                 pushQueueItem(item, false);
-
             }
         }
 
@@ -157,7 +156,19 @@ public class QueueManager {
 
     public PlaylistItem getUpNext() {
 
-        return getQueue().get(getNextIndex());
+        ArrayList<PlaylistItem> queue = getQueue();
+        if(queue.size()==0){
+            return null;
+        }else {
+            int ind = getNextIndex();
+
+            if(ind==-1){
+                return null;
+            }else{
+                return queue.get(ind);
+            }
+
+        }
 
     }
 
@@ -171,26 +182,39 @@ public class QueueManager {
 
             case Constants.MODE_REPEAT_NONE:
 
+                Log.d("RepeatMode","[None] current Index "+currentIndex+" Queue Len "+(totalQueueLength+1));
+
                 if (currentIndex == totalQueueLength) {
                     utils.setCurrentQueueIndex(0);
+                    Log.d("RepeatMode","[None] last item reached ");
                     return -1;
                 } else {
+
                     utils.setCurrentQueueIndex(currentIndex + 1);
+                    Log.d("RepeatMode","[None] next to play index "+(currentIndex+1));
                     return currentIndex + 1;
+
                 }
 
             case Constants.MODE_REPEAT_ALL:
+
+                Log.d("RepeatMode","[All] current Index "+currentIndex+" Queue Len "+(totalQueueLength+1));
+
                 if (currentIndex == totalQueueLength) {
                     utils.setCurrentQueueIndex(0);
+                    Log.d("RepeatMode","[All] next to play index 0");
                     return 0;
                 } else {
                     utils.setCurrentQueueIndex(currentIndex + 1);
+                    Log.d("RepeatMode","[All] next to play index "+(currentIndex+1));
                     return currentIndex + 1;
                 }
 
             case Constants.MODE_SUFFLE:
-                int nextIndex = 0;
 
+                Log.d("RepeatMode","[Suffle] current Index "+currentIndex+" Queue Len "+(totalQueueLength+1));
+
+                int nextIndex = 0;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     nextIndex = ThreadLocalRandom.current().nextInt(0, totalQueueLength + 1);
                 } else {
@@ -198,8 +222,11 @@ public class QueueManager {
                 }
 
                 if (nextIndex == currentIndex && totalQueueLength > 1) {
-                    return getNextIndex();
+                    int nd =  getNextIndex();
+                    Log.d("RepeatMode","[Suffle] next to play index "+nd);
+                    return nd;
                 }
+                Log.d("RepeatMode","[Suffle] next to play index "+nextIndex);
                 return nextIndex;
 
         }

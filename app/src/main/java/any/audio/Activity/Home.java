@@ -71,7 +71,7 @@ import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.L;
-import any.audio.helpers.MusicStreamer;
+import any.audio.helpers.StreamUrlFetcher;
 import any.audio.helpers.PlaylistGenerator;
 import any.audio.helpers.SearchSuggestionHelper;
 import any.audio.helpers.TaskHandler;
@@ -84,7 +84,7 @@ public class Home extends AppCompatActivity {
     final String playBtn = "\uE039";
     final String pauseBtn = "\uE036";
     int mBuffered = -1;
-    MusicStreamer.OnStreamUriFetchedListener streamUriFetchedListener = new MusicStreamer.OnStreamUriFetchedListener() {
+    StreamUrlFetcher.OnStreamUriFetchedListener streamUriFetchedListener = new StreamUrlFetcher.OnStreamUriFetchedListener() {
         @Override
         public void onUriAvailable(String uri) {
         }
@@ -604,7 +604,7 @@ public class Home extends AppCompatActivity {
             }
 
 
-            MusicStreamer
+            StreamUrlFetcher
                     .getInstance(Home.this)
                     .setBroadcastMode(true)
                     .setData(v_id, stuff)
@@ -1435,11 +1435,11 @@ public class Home extends AppCompatActivity {
                                     StreamSharedPref.getInstance(Home.this).setStreamTitle(nextVidTitle);
                                     StreamSharedPref.getInstance(Home.this).setStreamSubTitle(upNextArtist);
 
-                                    MusicStreamer
+                                    StreamUrlFetcher
                                             .getInstance(Home.this)
                                             .setData(nextVid, nextVidTitle)
                                             .setBroadcastMode(false)
-                                            .setOnStreamUriFetchedListener(new MusicStreamer.OnStreamUriFetchedListener() {
+                                            .setOnStreamUriFetchedListener(new StreamUrlFetcher.OnStreamUriFetchedListener() {
                                                 @Override
                                                 public void onUriAvailable(String uri) {
                                                     Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);

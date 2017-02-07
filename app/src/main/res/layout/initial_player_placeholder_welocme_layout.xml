@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/BottomPlayerColor"
+    android:id="@+id/playerPlacHolderView"
+    android:background="@color/AnyAudioPlayerBackground"
     android:layout_height="64dp">
 
     <TextView
         android:textSize="20sp"
         android:gravity="center"
         android:textColor="#fefefe"
-        android:text="Listen To Your Favorites "
+        android:text="Listen To Your Favorites Songs"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-</LinearLayout>
+</RelativeLayout>

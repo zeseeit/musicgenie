@@ -18,6 +18,7 @@ import any.audio.Managers.FontManager;
 import any.audio.Models.ItemModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.FileNameReformatter;
@@ -37,6 +38,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     public SearchResultsAdapter(Context context) {
         this.context = context;
+        itemModels = new ArrayList<>();
     }
 
     public static SearchResultsAdapter getInstance(Context context) {
@@ -47,8 +49,17 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     }
 
     public void setItemList(ArrayList<ItemModel> itemList){
-        this.itemModels = itemList;
+
+        if(itemList!=null)
+            for(int i = 0 ; i<itemList.size();i++){
+               addItems(itemList.get(i));
+            }
+
         notifyDataSetChanged();
+    }
+
+    private void addItems(ItemModel item){
+        itemModels.add(item);
     }
 
     @Override
@@ -159,8 +170,15 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     StreamSharedPref.getInstance(context).setStreamTitle(file_name);
                     Log.d("StreamHome","v_id "+v_id);
                     Log.d("StreamingHome", " setting thumb uri " + thumb_uri);
+                    //todo: remove StreamShared infos for player
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
+
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemTitle(file_name);
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemThumbnailUrl(thumb_uri);
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemArtist(subTitle);
+                    SharedPrefrenceUtils.getInstance(context).setCurrentItemStreamUrl(adapter.itemModels.get(pos).Video_id);
+
                     adapter.requestStream(v_id, file_name);
 
                 }

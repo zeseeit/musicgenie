@@ -21,10 +21,12 @@ import any.audio.Adapters.ExploreLeftToRightAdapter;
 import any.audio.Adapters.ExploreTopDownAdapter;
 import any.audio.Centrals.CentralDataRepository;
 import any.audio.Config.Constants;
+import any.audio.Managers.AnyAudioLinearLayoutManager;
 import any.audio.Models.ExploreItemModel;
 import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
+import any.audio.Views.AnyAudioRecyclerView;
 
 /**
  * Created by Ankit on 1/24/2017.
@@ -59,6 +61,7 @@ public class ExploreFragment extends Fragment {
         exploreTopDownRecyler = (RecyclerView) view.findViewById(R.id.explore_recycler_view);
         progressBar = (ProgressBar) view.findViewById(R.id.explore_progressBar);
         progressBarMsgPanel = (TextView) view.findViewById(R.id.exploreMessage);
+
         exploreTopDownRecyler.setLayoutManager(new LinearLayoutManager(context));
         exploreTopDownRecyler.setAdapter(ExploreTopDownAdapter.getInstance(context));
 

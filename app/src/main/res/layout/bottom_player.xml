@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:clickable="true"
     android:focusable="false"
     android:background="#1a0907"
@@ -13,14 +14,15 @@
         android:background="@color/BottomPlayerColor"
         android:layout_width="match_parent"
         android:layout_height="64dp" />
+
     <ProgressBar
         android:progressDrawable="@drawable/progress_bar_bg"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
         android:layout_height="3dp"
-        android:progress="70"
-        android:secondaryProgress="80"
-        android:max="100"
+        android:progress="0"
+        android:secondaryProgress="0"
+        android:max="0"
         android:id="@+id/progressBarStreamProgress" />
     <FrameLayout
         android:layout_marginTop="2dp"
@@ -31,11 +33,16 @@
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/thumbnail"
             android:padding="8dp"
-            android:src="@drawable/circle"
+            android:src="@color/AnyAudioGrey189"
+            app:civ_border_overlay="true"
+            app:civ_border_width="2dp"
+            app:civ_border_color="@color/AnyAudioPrimaryColor"
             android:layout_width="64dp"
             android:layout_height="64dp" />
 
     </FrameLayout>
+
+
     <RelativeLayout
         android:layout_toLeftOf="@+id/pauseWrapper"
         android:id="@+id/info_wrapper"
@@ -46,8 +53,8 @@
         <TextView
             android:id="@+id/title"
             android:textSize="16sp"
-            android:textColor="#ffffff"
-            android:text="Hello World"
+            android:textColor="@color/AnyAudioGrey224"
+            android:text=""
             android:maxLines="1"
             android:lines="1"
             android:layout_width="wrap_content"
@@ -56,8 +63,10 @@
         <TextView
             android:layout_below="@+id/title"
             android:id="@+id/artist"
-            android:textColor="#ffffff"
-            android:text="T-series"
+            android:textColor="@color/AnyAudioGrey189"
+            android:text=""
+            android:maxLines="1"
+            android:lines="1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -75,8 +84,8 @@
         <TextView
             android:id="@+id/title_second"
             android:textSize="16sp"
-            android:textColor="@color/PlayerInfoColor"
-            android:text="Seone Mix"
+            android:textColor="@color/AnyAudioGrey224"
+            android:text=""
             android:maxLines="1"
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
@@ -85,8 +94,8 @@
         <TextView
             android:layout_below="@+id/title_second"
             android:id="@+id/artist_second"
-            android:textColor="@color/PlayerInfoColor"
-            android:text="T-series"
+            android:textColor="@color/AnyAudioGrey189"
+            android:text=""
             android:gravity="center_horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
@@ -94,10 +103,10 @@
 
         <TextView
             android:id="@+id/stream_duration"
-            android:textColor="#fefefe"
+            android:textColor="@color/AnyAudioGrey189"
             android:layout_alignParentEnd="true"
             android:layout_below="@+id/artist_second"
-            android:text="01:40 / 06:22 "
+            android:text="00:00/00:00 "
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -111,11 +120,12 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:visibility="invisible"
             android:gravity="center_vertical|end"
             android:id="@+id/pauseBtn"
             android:text=""
             android:textSize="28sp"
-            android:textColor="@color/PlayerInfoColor"
+            android:textColor="@color/AnyAudioGrey189"
             android:layout_width="36dp"
             android:layout_height="36dp" />
 
@@ -132,7 +142,7 @@
         <TextView
             android:gravity="center"
             android:id="@+id/playlistBtn"
-            android:textColor="@color/PlayerInfoColor"
+            android:textColor="@color/AnyAudioGrey189"
             android:text=""
             android:textSize="28sp"
             android:layout_width="wrap_content"
@@ -152,7 +162,7 @@
             android:alpha="0"
             android:gravity="center"
             android:textSize="36sp"
-            android:textColor="@color/CollapsePlayerBtnColor"
+            android:textColor="@color/AnyAudioPrimaryColor"
             android:layout_width="36dp"
             android:layout_height="36dp" />
 
@@ -163,7 +173,7 @@
         android:layout_below="@+id/info_wrapper_below"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="0dp"
-        android:thumbTint="@color/PrimaryColor"
+        android:thumbTint="@color/AnyAudioPrimaryColor"
         android:progressDrawable="@drawable/seekbar_bg"
         android:id="@+id/seekBar" />
     <RelativeLayout
@@ -177,15 +187,15 @@
             android:id="@+id/autoplay_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"/>
+            android:checked="false"/>
 
         <TextView
             android:layout_marginLeft="6dp"
             android:layout_toRightOf="@+id/autoplay_switch"
             android:text="Autoplay"
-            android:textColor="@color/Gray"
+            android:textColor="@color/AnyAudioGrey189"
             android:textSize="12sp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="6dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
 
@@ -197,7 +207,7 @@
             android:paddingBottom="4dp"
             android:layout_alignParentEnd="true"
             android:textSize="24sp"
-            android:textColor="#ffffff"
+            android:textColor="@color/AnyAudioGrey189"
             android:text=""
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -205,7 +215,8 @@
 
     </RelativeLayout>
     <FrameLayout
-        android:padding="8dp"
+        android:padding="0dp"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:layout_below="@+id/autoplay_switch_wrapper"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -248,17 +259,19 @@
 
 
         <TextView
+            android:visibility="invisible"
             android:gravity="center_vertical"
             android:id="@+id/nextBtn"
             android:text=""
             android:textSize="28sp"
-            android:textColor="@color/PrimaryColor"
+            android:textColor="@color/AnyAudioGrey189"
             android:layout_width="36dp"
             android:layout_height="36dp" />
 
     </FrameLayout>
 
     <include
+        android:visibility="visible"
         android:layout_height="64dp"
         android:layout_width="match_parent"
         android:id="@+id/welcome_placeholderView"

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    android:layout_width="240dp"
+<RelativeLayout android:layout_width="240dp"
     android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:visibility="visible"
     android:background="@drawable/explore_item_bg"
     xmlns:android="http://schemas.android.com/apk/res/android">
@@ -17,11 +17,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="135dp">
 
-                <ImageView
+                <com.facebook.drawee.view.SimpleDraweeView
                     android:id="@+id/explore_item_thumbnail"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
+                    fresco:placeholderImage="@drawable/ok_btn_bg"
+                    />
 
                 <TextView
                     android:id="@+id/play_btn_explore_card"
@@ -31,7 +32,7 @@
                     android:background="@drawable/play_btn_bg_card"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="#000000"
+                    android:textColor="@color/AnyAudioPrimaryBackground"
                     android:textSize="28sp" />
 
 
@@ -43,19 +44,20 @@
                     android:layout_alignParentEnd="true"
                     android:layout_marginBottom="4dp"
                     android:layout_marginRight="4dp"
-                    android:background="@drawable/time_stamp_explore_card_bg"
+                    android:background="@drawable/explore_item_card_info_gradient_bg"
                     android:paddingBottom="1dp"
                     android:paddingLeft="2dp"
                     android:paddingRight="2dp"
                     android:paddingTop="1dp"
                     android:text="04:04"
-                    android:textColor="#ffffff"
+                    android:textColor="@color/AnyAudioGrey224"
                     android:textSize="10sp" />
 
 
             </RelativeLayout>
 
             <RelativeLayout
+                android:background="@drawable/explore_item_card_info_gradient_bg"
                 android:layout_width="match_parent"
                 android:layout_height="84dp"
                 android:layout_below="@+id/explore_card_top_wrapper">
@@ -69,7 +71,7 @@
                     android:paddingLeft="8dp"
                     android:paddingTop="8dp"
                     android:text="The Weekend - Party"
-                    android:textColor="@color/Gray"
+                    android:textColor="@color/AnyAudioGrey224"
                     android:textSize="14sp"
                     android:textStyle="bold" />
 
@@ -83,7 +85,7 @@
                     android:paddingLeft="8dp"
                     android:paddingTop="2dp"
                     android:text="The Weekend - Party test"
-                    android:textColor="@color/Gray"
+                    android:textColor="@color/AnyAudioGrey189"
                     android:textSize="12sp" />
 
                 <TextView
@@ -96,7 +98,7 @@
                     android:paddingLeft="8dp"
                     android:paddingTop="2dp"
                     android:text="8,888,908"
-                    android:textColor="@color/Gray"
+                    android:textColor="@color/AnyAudioGrey189"
                     android:textSize="12sp" />
 
 
@@ -110,19 +112,19 @@
                     android:background="@drawable/explore_item_download_btn_bg"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/DarkChocolate"
+                    android:textColor="@color/AnyAudioPrimaryBackground"
                     android:textSize="18sp" />
 
 
                 <TextView
                     android:id="@+id/explore_item_popup_btn"
                     android:layout_width="28dp"
-                    android:layout_height="28dp"
+                    android:layout_height="36dp"
                     android:layout_alignParentEnd="true"
                     android:gravity="center"
                     android:text=""
-                    android:textColor="@color/Gray"
-                    android:textSize="16sp" />
+                    android:textColor="@color/AnyAudioGrey189"
+                    android:textSize="24sp" />
 
 
             </RelativeLayout>

@@ -2,22 +2,15 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <item android:id="@+id/action_search"
+    <item android:id="@+id/home_search"
         android:title="Search"
         android:icon="@drawable/search_ic"
-        app:showAsAction="always" />
+        app:showAsAction="always"/>
 
-    <item android:title="Trending"
-        android:id="@+id/trending"
-        android:orderInCategory="2"/>
+    <item android:id="@+id/home_popoup"
+        android:title="Search"
+        android:icon="@drawable/overflow_ic"
+        app:showAsAction="always"/>
 
-    <item android:title="Downloads"
-        android:id="@+id/donwloads"
-        android:orderInCategory="3"/>
-
-
-    <item android:title="Setting"
-        android:id="@+id/settings"
-        android:orderInCategory="4"/>
 
 </menu>

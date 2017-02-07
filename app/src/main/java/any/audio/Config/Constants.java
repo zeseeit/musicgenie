@@ -76,6 +76,11 @@ public class Constants {
         String KEY_DEFAULT_SUBS = "defaultSubs";
     }
 
+    public interface DIRECTION{
+        public static int VERTICAL = 1;
+        public static int HORIZONTAL = 2;
+    }
+
     public interface ACTIONS {
 
         public static String SWIPE_TO_CANCEL = "com.anyaudio.in.action.swipe_to_cancel";
@@ -95,6 +100,7 @@ public class Constants {
         public static String SONG_DOWNLOAD_ON_CARD = "com.anyaudio.in.action.downloadoncard";
         public static String SONG_SHOWALL_ON_CARD = "com.anyaudio.in.action.showalloncard";
 
+        public static String NEXT_ACTION = "com.anyaudio.in.action.nextPlay";
     }
 
     public interface NOTIFICATION_ID {
@@ -102,11 +108,17 @@ public class Constants {
     }
 
     public interface PLAYER{
+
         public static boolean PLAYING = false;
         public static String AUDIO_TITLE = "";
         public static String THUMBNAIL_URL = "";
         String AUDIO_SUBTITLE = "audio_subtitle";
         public String EXTRAA_PLAYER_STATE = "player_state_extraa";
+
+        public int PLAYER_STATE_PLAYING = 2;
+        public int PLAYER_STATE_PAUSED = 1;
+        public int PLAYER_STATE_STOPPED = -1;
+
 
     }
 

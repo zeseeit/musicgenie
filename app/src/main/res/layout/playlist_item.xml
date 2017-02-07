@@ -5,13 +5,20 @@
 
     <FrameLayout
         android:id="@+id/playlist_item_thumbnail_wrapper"
-        android:padding="6dp"
+        android:padding="4dp"
         android:layout_width="72dp"
         android:layout_height="72dp">
 
+        <FrameLayout
+            android:layout_gravity="center"
+            android:background="@drawable/bottom_player_thumbnail_border"
+            android:layout_width="58dp"
+            android:layout_height="58dp" />
+
         <de.hdodenhof.circleimageview.CircleImageView
+            android:padding="4dp"
             android:id="@+id/playlist_item_thumbnail"
-            android:src="@drawable/circle"
+            android:src="@color/AnyAudioGrey189"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
@@ -19,47 +26,49 @@
 
     <TextView
         android:gravity="center_vertical"
-        android:layout_marginTop="6dp"
-        android:layout_toRightOf="@+id/playlist_item_thumbnail_wrapper"
         android:id="@+id/playlist_item_title"
         android:textSize="18sp"
-        android:textColor="#ffffff"
+        android:layout_marginTop="8dp"
+        android:textColor="@color/AnyAudioGrey224"
         android:text="Santoshdfffffffffffffffffff Nanavathe"
         android:lines="1"
         android:maxLines="1"
-        android:maxLength="30"
         android:layout_toLeftOf="@+id/playlist_item_cancel_btn_text"
         android:layout_width="match_parent"
-        android:layout_height="36dp" />
-
+        android:layout_height="32dp"
+        android:layout_toEndOf="@+id/playlist_item_thumbnail_wrapper" />
 
     <TextView
-        android:layout_marginBottom="6dp"
+        android:layout_marginBottom="8dp"
         android:layout_toRightOf="@+id/playlist_item_thumbnail_wrapper"
         android:layout_below="@+id/playlist_item_title"
         android:id="@+id/playlist_item_artist"
         android:textSize="14sp"
         android:lines="1"
-        android:textColor="#ffffff"
+        android:textColor="@color/AnyAudioGrey189"
         android:maxLines="1"
-        android:text="T-Seriesfsdaaaaaaaaaaaaaaasdafdsfdsfdsf"
+        android:text="T-Series"
         android:layout_toLeftOf="@+id/playlist_item_cancel_btn_text"
         android:layout_width="match_parent"
         android:layout_height="36dp" />
 
+
+
     <TextView
+        android:layout_centerVertical="true"
         android:id="@+id/playlist_item_cancel_btn_text"
         android:paddingTop="12dp"
         android:paddingLeft="12dp"
         android:paddingBottom="12dp"
         android:textSize="20sp"
         android:paddingRight="16dp"
-        android:textColor="@color/PrimaryColor"
+        android:textColor="@color/AnyAudioPrimaryColor"
         android:layout_alignParentEnd="true"
         android:text=""
-
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+
 
 
 </RelativeLayout>

@@ -4,8 +4,8 @@
     <size android:height="10dp" android:width="10dp"/>
 
     <gradient
-        android:startColor="#a2f44336"
-        android:endColor="#a2FFA726"
+        android:startColor="@color/AnyAudioPrimaryGradientStart75"
+        android:endColor="@color/AnyAudioPrimaryGradientEnd75"
         android:angle="0" />
 
 

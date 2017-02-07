@@ -7,11 +7,10 @@
     android:paddingRight="12dp"
     android:paddingTop="6dp"
     android:paddingBottom="6dp"
-    android:background="@color/colorPrimaryDark"
     android:layout_height="96dp">
 
     <RelativeLayout
-        android:background="@color/search_item_bgcolor"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -20,10 +19,18 @@
         android:layout_width="76dp"
         android:layout_height="76dp">
 
+
+        <FrameLayout
+            android:layout_gravity="center"
+            android:background="@drawable/bottom_player_thumbnail_border"
+            android:layout_width="68dp"
+            android:layout_height="68dp" />
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:layout_margin="6dp"
             android:id="@+id/search_item_thumbnail"
-            app:civ_border_width="1dp"
+            app:civ_border_width="0dp"
+            android:src="@color/AnyAudioGrey189"
             app:civ_border_color="@color/PrimaryColor"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
@@ -36,19 +43,20 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text=""
-            android:textColor="@color/PrimaryColor"
+            android:textColor="@color/AnyAudioPrimaryColor"
             android:textSize="32sp" />
 
     </FrameLayout>
     <TextView
         android:textSize="12sp"
         android:id="@+id/search_item_duration"
-        android:textColor="@color/PrimaryColor"
+        android:textColor="@color/AnyAudioPrimaryColor"
         android:layout_marginTop="4dp"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="04:50"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
     <TextView
         android:layout_below="@+id/search_item_duration"
         android:id="@+id/search_item_title"
@@ -56,17 +64,18 @@
         android:maxLines="1"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="Sanam Rdddddddddddjhbbbbbbbbbbbbbbbbbbbbbjhbddddddddddddddddddde..."
-        android:textColor="#ffffff"
+        android:textColor="@color/AnyAudioGrey224"
         android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
     <TextView
         android:textSize="12sp"
         android:layout_below="@+id/search_item_title"
         android:id="@+id/search_item_artist"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="T-Series"
-        android:textColor="#ffffff"
+        android:textColor="@color/AnyAudioGrey189"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
@@ -75,14 +84,14 @@
         android:id="@+id/search_item_views"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="T-Series"
-        android:textColor="#ffffff"
+        android:textColor="@color/AnyAudioGrey189"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
         android:layout_centerVertical="true"
         android:id="@+id/addToQueue"
         android:layout_toLeftOf="@+id/search_item_download_btn"
-        android:textColor="@color/PrimaryColor"
+        android:textColor="@color/AnyAudioPrimaryColor"
         android:gravity="center"
         android:text=""
         android:textSize="24dp"
@@ -97,7 +106,7 @@
         android:layout_margin="8dp"
         android:text=""
         android:textSize="24sp"
-        android:textColor="@color/PrimaryColor"
+        android:textColor="@color/AnyAudioPrimaryColor"
         android:gravity="center" />
 
     </RelativeLayout>
