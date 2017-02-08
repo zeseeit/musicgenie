@@ -80,7 +80,15 @@
         <activity
             android:name=".Activity.AnyAudioSplash"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme"></activity>
+            android:theme="@style/SplashTheme">
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".Activity.TourActivity" />
         <!-- This meta-data tag is required to use Google Play Services. -->
         <meta-data
@@ -99,6 +107,7 @@
             android:name="com.google.android.gms.ads.AdActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
+
         <activity android:name=".Activity.UnknownErrorActivity" />
 
         <activity
@@ -107,13 +116,7 @@
             android:parentActivityName=".Activity.AnyAudioActivity" />
 
         <activity android:name=".Activity.AnyAudioActivity"
-            android:screenOrientation="portrait"
-            >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            android:screenOrientation="portrait">
         </activity>
     </application>
 

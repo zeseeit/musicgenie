@@ -13,7 +13,7 @@
 
     <TextView
         android:id="@+id/continueBtn"
-        android:layout_marginBottom="26dp"
+        android:layout_marginBottom="24dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
         android:paddingLeft="16dp"
@@ -21,11 +21,12 @@
         android:background="@drawable/terms_accept_btn"
         android:textSize="20sp"
         android:textColor="@color/White"
-        android:layout_alignParentBottom="true"
-        android:layout_centerInParent="true"
         android:text="Continue"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />w
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+    w
 
 
 </RelativeLayout>

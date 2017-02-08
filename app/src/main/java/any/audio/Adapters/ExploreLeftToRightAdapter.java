@@ -135,6 +135,14 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
 
             //attach click listeners
 
+            popUpBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ExploreLeftToRightAdapter adapter = ExploreLeftToRightAdapter.getInstance(context);
+                    adapter.requestPopUp(view);
+                }
+            });
+
             downloadBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -172,12 +180,17 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemThumbnailUrl(thumb_uri);
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemArtist(subTitle);
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemStreamUrl(itemModels.get(pos).Video_id);
-
                     adapter.broadcastStreamAction(v_id,file_name);
 
                 }
             });
 
+        }
+    }
+
+    private void requestPopUp(View view) {
+        if(exploreActionListener!=null){
+            exploreActionListener.onPopUpMenuTap(view);
         }
     }
 
@@ -198,7 +211,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
         void onDownloadAction(String video_id,String title);
         void onAddToQueue(String video_id,String youtubeId,String title,String uploader);
         void onShowAll(String type);
-
+        void onPopUpMenuTap(View view);
     }
 
     private void broadcastStreamAction(String vid,String title){

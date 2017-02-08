@@ -23,6 +23,7 @@ import any.audio.Models.ExploreItemModel;
 import any.audio.helpers.Segmentor;
 import any.audio.Config.URLS;
 import any.audio.Network.VolleyUtils;
+import any.audio.helpers.TextFormatter;
 
 public class CloudManager {
 
@@ -122,7 +123,9 @@ public class CloudManager {
                     JSONObject songObj = (JSONObject) typeArray.get(j);
                     String enc_v_id = songObj.getString("get_url").substring(14);
 
-                    item = new ItemModel(songObj.getString("title"),
+                    String title = TextFormatter.getInstance(context).reformat(songObj.getString("title"));
+                    item = new ItemModel(
+                            title,
                             songObj.getString("length"),
                             songObj.getString("uploader"),
                             songObj.getString("thumb"),
@@ -247,7 +250,8 @@ public class CloudManager {
             for (int i = 0; i < results_count; i++) {
                 String enc_v_id = results.getJSONObject(i).getString("get_url").substring(14);
                 // L.m("CM", " video id " + enc_v_id);
-                songs.add(new ItemModel(results.getJSONObject(i).getString("title"),
+                String title = TextFormatter.getInstance(context).reformat(results.getJSONObject(i).getString("title"));
+                songs.add(new ItemModel(title,
                         results.getJSONObject(i).getString("length"),
                         results.getJSONObject(i).getString("uploader"),
                         results.getJSONObject(i).getString("thumb"),

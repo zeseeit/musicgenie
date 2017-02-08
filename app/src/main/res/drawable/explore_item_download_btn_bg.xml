@@ -14,7 +14,6 @@
 
         </shape>
     </item>
-
     <item android:right="1dp" android:bottom="1dp">
         <shape android:shape="oval">
             <size

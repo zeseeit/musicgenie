@@ -20,6 +20,7 @@
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/search_progressBar"
             android:text="Eploring Item"
+            android:textColor="@color/AnyAudioGrey224"
             android:id="@+id/searchMessage"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

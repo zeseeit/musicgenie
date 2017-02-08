@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -19,6 +20,7 @@ import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.QueueManager;
+import any.audio.helpers.ToastMaker;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -107,6 +109,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         TextView title;
         TextView artist;
         TextView removeBtn;
+        RelativeLayout infoWrapper;
 
         public PlaylistItemHolder(View itemView) {
             super(itemView);
@@ -115,18 +118,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
             title = (TextView) itemView.findViewById(R.id.playlist_item_title);
             artist = (TextView) itemView.findViewById(R.id.playlist_item_artist);
             removeBtn = (TextView) itemView.findViewById(R.id.playlist_item_cancel_btn_text);
+            infoWrapper = (RelativeLayout) itemView.findViewById(R.id.playlist_item_info_wrapper);
 
-            thumbnail.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    PlaylistAdapter adapter = PlaylistAdapter.getInstance(context);
-                    adapter.streamItem(getAdapterPosition());
-
-                }
-            });
-
-            title.setOnClickListener(new View.OnClickListener() {
+            infoWrapper.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -142,8 +136,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
                     if (!utils.getAutoPlayMode()) {   // auto-playlist are not cancellable
                         // queue items are visible => items are cancellable
+
                         PlaylistAdapter adapter = PlaylistAdapter.getInstance(context);
                         int pos = getAdapterPosition();
+                        ToastMaker.getInstance(context).toast(adapter.playlistItems.get(pos).getTitle()+" Removed");
                         QueueManager.getInstance(context).removeQueueItem(adapter.playlistItems.get(pos).getVideoId());
                         adapter.playlistItems.remove(pos);
                         adapter.notifyItemRemoved(pos);

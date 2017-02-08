@@ -9,7 +9,25 @@
     android:elevation="4dp"
     tools:context="any.audio.Activity.RecommendationThemed">
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <TextView
+        android:visibility="gone"
         android:id="@+id/fixedText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,8 +41,8 @@
         android:text="Enjoy The Latest Song"
         android:textColor="@color/PrimaryColor"
         android:textSize="14sp" />
-
     <TextView
+        android:visibility="gone"
         android:id="@+id/recommendationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,8 +54,8 @@
         android:text="Sanam Re..."
         android:textColor="@color/AccentColor"
         android:textSize="24sp" />
-
     <TextView
+        android:visibility="gone"
         android:id="@+id/recommendation_ok_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

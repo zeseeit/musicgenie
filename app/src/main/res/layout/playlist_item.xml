@@ -3,9 +3,18 @@
     android:layout_width="match_parent"
     android:layout_height="72dp">
 
+    <RelativeLayout
+        android:id="@+id/playlist_item_info_wrapper"
+        android:background="@drawable/btn_ripple_effect"
+        android:layout_toLeftOf="@+id/playlist_item_cancel_btn_text"
+        android:layout_marginRight="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <FrameLayout
         android:id="@+id/playlist_item_thumbnail_wrapper"
         android:padding="4dp"
+        android:layout_centerVertical="true"
         android:layout_width="72dp"
         android:layout_height="72dp">
 
@@ -23,7 +32,6 @@
             android:layout_height="match_parent" />
 
     </FrameLayout>
-
     <TextView
         android:gravity="center_vertical"
         android:id="@+id/playlist_item_title"
@@ -37,7 +45,6 @@
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_toEndOf="@+id/playlist_item_thumbnail_wrapper" />
-
     <TextView
         android:layout_marginBottom="8dp"
         android:layout_toRightOf="@+id/playlist_item_thumbnail_wrapper"
@@ -51,24 +58,20 @@
         android:layout_toLeftOf="@+id/playlist_item_cancel_btn_text"
         android:layout_width="match_parent"
         android:layout_height="36dp" />
-
-
+    </RelativeLayout>
 
     <TextView
-        android:layout_centerVertical="true"
         android:id="@+id/playlist_item_cancel_btn_text"
         android:paddingTop="12dp"
         android:paddingLeft="12dp"
         android:paddingBottom="12dp"
         android:textSize="20sp"
+        android:background="@drawable/btn_ripple_effect"
         android:paddingRight="16dp"
         android:textColor="@color/AnyAudioPrimaryColor"
         android:layout_alignParentEnd="true"
         android:text=""
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
-
-
-
 
 </RelativeLayout>

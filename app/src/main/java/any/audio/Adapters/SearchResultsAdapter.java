@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
@@ -23,6 +24,7 @@ import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.FileNameReformatter;
 import any.audio.helpers.PlaylistGenerator;
+import any.audio.helpers.ToastMaker;
 
 /**
  * Created by Ankit on 1/27/2017.
@@ -51,10 +53,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public void setItemList(ArrayList<ItemModel> itemList){
 
         if(itemList!=null)
-            for(int i = 0 ; i<itemList.size();i++){
-               addItems(itemList.get(i));
-            }
-
+        {
+            this.itemModels = itemList;
+        }
         notifyDataSetChanged();
     }
 
@@ -110,11 +111,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         TextView duration;
         TextView addbtn;
         ImageView thumbnail;
+        RelativeLayout infoWrapper;
 
         public SearchItemCardViewHolder(View itemView) {
             super(itemView);
 
             playBtn = (TextView) itemView.findViewById(R.id.search_item_play_btn);
+            infoWrapper = (RelativeLayout) itemView.findViewById(R.id.search_item_info_wrapper);
             downloadBtn = (TextView) itemView.findViewById(R.id.search_item_download_btn);
             title = (TextView) itemView.findViewById(R.id.search_item_title);
             uploader = (TextView) itemView.findViewById(R.id.search_item_artist);
@@ -137,6 +140,8 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     String uploader = adapter.itemModels.get(pos).UploadedBy;
                     adapter.addItemToQueue(v_id,youtubId,file_name,uploader);
 
+                    ToastMaker.getInstance(context).toast("\""+adapter.itemModels.get(pos).Title+ "\" Added To Queue");
+
                 }
             });
 
@@ -149,11 +154,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     String v_id = adapter.itemModels.get(pos).Video_id;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.itemModels.get(pos).Title);
                     adapter.requestDownload(v_id, file_name);
-
+                    ToastMaker.getInstance(context).toast("\""+adapter.itemModels.get(pos).Title+ "\" Added To Downloads");
                 }
             });
 
-            playBtn.setOnClickListener(new View.OnClickListener() {
+            infoWrapper.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
 
@@ -173,12 +178,10 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     //todo: remove StreamShared infos for player
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
-
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemTitle(file_name);
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemThumbnailUrl(thumb_uri);
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemArtist(subTitle);
                     SharedPrefrenceUtils.getInstance(context).setCurrentItemStreamUrl(adapter.itemModels.get(pos).Video_id);
-
                     adapter.requestStream(v_id, file_name);
 
                 }

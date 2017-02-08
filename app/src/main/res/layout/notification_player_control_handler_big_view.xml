@@ -26,6 +26,7 @@
         android:layout_toRightOf="@+id/notification_player_thumbnail"
         android:layout_toLeftOf="@+id/notification_player_cancel"
         android:orientation="vertical"
+        android:gravity="center_vertical"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -35,7 +36,7 @@
             android:textSize="20sp"
             android:text="Sanam Re tu Mera Sanam Hua re"
             android:maxLines="1"
-            android:paddingTop="16dp"
+            android:paddingTop="0dp"
             android:paddingLeft="16dp"
             android:paddingBottom="4dp"
             android:paddingRight="8dp"
@@ -51,7 +52,6 @@
             android:maxLines="1"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
-            android:paddingBottom="4dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 

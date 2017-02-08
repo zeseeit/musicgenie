@@ -1,9 +1,11 @@
 package any.audio.Activity;
 
+import android.content.Intent;
 import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -12,7 +14,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import any.audio.Adapters.TourPagerAdapter;
+import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.Views.ScrollViewExt;
 
 
@@ -32,11 +36,26 @@ public class TourActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        // try navigating to next
+        if(SharedPrefrenceUtils.getInstance(this).getTermsAccepted()) {
+            navigateToNext();
+        }
         fullScreencall();
         setContentView(R.layout.activity_tour);
-
         initView();
         attachListeners();
+
+    }
+
+    private void navigateToNext(){
+
+
+            if(ConnectivityUtils.getInstance(this).isConnectedToNet()){
+                startActivity(new Intent(this,AnyAudioActivity.class));
+            }else{
+                startActivity(new Intent(this,ErrorSplash.class));
+            }
+            finish();
 
     }
 
@@ -86,14 +105,20 @@ public class TourActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if(viewPager.getCurrentItem()==2){
-                    btnNext.setEnabled(false);
-                    btnNext.setVisibility(View.INVISIBLE);
-                    viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
-                }else {
-                    btnBack.setVisibility(View.VISIBLE);
+
+                Log.i("TourPage","clicked Next currentNo -"+viewPager.getCurrentItem());
+                if(viewPager.getCurrentItem()==3){
+                    SharedPrefrenceUtils.getInstance(TourActivity.this).setTermsAccepted(true);
+                    navigateToNext();
+                }else{
                     viewPager.setCurrentItem(viewPager.getCurrentItem()+1);
                 }
+
+                if(viewPager.getCurrentItem()>1)
+                    btnBack.setVisibility(View.VISIBLE);
+
+
+
             }
         });
 
@@ -132,7 +157,9 @@ public class TourActivity extends AppCompatActivity {
 
             if (position == 3) {
                 // last page. make button text to GOT IT
-                btnNext.setVisibility(View.INVISIBLE);
+                btnNext.setVisibility(View.VISIBLE);
+
+                btnNext.setText("Accept & Proceed");
             }
             if(position>0 && position<3){
                 // still pages are left

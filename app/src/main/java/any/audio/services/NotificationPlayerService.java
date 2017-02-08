@@ -83,7 +83,7 @@ public class NotificationPlayerService extends Service {
                 break;
 
             case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
-                Log.i("NotificationPlayer"," Sending Stop Action");
+                Log.i("NotificationPlayer", " Sending Stop Action");
                 sendStopAction();
 
                 break;
@@ -115,18 +115,11 @@ public class NotificationPlayerService extends Service {
 
     private void swipeCancel() {
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            stopForeground(false);
-            stopSelf();
-        }else{
-
-            stopForeground(true);
-            NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-
-        }
-
+        Log.i("NotificationPlayer", "SwipeAction");
         sendStopAction();
+        stopForeground(false);
+        stopSelf();
+
     }
 
     private void sendPlayerStateBroadcast() {
@@ -174,6 +167,10 @@ public class NotificationPlayerService extends Service {
         closeIntent.setAction(Constants.ACTIONS.STOP_FOREGROUND_ACTION);
         PendingIntent pcloseIntent = PendingIntent.getService(this, 0, closeIntent, 0);
 
+        Intent closeIntent_dull = new Intent(this, NotificationPlayerService.class);
+        closeIntent_dull.setAction(Constants.ACTIONS.DN);
+        PendingIntent pcloseIntent_dull = PendingIntent.getService(this, 0, closeIntent_dull, 0);
+
         String streamThumbnailUrl = SharedPrefrenceUtils.getInstance(this).getLastItemThumbnail();
         String title = SharedPrefrenceUtils.getInstance(this).getLastItemTitle();
         String subtitle = SharedPrefrenceUtils.getInstance(this).getLastItemArtist();
@@ -191,12 +188,12 @@ public class NotificationPlayerService extends Service {
 
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            //bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent);
-            bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn,nextPendingIntent);
+            bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent_dull);
+            bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn, nextPendingIntent);
 
             bigView.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_pause);
-            //bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.notification_cancel);
-            bigView.setImageViewResource(R.id.notification_player_nextBtn,R.drawable.ic_action_next);
+            bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.null_view);
+            bigView.setImageViewResource(R.id.notification_player_nextBtn, R.drawable.ic_action_next);
 
             bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);
             bigView.setTextViewText(R.id.notification_player_title, title);
@@ -215,11 +212,11 @@ public class NotificationPlayerService extends Service {
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
             bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent);
-            bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn,nextPendingIntent);
+            bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn, nextPendingIntent);
 
             bigView.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_play);
             bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.notification_cancel);
-            bigView.setImageViewResource(R.id.notification_player_nextBtn,R.drawable.ic_action_next);
+            bigView.setImageViewResource(R.id.notification_player_nextBtn, R.drawable.ic_action_next);
 
             bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);
             bigView.setTextViewText(R.id.notification_player_title, title);

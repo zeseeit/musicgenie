@@ -6,12 +6,14 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import any.audio.AnyAudioMains.AnyAudio;
 import any.audio.Managers.FontManager;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
@@ -30,13 +32,26 @@ public class ErrorSplash extends AppCompatActivity {
     }
 
     private static void navigateToHome() {
-        mContext.startActivity(new Intent(mContext, Home.class));
+        mContext.startActivity(new Intent(mContext, AnyAudioActivity.class));
         ((Activity) mContext).finish();
+    }
+
+    public void fullScreencall() {
+        if(Build.VERSION.SDK_INT < 19){
+            View v = this.getWindow().getDecorView();
+            v.setSystemUiVisibility(View.GONE);
+        } else {
+            //for higher api versions.
+            View decorView = getWindow().getDecorView();
+            int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(uiOptions);
+        }
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        fullScreencall();
         setContentView(R.layout.activity_error_splash);
         mContext = this;
         Log.d("AnyAudioApp","[ErrorSplash] onCreate()");

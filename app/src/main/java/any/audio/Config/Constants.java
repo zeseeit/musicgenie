@@ -101,6 +101,7 @@ public class Constants {
         public static String SONG_SHOWALL_ON_CARD = "com.anyaudio.in.action.showalloncard";
 
         public static String NEXT_ACTION = "com.anyaudio.in.action.nextPlay";
+        public static String DN = "donothing";
     }
 
     public interface NOTIFICATION_ID {

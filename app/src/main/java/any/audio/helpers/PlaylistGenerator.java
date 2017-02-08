@@ -70,7 +70,7 @@ public class PlaylistGenerator {
     }
 
     public void preparePlaylist(String currentItem) {
-        Log.d("PlaylistGen","preparing playlist for "+currentItem);
+        Log.d("PlaylistGen", "preparing playlist for " + currentItem);
         resetPlaylist(currentItem);
     }
 
@@ -84,7 +84,7 @@ public class PlaylistGenerator {
 
     public void deletePlaylist() {
 
-        Log.d("PlaylistGen"," deleting old playlist");
+        Log.d("PlaylistGen", " deleting old playlist");
         utils.setPlaylistVideoId("");
         utils.setPlaylistYoutubeId("");
         utils.setPlaylistVideoTitles("");
@@ -113,7 +113,7 @@ public class PlaylistGenerator {
         playlistFetchReq.setRetryPolicy(new DefaultRetryPolicy(20000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
-        Log.d("PlaylistGen"," requesting playlist : "+_url);
+        Log.d("PlaylistGen", " requesting playlist : " + _url);
 
         VolleyUtils.getInstance().addToRequestQueue(playlistFetchReq, "playlistReq", context);
 
@@ -170,9 +170,9 @@ public class PlaylistGenerator {
 
     }
 
-    private void sendPreparingFeedback(){
+    private void sendPreparingFeedback() {
 
-        if(playlistGeneraterListener!=null){
+        if (playlistGeneraterListener != null) {
             playlistGeneraterListener.onPlaylistPreparing();
         }
 
@@ -180,14 +180,19 @@ public class PlaylistGenerator {
 
     private void sendGeneratedFeedback() {
 
-        if(playlistGeneraterListener!=null){
+        if (playlistGeneraterListener != null) {
             playlistGeneraterListener.onPlaylistPrepared(getPlaylistItems());
         }
 
     }
 
     public PlaylistItem getUpNext() {
-        return getPlaylistItems().get(0);
+
+        if (getPlaylistItems().size() >0) {
+            return getPlaylistItems().get(0);
+        } else {
+            return null;
+        }
     }
 
     public ArrayList<PlaylistItem> getPlaylistItems() {
@@ -206,30 +211,34 @@ public class PlaylistGenerator {
         }
 
         return playlistItems;
+
     }
 
-    public void refreshPlaylist(){
+    public void refreshPlaylist() {
 
         //reset according to top items
-        if(ConnectivityUtils.isConnectedToNet()) {
-            resetPlaylist(getPlaylistItems().get(0).videoId);
-        }else{
+        if (ConnectivityUtils.isConnectedToNet()) {
+            if(getPlaylistItems().size()>0)
+                resetPlaylist(getPlaylistItems().get(0).videoId);
+
+        } else {
             new TextView(context).post(new Runnable() {
                 @Override
                 public void run() {
-                    Toast.makeText(context,"No Internet Connection!",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "No Internet Connection!", Toast.LENGTH_LONG).show();
                 }
             });
         }
     }
 
-    public void setPlaylistGenerationListener(PlaylistGenerateListener listener){
+    public void setPlaylistGenerationListener(PlaylistGenerateListener listener) {
         this.playlistGeneraterListener = listener;
     }
 
-    public interface PlaylistGenerateListener{
+    public interface PlaylistGenerateListener {
 
         void onPlaylistPreparing();
+
         void onPlaylistPrepared(ArrayList<PlaylistItem> items);
 
     }

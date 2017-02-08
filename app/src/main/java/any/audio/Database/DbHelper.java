@@ -41,6 +41,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String COL_USER_VIEWS = "USER_VIEWS";
     private static final String COL_TYPE = "TYPE";
     private static final String CREATE_TRENDING_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_TRENDING + "( " +
+
             COL_TITLE + " TEXT , " +
             COL_UPLOADED_BY + " TEXT , " +
             COL_THUMB_URL + " TEXT , " +
