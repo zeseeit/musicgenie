@@ -8,6 +8,7 @@
     <color name="AnyAudioGrey224">#e0e0e0</color>
     <color name="AnyAudioPrimaryBackground">#1A0907</color>
     <color name="AnyAudioPlayerBackground">#571e18</color>
+    <color name="AnyAudioPrimaryBackgroundLight">#0bffffff</color>
 
     <color name="AnyAudioPrimaryColor40">#64ff6e2c</color>
     <color name="AnyAudioPrimaryGradientStart50">#80f44336</color>

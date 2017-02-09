@@ -109,8 +109,8 @@ public class NotificationPlayerService extends Service {
 
         String action = Constants.ACTIONS.NEXT_ACTION;
         Intent stateIntent = new Intent(action);
+        Log.i("NotificationPlayer"," sending next action");
         sendBroadcast(stateIntent);
-
     }
 
     private void swipeCancel() {
@@ -125,6 +125,7 @@ public class NotificationPlayerService extends Service {
     private void sendPlayerStateBroadcast() {
 
         String action = PLAYING ? Constants.ACTIONS.PAUSE_TO_PLAY : Constants.ACTIONS.PLAY_TO_PAUSE;
+        Log.i("NotificationPlayer"," sending play pause action");
         Intent stateIntent = new Intent(action);
         sendBroadcast(stateIntent);
 
@@ -134,6 +135,7 @@ public class NotificationPlayerService extends Service {
 
         String action = Constants.ACTIONS.STOP_PLAYER;
         Intent stateIntent = new Intent(action);
+        Log.i("NotificationPlayer"," sending stop action");
         sendBroadcast(stateIntent);
 
     }

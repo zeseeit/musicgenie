@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import any.audio.Config.Constants;
+import any.audio.Config.URLS;
 import any.audio.Interfaces.DownloadItemInvalidatedListener;
 import any.audio.Interfaces.DownloadListener;
 import any.audio.Notification.LocalNotificationManager;
@@ -52,9 +53,11 @@ public class TaskHandler {
     private String dwnd_url;
     private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000; // 1 min
     private DownloadItemInvalidatedListener itemInvalidatedListener;
+    private SharedPrefrenceUtils utils;
 
     public TaskHandler(Context context) {
         TaskHandler.context = context;
+        utils =  utils = SharedPrefrenceUtils.getInstance(context);
     }
 
     public static TaskHandler getInstance(Context context) {
@@ -133,14 +136,20 @@ public class TaskHandler {
                 // retrieve the file and delete it
                 deleteFile(taskID);
                 String flnm = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
-                LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
+
+                SharedPrefrenceUtils.getInstance(context).setTaskStatus(taskID,Constants.DOWNLOAD.STATE_STOPPED);
+
+                //LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
             }
 
             @Override
             public void onError(String taskID) {
                 deleteFile(taskID);
                 String flnm = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
-                LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
+
+                SharedPrefrenceUtils.getInstance(context).setTaskStatus(taskID,Constants.DOWNLOAD.STATE_STOPPED);
+
+               // LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
             }
 
             @Override
@@ -234,25 +243,30 @@ public class TaskHandler {
     }
 
     // adds task to shared preferences task queue
-    public void addTask(String file_name, String v_id) {
+    public void addTask(String file_name, String v_id,String thumbanil,String artist) {
 
-        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
         // create taskID
         Date d = new Date();
         String timeStamp = DateFormat.format("yyyyMMddhhmmss", d.getTime()).toString();
-        // log("adding task :[audTsk" + timeStamp + "]");
         String taskID = "audTsk" + timeStamp;
+
+        // appending tasks
         String tasks = utils.getTaskSequence();
         utils.setTasksSequence(tasks + taskID + "#");
-        L.m("TaskHandler", " added Task [" + taskID + "]");
         tasks = utils.getDispatchTaskSequence();
         utils.setDispatchTasksSequence(tasks + taskID + "#");
-        L.m("TaskHandler", " dispatched Task [" + taskID + "]");
-        //log("after adding " + utils.getTaskSequence());
-        // save taskTitle:file_name
+
+        // adding new Title to SPref.
         utils.setTaskTitle(taskID, file_name);
-        // save videoID  : v_id
+        // adding new V_id to SPref.
         utils.setTaskVideoID(taskID, v_id);
+        // adding new ThumbnailUrl to SPref.
+        utils.setTaskThumbnail(taskID, thumbanil);
+        //adding new Artist to SPref.
+        utils.setTaskArtist(taskID, artist);
+        // adding task Status as "Waiting"
+        utils.setTaskStatus(taskID,Constants.DOWNLOAD.STATE_WAITING);
+        // get-off and start task
         // notifies handler for new task arrival
         initiate();
     }
@@ -329,6 +343,19 @@ public class TaskHandler {
         this.isCanceled = true;
     }
 
+    public void restartTask(String taskId){
+
+        Log.d("TaskHandler"," restarting Task "+taskId);
+        String _tasks = utils.getDispatchTaskSequence();
+        utils.setDispatchTasksSequence(_tasks + taskId + "#");
+        initiate();
+    }
+
+    public void stopTask(String taskId){
+
+    }
+
+
     /*
     *   Download Thread
     * */
@@ -360,7 +387,7 @@ public class TaskHandler {
             int count;
             final String t_v_id = this.v_id;
             final String t_file_name = this.file_name;
-            String t_url = Constants.SERVER_URL;
+            String t_url = URLS.URL_SERVER_ROOT;
             File dest_file = null;
             File dest_dir = null;
             subscribeDownloadCancelListener();
@@ -370,7 +397,7 @@ public class TaskHandler {
 
                     downloadListener.onDownloadTaskProcessStart();
 
-                    String _url = Constants.SERVER_URL + "/api/v1/g?url=" + t_v_id;
+                    String _url = URLS.URL_SERVER_ROOT + "api/v1/g?url=" + t_v_id;
 //                    log("for dwnd url requesting on " + _url);
                     L.m("TaskHandler", " Request For Download Url - on - " + _url);
                     URL u = new URL(_url);
@@ -393,7 +420,6 @@ public class TaskHandler {
                         if (obj.getInt("status") == 200) {
 
                             t_url += obj.getString("url");
-//                            log("download url:" + t_url);
                             L.m("TaskHandler", "Download Url " + t_url);
                         } else {
                             downloadListener.onError(taskID);
@@ -409,12 +435,13 @@ public class TaskHandler {
                     connection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
                     connection.connect();
                     fileLength = connection.getContentLength();
-//                    log("content len " + fileLength);
                     L.m("TaskHandler", " Content Length " + fileLength);
                     if (fileLength == -1 || fileLength == 24) {
                         downloadListener.onError(taskID);
                         return;
                     }
+
+                    SharedPrefrenceUtils.getInstance(context).setTaskStatus(taskID,Constants.DOWNLOAD.STATE_DOWNLOADING);
 
                     // file creation
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,25 +18,27 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import any.audio.Adapters.DownloadedSongsAdapter;
+import any.audio.Adapters.DownloadingAdapter;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.DownloadCancelListener;
 import any.audio.Models.DownloadTaskModel;
-import any.audio.Adapters.DownloadingAdapter;
+import any.audio.Models.DownloadingItemModel;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.TaskHandler;
 
 /**
- * Created by Ankit on 9/25/2016.
+ * Created by Ankit on 2/8/2017.
  */
 
-public class ActiveTaskFragment extends Fragment {
+public class DownloadsFragment extends Fragment {
 
-
-    private static final String TAG = "ActiveTaskFragment";
+    private Context context;
     private ListView liveDownloadListView;
     private DownloadingAdapter adapter;
-    private NewDownloadItemArrivalListener newDownloadItemArrivalListener;
+    private ActiveTaskFragment.NewDownloadItemArrivalListener newDownloadItemArrivalListener;
+
 
     DownloadCancelListener downloadCancelListener = new DownloadCancelListener() {
         @Override
@@ -48,20 +51,19 @@ public class ActiveTaskFragment extends Fragment {
     private ProgressUpdateBroadcastReceiver receiver;
     private boolean mReceiverRegistered;
 
-    public ActiveTaskFragment() {
-    }
-
     private void cancelItem(String taskID) {
 
         TaskHandler handler = TaskHandler.getInstance(getActivity());
         // remove specific task
         handler.removeTask(taskID);
         handler.setCancelled(true);
-       // adapter.setDownloadingList(getTasksList());
+
+        adapter.setDownloadingList(getTasksList());
         liveDownloadListView.setAdapter(adapter);
+
     }
 
-    public void setNewDownloadItemArrivalListener(NewDownloadItemArrivalListener newDownloadItemArrivalListener) {
+    public void setNewDownloadItemArrivalListener(ActiveTaskFragment.NewDownloadItemArrivalListener newDownloadItemArrivalListener) {
         this.newDownloadItemArrivalListener = newDownloadItemArrivalListener;
     }
 
@@ -75,28 +77,34 @@ public class ActiveTaskFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
         View fragmentView = inflater.inflate(R.layout.fragment_active_task, container, false);
         liveDownloadListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
         adapter = DownloadingAdapter.getInstance(getActivity());
         adapter.setOnDownloadCancelListener(downloadCancelListener);
-     //   adapter.setDownloadingList(getTasksList());
+        adapter.setDownloadingList(getTasksList());
         liveDownloadListView.setAdapter(adapter);
 
         return fragmentView;
+
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        SharedPrefrenceUtils.getInstance(activity).setActiveFragmentAttachedState(true);
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+        SharedPrefrenceUtils.getInstance(context).setActiveFragmentAttachedState(true);
         if (!mReceiverRegistered)
-            registerForBroadcastListen(activity);
+            registerForBroadcastListen(context);
+
     }
 
     @Override
@@ -105,25 +113,31 @@ public class ActiveTaskFragment extends Fragment {
         SharedPrefrenceUtils.getInstance(getActivity()).setActiveFragmentAttachedState(false);
         if (mReceiverRegistered)
             unRegisterBroadcast();
+
     }
 
-    private ArrayList<DownloadTaskModel> getTasksList() {
-        ArrayList<DownloadTaskModel> list = new ArrayList<>();
+    private ArrayList<DownloadingItemModel> getTasksList() {
+        ArrayList<DownloadingItemModel> list = new ArrayList<>();
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(getActivity());
         //get tasks list from taskhandler
         //get title from sf
         ArrayList<String> taskIDs = TaskHandler.getInstance(getActivity()).getTaskSequence();
         for (String t_id : taskIDs) {
-            String title = SharedPrefrenceUtils.getInstance(getActivity()).getTaskTitle(t_id);
-            list.add(new DownloadTaskModel(title, 0, t_id, ""));
+            String title = utils.getTaskTitle(t_id);
+            String thumbnailUrl = utils.getTaskThumbnail(t_id);
+            String artist = utils.getTaskArtist(t_id);
+            String status = utils.getTaskStatus(t_id);
+            list.add(new DownloadingItemModel(t_id,thumbnailUrl,title,artist,"0",status,"0"));
         }
+
         return list;
     }
 
     private int getPosition(String taskID) {
         int pos = -1;
-        ArrayList<DownloadTaskModel> list = getTasksList();
+        ArrayList<DownloadingItemModel> list = getTasksList();
         for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).taskID.equals(taskID)) {
+            if (list.get(i).taskId.equals(taskID)) {
                 pos = i;
                 return pos;
             }
@@ -134,15 +148,16 @@ public class ActiveTaskFragment extends Fragment {
     private void updateItem(int position, int progress, String contentSize) {
 
         if (position != -1) {
-            ArrayList<DownloadTaskModel> old_list = getTasksList();
+            ArrayList<DownloadingItemModel> old_list = getTasksList();
 
             for (int i = 0; i < old_list.size(); i++) {
                 if (i == position) {
-                    old_list.set(i, new DownloadTaskModel(old_list.get(i).Title, progress, old_list.get(i).taskID, String.valueOf(inMB(contentSize)) + " Mb"));
+                    DownloadingItemModel data = old_list.get(i);
+                    old_list.set(i, new DownloadingItemModel(data.taskId,data.thumbnailUrl,data.title,data.artist,""+progress,data.downloadingState,inMB(contentSize)+" MB"));
                 }
             }
 
-            //adapter.setDownloadingList(old_list);
+            adapter.setDownloadingList(old_list);
             liveDownloadListView.setAdapter(adapter);
 
             int start = liveDownloadListView.getFirstVisiblePosition();
@@ -156,7 +171,7 @@ public class ActiveTaskFragment extends Fragment {
             }
         } else {
             // refressing the tasks list
-        //    adapter.setDownloadingList(getTasksList());
+            adapter.setDownloadingList(getTasksList());
             liveDownloadListView.setAdapter(adapter);
 
             if (newDownloadItemArrivalListener != null)
@@ -175,7 +190,7 @@ public class ActiveTaskFragment extends Fragment {
         } else return 0;
     }
 
-    private void registerForBroadcastListen(Activity activity) {
+    private void registerForBroadcastListen(Context activity) {
         receiver = new ProgressUpdateBroadcastReceiver();
         activity.registerReceiver(receiver, new IntentFilter(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST));
         mReceiverRegistered = true;
@@ -194,7 +209,7 @@ public class ActiveTaskFragment extends Fragment {
     }
 
     public void log(String msg) {
-        Log.d(TAG, msg);
+        Log.d("DownloadsFragment", msg);
     }
 
     public class ProgressUpdateBroadcastReceiver extends BroadcastReceiver {
@@ -231,3 +246,4 @@ public class ActiveTaskFragment extends Fragment {
     }
 
 }
+

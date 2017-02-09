@@ -53,6 +53,7 @@ import any.audio.Adapters.ExploreLeftToRightAdapter;
 import any.audio.Adapters.PlaylistAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
 import any.audio.Config.Constants;
+import any.audio.Fragments.DownloadsFragment;
 import any.audio.Fragments.ExploreFragment;
 import any.audio.Fragments.SearchFragment;
 import any.audio.Managers.FontManager;
@@ -76,6 +77,10 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     private static final int FRAGMENT_EXPLORE = 1;
     private static final int FRAGMENT_SEARCH = 2;
+    private static final int FRAGMENT_DOWNLOADING = 3;
+    private static final int FRAGMENT_DOWNLOADED = 4;
+    private static final int FRAGMENT_SETTINGS = 5;
+    private static final int FRAGMENT_ABOUT_US = 6;
 
     final String playBtnString = "\uE039";
     final String pauseBtnString = "\uE036";
@@ -177,7 +182,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         String term = utils.getLastSearchTerm();
 
-        if (term.length() > 0) {
+        if (utils.isFirstSearchDone()) {
             homePanelTitle.setText(reformatHomeTitle(term));
             transactFragment(FRAGMENT_SEARCH, term);
         } else {
@@ -186,7 +191,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         playlistAdapter = PlaylistAdapter.getInstance(this);
 
-        if (utils.getLastItemThumbnail().length() > 0) {  // here param could be any thing among last item (artist,url,title)
+        if (utils.getLastItemThumbnail().length() > 0) {
+            // here param could be any thing among last item (artist,url,title)
             //set visibility of placeholder GONE
             playerPlaceHolderView.setVisibility(View.GONE);
             //set Bottom Player Slidable
@@ -242,6 +248,27 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+
+                int id = item.getItemId();
+                switch (id) {
+
+                    case R.id.trending:
+                        transactFragment(FRAGMENT_EXPLORE, "Explore");
+                        return true;
+
+                    case R.id.downloading:
+                        transactFragment(FRAGMENT_DOWNLOADING, "Downloading");
+                        return true;
+
+                    case R.id.settings:
+
+                        return true;
+
+                    default:
+                        break;
+
+                }
+
                 return false;
             }
         });
@@ -249,7 +276,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private void showExploreItemPopUpMenu(View view){
+    private void showExploreItemPopUpMenu(View view) {
 
         PopupMenu popup = new PopupMenu(this, view);
         popup.getMenuInflater().inflate(R.menu.explore_card_popup, popup.getMenu());
@@ -305,9 +332,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     }
 
     @Override
-    public void onDownloadAction(String video_id, String title) {
+    public void onDownloadAction(String video_id, String title,String thumb,String artist) {
 
-        showDownloadDialog(video_id, title);
+        showDownloadDialog(video_id, title,thumb,artist);
 
     }
 
@@ -573,7 +600,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private String getCurrentRepeatModeText(){
+    private String getCurrentRepeatModeText() {
 
         String mode = utils.getRepeatMode();
         if (mode.equals(Constants.MODE_REPEAT_ALL)) {
@@ -680,6 +707,17 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                         .replace(R.id.fragmentPlaceHolder, searchFragment)
                         .commit();
 
+
+                break;
+
+            case FRAGMENT_DOWNLOADING:
+
+                DownloadsFragment downloadsFragmentFragment = new DownloadsFragment();
+
+                manager
+                        .beginTransaction()
+                        .replace(R.id.fragmentPlaceHolder, downloadsFragmentFragment)
+                        .commit();
 
                 break;
 
@@ -1065,7 +1103,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                     }
 
-                    sendPlayerStateToNotificationService(utils.getPlayerState()==Constants.PLAYER.PLAYER_STATE_PLAYING);
+                    sendPlayerStateToNotificationService(utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING);
                     exoPlayer.setPlayWhenReady((utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING));
 
                 } else {
@@ -1109,7 +1147,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         startService(notificationIntent);
     }
 
-    private void showDownloadDialog(final String v_id, final String stuff_title) {
+    private void showDownloadDialog(final String v_id, final String stuff_title, final String thumbnailUrl, final String artist) {
 
         DialogInterface.OnClickListener downloaDialogClickListener = new DialogInterface.OnClickListener() {
             @Override
@@ -1134,7 +1172,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                                 TaskHandler
                                         .getInstance(AnyAudioActivity.this)
-                                        .addTask(stuff_title, v_id);
+                                        .addTask(stuff_title, v_id,thumbnailUrl,artist);
 
                                 Toast.makeText(AnyAudioActivity.this, " Added " + stuff_title + " To Download", Toast.LENGTH_LONG).show();
 
@@ -1149,7 +1187,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                                                 TaskHandler
                                                         .getInstance(AnyAudioActivity.this)
-                                                        .addTask(stuff_title, v_id);
+                                                        .addTask(stuff_title, v_id,thumbnailUrl,artist);
 
                                                 Toast.makeText(AnyAudioActivity.this, " Added " + stuff_title + " To Download", Toast.LENGTH_LONG).show();
                                                 break;

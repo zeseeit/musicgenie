@@ -207,6 +207,14 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
+    public void setFirstSearchDone(boolean firstSearchDone){
+        editor.putBoolean("firstSearchDone",firstSearchDone);
+        editor.commit();
+    }
+
+    public boolean isFirstSearchDone(){
+        return preferences.getBoolean("firstSearchDone",false);
+    }
 
     public boolean getOptionsForPushNotification() {
         return preferences.getBoolean("pushNotificationAllowance", true);
@@ -577,4 +585,33 @@ public class SharedPrefrenceUtils {
     public boolean getStreamUrlFetchedStatus(){
         return preferences.getBoolean("fetchedStatus",false);
     }
+
+    public void setTaskThumbnail(String taskID, String thumbanil) {
+        editor.putString("taskThumbnail"+taskID,thumbanil);
+        editor.commit();
+    }
+
+
+    public void setTaskArtist(String taskID, String artist) {
+        editor.putString("taskArtist"+taskID,artist);
+        editor.commit();
+    }
+
+    public String getTaskThumbnail(String taskId){
+        return preferences.getString("taskThumbnail"+taskId,"");
+    }
+
+    public String getTaskArtist(String taskId){
+        return preferences.getString("taskArtist"+taskId,"");
+    }
+
+    public void setTaskStatus(String taskID, String stateWaiting) {
+        editor.putString("taskStatus"+taskID,stateWaiting);
+        editor.commit();
+    }
+
+    public String getTaskStatus(String taskId){
+        return preferences.getString("taskStatus"+taskId,Constants.DOWNLOAD.STATE_WAITING);
+    }
+
 }

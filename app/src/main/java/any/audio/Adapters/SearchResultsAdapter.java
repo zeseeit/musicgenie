@@ -152,9 +152,11 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     SearchResultsAdapter adapter = SearchResultsAdapter.getInstance(context);
                     int pos = getAdapterPosition();
                     String v_id = adapter.itemModels.get(pos).Video_id;
+                    String thumb_uri = adapter.itemModels.get(pos).Thumbnail_url;
+                    String subTitle = adapter.itemModels.get(pos).UploadedBy;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.itemModels.get(pos).Title);
-                    adapter.requestDownload(v_id, file_name);
-                    ToastMaker.getInstance(context).toast("\""+adapter.itemModels.get(pos).Title+ "\" Added To Downloads");
+                    adapter.requestDownload(v_id, file_name,thumb_uri,subTitle);
+
                 }
             });
 
@@ -205,9 +207,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         }
     }
 
-    private void requestDownload(String v_id, String file_name) {
+    private void requestDownload(String v_id, String file_name,String thumbnailUrl,String artist) {
         if(searchActionListener!=null){
-            searchActionListener.onDownloadAction(v_id,file_name);
+            searchActionListener.onDownloadAction(v_id,file_name,thumbnailUrl,artist);
         }
     }
 
@@ -219,7 +221,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     public interface SearchResultActionListener{
 
         void onPlayAction(String video_id,String title);
-        void onDownloadAction(String video_id,String title);
+        void onDownloadAction(String video_id,String title,String thumbnail,String artist);
         void onAddToQueue(String video_id,String youtubeId,String title,String uploader);
 
     }

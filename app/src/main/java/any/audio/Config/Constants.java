@@ -68,6 +68,13 @@ public class Constants {
     public static final String MODE_REPEAT_ALL = "repeatall";
     public static final String MODE_SUFFLE = "suffle";
 
+    public interface DOWNLOAD{
+
+        public String STATE_DOWNLOADING = "com.anyaudio.state.downloading";
+        public String STATE_WAITING = "com.anyaudio.state.waiting";
+        public String STATE_STOPPED = "com.anyaudio.state.stopped";
+    }
+
     public interface FIREBASE {
         String TOPIC_UPDATE = "update";
         String TOPIC_RECOMMEND = "recommend";

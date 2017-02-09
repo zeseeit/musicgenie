@@ -5,7 +5,7 @@
 
     <ListView
         android:divider="@drawable/listview_divider"
-        android:dividerHeight="4dp"
+        android:dividerHeight="2dp"
         android:paddingLeft="4dp"
         android:paddingRight="4dp"
         android:id="@+id/dowloadedItemsList"

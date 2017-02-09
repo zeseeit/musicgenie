@@ -1,12 +1,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/DownloadingPageBackground">
+    android:background="@color/AnyAudioPrimaryBackground">
 
     <ListView
         android:paddingTop="4dp"
-        android:divider="@color/DownloadingPageBackground"
-        android:dividerHeight="2dp"
+        android:divider="@null"
+        android:dividerHeight="8dp"
         android:id="@+id/liveDownloadListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

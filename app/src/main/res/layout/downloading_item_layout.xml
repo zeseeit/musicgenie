@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingLeft="4dp"
+    android:background="@color/AnyAudioPrimaryBackground"
+    android:paddingRight="4dp"
+    android:layout_height="88dp">
+
+    <RelativeLayout
+        android:padding="4dp"
+        android:background="@color/AnyAudioSearchItemBgColor"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
+
+        <RelativeLayout
+            android:id="@+id/downloading_item_info_wrapper"
+            android:background="@drawable/btn_ripple_effect"
+            android:layout_toLeftOf="@+id/downloading_item_startStopBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <FrameLayout
+                android:layout_marginRight="4dp"
+                android:layout_centerVertical="true"
+                android:id="@+id/downloading_item_thumbnail_wrapper"
+                android:layout_width="76dp"
+                android:layout_height="76dp">
+
+
+                <FrameLayout
+                    android:padding="4dp"
+                    android:layout_gravity="center"
+                    android:background="@drawable/bottom_player_thumbnail_border"
+                    android:layout_width="68dp"
+                    android:layout_height="68dp" />
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:layout_margin="6dp"
+                    android:id="@+id/downloading_item_thumbnail"
+                    app:civ_border_width="0dp"
+                    android:src="@drawable/hqdefault"
+                    app:civ_border_color="@color/PrimaryColor"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+
+            </FrameLayout>
+
+            <TextView
+                android:layout_marginTop="4dp"
+                android:id="@+id/downloading_item_title"
+                android:gravity="bottom"
+                android:maxLength="32"
+                android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
+                android:text="Sorry Sorry Hot Song \nfor The Year OF the"
+                android:textColor="@color/AnyAudioGrey224"
+                android:textStyle="bold"
+                android:maxLines="1"
+                android:layout_width="match_parent"
+                android:layout_height="28dp" />
+
+            <TextView
+                android:textSize="10sp"
+                android:layout_below="@+id/downloading_item_title"
+                android:id="@+id/downloading_item_artist"
+                android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
+                android:text=""
+                android:gravity="center_vertical"
+                android:textColor="@color/AnyAudioGrey189"
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <TextView
+                android:visibility="invisible"
+                android:textSize="12sp"
+                android:layout_below="@+id/downloading_item_artist"
+                android:id="@+id/downloading_item_status"
+                android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
+                android:text="Waiting To Start"
+                android:textColor="@color/AnyAudioPrimaryColor"
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <ProgressBar
+                android:progressDrawable="@drawable/progress_bar_bg"
+                android:layout_marginTop="6dp"
+                android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
+                android:layout_below="@+id/downloading_item_artist"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_marginRight="36dp"
+                android:max="100"
+                android:progress="0"
+                android:layout_height="2dp"
+                android:id="@+id/downloading_item_progressBar" />
+
+            <TextView
+                android:id="@+id/downloading_item_progressText"
+                android:textColor="@color/AnyAudioGrey189"
+                android:textSize="12sp"
+                android:paddingTop="6dp"
+                android:gravity="center_horizontal"
+                android:text="70%"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_width="36dp"
+                android:layout_height="36dp" />
+
+        </RelativeLayout>
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/downloading_item_startStopBtn"
+            android:background="@drawable/btn_ripple_effect"
+            android:layout_toLeftOf="@+id/downloading_item_cancel_btn"
+            android:textColor="@color/AnyAudioPrimaryColor"
+            android:gravity="center"
+            android:text=""
+            android:textSize="24dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
+        <TextView
+            android:id="@+id/downloading_item_cancel_btn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/btn_ripple_effect"
+            android:text=""
+            android:textSize="24sp"
+            android:textColor="@color/AnyAudioPrimaryColor"
+            android:gravity="center"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+
+        <TextView
+            android:id="@+id/content_size_MB"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:gravity="center"
+            android:layout_marginRight="8dp"
+            android:text="--"
+            android:textSize="10sp"
+            android:textColor="@color/AnyAudioPrimaryColor"
+            android:layout_width="36dp"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+</RelativeLayout>

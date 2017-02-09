@@ -508,8 +508,7 @@ public class Home extends AppCompatActivity {
                                     if (!checkForExistingFile(stuff)) {
 
                                         TaskHandler
-                                                .getInstance(Home.this)
-                                                .addTask(stuff, v_id);
+                                                .getInstance(Home.this).addTask(stuff, v_id,"","");
 
                                         Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
 
@@ -524,7 +523,7 @@ public class Home extends AppCompatActivity {
 
                                                         TaskHandler
                                                                 .getInstance(Home.this)
-                                                                .addTask(stuff, v_id);
+                                                                .addTask(stuff, v_id,"","");
 
                                                         Toast.makeText(Home.this, " Added " + stuff + " To Download", Toast.LENGTH_LONG).show();
                                                         break;

@@ -150,8 +150,10 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                     int pos = getAdapterPosition();
                     Log.d("ExploreLeftRight"," size: "+itemModels.size());
                     String v_id = itemModels.get(pos).Video_id;
+                    String t_url = itemModels.get(pos).Thumbnail_url;
+                    String artist = itemModels.get(pos).UploadedBy;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(itemModels.get(pos).Title);
-                    adapter.requestDownload(v_id, file_name);
+                    adapter.requestDownload(v_id, file_name,t_url,artist);
 
                 }
             });
@@ -194,9 +196,9 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
         }
     }
 
-    private void requestDownload(String v_id, String file_name) {
+    private void requestDownload(String v_id, String file_name,String t_url,String artist) {
         if(exploreActionListener!=null){
-            exploreActionListener.onDownloadAction(v_id,file_name);
+            exploreActionListener.onDownloadAction(v_id,file_name,t_url,artist);
         }
     }
 
@@ -208,7 +210,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
     public interface ExploreActionListener{
 
         void onPlayAction(String video_id,String title);
-        void onDownloadAction(String video_id,String title);
+        void onDownloadAction(String video_id,String title,String thumbnailUrl,String artist);
         void onAddToQueue(String video_id,String youtubeId,String title,String uploader);
         void onShowAll(String type);
         void onPopUpMenuTap(View view);

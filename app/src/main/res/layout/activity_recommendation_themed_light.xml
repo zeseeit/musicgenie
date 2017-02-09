@@ -6,14 +6,16 @@
     android:layout_width="248dp"
     android:layout_height="248dp"
     android:layout_gravity="center"
-    android:background="@drawable/recommendation_layer1"
+    android:background="@drawable/recommendation_layer1_light"
     android:elevation="4dp"
     tools:context="any.audio.Activity.RecommendationThemed">
 
     <RelativeLayout
         android:id="@+id/recommendation_item_thumbnail_wrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true">
 
 
 
@@ -60,8 +62,8 @@
             android:padding="48dp"
             android:text="Sanamsdf Re kaise ho kjlsdf"
             android:layout_alignParentBottom="true"
-            android:textColor="@color/AnyAudioGrey224"
-           />
+            android:textColor="@color/DarkChocolate"
+            />
 
         <TextView
             android:id="@+id/recommendationArtist"
@@ -74,7 +76,7 @@
             android:textSize="12sp"
             android:text="Sanamsdf Re kaise ho kjlsdf"
             android:layout_alignParentBottom="true"
-            android:textColor="@color/AnyAudioGrey189"
+            android:textColor="@color/Gray"
             />
 
 

@@ -34,8 +34,8 @@ public class RecommendationThemed extends Activity {
 
         typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
         fixedTextView = (TextView) findViewById(R.id.fixedText);
-        recommendationText = (TextView) findViewById(R.id.recommendationText);
-        okBtn = (TextView) findViewById(R.id.recommendation_ok_btn);
+//        recommendationText = (TextView) findViewById(R.id.recommendationText);
+//        okBtn = (TextView) findViewById(R.id.recommendation_ok_btn);
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override

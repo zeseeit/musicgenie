@@ -8,15 +8,20 @@
         app:showAsAction="always"
         android:orderInCategory="2"/>
 
-    <item android:title="Downloads"
-        android:id="@+id/donwloads"
+    <item android:title="Downloading"
+        android:id="@+id/downloading"
         app:showAsAction="always"
         android:orderInCategory="3"/>
+
+    <item android:title="Downloading"
+        android:id="@+id/downloaded"
+        app:showAsAction="always"
+        android:orderInCategory="4"/>
 
 
     <item android:title="Setting"
         android:id="@+id/settings"
         app:showAsAction="always"
-        android:orderInCategory="4"/>
+        android:orderInCategory="5"/>
 
 </menu>
