@@ -614,4 +614,30 @@ public class SharedPrefrenceUtils {
         return preferences.getString("taskStatus"+taskId,Constants.DOWNLOAD.STATE_WAITING);
     }
 
+    public void setCurrentOngoingTask(String taskID) {
+        editor.putString("currentOngoingTask",taskID);
+        editor.commit();
+    }
+
+    public String getCurrentOngoingTask(){
+        return preferences.getString("currentOngoingTask","");
+    }
+
+    public void setMetadataDuration(String fileName, String duration) {
+        editor.putString("mtd"+fileName,duration);
+        editor.commit();
+    }
+
+    public String getMetadataDuration(String fileName){
+        return preferences.getString("mtd"+fileName,"<Unknown>");
+    }
+
+    public void setMetadataArtist(String filename, String artist) {
+        editor.putString("mtar"+filename,artist);
+        editor.commit();
+    }
+
+    public String getMetadataArtist(String fileName){
+        return preferences.getString("mtar"+fileName,"<Unknown>");
+    }
 }

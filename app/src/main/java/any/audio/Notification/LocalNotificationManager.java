@@ -9,7 +9,7 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.support.v7.app.NotificationCompat;
 
-import any.audio.Activity.DowloadsActivity;
+import any.audio.Activity.AnyAudioActivity;
 import any.audio.R;
 
 /**
@@ -55,7 +55,7 @@ public class LocalNotificationManager {
 
         final NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
 
-        Intent intent = new Intent(context, DowloadsActivity.class);
+        Intent intent = new Intent(context, AnyAudioActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentTitle("AnyAudio");
         Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_rnd);

@@ -843,16 +843,6 @@ public class Home extends AppCompatActivity {
                     startActivity(i);
 
                 }
-                if (id == R.id.action_downloads) {
-
-                    Intent i = new Intent(Home.this, DowloadsActivity.class);
-                    boolean willStreamingContinue = StreamSharedPref.getInstance(Home.this).getStreamState();
-                    Log.d("StreamingHome", " Will Streaming Continue " + willStreamingContinue);
-                    i.putExtra(Constants.EXTRAA_FLAG_STREAM_WILL_CONTINUE, willStreamingContinue);
-                    startActivity(i);
-
-
-                }
 
                 if (id == R.id.action_request_trending) {
                     invokeAction(Constants.ACTION_TYPE_TRENDING);

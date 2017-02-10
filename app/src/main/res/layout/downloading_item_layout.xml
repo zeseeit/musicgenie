@@ -120,7 +120,7 @@
             android:textColor="@color/AnyAudioPrimaryColor"
             android:gravity="center"
             android:text=""
-            android:textSize="24dp"
+            android:textSize="28dp"
             android:layout_width="36dp"
             android:layout_height="36dp" />
 
@@ -130,7 +130,7 @@
             android:layout_height="36dp"
             android:background="@drawable/btn_ripple_effect"
             android:text=""
-            android:textSize="24sp"
+            android:textSize="28sp"
             android:textColor="@color/AnyAudioPrimaryColor"
             android:gravity="center"
             android:layout_marginLeft="8dp"

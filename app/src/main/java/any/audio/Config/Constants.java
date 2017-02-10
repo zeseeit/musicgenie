@@ -10,7 +10,7 @@ public class Constants {
     public static final String PHONE = "phone";
     public static final int SCREEN_MODE_TABLET = 0;
     public static final int SCREEN_MODE_MOBILE = 1;
-    public static final String ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST = "action_progress_update";
+    public static final String ACTION_DOWNLOAD_UPDATE = "action_progress_update";
     public static final String EXTRA_TASK_ID = "task_id";
     public static final String EXTRA_PROGRESS = "progress";
     //    public static final String FILES_DIR = Environment.getExternalStorageDirectory().getAbsolutePath()+"/AnyAudio/YourSongs";
@@ -67,6 +67,11 @@ public class Constants {
     public static final String MODE_REPEAT_NONE = "norepeat";
     public static final String MODE_REPEAT_ALL = "repeatall";
     public static final String MODE_SUFFLE = "suffle";
+    public static String EXTRAA_BROADCAST_TYPE = "BROADCAST_TYPE";
+    public static String BROADCAST_TYPE_STATE = "state_of_download_view";
+    public static String EXTRAA_DOWNLOAD_VIEW_STATE = "view_state";
+    public static String BROADCAST_TYPE_PROGRESS = "progress_update";
+
 
     public interface DOWNLOAD{
 

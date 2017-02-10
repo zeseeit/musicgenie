@@ -2,7 +2,9 @@ package any.audio.Adapters;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +23,7 @@ import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.FileNameReformatter;
+import any.audio.helpers.MetaDataHelper;
 import any.audio.helpers.RoundedCornerTransformer;
 import any.audio.helpers.PlaylistGenerator;
 
@@ -74,6 +77,11 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
             int widthPx = (int) SharedPrefrenceUtils.getInstance(context).getScreenWidthPx();
             int thumbnailHeight = (int) (0.56*widthPx);
             holder.thumbnail.setImageURI(itemModels.get(position).Thumbnail_url);
+
+            Bitmap bt = ((BitmapDrawable) holder.thumbnail.getDrawable()).getBitmap();
+            MetaDataHelper.getInstance(context).storeImage(bt,model.Title);
+            MetaDataHelper.getInstance(context).setDuration(model.Title,model.TrackDuration);
+            MetaDataHelper.getInstance(context).setArtist(model.Title,model.UploadedBy);
 
         }
 

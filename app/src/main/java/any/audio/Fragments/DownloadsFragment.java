@@ -1,6 +1,5 @@
 package any.audio.Fragments;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,11 +17,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-import any.audio.Adapters.DownloadedSongsAdapter;
 import any.audio.Adapters.DownloadingAdapter;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.DownloadCancelListener;
-import any.audio.Models.DownloadTaskModel;
 import any.audio.Models.DownloadingItemModel;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
@@ -153,7 +150,8 @@ public class DownloadsFragment extends Fragment {
             for (int i = 0; i < old_list.size(); i++) {
                 if (i == position) {
                     DownloadingItemModel data = old_list.get(i);
-                    old_list.set(i, new DownloadingItemModel(data.taskId,data.thumbnailUrl,data.title,data.artist,""+progress,data.downloadingState,inMB(contentSize)+" MB"));
+                    old_list.set(i, new DownloadingItemModel(data.taskId,data.thumbnailUrl,data.title,
+                            data.artist,""+progress,data.downloadingState,inMB(contentSize)+" MB"));
                 }
             }
 
@@ -179,6 +177,8 @@ public class DownloadsFragment extends Fragment {
         }
     }
 
+
+
     private double inMB(String bytes) {
         if (bytes != null) {
             double inBytes = Double.parseDouble(bytes);
@@ -192,7 +192,7 @@ public class DownloadsFragment extends Fragment {
 
     private void registerForBroadcastListen(Context activity) {
         receiver = new ProgressUpdateBroadcastReceiver();
-        activity.registerReceiver(receiver, new IntentFilter(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST));
+        activity.registerReceiver(receiver, new IntentFilter(Constants.ACTION_DOWNLOAD_UPDATE));
         mReceiverRegistered = true;
 
     }
@@ -217,27 +217,100 @@ public class DownloadsFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (intent.getAction().equals(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST)) {
+            if (intent.getAction().equals(Constants.ACTION_DOWNLOAD_UPDATE)) {
 
+                if( intent.getStringExtra(Constants.EXTRAA_BROADCAST_TYPE).equals(Constants.BROADCAST_TYPE_PROGRESS)){
+                    // update the progress
+                    final String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
+                    final String progress = intent.getStringExtra(Constants.EXTRA_PROGRESS);
+                    final String contentSize = intent.getStringExtra(Constants.EXTRA_CONTENT_SIZE);
+                    updateItemProgress(getPosition(taskID), Integer.valueOf(progress), contentSize);
 
-                final String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
-                final String progress = intent.getStringExtra(Constants.EXTRA_PROGRESS);
-                final String contentSize = intent.getStringExtra(Constants.EXTRA_CONTENT_SIZE);
-                final boolean isDownloadingHealthy = intent.getBooleanExtra(Constants.EXTRAA_FLAG_DOWNLOAD_STATE, false);
+                }else{
+                    // update the view state
+                    final String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
+                    final String state = intent.getStringExtra(Constants.EXTRAA_DOWNLOAD_VIEW_STATE);
+                    updateItemState(getPosition(taskID),state);
 
-                if (!isDownloadingHealthy) {
-                    Log.d("DowloadingTest", " Something goes wrong. removing item");
-                    cancelItem(taskID);
                 }
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateItem(getPosition(taskID), Integer.valueOf(progress), contentSize);
-                    }
-                }, 700);
+            }
+        }
+    }
+
+    private void updateItemState(int position, String state) {
+
+        if (position != -1) {
+            ArrayList<DownloadingItemModel> old_list = getTasksList();
+
+            for (int i = 0; i < old_list.size(); i++) {
+                if (i == position) {
+                    DownloadingItemModel data = old_list.get(i);
+                    old_list.set(i, new DownloadingItemModel(
+                            data.taskId,
+                            data.thumbnailUrl,
+                            data.title,
+                            data.artist,
+                            "0", // progresss
+                            state, // new State
+                            "--" // content size
+                    ));
+                }
+            }
+
+            adapter.setDownloadingList(old_list);
+            liveDownloadListView.setAdapter(adapter);
+
+            int start = liveDownloadListView.getFirstVisiblePosition();
+            int end = liveDownloadListView.getLastVisiblePosition();
+
+            if (start <= position && end >= position) {
+
+                View view = liveDownloadListView.getChildAt(position);
+                liveDownloadListView.getAdapter().getView(position, view, liveDownloadListView);
 
             }
+        } else {
+            // refressing the tasks list
+            adapter.setDownloadingList(getTasksList());
+            liveDownloadListView.setAdapter(adapter);
+
+            if (newDownloadItemArrivalListener != null)
+                newDownloadItemArrivalListener.onNewItemAdded();
+        }
+    }
+
+    private void updateItemProgress(int position, int progress, String contentSize) {
+        if (position != -1) {
+            ArrayList<DownloadingItemModel> old_list = getTasksList();
+
+            for (int i = 0; i < old_list.size(); i++) {
+                if (i == position) {
+                    DownloadingItemModel data = old_list.get(i);
+                    old_list.set(i, new DownloadingItemModel(data.taskId,data.thumbnailUrl,data.title,
+                            data.artist,""+progress,data.downloadingState,inMB(contentSize)+" MB"));
+                }
+            }
+
+            adapter.setDownloadingList(old_list);
+            liveDownloadListView.setAdapter(adapter);
+
+            int start = liveDownloadListView.getFirstVisiblePosition();
+            int end = liveDownloadListView.getLastVisiblePosition();
+
+            if (start <= position && end >= position) {
+
+                View view = liveDownloadListView.getChildAt(position);
+                liveDownloadListView.getAdapter().getView(position, view, liveDownloadListView);
+
+            }
+        } else {
+            // refressing the tasks list
+            adapter.setDownloadingList(getTasksList());
+            liveDownloadListView.setAdapter(adapter);
+
+            if (newDownloadItemArrivalListener != null)
+                newDownloadItemArrivalListener.onNewItemAdded();
         }
     }
 

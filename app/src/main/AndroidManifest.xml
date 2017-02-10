@@ -53,11 +53,6 @@
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".Activity.DowloadsActivity"
-            android:label="@string/activity_downloads"
-            android:parentActivityName=".Activity.Home"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".Activity.UserPreferenceSetting"
             android:label="@string/activity_preferences"
             android:parentActivityName=".Activity.Home"

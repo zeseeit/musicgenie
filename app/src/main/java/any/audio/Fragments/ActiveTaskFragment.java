@@ -177,7 +177,7 @@ public class ActiveTaskFragment extends Fragment {
 
     private void registerForBroadcastListen(Activity activity) {
         receiver = new ProgressUpdateBroadcastReceiver();
-        activity.registerReceiver(receiver, new IntentFilter(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST));
+        activity.registerReceiver(receiver, new IntentFilter(Constants.ACTION_DOWNLOAD_UPDATE));
         mReceiverRegistered = true;
 
     }
@@ -202,7 +202,7 @@ public class ActiveTaskFragment extends Fragment {
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if (intent.getAction().equals(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST)) {
+            if (intent.getAction().equals(Constants.ACTION_DOWNLOAD_UPDATE)) {
 
 
                 final String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);

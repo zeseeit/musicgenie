@@ -58,7 +58,7 @@ public class TermsConditionsAcceptance extends AppCompatActivity {
             public void onClick(View view) {
 
                 SharedPrefrenceUtils.getInstance(TermsConditionsAcceptance.this).setTermsAccepted(true);
-                startActivity(new Intent(TermsConditionsAcceptance.this, Home.class));
+                startActivity(new Intent(TermsConditionsAcceptance.this, AnyAudioActivity.class));
                 finish();
             }
         });

@@ -49,7 +49,7 @@ public class TaskHandler {
     private boolean isHandlerRunning = false;
     private int task_count = 0;
     private ProgressDialog progressDialog;
-    public boolean isCanceled = false;
+    public static boolean isCanceled = false;
     private String dwnd_url;
     private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000; // 1 min
     private DownloadItemInvalidatedListener itemInvalidatedListener;
@@ -57,7 +57,7 @@ public class TaskHandler {
 
     public TaskHandler(Context context) {
         TaskHandler.context = context;
-        utils =  utils = SharedPrefrenceUtils.getInstance(context);
+        utils = SharedPrefrenceUtils.getInstance(context);
     }
 
     public static TaskHandler getInstance(Context context) {
@@ -87,7 +87,7 @@ public class TaskHandler {
                 final ArrayList<String> taskIDs = getDispatchTaskSequence();
 
                 for (final String taskID : taskIDs) {
-                    if (SharedPrefrenceUtils.getInstance(context).getCurrentDownloadsCount() < 1) {
+                    if (utils.getCurrentDownloadsCount() < 1) {
 
                         new Thread(new Runnable() {
                             @Override
@@ -126,8 +126,13 @@ public class TaskHandler {
 
     private void dispatch(final String taskID) {
 
-        String v_id = SharedPrefrenceUtils.getInstance(context).getTaskVideoID(taskID);
-        String file_name = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
+        if (!utils.getTaskStatus(taskID).equals(Constants.DOWNLOAD.STATE_WAITING)) {
+            return;
+        }
+
+
+        String v_id = utils.getTaskVideoID(taskID);
+        String file_name = utils.getTaskTitle(taskID);
 
         DownloadListener listener = new DownloadListener() {
 
@@ -135,33 +140,38 @@ public class TaskHandler {
             public void onInterruptted(String taskID) {
                 // retrieve the file and delete it
                 deleteFile(taskID);
-                String flnm = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
+                String flnm = utils.getTaskTitle(taskID);
 
-                SharedPrefrenceUtils.getInstance(context).setTaskStatus(taskID,Constants.DOWNLOAD.STATE_STOPPED);
-
+                utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_STOPPED);
+                broadcastStateUpdate(taskID,Constants.DOWNLOAD.STATE_STOPPED);
+                utils.setCurrentOngoingTask("");
+                utils.setCurrentDownloadCount(0);
                 //LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
             }
 
             @Override
             public void onError(String taskID) {
                 deleteFile(taskID);
-                String flnm = SharedPrefrenceUtils.getInstance(context).getTaskTitle(taskID);
+                String flnm = utils.getTaskTitle(taskID);
 
-                SharedPrefrenceUtils.getInstance(context).setTaskStatus(taskID,Constants.DOWNLOAD.STATE_STOPPED);
-
-               // LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
+                utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_STOPPED);
+                broadcastStateUpdate(taskID,Constants.DOWNLOAD.STATE_STOPPED);
+                utils.setCurrentOngoingTask("");
+                utils.setCurrentDownloadCount(0);
+                // LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
             }
 
             @Override
             public void onDownloadTaskProcessStart() {
-                SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(1);
+                utils.setCurrentDownloadCount(1);
                 log("callback: download started");
 
             }
 
             @Override
             public void onDownloadFinish() {
-                SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+                utils.setCurrentOngoingTask("");
+                utils.setCurrentDownloadCount(0);
             }
         };
 
@@ -190,7 +200,7 @@ public class TaskHandler {
 
     private void deleteFile(String taskID) {
 
-        SharedPrefrenceUtils.getInstance(context).setCurrentDownloadCount(0);
+        utils.setCurrentDownloadCount(0);
         L.m("TaskHandler", "callback: download error");
 
         String file_to_delete = FileNameReformatter
@@ -219,7 +229,7 @@ public class TaskHandler {
 
     public ArrayList<String> getTaskSequence() {
         ArrayList<String> task;
-        String _tasks = SharedPrefrenceUtils.getInstance(context).getTaskSequence();
+        String _tasks = utils.getTaskSequence();
         task = new Segmentor().getParts(_tasks, '#');
         return task;
     }
@@ -227,7 +237,7 @@ public class TaskHandler {
     private ArrayList<String> getDispatchTaskSequence() {
 
         ArrayList<String> task;
-        String _tasks = SharedPrefrenceUtils.getInstance(context).getDispatchTaskSequence();
+        String _tasks = utils.getDispatchTaskSequence();
         //log(" dispatch pendings :: "+_tasks);
         task = new Segmentor().getParts(_tasks, '#');
         return task;
@@ -243,7 +253,7 @@ public class TaskHandler {
     }
 
     // adds task to shared preferences task queue
-    public void addTask(String file_name, String v_id,String thumbanil,String artist) {
+    public void addTask(String file_name, String v_id, String thumbanil, String artist) {
 
         // create taskID
         Date d = new Date();
@@ -265,7 +275,7 @@ public class TaskHandler {
         //adding new Artist to SPref.
         utils.setTaskArtist(taskID, artist);
         // adding task Status as "Waiting"
-        utils.setTaskStatus(taskID,Constants.DOWNLOAD.STATE_WAITING);
+        utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_WAITING);
         // get-off and start task
         // notifies handler for new task arrival
         initiate();
@@ -274,7 +284,7 @@ public class TaskHandler {
     // removes taskID from sharedPreferences string queue
     public void removeTask(String taskID) {
 
-        ArrayList<String> tids = new Segmentor().getParts(SharedPrefrenceUtils.getInstance(context).getTaskSequence(), '#');
+        ArrayList<String> tids = new Segmentor().getParts(utils.getTaskSequence(), '#');
         for (int i = 0; i < tids.size(); i++) {
             String tid = tids.get(i);
             if (tid.equals(taskID)) {
@@ -290,13 +300,13 @@ public class TaskHandler {
     // remove all tasks
     public void removeAllTasks() {
         log("removing all tasks");
-        SharedPrefrenceUtils.getInstance(context).setTasksSequence("");
+        utils.setTasksSequence("");
     }
 
     //remove dispatch task
     public void removeDispatchTask(String taskID) {
 
-        ArrayList<String> tids = new Segmentor().getParts(SharedPrefrenceUtils.getInstance(context).getDispatchTaskSequence(), '#');
+        ArrayList<String> tids = new Segmentor().getParts(utils.getDispatchTaskSequence(), '#');
         for (int i = 0; i < tids.size(); i++) {
             String tid = tids.get(i);
             if (tid.equals(taskID)) {
@@ -321,10 +331,10 @@ public class TaskHandler {
 
         if (type == TYPE_TASK_DOWNLOAD) {
             log("writing back tasks :" + currStack);
-            SharedPrefrenceUtils.getInstance(context).setTasksSequence(currStack);
+            utils.setTasksSequence(currStack);
         } else {
             log("writing back the dispatch tasks :" + currStack);
-            SharedPrefrenceUtils.getInstance(context).setDispatchTasksSequence(currStack);
+            utils.setDispatchTasksSequence(currStack);
         }
 
     }
@@ -343,15 +353,63 @@ public class TaskHandler {
         this.isCanceled = true;
     }
 
-    public void restartTask(String taskId){
+    public void restartTask(String taskId) {
 
-        Log.d("TaskHandler"," restarting Task "+taskId);
+        // Failed Or Stopped Downloads
+        // Set the tasks status to be waiting
+        utils.setTaskStatus(taskId, Constants.DOWNLOAD.STATE_WAITING);
+        broadcastStateUpdate(taskId,Constants.DOWNLOAD.STATE_WAITING);
+        // Add task to Dispatch Queue and poke the handler
+        Log.d("TaskHandler", " restarting Task " + taskId);
         String _tasks = utils.getDispatchTaskSequence();
         utils.setDispatchTasksSequence(_tasks + taskId + "#");
         initiate();
+
+
     }
 
-    public void stopTask(String taskId){
+    public void stopTask(String taskId) {
+        // check if current task is ongoing
+        // if yes then ->
+        if (!utils.getTaskStatus(taskId).equals(Constants.DOWNLOAD.STATE_STOPPED)) {
+            // Ongoing/Pending
+            if (utils.getTaskStatus(taskId).equals(Constants.DOWNLOAD.STATE_DOWNLOADING)) {
+                //Ongoing
+                cancelCurrentDownload();
+            } else {
+                // Pending
+                removeDispatchTask(taskId);
+            }
+
+        }
+
+        broadcastStateUpdate(taskId,Constants.DOWNLOAD.STATE_STOPPED);
+
+    }
+
+    public void cancelTask(String taskId) {
+
+        if (utils.getCurrentDownloadsCount() > 0) {
+            //some download is going on---
+            String currentOngoingTask = utils.getCurrentOngoingTask();
+
+            //check if "task to remove" is the current Ongoing task
+            if (taskId.equals(currentOngoingTask)) {
+                // stop download and remove from task queue
+                removeTask(taskId);
+                cancelCurrentDownload();
+
+            } else {
+                // items are pending/failed
+                // remove from queue
+                removeTask(taskId);
+            }
+        } else {
+            // all downloads are stopped/inturrupted
+            // so - simply remove from queue
+            removeTask(taskId);
+        }
+
 
     }
 
@@ -379,6 +437,7 @@ public class TaskHandler {
             this.file_name = file_name;
             this.downloadListener = listener;
             this.currentProgress = 0;
+            utils.setCurrentOngoingTask(taskID);
             //  this.context = context;
         }
 
@@ -441,7 +500,8 @@ public class TaskHandler {
                         return;
                     }
 
-                    SharedPrefrenceUtils.getInstance(context).setTaskStatus(taskID,Constants.DOWNLOAD.STATE_DOWNLOADING);
+                    utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_DOWNLOADING);
+                    broadcastStateUpdate(taskID,Constants.DOWNLOAD.STATE_DOWNLOADING);
 
                     // file creation
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -484,11 +544,9 @@ public class TaskHandler {
 
                 } catch (MalformedURLException e) {
                     downloadListener.onError(taskID);
-                    broadcastUpdate(String.valueOf(0), "0", false);
                     L.m("TaskHandler", " URL exception");
                 } catch (IOException e) {
                     downloadListener.onError(taskID);
-                    broadcastUpdate(String.valueOf(0), "0", false);
                     L.m("TaskHandler", " IO exception " + e.toString());
                 }
 
@@ -499,14 +557,13 @@ public class TaskHandler {
 
             if (progress == 100) {
                 removeTask(taskID);
-                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
                 downloadListener.onDownloadFinish();
 //                log("downloaded task " + taskID);
                 L.m("TaskHandler", "downloaded task " + taskID);
             }
             L.m("TaskHandler", "prog " + progress);
 
-            broadcastUpdate(String.valueOf(progress), cl, true);
+            broadcastProgressUpdate(taskID,String.valueOf(progress), cl);
             if (currentProgress < progress) {
                 LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);
             }
@@ -515,19 +572,31 @@ public class TaskHandler {
 
         // broadcast is for progress update to download activity
 
-        public void broadcastUpdate(String progressPercentage, String contentLen, boolean currentDownloadStatus) {
 
-            Intent intent = new Intent(Constants.ACTION_DOWNLOAD_PROGRESS_UPDATE_BROADCAST);
-            intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
-            intent.putExtra(Constants.EXTRA_PROGRESS, progressPercentage);
-            intent.putExtra(Constants.EXTRA_CONTENT_SIZE, contentLen);
-            intent.putExtra(Constants.EXTRAA_FLAG_DOWNLOAD_STATE, currentDownloadStatus);
-            context.sendBroadcast(intent);
-
-        }
 
         private void subscribeDownloadCancelListener() {
         }
+
+    }
+
+    public void broadcastProgressUpdate(String taskID,String progressPercentage, String contentLen) {
+
+        Intent intent = new Intent(Constants.ACTION_DOWNLOAD_UPDATE);
+        intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
+        intent.putExtra(Constants.EXTRAA_BROADCAST_TYPE,Constants.BROADCAST_TYPE_PROGRESS);
+        intent.putExtra(Constants.EXTRA_PROGRESS, progressPercentage);
+        intent.putExtra(Constants.EXTRA_CONTENT_SIZE, contentLen);
+        context.sendBroadcast(intent);
+
+    }
+
+    public void broadcastStateUpdate(String taskID,String state){
+
+        Intent intent = new Intent(Constants.ACTION_DOWNLOAD_UPDATE);
+        intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
+        intent.putExtra(Constants.EXTRAA_BROADCAST_TYPE,Constants.BROADCAST_TYPE_STATE);
+        intent.putExtra(Constants.EXTRAA_DOWNLOAD_VIEW_STATE,state);
+        context.sendBroadcast(intent);
 
     }
 }

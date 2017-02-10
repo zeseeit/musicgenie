@@ -15,7 +15,6 @@ import android.widget.RemoteViews;
 import com.squareup.picasso.Picasso;
 
 import any.audio.Activity.AnyAudioActivity;
-import any.audio.Activity.Home;
 import any.audio.Config.Constants;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;

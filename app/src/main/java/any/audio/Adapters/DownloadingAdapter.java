@@ -22,6 +22,7 @@ import any.audio.Models.DownloadTaskModel;
 import any.audio.Models.DownloadingItemModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.L;
 import any.audio.helpers.TaskHandler;
 
@@ -37,12 +38,13 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
     private Typeface tfIcon;
     private String toStartDownloadText = "\uE037";
     private String stoppedDownloadText = "\uE047";
-
+    private SharedPrefrenceUtils utils;
 
     public DownloadingAdapter(Context context) {
         super(context, 0);
         DownloadingAdapter.context = context;
         downloadingList = new ArrayList<>();
+        utils = SharedPrefrenceUtils.getInstance(context);
         tfIcon = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
 
     }
@@ -61,6 +63,16 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
     public void setDownloadingList(ArrayList<DownloadingItemModel> list) {
         this.downloadingList = list;
         notifyDataSetChanged();
+    }
+
+    public void removeItem(String taskId){
+        for(DownloadingItemModel item:downloadingList){
+            if(taskId.equals(item.taskId)){
+                downloadingList.remove(item);
+                notifyDataSetChanged();
+                return;
+            }
+        }
     }
 
     @Override
@@ -127,14 +139,23 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
         viewHolder.stopStartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                TaskHandler.getInstance(context).restartTask(data.taskId);
+
+                if(utils.getTaskStatus(data.taskId).equals(Constants.DOWNLOAD.STATE_STOPPED)) {
+
+                    TaskHandler.getInstance(context).restartTask(data.taskId);
+                }else{
+                    // either waiting or downloading = > stop the task
+                    TaskHandler.getInstance(context).stopTask(data.taskId);
+                }
+
             }
         });
 
         viewHolder.cancelBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                TaskHandler.getInstance(context).cancelTask(data.taskId);
+                removeItem(data.taskId);
             }
         });
 

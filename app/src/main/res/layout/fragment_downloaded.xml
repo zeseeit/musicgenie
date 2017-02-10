@@ -1,0 +1,16 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/AnyAudioPrimaryBackground">
+
+    <ListView
+        android:paddingTop="4dp"
+        android:divider="@null"
+        android:dividerHeight="8dp"
+        android:id="@+id/DownloadedListView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp"></ListView>
+
+</FrameLayout>

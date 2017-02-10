@@ -253,11 +253,11 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                 switch (id) {
 
                     case R.id.trending:
-                        transactFragment(FRAGMENT_EXPLORE, "Explore");
+                        transactFragment(FRAGMENT_EXPLORE, "EXPLORE");
                         return true;
 
                     case R.id.downloading:
-                        transactFragment(FRAGMENT_DOWNLOADING, "Downloading");
+                        transactFragment(FRAGMENT_DOWNLOADING, "DOWNLOADING");
                         return true;
 
                     case R.id.settings:
@@ -680,6 +680,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private void transactFragment(int fragmentType, String extraa) {
 
         FragmentManager manager = getSupportFragmentManager();
+
+        homePanelTitle.setText(extraa);
 
         switch (fragmentType) {
 

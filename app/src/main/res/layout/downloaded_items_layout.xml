@@ -19,7 +19,7 @@
         <RelativeLayout
             android:id="@+id/downloaded_item_info_wrapper"
             android:background="@drawable/btn_ripple_effect"
-            android:layout_toLeftOf="@+id/addToQueue"
+            android:layout_toLeftOf="@+id/deleteDownloadedItem"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 

@@ -56,7 +56,7 @@ public class RecommendationThemed extends Activity {
 
     private void search(String term) {
 
-        Intent homeItent = new Intent(this, Home.class);
+        Intent homeItent = new Intent(this, AnyAudioActivity.class);
         Bundle bundle = new Bundle();
         bundle.putString("push_type", Constants.PUSH.PUSH_TYPE_RECOMMENDATIONS);
         bundle.putString("search_term", term);

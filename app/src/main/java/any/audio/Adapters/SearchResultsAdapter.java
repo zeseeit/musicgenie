@@ -1,7 +1,10 @@
 package any.audio.Adapters;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Typeface;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
@@ -23,6 +27,7 @@ import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.FileNameReformatter;
+import any.audio.helpers.MetaDataHelper;
 import any.audio.helpers.PlaylistGenerator;
 import any.audio.helpers.ToastMaker;
 
@@ -72,15 +77,35 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     }
 
     @Override
-    public void onBindViewHolder(SearchItemCardViewHolder holder, int position) {
+    public void onBindViewHolder(final SearchItemCardViewHolder holder, int position) {
 
 
         Log.d("SearchAdapter"," binding ");
-        ItemModel model = itemModels.get(position);
+        final ItemModel model = itemModels.get(position);
 
         if(ConnectivityUtils.isConnectedToNet()){
 
             Picasso.with(context).load(model.Thumbnail_url).transform(new CircularImageTransformer()).into(holder.thumbnail);
+            Picasso.with(context).load(model.Thumbnail_url).into(new Target() {
+                @Override
+                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                    holder.thumbnail.setImageBitmap(bitmap);
+                    MetaDataHelper.getInstance(context).storeImage(bitmap,model.Title);
+                }
+
+                @Override
+                public void onBitmapFailed(Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onPrepareLoad(Drawable placeHolderDrawable) {
+
+                }
+            });
+
+            MetaDataHelper.getInstance(context).setDuration(model.Title,model.TrackDuration);
+            MetaDataHelper.getInstance(context).setArtist(model.Title,model.UploadedBy);
 
         }
 
