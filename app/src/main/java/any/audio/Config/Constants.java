@@ -71,6 +71,7 @@ public class Constants {
     public static String BROADCAST_TYPE_STATE = "state_of_download_view";
     public static String EXTRAA_DOWNLOAD_VIEW_STATE = "view_state";
     public static String BROADCAST_TYPE_PROGRESS = "progress_update";
+    public static String KEY_NEW_ANYAUDIO_VERSION = "NEWvERSION";
 
 
     public interface DOWNLOAD{

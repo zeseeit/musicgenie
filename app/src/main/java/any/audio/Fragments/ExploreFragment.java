@@ -102,12 +102,8 @@ public class ExploreFragment extends Fragment {
         if (!ConnectivityUtils.getInstance(context).isConnectedToNet()) {
             exploreTopDownRecyler.setVisibility(RecyclerView.GONE);
             progressBar.setVisibility(View.INVISIBLE);
-            progressBarMsgPanel.setVisibility(View.VISIBLE);
-            progressBarMsgPanel.setText("Troubling Getting Data. Check Your Working Internet Connection");
-
             context.startActivity(new Intent(context, ErrorSplash.class));
             ((AppCompatActivity) context).finish();
-
             return;
         }
 

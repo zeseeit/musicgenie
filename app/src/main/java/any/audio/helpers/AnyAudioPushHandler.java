@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
@@ -75,9 +77,20 @@ public class AnyAudioPushHandler {
     private void handleNewUpdate(Map<String, String> data) {
 
         Intent updateIntent = new Intent(context, UpdateThemedActivity.class);
+
+        String newVersionCode = data.get("versionCode");
+
+        if(!((Integer.valueOf(newVersionCode)>getCurrentVersion()))) {
+            Log.d("PushHandler"," Updated Version");
+            return;
+        }
+
         updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, data.get("newInThis"));
         updateIntent.putExtra(Constants.KEY_NEW_UPDATE_URL, data.get("downloadUrl"));
+        updateIntent.putExtra(Constants.KEY_NEW_ANYAUDIO_VERSION,data.get("newVersionName"));
         updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+
         showNotification("AnyAudio Update!!", "Newer Version of App is Available", updateIntent);
         SharedPrefrenceUtils.getInstance(context).setNotifiedForUpdate(true);
 
@@ -86,10 +99,10 @@ public class AnyAudioPushHandler {
     private void handleEveWisher(Map<String, String> data) {
 
         String eveMessage = data.get("message");
-        String associatedDpUrl = data.get("dp");
+        String title = data.get("title");
         Intent eveWishIntent = new Intent(context, EveWisherThemedActivity.class);
         eveWishIntent.putExtra("message", eveMessage);
-        eveWishIntent.putExtra("dp", associatedDpUrl);
+        eveWishIntent.putExtra("title", title);
         eveWishIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         showNotification("AnyAudio", "Wishes For You", eveWishIntent);
 
@@ -98,10 +111,14 @@ public class AnyAudioPushHandler {
     private void handleRecommendations(Map<String, String> data) {
 
         String searchTerm = data.get("search_term");
-        String initial = data.get("initial");
+        String initial = data.get("initials");
+        String artist = data.get("artist");
+        String art = data.get("thumbnail");
         Intent recomIntent = new Intent(context, RecommendationThemed.class);
         recomIntent.putExtra("recom", searchTerm);
+        recomIntent.putExtra("artist", artist);
         recomIntent.putExtra("fixed", initial);
+        recomIntent.putExtra("artUrl", art);
         recomIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         showNotification("AnyAudio", "AnyAudio`s Recommendations", recomIntent);
 
@@ -113,6 +130,16 @@ public class AnyAudioPushHandler {
         return this;
     }
 
+    private int getCurrentVersion(){
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return pInfo.versionCode;
+    }
+
     private void showSmallNotification(NotificationCompat.Builder mBuilder, int icon, String title, String message, String timeStamp, PendingIntent resultPendingIntent, Uri alarmSound) {
 
         Notification notification;
@@ -120,7 +147,6 @@ public class AnyAudioPushHandler {
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
-                .setSound(alarmSound)
                 .setSmallIcon(R.drawable.notifications_bar_small)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
                 .setContentText(message)

@@ -78,10 +78,10 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
             int thumbnailHeight = (int) (0.56*widthPx);
             holder.thumbnail.setImageURI(itemModels.get(position).Thumbnail_url);
 
-            Bitmap bt = ((BitmapDrawable) holder.thumbnail.getDrawable()).getBitmap();
-            MetaDataHelper.getInstance(context).storeImage(bt,model.Title);
-            MetaDataHelper.getInstance(context).setDuration(model.Title,model.TrackDuration);
-            MetaDataHelper.getInstance(context).setArtist(model.Title,model.UploadedBy);
+//            Bitmap bt = ((BitmapDrawable) holder.thumbnail.getDrawable()).getBitmap();
+//            MetaDataHelper.getInstance(context).storeImage(bt,model.Title);
+//            MetaDataHelper.getInstance(context).setDuration(model.Title,model.TrackDuration);
+//            MetaDataHelper.getInstance(context).setArtist(model.Title,model.UploadedBy);
 
         }
 

@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -47,6 +48,7 @@ public class DownloadsFragment extends Fragment {
 
     private ProgressUpdateBroadcastReceiver receiver;
     private boolean mReceiverRegistered;
+    private int mScrollState;
 
     private void cancelItem(String taskID) {
 
@@ -57,6 +59,7 @@ public class DownloadsFragment extends Fragment {
 
         adapter.setDownloadingList(getTasksList());
         liveDownloadListView.setAdapter(adapter);
+
 
     }
 
@@ -85,6 +88,17 @@ public class DownloadsFragment extends Fragment {
 
         View fragmentView = inflater.inflate(R.layout.fragment_active_task, container, false);
         liveDownloadListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
+        liveDownloadListView.setOnScrollListener(new AbsListView.OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(AbsListView absListView, int scrollState) {
+                mScrollState = scrollState;
+            }
+
+            @Override
+            public void onScroll(AbsListView absListView, int i, int i1, int i2) {
+
+            }
+        });
         adapter = DownloadingAdapter.getInstance(getActivity());
         adapter.setOnDownloadCancelListener(downloadCancelListener);
         adapter.setDownloadingList(getTasksList());
@@ -156,16 +170,15 @@ public class DownloadsFragment extends Fragment {
             }
 
             adapter.setDownloadingList(old_list);
-            liveDownloadListView.setAdapter(adapter);
+            //liveDownloadListView.setAdapter(adapter);
 
             int start = liveDownloadListView.getFirstVisiblePosition();
             int end = liveDownloadListView.getLastVisiblePosition();
 
+            if(mScrollState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE)
             if (start <= position && end >= position) {
-
                 View view = liveDownloadListView.getChildAt(position);
                 liveDownloadListView.getAdapter().getView(position, view, liveDownloadListView);
-
             }
         } else {
             // refressing the tasks list
@@ -224,7 +237,14 @@ public class DownloadsFragment extends Fragment {
                     final String taskID = intent.getStringExtra(Constants.EXTRA_TASK_ID);
                     final String progress = intent.getStringExtra(Constants.EXTRA_PROGRESS);
                     final String contentSize = intent.getStringExtra(Constants.EXTRA_CONTENT_SIZE);
-                    updateItemProgress(getPosition(taskID), Integer.valueOf(progress), contentSize);
+
+                    //update in batches of 700ms
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateItemProgress(getPosition(taskID), Integer.valueOf(progress), contentSize);
+                        }
+                    }, 700);
 
                 }else{
                     // update the view state
@@ -244,7 +264,9 @@ public class DownloadsFragment extends Fragment {
             ArrayList<DownloadingItemModel> old_list = getTasksList();
 
             for (int i = 0; i < old_list.size(); i++) {
+
                 if (i == position) {
+                    Log.d("TaskState","updated task-title: "+old_list.get(i).title+" state "+old_list.get(i).downloadingState);
                     DownloadingItemModel data = old_list.get(i);
                     old_list.set(i, new DownloadingItemModel(
                             data.taskId,
@@ -255,17 +277,18 @@ public class DownloadsFragment extends Fragment {
                             state, // new State
                             "--" // content size
                     ));
+                }else {
+                    Log.d("TaskState"," task-title: "+old_list.get(i).title+" state "+old_list.get(i).downloadingState);
                 }
             }
 
-            adapter.setDownloadingList(old_list);
-            liveDownloadListView.setAdapter(adapter);
 
+            adapter.setDownloadingList(old_list);
             int start = liveDownloadListView.getFirstVisiblePosition();
             int end = liveDownloadListView.getLastVisiblePosition();
 
+            if(mScrollState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE)
             if (start <= position && end >= position) {
-
                 View view = liveDownloadListView.getChildAt(position);
                 liveDownloadListView.getAdapter().getView(position, view, liveDownloadListView);
 
@@ -293,17 +316,18 @@ public class DownloadsFragment extends Fragment {
             }
 
             adapter.setDownloadingList(old_list);
-            liveDownloadListView.setAdapter(adapter);
+            //liveDownloadListView.setAdapter(adapter);
 
             int start = liveDownloadListView.getFirstVisiblePosition();
             int end = liveDownloadListView.getLastVisiblePosition();
 
-            if (start <= position && end >= position) {
 
+            if(mScrollState== AbsListView.OnScrollListener.SCROLL_STATE_IDLE)
+            if (start <= position && end >= position) {
                 View view = liveDownloadListView.getChildAt(position);
                 liveDownloadListView.getAdapter().getView(position, view, liveDownloadListView);
-
             }
+
         } else {
             // refressing the tasks list
             adapter.setDownloadingList(getTasksList());

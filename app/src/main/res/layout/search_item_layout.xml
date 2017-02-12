@@ -3,6 +3,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/rectangle_ripple_views"
     android:paddingLeft="12dp"
     android:paddingRight="12dp"
     android:paddingTop="6dp"
@@ -17,7 +18,6 @@
 
     <RelativeLayout
         android:id="@+id/search_item_info_wrapper"
-       android:background="@drawable/btn_ripple_effect"
         android:layout_toLeftOf="@+id/addToQueue"
         android:layout_width="match_parent"
         android:layout_height="match_parent">

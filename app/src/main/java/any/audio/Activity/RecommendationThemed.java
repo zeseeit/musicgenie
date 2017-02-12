@@ -9,9 +9,13 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
+import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class RecommendationThemed extends Activity {
 
@@ -19,6 +23,8 @@ public class RecommendationThemed extends Activity {
     TextView recommendationText;
     TextView okBtn;
     Typeface typeface;
+    CircleImageView thumbnaill;
+    private TextView recommendationArtistTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,27 +36,30 @@ public class RecommendationThemed extends Activity {
         Bundle bundle = getIntent().getExtras();
         final String fixedTxt = bundle.getString("fixed");
         final String recom = bundle.getString("recom");
-
-
-        typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        final String recom_artist = bundle.getString("artist");
+        final String urlThumb = bundle.getString("artUrl");
+        typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
         fixedTextView = (TextView) findViewById(R.id.fixedText);
-//        recommendationText = (TextView) findViewById(R.id.recommendationText);
-//        okBtn = (TextView) findViewById(R.id.recommendation_ok_btn);
+        okBtn = (TextView) findViewById(R.id.search_item_play_btn);
+        recommendationText = (TextView) findViewById(R.id.recommendationTitle);
+        recommendationArtistTv = (TextView) findViewById(R.id.recommendationArtist);
+        thumbnaill = (CircleImageView) findViewById(R.id.recommndation_thumbnail);
+
+        okBtn.setTypeface(typeface);
+        fixedTextView.setText(fixedTxt);
+        recommendationText.setText(recom);
+        recommendationArtistTv.setText(recom_artist);
+
+        if(ConnectivityUtils.getInstance(this).isConnectedToNet())
+            Picasso.with(this).load(urlThumb).into(thumbnaill);
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //navigate to home and search for seach term
                 search(recom);
             }
         });
 
-        fixedTextView.setTypeface(typeface);
-        recommendationText.setTypeface(typeface);
-        okBtn.setTypeface(typeface);
-
-        fixedTextView.setText(fixedTxt);
-        recommendationText.setText(recom);
 
     }
 
@@ -58,8 +67,8 @@ public class RecommendationThemed extends Activity {
 
         Intent homeItent = new Intent(this, AnyAudioActivity.class);
         Bundle bundle = new Bundle();
-        bundle.putString("push_type", Constants.PUSH.PUSH_TYPE_RECOMMENDATIONS);
-        bundle.putString("search_term", term);
+        bundle.putString("type", "search");
+        bundle.putString("term", term);
         homeItent.putExtras(bundle);
         homeItent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(homeItent);

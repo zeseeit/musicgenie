@@ -10,7 +10,9 @@
         android:id="@+id/DownloadedListView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingLeft="4dp"
-        android:paddingRight="4dp"></ListView>
+        android:paddingLeft="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:paddingRight="8dp"></ListView>
 
 </FrameLayout>

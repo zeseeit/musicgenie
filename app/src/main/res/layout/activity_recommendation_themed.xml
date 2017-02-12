@@ -73,9 +73,9 @@
             android:padding="36dp"
             android:textSize="12sp"
             android:text="Sanamsdf Re kaise ho kjlsdf"
-            android:layout_alignParentBottom="true"
             android:textColor="@color/AnyAudioGrey189"
-            />
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentStart="true" />
 
 
     </RelativeLayout>

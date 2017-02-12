@@ -3,40 +3,48 @@ package any.audio.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import any.audio.Managers.FontManager;
 import any.audio.R;
 
 public class EveWisherThemedActivity extends AppCompatActivity {
 
+    TextView eveTitle;
     TextView eveMessage;
     ImageView evePic;
-    TextView okBtn;
+    TextView cancelEveDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_eve_wisher_themed);
+
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+
+        setContentView(R.layout.eve_wishing_dialog);
         Bundle bundle = getIntent().getExtras();
         String eve_msg = bundle.getString("message");
-        String dpUrl = bundle.getString("dp");
+        String title = bundle.getString("title");
 
+        eveTitle = (TextView) findViewById(R.id.eveCaption);
         eveMessage = (TextView) findViewById(R.id.eveMessage);
-        evePic = (ImageView) findViewById(R.id.evePic);
-        okBtn = (TextView) findViewById(R.id.sayThanks);
-        okBtn.setOnClickListener(new View.OnClickListener() {
+        cancelEveDialog = (TextView) findViewById(R.id.cancelEveDialog);
+
+        eveMessage.setText(eve_msg);
+        eveTitle.setText(title);
+        cancelEveDialog.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL));
+        cancelEveDialog.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 finish();
             }
         });
 
-        eveMessage.setText(eve_msg);
-        if (dpUrl.length() > 0)
-            Picasso.with(this).load(dpUrl).into(evePic);
 
     }
 }

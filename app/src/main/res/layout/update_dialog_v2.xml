@@ -5,19 +5,50 @@
     android:background="@drawable/main_bg">
 
     <TextView
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/updates_top_wrapper"
+        android:gravity="center_horizontal"
+        android:textColor="@color/AnyAudioGrey224"
+        android:text="Better Performance "
+        android:id="@+id/newFeatures"
+        android:paddingRight="48dp"
+        android:paddingLeft="48dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_marginTop="14dp"
+        android:text="UPDATE"
+        android:textColor="@color/White"
+        android:id="@+id/updateBtn"
+        android:paddingLeft="14dp"
+        android:paddingRight="14dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:background="@drawable/terms_accept_btn"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/newFeatures"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:padding="16dp"
         android:text=""
         android:textColor="@color/AnyAudioPrimaryColor"
-        android:textSize="24sp" />
+        android:textSize="24sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:id="@+id/cancelUpdateDialog" />
+
     <RelativeLayout
         android:id="@+id/updates_top_wrapper"
         android:layout_marginTop="36dp"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true">
 
         <TextView
             android:layout_centerHorizontal="true"
@@ -72,31 +103,4 @@
 
     </RelativeLayout>
 
-    <TextView
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/updates_top_wrapper"
-        android:gravity="center_horizontal"
-        android:textColor="@color/AnyAudioGrey224"
-        android:text="Better Performance "
-        android:id="@+id/newFeatures"
-        android:paddingRight="48dp"
-        android:paddingLeft="48dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <TextView
-        android:layout_marginTop="14dp"
-        android:text="UPDATE"
-        android:textColor="@color/White"
-        android:id="@+id/updateBtn"
-        android:paddingLeft="14dp"
-        android:paddingRight="14dp"
-        android:paddingTop="8dp"
-        android:paddingBottom="8dp"
-        android:background="@drawable/terms_accept_btn"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/newFeatures"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-    
 </RelativeLayout>

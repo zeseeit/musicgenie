@@ -1,25 +1,34 @@
-package any.audio.Activity;
+package any.audio.Fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import any.audio.Activity.UpdateThemedActivity;
+import any.audio.Activity.UserPreferenceSetting;
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
-public class UserPreferenceSetting extends AppCompatActivity {
+/**
+ * Created by Ankit on 2/12/2017.
+ */
 
+public class SettingsFragment extends Fragment {
+
+    private Context context;
     TextView thumbnailTxtView;
     TextView pushNotificationTxtView;
     TextView pushNotificationSoundTxtView;
@@ -34,26 +43,91 @@ public class UserPreferenceSetting extends AppCompatActivity {
     TextView suggestBtn;
     TextView updateBtn;
     private TextView termsOfUse;
+    private SharedPrefrenceUtils utils;
+
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user_preference_setting);
-        // initializes all view components
-        init();
-        // setsToolbar
-        setUpToolbar();
-        // loads settings
-        loadSettings();
-        // attach listeners to setting widgets
-        attachListeners();
+        utils = SharedPrefrenceUtils.getInstance(context);
     }
 
-    private void setUpToolbar() {
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        View view = inflater.inflate(R.layout.activity_user_preference_setting,null,false);
+        init(view);
+        loadSettings();
+        attachListeners();
+
+        return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        this.context = context;
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+    }
+
+    private void init(View view) {
+
+        thumbnailTxtView = (TextView) view.findViewById(R.id.loadThumbnailTextMessage);
+        pushNotificationTxtView = (TextView) view.findViewById(R.id.pushNotificationTextMessage);
+        pushNotificationSoundTxtView = (TextView) view.findViewById(R.id.pushNotificationSoundTextMessage);
+        pushNotificationSwitch = (Switch) view.findViewById(R.id.pushNotificationSwitch);
+        pushNotificationSoundSwitch = (Switch) view.findViewById(R.id.pushNotificationSoundSwitch);
+
+        issueTxtView = (TextView) view.findViewById(R.id.issuesTextMessage);
+        issueBtnTxt = (TextView) view.findViewById(R.id.issueBtn);
+        thumbnailSwitch = (Switch) view.findViewById(R.id.loadThumbnailSwitch);
+        updateTextView = (TextView) view.findViewById(R.id.UpdateTextMessage);
+        suggestTextView = (TextView) view.findViewById(R.id.SuggestTextMessage);
+        updateBtn = (TextView) view.findViewById(R.id.updateBtn);
+        suggestBtn = (TextView) view.findViewById(R.id.suggestBtn);
+
+        termsOfUse = (TextView) view.findViewById(R.id.termsOfUse);
+
+
+        Typeface tf = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
+        Typeface materialIconFont = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
+        thumbnailTxtView.setTypeface(tf);
+        pushNotificationSoundTxtView.setTypeface(tf);
+        pushNotificationTxtView.setTypeface(tf);
+        issueTxtView.setTypeface(tf);
+        termsOfUse.setTypeface(tf);
+        updateTextView.setTypeface(tf);
+        suggestTextView.setTypeface(tf);
+        issueBtnTxt.setTypeface(materialIconFont);
+        suggestBtn.setTypeface(materialIconFont);
+        updateBtn.setTypeface(materialIconFont);
+
+    }
+
+    private void loadSettings() {
+
+        // get thumbnail choice
+        thumbnailSwitch.setChecked(utils.getOptionsForThumbnailLoad());
+        pushNotificationSwitch.setChecked(utils.getOptionsForPushNotification());
+        pushNotificationSoundSwitch.setChecked(utils.getOptionsForPushNotificationSound());
+
+    }
+
+    private void suggestOther() {
+
+        String dndUrl = utils.getNewUpdateUrl();
+        String textToShare = "AnyAudio a tool to download/stream Any Audio from Internet. You Can Download it from "+dndUrl;
+
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_TEXT, textToShare);
+        startActivity(share);
+
     }
 
     private void attachListeners() {
@@ -62,7 +136,6 @@ public class UserPreferenceSetting extends AppCompatActivity {
         thumbnailSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
-                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
                 if (state) {
                     utils.setOptionsForThumbnailLoad(true);
                 } else {
@@ -74,7 +147,6 @@ public class UserPreferenceSetting extends AppCompatActivity {
         pushNotificationSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
-                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
                 if (state) {
                     utils.setOptionsForPushNotification(true);
                 } else {
@@ -87,7 +159,6 @@ public class UserPreferenceSetting extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean state) {
 
-                SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
                 if (state) {
                     utils.setOptionsForPushNotificationSound(true);
                 } else {
@@ -114,7 +185,7 @@ public class UserPreferenceSetting extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 checkForUpdate();
-                SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this).setDoNotRemindMeAgainForAppUpdate(false);
+                utils.setDoNotRemindMeAgainForAppUpdate(false);
             }
         });
 
@@ -140,71 +211,14 @@ public class UserPreferenceSetting extends AppCompatActivity {
 
     public void checkForUpdate() {
 
-        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
-
         if (utils.getNewVersionAvailibility() && !utils.donotRemindForAppUpdate()) {
 
-            Intent updateIntent = new Intent(getApplicationContext(), UpdateThemedActivity.class);
+            Intent updateIntent = new Intent(context, UpdateThemedActivity.class);
             updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
             updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(updateIntent);
 
         }
-    }
-
-    private void suggestOther() {
-        String dndUrl = SharedPrefrenceUtils.getInstance(this).getNewUpdateUrl();
-        String textToShare = "AnyAudio a tool to download/stream Any Audio from Internet. You Can Download it from "+dndUrl;
-
-        Intent share = new Intent(Intent.ACTION_SEND);
-        share.setType("text/plain");
-        share.putExtra(Intent.EXTRA_TEXT, textToShare);
-        startActivity(share);
-
-    }
-
-    private void loadSettings() {
-
-        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
-        // get thumbnail choice
-        thumbnailSwitch.setChecked(utils.getOptionsForThumbnailLoad());
-        pushNotificationSwitch.setChecked(utils.getOptionsForPushNotification());
-        pushNotificationSoundSwitch.setChecked(utils.getOptionsForPushNotificationSound());
-
-    }
-
-    private void init() {
-
-        thumbnailTxtView = (TextView) findViewById(R.id.loadThumbnailTextMessage);
-        pushNotificationTxtView = (TextView) findViewById(R.id.pushNotificationTextMessage);
-        pushNotificationSoundTxtView = (TextView) findViewById(R.id.pushNotificationSoundTextMessage);
-        pushNotificationSwitch = (Switch) findViewById(R.id.pushNotificationSwitch);
-        pushNotificationSoundSwitch = (Switch) findViewById(R.id.pushNotificationSoundSwitch);
-
-        issueTxtView = (TextView) findViewById(R.id.issuesTextMessage);
-        issueBtnTxt = (TextView) findViewById(R.id.issueBtn);
-        thumbnailSwitch = (Switch) findViewById(R.id.loadThumbnailSwitch);
-        updateTextView = (TextView) findViewById(R.id.UpdateTextMessage);
-        suggestTextView = (TextView) findViewById(R.id.SuggestTextMessage);
-        updateBtn = (TextView) findViewById(R.id.updateBtn);
-        suggestBtn = (TextView) findViewById(R.id.suggestBtn);
-
-        termsOfUse = (TextView) findViewById(R.id.termsOfUse);
-
-
-        Typeface tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
-        Typeface materialIconFont = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
-        thumbnailTxtView.setTypeface(tf);
-        pushNotificationSoundTxtView.setTypeface(tf);
-        pushNotificationTxtView.setTypeface(tf);
-        issueTxtView.setTypeface(tf);
-        termsOfUse.setTypeface(tf);
-        updateTextView.setTypeface(tf);
-        suggestTextView.setTypeface(tf);
-        issueBtnTxt.setTypeface(materialIconFont);
-        suggestBtn.setTypeface(materialIconFont);
-        updateBtn.setTypeface(materialIconFont);
-
     }
 
 }

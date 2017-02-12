@@ -29,7 +29,7 @@ public class ToastMaker {
         new View(context).post(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(context,message,Toast.LENGTH_LONG).show();
+                Toast.makeText(context,message,Toast.LENGTH_SHORT).show();
             }
         });
     }

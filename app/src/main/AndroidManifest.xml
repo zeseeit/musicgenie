@@ -52,26 +52,31 @@
             android:hardwareAccelerated="true"
             android:label="@string/title_activity_home"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".Activity.UserPreferenceSetting"
             android:label="@string/activity_preferences"
             android:parentActivityName=".Activity.Home"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".Activity.UpdateThemedActivity"
             android:label="@string/title_activity_update_themed"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".Activity.EveWisherThemedActivity"
             android:label="@string/title_activity_update_themed"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.Dialog" />
+            android:theme="@style/AppTheme" />
+
         <activity
             android:name=".Activity.RecommendationThemed"
             android:screenOrientation="portrait"
             android:theme="@android:style/Theme.Holo.Dialog" />
         <activity android:name=".Activity.TermsConditionsAcceptance" />
+
         <activity
             android:name=".Activity.AnyAudioSplash"
             android:screenOrientation="portrait"

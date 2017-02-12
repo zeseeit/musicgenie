@@ -1,10 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:background="@color/AnyAudioPrimaryBackground"
     android:layout_height="match_parent">
-
-    <include
-        android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
 
     <FrameLayout
         android:id="@+id/thumbnailChoiceFrame"
@@ -15,7 +12,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="16dp"
-        android:background="@color/White"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:elevation="2dp"
         android:padding="10dp">
 
@@ -25,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Load Thumbnail\n(Slow Internet Connection)"
-            android:textColor="@color/AccentColor"
+            android:textColor="@color/AnyAudioGrey224"
             android:textSize="16sp" />
 
         <Switch
@@ -44,8 +41,8 @@
         android:layout_marginBottom="2dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/White"
+        android:layout_marginTop="4dp"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:elevation="2dp"
         android:padding="10dp">
 
@@ -55,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Have Issues With AnyAudio ? "
-            android:textColor="@color/AccentColor"
+            android:textColor="@color/AnyAudioGrey224"
             android:textSize="16sp" />
 
         <TextView
@@ -65,7 +62,7 @@
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="8dp"
             android:text=""
-            android:textColor="@color/PrimaryColor"
+            android:textColor="@color/AnyAudioPrimaryColor"
             android:textSize="25sp" />
 
     </FrameLayout>
@@ -79,7 +76,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="2dp"
-        android:background="@color/White"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:elevation="2dp"
         android:padding="10dp">
 
@@ -89,7 +86,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text=" Update AnyAudio"
-            android:textColor="@color/AccentColor"
+            android:textColor="@color/AnyAudioGrey224"
             android:textSize="16sp" />
 
         <TextView
@@ -99,41 +96,7 @@
             android:layout_gravity="right|center_vertical"
             android:layout_marginRight="8dp"
             android:text=""
-            android:textColor="@color/PrimaryColor"
-            android:textSize="25sp" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/suggestAppTextFrame"
-        android:layout_width="match_parent"
-        android:layout_height="72dp"
-        android:layout_below="@+id/UpdateTextFrame"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/White"
-        android:elevation="2dp"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/SuggestTextMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="Share AnyAudio Via Link"
-            android:textColor="@color/AccentColor"
-            android:textSize="16sp" />
-
-        <TextView
-            android:id="@+id/suggestBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center_vertical"
-            android:layout_marginRight="8dp"
-            android:text=""
-            android:textColor="@color/PrimaryColor"
+            android:textColor="@color/AnyAudioPrimaryColor"
             android:textSize="25sp" />
 
     </FrameLayout>
@@ -147,7 +110,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="2dp"
-        android:background="@color/White"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:elevation="2dp"
         android:padding="10dp">
 
@@ -157,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Allow Notifications"
-            android:textColor="@color/AccentColor"
+            android:textColor="@color/AnyAudioGrey224"
             android:textSize="16sp" />
 
         <Switch
@@ -177,8 +140,8 @@
         android:layout_centerHorizontal="true"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:layout_marginTop="2dp"
-        android:background="@color/White"
+        android:layout_marginTop="4dp"
+        android:background="@color/AnyAudioSearchItemBgColor"
         android:elevation="2dp"
         android:padding="10dp">
 
@@ -188,7 +151,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
             android:text="Notification Sounds"
-            android:textColor="@color/AccentColor"
+            android:textColor="@color/AnyAudioGrey224"
             android:textSize="16sp" />
 
         <Switch
@@ -208,7 +171,40 @@
         android:gravity="center"
         android:padding="16dp"
         android:text="Terms Of Use"
-        android:textColor="@color/PrimaryColor"
+        android:textColor="@color/AnyAudioPrimaryColor"
         android:textSize="14sp" />
+
+    <FrameLayout
+        android:id="@+id/suggestAppTextFrame"
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@color/AnyAudioSearchItemBgColor"
+        android:elevation="2dp"
+        android:padding="10dp"
+        android:layout_below="@+id/UpdateTextFrame"
+        android:layout_alignStart="@+id/UpdateTextFrame">
+
+        <TextView
+            android:id="@+id/SuggestTextMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:text="Share AnyAudio Via Link"
+            android:textColor="@color/AnyAudioGrey224"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/suggestBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:layout_marginRight="8dp"
+            android:text=""
+            android:textColor="@color/AnyAudioPrimaryColor"
+            android:textSize="25sp" />
+
+    </FrameLayout>
 
 </RelativeLayout>

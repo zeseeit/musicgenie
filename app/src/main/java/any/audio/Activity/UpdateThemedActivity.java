@@ -1,6 +1,8 @@
 package any.audio.Activity;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -19,77 +21,72 @@ import any.audio.SharedPreferences.SharedPrefrenceUtils;
 
 public class UpdateThemedActivity extends AppCompatActivity {
 
-    TextView tvUpdateMessage;
     TextView tvUpdateDescription;
     TextView btnCancel;
     TextView btnDownload;
-    Typeface tf;
-    CheckBox mUpdateCheckBox;
+    Typeface tfMaterial;
+    TextView newVersion;
+    TextView previousVersion;
     private String newInThisUpdateDescription;
     private String newAppDownloadUrl;
+    private String ov;
+    private String nv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_themed);
+        setContentView(R.layout.update_dialog_v2);
 
-        tf = FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
-        tvUpdateMessage = (TextView) findViewById(R.id.updateMsg);
-        tvUpdateDescription = (TextView) findViewById(R.id.updateDescription);
-        btnCancel = (TextView) findViewById(R.id.cancel_update_msg_dialog);
-        btnDownload = (TextView) findViewById(R.id.download_btn_update_msg);
-        mUpdateCheckBox = (CheckBox) findViewById(R.id.checkedConfirmation);
+        tfMaterial = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
+        tvUpdateDescription = (TextView) findViewById(R.id.newFeatures);
+        btnCancel = (TextView) findViewById(R.id.cancelUpdateDialog);
+        btnDownload = (TextView) findViewById(R.id.updateBtn);
+        newVersion = (TextView) findViewById(R.id.newVersionText);
+        previousVersion = (TextView) findViewById(R.id.oldVersionText);
 
-        mUpdateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+
+//        mUpdateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton compoundButton, boolean byUser) {
+//                if (byUser) {
+//                    if (compoundButton.isChecked()) {
+//                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(true);
+//                    } else {
+//                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(false);
+//                    }
+//                }
+//            }
+//        });
+
+        //Regular TypeFace
+        btnCancel.setTypeface(tfMaterial);
+        // data setters
+        newInThisUpdateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
+        newAppDownloadUrl = getIntent().getExtras().getString(Constants.KEY_NEW_UPDATE_URL);
+        ov = getCurrentVersion();
+        nv = getIntent().getExtras().getString(Constants.KEY_NEW_ANYAUDIO_VERSION);
+
+        tvUpdateDescription.setText(newInThisUpdateDescription);
+        previousVersion.setText("Your Version "+ov);
+        newVersion.setText("New Version "+nv);
+
+        btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean byUser) {
-                if (byUser) {
-                    if (compoundButton.isChecked()) {
-                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(true);
-                    } else {
-                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(false);
-                    }
-                }
+            public void onClick(View view) {
+                cancel();
             }
         });
 
-        //Regular TypeFace
-        btnDownload.setTypeface(tf);
-        btnCancel.setTypeface(tf);
-        tvUpdateMessage.setTypeface(tf);
-        tvUpdateDescription.setTypeface(tf);
-
-        // data setters
-
-        newInThisUpdateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
-        newAppDownloadUrl = getIntent().getExtras().getString(Constants.KEY_NEW_UPDATE_URL);
-        tvUpdateDescription.setText(newInThisUpdateDescription);
-
-
-
-
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_update_themed, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+    private String getCurrentVersion(){
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
-
-        return super.onOptionsItemSelected(item);
+        return pInfo.versionName;
     }
 
     public void download(View view) {
@@ -101,7 +98,7 @@ public class UpdateThemedActivity extends AppCompatActivity {
 
     }
 
-    public void cancel(View view) {
+    public void cancel() {
         finish();
     }
 }

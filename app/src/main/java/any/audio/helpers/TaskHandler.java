@@ -87,8 +87,9 @@ public class TaskHandler {
                 final ArrayList<String> taskIDs = getDispatchTaskSequence();
 
                 for (final String taskID : taskIDs) {
+                    Log.d("TaskHandler", " Looping dispatch tasks.. length:[" + taskIDs.size() + "]");
                     if (utils.getCurrentDownloadsCount() < 1) {
-
+                        Log.d("TaskHandler", " Current No Downloading..So Starting download thread");
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -105,6 +106,8 @@ public class TaskHandler {
                         }).start();
 
                         removeDispatchTask(taskID);
+                    } else {
+                        Log.d("TaskHandler", " Download going on.........");
                     }
                 }
             }
@@ -125,10 +128,10 @@ public class TaskHandler {
     * */
 
     private void dispatch(final String taskID) {
-
-        if (!utils.getTaskStatus(taskID).equals(Constants.DOWNLOAD.STATE_WAITING)) {
-            return;
-        }
+//
+//        if (!utils.getTaskStatus(taskID).equals(Constants.DOWNLOAD.STATE_WAITING)) {
+//            return;
+//        }
 
 
         String v_id = utils.getTaskVideoID(taskID);
@@ -143,7 +146,7 @@ public class TaskHandler {
                 String flnm = utils.getTaskTitle(taskID);
 
                 utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_STOPPED);
-                broadcastStateUpdate(taskID,Constants.DOWNLOAD.STATE_STOPPED);
+                broadcastStateUpdate(taskID, Constants.DOWNLOAD.STATE_STOPPED);
                 utils.setCurrentOngoingTask("");
                 utils.setCurrentDownloadCount(0);
                 //LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
@@ -155,7 +158,7 @@ public class TaskHandler {
                 String flnm = utils.getTaskTitle(taskID);
 
                 utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_STOPPED);
-                broadcastStateUpdate(taskID,Constants.DOWNLOAD.STATE_STOPPED);
+                broadcastStateUpdate(taskID, Constants.DOWNLOAD.STATE_STOPPED);
                 utils.setCurrentOngoingTask("");
                 utils.setCurrentDownloadCount(0);
                 // LocalNotificationManager.getInstance(context).launchNotification("Failed To Download - " + flnm);
@@ -351,6 +354,7 @@ public class TaskHandler {
 
     public void cancelCurrentDownload() {
         this.isCanceled = true;
+        utils.setCurrentDownloadCount(0);
     }
 
     public void restartTask(String taskId) {
@@ -358,13 +362,12 @@ public class TaskHandler {
         // Failed Or Stopped Downloads
         // Set the tasks status to be waiting
         utils.setTaskStatus(taskId, Constants.DOWNLOAD.STATE_WAITING);
-        broadcastStateUpdate(taskId,Constants.DOWNLOAD.STATE_WAITING);
+        broadcastStateUpdate(taskId, Constants.DOWNLOAD.STATE_WAITING);
         // Add task to Dispatch Queue and poke the handler
         Log.d("TaskHandler", " restarting Task " + taskId);
         String _tasks = utils.getDispatchTaskSequence();
         utils.setDispatchTasksSequence(_tasks + taskId + "#");
         initiate();
-
 
     }
 
@@ -381,9 +384,10 @@ public class TaskHandler {
                 removeDispatchTask(taskId);
             }
 
+            utils.setTaskStatus(taskId, Constants.DOWNLOAD.STATE_STOPPED);
+            broadcastStateUpdate(taskId, Constants.DOWNLOAD.STATE_STOPPED);
         }
 
-        broadcastStateUpdate(taskId,Constants.DOWNLOAD.STATE_STOPPED);
 
     }
 
@@ -450,44 +454,51 @@ public class TaskHandler {
             File dest_file = null;
             File dest_dir = null;
             subscribeDownloadCancelListener();
+
             if (!isCanceled) {
+
                 L.m("TaskHandler", " isCancelled " + isCanceled);
+                downloadListener.onDownloadTaskProcessStart();
+                String _url = URLS.URL_SERVER_ROOT + "api/v1/g?url=" + t_v_id;
+                L.m("TaskHandler", " Request For Download Url - on - " + _url);
+
+                URL u = null;
                 try {
-
-                    downloadListener.onDownloadTaskProcessStart();
-
-                    String _url = URLS.URL_SERVER_ROOT + "api/v1/g?url=" + t_v_id;
-//                    log("for dwnd url requesting on " + _url);
-                    L.m("TaskHandler", " Request For Download Url - on - " + _url);
-                    URL u = new URL(_url);
-                    URLConnection dconnection = u.openConnection();
+                    u = new URL(_url);
+                    URLConnection dconnection = null;
+                    dconnection = u.openConnection();
                     dconnection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
                     dconnection.setConnectTimeout(SOCKET_CONNECT_TIMEOUT);
                     dconnection.connect();
-
                     StringBuilder result = new StringBuilder();
                     InputStream in = new BufferedInputStream(dconnection.getInputStream());
-
                     BufferedReader reader = new BufferedReader(new InputStreamReader(in));
 
                     String line;
                     while ((line = reader.readLine()) != null) {
                         result.append(line);
                     }
-                    try {
-                        JSONObject obj = new JSONObject(result.toString());
-                        if (obj.getInt("status") == 200) {
 
-                            t_url += obj.getString("url");
-                            L.m("TaskHandler", "Download Url " + t_url);
-                        } else {
-                            downloadListener.onError(taskID);
-                            return;
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    JSONObject obj = new JSONObject(result.toString());
+                    if (obj.getInt("status") == 200) {
+                        t_url += obj.getString("url");
+                        L.m("TaskHandler", "Download Url " + t_url);
+                    } else {
+                        downloadListener.onError(taskID);
+                        return;
                     }
 
+                } catch (JSONException e) {
+                    downloadListener.onError(taskID);
+                    e.printStackTrace();
+                    return;
+                } catch (IOException e) {
+                    downloadListener.onError(taskID);
+                    e.printStackTrace();
+                    return;
+                }
+
+                try {
                     URL url = new URL(t_url);
                     URLConnection connection = url.openConnection();
                     connection.setReadTimeout(SOCKET_CONNECT_TIMEOUT);
@@ -501,7 +512,7 @@ public class TaskHandler {
                     }
 
                     utils.setTaskStatus(taskID, Constants.DOWNLOAD.STATE_DOWNLOADING);
-                    broadcastStateUpdate(taskID,Constants.DOWNLOAD.STATE_DOWNLOADING);
+                    broadcastStateUpdate(taskID, Constants.DOWNLOAD.STATE_DOWNLOADING);
 
                     // file creation
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -522,7 +533,7 @@ public class TaskHandler {
                         total += count;
                         progressPercentage = ((int) total * 100 / fileLength);//, fileLength;
 
-                        if (progressSent < progressPercentage) {
+                        if (progressSent < progressPercentage && progressPercentage % 4 == 0) {
                             publishProgress(progressPercentage, String.valueOf(fileLength));
                             progressSent = progressPercentage;
                         }
@@ -563,7 +574,7 @@ public class TaskHandler {
             }
             L.m("TaskHandler", "prog " + progress);
 
-            broadcastProgressUpdate(taskID,String.valueOf(progress), cl);
+            broadcastProgressUpdate(taskID, String.valueOf(progress), cl);
             if (currentProgress < progress) {
                 LocalNotificationManager.getInstance(context).publishProgressOnNotification(progress, file_name);
             }
@@ -573,29 +584,28 @@ public class TaskHandler {
         // broadcast is for progress update to download activity
 
 
-
         private void subscribeDownloadCancelListener() {
         }
 
     }
 
-    public void broadcastProgressUpdate(String taskID,String progressPercentage, String contentLen) {
+    public void broadcastProgressUpdate(String taskID, String progressPercentage, String contentLen) {
 
         Intent intent = new Intent(Constants.ACTION_DOWNLOAD_UPDATE);
         intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
-        intent.putExtra(Constants.EXTRAA_BROADCAST_TYPE,Constants.BROADCAST_TYPE_PROGRESS);
+        intent.putExtra(Constants.EXTRAA_BROADCAST_TYPE, Constants.BROADCAST_TYPE_PROGRESS);
         intent.putExtra(Constants.EXTRA_PROGRESS, progressPercentage);
         intent.putExtra(Constants.EXTRA_CONTENT_SIZE, contentLen);
         context.sendBroadcast(intent);
 
     }
 
-    public void broadcastStateUpdate(String taskID,String state){
+    public void broadcastStateUpdate(String taskID, String state) {
 
         Intent intent = new Intent(Constants.ACTION_DOWNLOAD_UPDATE);
         intent.putExtra(Constants.EXTRA_TASK_ID, taskID);
-        intent.putExtra(Constants.EXTRAA_BROADCAST_TYPE,Constants.BROADCAST_TYPE_STATE);
-        intent.putExtra(Constants.EXTRAA_DOWNLOAD_VIEW_STATE,state);
+        intent.putExtra(Constants.EXTRAA_BROADCAST_TYPE, Constants.BROADCAST_TYPE_STATE);
+        intent.putExtra(Constants.EXTRAA_DOWNLOAD_VIEW_STATE, state);
         context.sendBroadcast(intent);
 
     }

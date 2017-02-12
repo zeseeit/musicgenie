@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import any.audio.Config.Constants;
 import any.audio.Interfaces.DownloadCancelListener;
 import any.audio.Managers.FontManager;
-import any.audio.Models.DownloadTaskModel;
 import any.audio.Models.DownloadingItemModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.L;
 import any.audio.helpers.TaskHandler;
+import any.audio.helpers.ToastMaker;
 
 /**
  * Created by Ankit on 9/25/2016.
@@ -37,7 +37,7 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
     private DownloadCancelListener downloadCancelListener;
     private Typeface tfIcon;
     private String toStartDownloadText = "\uE037";
-    private String stoppedDownloadText = "\uE047";
+    private String toStopDownloadText = "\uE047";
     private SharedPrefrenceUtils utils;
 
     public DownloadingAdapter(Context context) {
@@ -113,19 +113,33 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
         ));
         viewHolder.taskArtist.setText(data.artist);
 
-        if(!data.downloadingState.equals(Constants.DOWNLOAD.STATE_DOWNLOADING)){
+        if(data.downloadingState.equals(Constants.DOWNLOAD.STATE_STOPPED)){
+            //stopped state
 
             viewHolder.progressBar.setVisibility(View.GONE);
             viewHolder.progressText.setVisibility(View.GONE);
 
             viewHolder.statusMessage.setVisibility(View.VISIBLE);
-            String msg = data.downloadingState.equals(Constants.DOWNLOAD.STATE_STOPPED)?"Stopped Downloading":"Waiting to Start";
+            String msg = "Stopped Downloading";
             viewHolder.statusMessage.setText(msg);
             viewHolder.stopStartBtn.setText(toStartDownloadText);
 
-        }else{
-            // downloading item
+        }else if(data.downloadingState.equals(Constants.DOWNLOAD.STATE_WAITING)){
+            // waiting item
 
+
+            viewHolder.progressBar.setVisibility(View.GONE);
+            viewHolder.progressText.setVisibility(View.GONE);
+
+            viewHolder.statusMessage.setVisibility(View.VISIBLE);
+            String msg = "Waiting To Start";
+            viewHolder.statusMessage.setText(msg);
+            viewHolder.stopStartBtn.setText(toStopDownloadText);
+
+
+        }else{
+
+            //downloading state
             viewHolder.progressBar.setVisibility(View.VISIBLE);
             viewHolder.progressText.setVisibility(View.VISIBLE);
             viewHolder.progressBar.setProgress(Integer.parseInt(data.progress));
@@ -133,7 +147,8 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
             viewHolder.progressText.setText(data.progress+" %");
             viewHolder.contentSizeMB.setText(data.contentSize);
             viewHolder.statusMessage.setVisibility(View.GONE);
-            viewHolder.stopStartBtn.setText(stoppedDownloadText);
+            viewHolder.stopStartBtn.setText(toStopDownloadText);
+
         }
 
         viewHolder.stopStartBtn.setOnClickListener(new View.OnClickListener() {
@@ -142,7 +157,12 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
 
                 if(utils.getTaskStatus(data.taskId).equals(Constants.DOWNLOAD.STATE_STOPPED)) {
 
-                    TaskHandler.getInstance(context).restartTask(data.taskId);
+                    if(ConnectivityUtils.isConnectedToNet()) {
+                        TaskHandler.getInstance(context).restartTask(data.taskId);
+                    }else{
+                        ToastMaker.getInstance(context).toast("No Internet Connection!");
+                    }
+
                 }else{
                     // either waiting or downloading = > stop the task
                     TaskHandler.getInstance(context).stopTask(data.taskId);

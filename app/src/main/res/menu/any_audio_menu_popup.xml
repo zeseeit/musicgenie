@@ -13,15 +13,16 @@
         app:showAsAction="always"
         android:orderInCategory="3"/>
 
-    <item android:title="Downloading"
+    <item android:title="Downloaded"
         android:id="@+id/downloaded"
         app:showAsAction="always"
         android:orderInCategory="4"/>
 
 
-    <item android:title="Setting"
+    <item android:title="Settings"
         android:id="@+id/settings"
         app:showAsAction="always"
         android:orderInCategory="5"/>
+
 
 </menu>

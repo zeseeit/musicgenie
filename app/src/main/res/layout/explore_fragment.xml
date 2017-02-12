@@ -16,6 +16,7 @@
             android:id="@+id/explore_progressBar" />
 
         <TextView
+            android:visibility="invisible"
             android:textColor="@color/AnyAudioGrey224"
             android:textSize="20sp"
             android:layout_centerHorizontal="true"
