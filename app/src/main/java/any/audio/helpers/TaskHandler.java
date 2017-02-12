@@ -506,7 +506,7 @@ public class TaskHandler {
                     connection.connect();
                     fileLength = connection.getContentLength();
                     L.m("TaskHandler", " Content Length " + fileLength);
-                    if (fileLength == -1 || fileLength == 24) {
+                    if (fileLength == -1 || fileLength == 24 || fileLength==0) {
                         downloadListener.onError(taskID);
                         return;
                     }

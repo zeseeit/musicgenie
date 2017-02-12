@@ -38,6 +38,8 @@ public class RecommendationThemed extends Activity {
         final String recom = bundle.getString("recom");
         final String recom_artist = bundle.getString("artist");
         final String urlThumb = bundle.getString("artUrl");
+        final String title = bundle.getString("title");
+
         typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
         fixedTextView = (TextView) findViewById(R.id.fixedText);
         okBtn = (TextView) findViewById(R.id.search_item_play_btn);
@@ -47,7 +49,7 @@ public class RecommendationThemed extends Activity {
 
         okBtn.setTypeface(typeface);
         fixedTextView.setText(fixedTxt);
-        recommendationText.setText(recom);
+        recommendationText.setText(title);
         recommendationArtistTv.setText(recom_artist);
 
         if(ConnectivityUtils.getInstance(this).isConnectedToNet())

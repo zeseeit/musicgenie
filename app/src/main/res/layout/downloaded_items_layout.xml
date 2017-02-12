@@ -91,11 +91,24 @@
         <TextView
             android:layout_centerVertical="true"
             android:id="@+id/deleteDownloadedItem"
-            android:layout_alignParentEnd="true"
+            android:layout_toLeftOf="@+id/playDownloadedItem"
             android:background="@drawable/btn_ripple_effect"
             android:textColor="@color/AnyAudioPrimaryColor"
             android:gravity="center"
             android:text=""
+            android:textSize="24dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp" />
+
+
+        <TextView
+            android:layout_centerVertical="true"
+            android:id="@+id/playDownloadedItem"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/btn_ripple_effect"
+            android:textColor="@color/AnyAudioPrimaryColor"
+            android:gravity="center"
+            android:text=""
             android:textSize="24dp"
             android:layout_width="36dp"
             android:layout_height="36dp" />

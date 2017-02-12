@@ -114,11 +114,14 @@ public class AnyAudioPushHandler {
         String initial = data.get("initials");
         String artist = data.get("artist");
         String art = data.get("thumbnail");
+        String title = data.get("title");
+
         Intent recomIntent = new Intent(context, RecommendationThemed.class);
         recomIntent.putExtra("recom", searchTerm);
         recomIntent.putExtra("artist", artist);
         recomIntent.putExtra("fixed", initial);
         recomIntent.putExtra("artUrl", art);
+        recomIntent.putExtra("title",title);
         recomIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         showNotification("AnyAudio", "AnyAudio`s Recommendations", recomIntent);
 

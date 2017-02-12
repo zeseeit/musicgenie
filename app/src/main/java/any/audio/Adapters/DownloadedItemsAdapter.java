@@ -25,6 +25,7 @@ import any.audio.Managers.FontManager;
 import any.audio.Models.DownloadedItemModel;
 import any.audio.Models.DownloadingItemModel;
 import any.audio.R;
+import any.audio.helpers.AnyAudioMediaPlayer;
 import any.audio.helpers.MetaDataHelper;
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -36,6 +37,10 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
     private MetaDataHelper metaDataHelper;
     private static DownloadedItemsAdapter mInstance;
     //Views
+    public static boolean isPlaying = false;
+    private String playBtnString = "\uE039";
+    private String pauseBtnString = "\uE036";
+    private TextView playBtnTv;
     private TextView mTitle;
     private ImageView mAlbumArt;
     private DownloadedItemDeleteListener deleteListener;
@@ -43,6 +48,7 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
     private Typeface tfIcon;
 
     public DownloadedItemsAdapter(Context context) {
+
         super(context, 0);
         DownloadedItemsAdapter.context = context;
         tfIcon = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
@@ -69,7 +75,9 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
             viewHolder.title = (TextView) convertView.findViewById(R.id.downloaded_item_title);
             viewHolder.artist = (TextView) convertView.findViewById(R.id.downloaded_item_artist);
             viewHolder.deleteBtn = (TextView) convertView.findViewById(R.id.deleteDownloadedItem);
+            viewHolder.playBtnTv = (TextView) convertView.findViewById(R.id.playDownloadedItem);
             viewHolder.deleteBtn.setTypeface(tfIcon);
+            viewHolder.playBtnTv.setTypeface(tfIcon);
             viewHolder.infoWrapper = (RelativeLayout) convertView.findViewById(R.id.downloaded_item_info_wrapper);
 
             convertView.setTag(viewHolder);
@@ -85,6 +93,7 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
 
         public CircleImageView thumbnail;
         public TextView title;
+        public TextView playBtnTv;
         public TextView deleteBtn;
         public TextView contentLength;
         public TextView artist;
@@ -92,7 +101,7 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
 
     }
 
-    private void bind(DownloadedItemViewHolder viewHolder, final int position) {
+    private void bind(final DownloadedItemViewHolder viewHolder, final int position) {
 
         String title = downloadedListItems.get(position).title;
         viewHolder.title.setText(title.substring(title.lastIndexOf('/') + 1));
@@ -114,21 +123,54 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
             }
         });
 
-        viewHolder.infoWrapper.setOnClickListener(new View.OnClickListener() {
+        viewHolder.playBtnTv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                // send Intent to Music Handle capable
-                Intent audioIntent = new Intent();
-                audioIntent.setAction(Intent.ACTION_VIEW);
-                audioIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                File f = new File(downloadedListItems.get(position).title);
-                Uri uri = Uri.fromFile(f);
-                audioIntent.setDataAndType(uri, "audio/*");
-                context.startActivity(audioIntent);
+                if (((TextView) view).getText().equals(playBtnString)) {
+                    // current item is not playing
+                    Log.d("AnyAudioPlayer","current item is not playing");
 
+                    if (isPlaying) {
+                        // some item is playing
+                        // so stop it
+                        Log.d("AnyAudioPlayer"," some other is playing");
+                        AnyAudioMediaPlayer.getInstance(context).stopPlaying();
+                    }
+                    // start the current item
+                    Log.d("AnyAudioPlayer","pausing current item");
+                    AnyAudioMediaPlayer.getInstance(context)
+                            .setViewCallback((TextView) view)
+                            .setAudioPath(downloadedListItems.get(position).title)
+                            .startPlay();
+
+                    ((TextView) view).setText(pauseBtnString);
+
+                } else {
+                    // current item is playing
+                    // so pause it[item is doubly tapped]
+                    ((TextView) view).setText(playBtnString);
+                    AnyAudioMediaPlayer.getInstance(context).stopPlaying();
+
+                }
             }
         });
+//
+//        viewHolder.infoWrapper.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//
+//                // send Intent to Music Handle capable
+//                Intent audioIntent = new Intent();
+//                audioIntent.setAction(Intent.ACTION_VIEW);
+//                audioIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                File f = new File(downloadedListItems.get(position).title);
+//                Uri uri = Uri.fromFile(f);
+//                audioIntent.setDataAndType(uri, "audio/*");
+//                context.startActivity(audioIntent);
+//
+//            }
+//        });
 
     }
 
