@@ -129,16 +129,14 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
 
                 if (((TextView) view).getText().equals(playBtnString)) {
                     // current item is not playing
-                    Log.d("AnyAudioPlayer","current item is not playing");
 
                     if (isPlaying) {
                         // some item is playing
                         // so stop it
-                        Log.d("AnyAudioPlayer"," some other is playing");
                         AnyAudioMediaPlayer.getInstance(context).stopPlaying();
                     }
                     // start the current item
-                    Log.d("AnyAudioPlayer","pausing current item");
+
                     AnyAudioMediaPlayer.getInstance(context)
                             .setViewCallback((TextView) view)
                             .setAudioPath(downloadedListItems.get(position).title)

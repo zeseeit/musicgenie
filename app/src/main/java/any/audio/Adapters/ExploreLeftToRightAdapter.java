@@ -27,6 +27,8 @@ import any.audio.helpers.MetaDataHelper;
 import any.audio.helpers.RoundedCornerTransformer;
 import any.audio.helpers.PlaylistGenerator;
 
+import static any.audio.Activity.AnyAudioActivity.anyAudioActivityInstance;
+
 /**
  * Created by Ankit on 1/25/2017.
  */
@@ -34,8 +36,6 @@ import any.audio.helpers.PlaylistGenerator;
 public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftToRightAdapter.ExploreItemCardViewHolder>  {
 
     public ArrayList<ItemModel> itemModels;
-    public ExploreActionListener exploreActionListener;
-
     private static Context context;
     private static ExploreLeftToRightAdapter mInstance;
 
@@ -156,11 +156,11 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                 public void onClick(View view) {
                     ExploreLeftToRightAdapter adapter = ExploreLeftToRightAdapter.getInstance(context);
                     int pos = getAdapterPosition();
-                    Log.d("ExploreLeftRight"," size: "+itemModels.size());
                     String v_id = itemModels.get(pos).Video_id;
                     String t_url = itemModels.get(pos).Thumbnail_url;
                     String artist = itemModels.get(pos).UploadedBy;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(itemModels.get(pos).Title);
+                    Log.d("ExploreCard"," >  dnd tapped");
                     adapter.requestDownload(v_id, file_name,t_url,artist);
 
                 }
@@ -199,29 +199,11 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
     }
 
     private void requestPopUp(View view) {
-        if(exploreActionListener!=null){
-            exploreActionListener.onPopUpMenuTap(view);
-        }
+        anyAudioActivityInstance.onPopUpMenuTap(view);
     }
 
     private void requestDownload(String v_id, String file_name,String t_url,String artist) {
-        if(exploreActionListener!=null){
-            exploreActionListener.onDownloadAction(v_id,file_name,t_url,artist);
-        }
-    }
-
-    // set by ExploreTopDownAdapter
-    public void setActionListener(ExploreActionListener actionListener){
-        this.exploreActionListener = actionListener;
-    }
-
-    public interface ExploreActionListener{
-
-        void onPlayAction(String video_id,String title);
-        void onDownloadAction(String video_id,String title,String thumbnailUrl,String artist);
-        void onAddToQueue(String video_id,String youtubeId,String title,String uploader);
-        void onShowAll(String type);
-        void onPopUpMenuTap(View view);
+        anyAudioActivityInstance.onDownloadAction(v_id,file_name,t_url,artist);
     }
 
     private void broadcastStreamAction(String vid,String title){

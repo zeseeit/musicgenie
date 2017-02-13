@@ -29,6 +29,8 @@
 
         <service android:name=".services.UpdateCheckService" />
         <service android:name=".services.NotificationPlayerService" />
+        <service android:name=".services.AnyAudioStreamService"/>
+
         <service
             android:name=".services.AnyAudioFirebaseMessageService"
             android:enabled="true"

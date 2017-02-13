@@ -15,4 +15,15 @@
         android:layout_marginRight="16dp"
         android:paddingRight="8dp"></ListView>
 
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/emptyDownloadedListMessage"
+        android:padding="16dp"
+        android:textColor="@color/AnyAudioGrey224"
+        android:text="Empty Download Bucket, Download and Listen Offline ! "
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+
 </FrameLayout>

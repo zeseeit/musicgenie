@@ -1,5 +1,6 @@
 package any.audio.Config;
 
+import android.content.Context;
 import android.os.Environment;
 
 public class Constants {
@@ -73,6 +74,12 @@ public class Constants {
     public static String BROADCAST_TYPE_PROGRESS = "progress_update";
     public static String KEY_NEW_ANYAUDIO_VERSION = "NEWvERSION";
 
+    public static final String ACTION_STREAM_TO_SERVICE_START = "streamServiceStartAction";
+    public static final String ACTION_STREAM_TO_SERVICE_RELEASE = "streamServiceReleaseAction";
+    public static final String ACTION_STREAM_TO_SERVICE_SEEK_TO = "streamServiceSeekToAction";
+    public static final String ACTION_STREAM_TO_SERVICE_PLAY_PAUSE = "streamServicePlayPauseAction";
+    public static final String ACTION_PREPARE_BOTTOM_PLAYER  = "prepare_bottom_player";
+    public static final String ACTION_STREAM_TO_SERVICE_NEXT = "streamServicePlayNext";
 
     public interface DOWNLOAD{
 

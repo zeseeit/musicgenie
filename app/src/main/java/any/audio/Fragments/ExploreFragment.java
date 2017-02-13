@@ -41,7 +41,6 @@ public class ExploreFragment extends Fragment {
     RecyclerView exploreTopDownRecyler;
     ProgressBar progressBar;
     ExploreTopDownAdapter topDownAdapter;
-    private ExploreLeftToRightAdapter.ExploreActionListener exploreActionListener;
     private TextView progressBarMsgPanel;
     private CentralDataRepository repository;
 
@@ -78,8 +77,6 @@ public class ExploreFragment extends Fragment {
         super.onCreate(savedInstanceState);
         //WID: invoke Action for get trending and a handler instance
         topDownAdapter = ExploreTopDownAdapter.getInstance(context);
-        topDownAdapter.setExploreActionListener(this.exploreActionListener);
-
     }
 
 
@@ -102,8 +99,6 @@ public class ExploreFragment extends Fragment {
         if (!ConnectivityUtils.getInstance(context).isConnectedToNet()) {
             exploreTopDownRecyler.setVisibility(RecyclerView.GONE);
             progressBar.setVisibility(View.INVISIBLE);
-            context.startActivity(new Intent(context, ErrorSplash.class));
-            ((AppCompatActivity) context).finish();
             return;
         }
 
@@ -155,12 +150,6 @@ public class ExploreFragment extends Fragment {
         };
 
         return exporeHandler;
-    }
-
-    //set by Home Activity
-    public void setActionListener(ExploreLeftToRightAdapter.ExploreActionListener actionListener){
-        this.exploreActionListener = actionListener;
-
     }
 
 }

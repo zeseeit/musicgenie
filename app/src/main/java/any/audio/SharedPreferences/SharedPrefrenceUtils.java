@@ -640,4 +640,13 @@ public class SharedPrefrenceUtils {
     public String getMetadataArtist(String fileName){
         return preferences.getString("mtar"+fileName,"<Unknown>");
     }
+
+    public boolean isNotificationPlayerControlReceiverRegistered() {
+        return preferences.getBoolean("npcbr",false);
+    }
+
+    public void setNotificationPlayerControlReceiverRegistered(boolean registered){
+        editor.putBoolean("npcbr",registered);
+        editor.commit();
+    }
 }

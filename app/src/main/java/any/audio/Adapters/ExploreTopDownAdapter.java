@@ -32,7 +32,6 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
     String TAG = ExploreTopDownAdapter.class.getSimpleName();
     ArrayList<ExploreItemModel> exploreItemModels;
     private int mLastAnimatedItemPosition = -1;
-    private ExploreLeftToRightAdapter.ExploreActionListener exploreActionListener;
     private static Context context;
     private static ExploreTopDownAdapter mInstance;
 
@@ -48,11 +47,6 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
             mInstance = new ExploreTopDownAdapter(context);
         }
         return mInstance;
-    }
-
-    //set by Explore Fragment
-    public void setExploreActionListener(ExploreLeftToRightAdapter.ExploreActionListener listener) {
-        this.exploreActionListener = listener;
     }
 
     public void addExploreItem(ExploreItemModel item) {
@@ -96,8 +90,6 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
         holder.sectionTitle.setText(formattedHeader);
 //         create and attach adapters
         ExploreLeftToRightAdapter adapter = new ExploreLeftToRightAdapter(context);
-        adapter.setActionListener(exploreActionListener);
-
         adapter.setItemList(exploreItem.getList());
         holder.recyclerViewLeftToRight.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);

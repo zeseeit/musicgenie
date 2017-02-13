@@ -1,11 +1,13 @@
 package any.audio.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -15,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import any.audio.Activity.ErrorSplash;
 import any.audio.Adapters.ExploreLeftToRightAdapter;
 import any.audio.Adapters.ExploreTopDownAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
@@ -78,8 +81,6 @@ public class SearchFragment extends Fragment {
         if (!ConnectivityUtils.getInstance(context).isConnectedToNet()) {
             searchResultRecycler.setVisibility(RecyclerView.GONE);
             progressBar.setVisibility(View.INVISIBLE);
-            progressBarMsgPanel.setVisibility(View.VISIBLE);
-            progressBarMsgPanel.setText("Troubling Getting Data. Check Your Working Internet Connection");
             return;
         }
 

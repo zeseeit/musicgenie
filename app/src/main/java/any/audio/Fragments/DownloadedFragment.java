@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -31,6 +32,7 @@ import any.audio.helpers.TaskHandler;
 public class DownloadedFragment extends Fragment {
 
     private Context context;
+    private TextView emptyMessage;
     private ListView downloadedListView;
     private DownloadedItemsAdapter downloadedAdapter;
     private DownloadedItemsAdapter.DownloadedItemDeleteListener downloadedItemDeleteListener = new DownloadedItemsAdapter.DownloadedItemDeleteListener() {
@@ -97,9 +99,11 @@ public class DownloadedFragment extends Fragment {
         newList.remove(index);
         downloadedAdapter.setDownloadingList(newList);
 
-    }
+        if(newList.size()==0){
+            emptyMessage.setVisibility(View.VISIBLE);
+        }
 
-    ;
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -110,14 +114,15 @@ public class DownloadedFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.fragment_active_task, container, false);
-        downloadedListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
+        View fragmentView = inflater.inflate(R.layout.fragment_downloaded, container, false);
+        emptyMessage = (TextView) fragmentView.findViewById(R.id.emptyDownloadedListMessage);
+        downloadedListView = (ListView) fragmentView.findViewById(R.id.DownloadedListView);
         downloadedAdapter = DownloadedItemsAdapter.getInstance(getActivity());
         downloadedAdapter.setOnDownloadCancelListener(downloadedItemDeleteListener);
         downloadedAdapter.setDownloadingList(getDownloadedItemList());
         downloadedListView.setAdapter(downloadedAdapter);
-
         return fragmentView;
+
     }
 
     private ArrayList<DownloadedItemModel> getDownloadedItemList() {
@@ -128,6 +133,12 @@ public class DownloadedFragment extends Fragment {
             String path = f.toString();
             Log.d("Downloaded", "" + path.toString());
             downloadedItemModels.add(0, new DownloadedItemModel(path));
+        }
+
+        if(downloadedItemModels.size()==0) {
+            emptyMessage.setVisibility(View.VISIBLE);
+        }else{
+            emptyMessage.setVisibility(View.GONE);
         }
 
         return downloadedItemModels;

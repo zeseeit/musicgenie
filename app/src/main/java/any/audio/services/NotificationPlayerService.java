@@ -61,8 +61,10 @@ public class NotificationPlayerService extends Service {
                     if (PLAYING) {
                         PLAYING = false;
                     } else {
+
                         PLAYING = true;
                     }
+
                     sendPlayerStateBroadcast();
                     showNotification();
 
@@ -107,9 +109,10 @@ public class NotificationPlayerService extends Service {
     private void sendNextAction() {
 
         String action = Constants.ACTIONS.NEXT_ACTION;
-        Intent stateIntent = new Intent(action);
+        Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
         Log.i("NotificationPlayer"," sending next action");
-        sendBroadcast(stateIntent);
+        stateIntent.setAction(action);
+        startService(stateIntent);
     }
 
     private void swipeCancel() {
@@ -123,19 +126,22 @@ public class NotificationPlayerService extends Service {
 
     private void sendPlayerStateBroadcast() {
 
-        String action = PLAYING ? Constants.ACTIONS.PAUSE_TO_PLAY : Constants.ACTIONS.PLAY_TO_PAUSE;
         Log.i("NotificationPlayer"," sending play pause action");
-        Intent stateIntent = new Intent(action);
-        sendBroadcast(stateIntent);
+        Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
+        stateIntent.setAction(Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE);
+        stateIntent.putExtra("play",PLAYING);
+        stateIntent.putExtra("imFromNotification",true);
+        startService(stateIntent);
 
     }
 
     private void sendStopAction() {
 
-        String action = Constants.ACTIONS.STOP_PLAYER;
-        Intent stateIntent = new Intent(action);
+        String action = Constants.ACTION_STREAM_TO_SERVICE_RELEASE;
+        Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
+        stateIntent.setAction(action);
         Log.i("NotificationPlayer"," sending stop action");
-        sendBroadcast(stateIntent);
+        startService(stateIntent);
 
     }
 
@@ -224,7 +230,8 @@ public class NotificationPlayerService extends Service {
 
         }
 
-        notification = new Notification.Builder(this).build();
+        notification = new Notification.Builder(this).setOngoing(PLAYING).build();
+
         notification.contentView = view;
         notification.bigContentView = bigView;
         notification.flags = Notification.FLAG_AUTO_CANCEL;

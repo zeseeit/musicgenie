@@ -24,11 +24,9 @@ public class TextFormatter {
 
     public String reformat(String string){
 
-        String reformatted = string;
-
         string.replace("&amp;", "&").replace("&quot;", "").replace("&quote;","");
 
-        return reformatted;
+        return string;
     }
 
 

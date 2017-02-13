@@ -8,7 +8,6 @@ import android.content.IntentFilter;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
-import android.os.Looper;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
@@ -50,7 +49,6 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.ArrayList;
 
-import any.audio.Adapters.ExploreLeftToRightAdapter;
 import any.audio.Adapters.PlaylistAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
 import any.audio.Config.AppConfig;
@@ -74,10 +72,13 @@ import any.audio.helpers.QueueManager.QueueEventListener;
 import any.audio.helpers.ScreenDimension;
 import any.audio.helpers.TaskHandler;
 import any.audio.helpers.ToastMaker;
+import any.audio.services.AnyAudioStreamService;
 import any.audio.services.NotificationPlayerService;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class AnyAudioActivity extends AppCompatActivity implements PlaylistGenerator.PlaylistGenerateListener, ExploreLeftToRightAdapter.ExploreActionListener, SearchResultsAdapter.SearchResultActionListener, PlaylistAdapter.PlaylistItemListener, QueueEventListener {
+import static any.audio.services.AnyAudioStreamService.anyPlayer;
+
+public class AnyAudioActivity extends AppCompatActivity implements PlaylistGenerator.PlaylistGenerateListener, SearchResultsAdapter.SearchResultActionListener, PlaylistAdapter.PlaylistItemListener, QueueEventListener {
 
     private static final int FRAGMENT_EXPLORE = 1;
     private static final int FRAGMENT_SEARCH = 2;
@@ -110,7 +111,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     SeekBar seekBar;
 
     private Typeface typeface;
-
+    public static AnyAudioActivity anyAudioActivityInstance;
     private SlidingUpPanelLayout mLayout;
     private TextView streamDuration;
     private TextView homePanelTitle;
@@ -133,12 +134,15 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private QueueEventListener queueEventListener;
     private TextView playlistMessagePanel;
     private RelativeLayout playerPlaceHolderView;
+    private boolean backPressedOnce  = false;
+    private PrepareBottomPlayerBroadcastReceiver prepareBottomPlayerReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_any_audio);
+        anyAudioActivityInstance = this;
         setSupportActionBar((Toolbar) findViewById(R.id.home_toolbar));
         getSupportActionBar().setTitle("");
         initView();
@@ -187,6 +191,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     protected void onResume() {
 
         super.onResume();
+        backPressedOnce = false;
+
         if (!receiverRegistered) {
             registerReceivers();
         }
@@ -214,6 +220,28 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         }
 
 
+    }
+
+    @Override
+    public void onBackPressed() {
+
+        if (mLayout != null &&
+                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
+            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
+        }
+
+        if(homePanelTitle.getText().equals("SETTINGS") || homePanelTitle.getText().equals("DOWNLOADING") || homePanelTitle.getText().equals("DOWNLOADED")){
+            // transact search or explore
+            normalStart();
+            return;
+        }
+
+        if (!backPressedOnce) {
+            Toast.makeText(this, "Press Back Once More to Exit", Toast.LENGTH_LONG).show();
+            backPressedOnce = true;
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -301,15 +329,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    @Override
-    public void onBackPressed() {
-        if (mLayout != null &&
-                (mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.EXPANDED || mLayout.getPanelState() == SlidingUpPanelLayout.PanelState.ANCHORED)) {
-            mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
-        } else {
-            super.onBackPressed();
-        }
-    }
 
     @Override
     public void onStart() {
@@ -344,6 +363,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     @Override
     public void onDownloadAction(String video_id, String title, String thumb, String artist) {
 
+        Log.d("ExploreCard"," dnd tapped");
         showDownloadDialog(video_id, title, thumb, artist);
 
     }
@@ -355,13 +375,12 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    @Override
     public void onShowAll(String type) {
 
     }
 
-    @Override
     public void onPopUpMenuTap(View view) {
+        Log.d("ExploreCard"," pop tapped");
         showExploreItemPopUpMenu(view);
     }
 
@@ -716,7 +735,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             case FRAGMENT_EXPLORE:
 
                 ExploreFragment exploreFragment = new ExploreFragment();
-                exploreFragment.setActionListener(this);
 
                 manager
                         .beginTransaction()
@@ -866,39 +884,39 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            Log.i("NotificationPlayer", " onReceive() ");
-            if (exoPlayer != null) {
-
+//
+//            Log.i("NotificationPlayer", " onReceive() ");
+//            if (exoPlayer != null) {
+//
                 if (intent.getAction().equals(Constants.ACTIONS.PLAY_TO_PAUSE)) {
-                    Log.i("NotificationPlayer", " onReceive() PLAY->PAUSE");
-                    // pause
+//                    Log.i("NotificationPlayer", " onReceive() PLAY->PAUSE");
+//                    // pause
                     pauseBtn.setText(playBtnString);
                     utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PAUSED);
-                    exoPlayer.setPlayWhenReady(false);
-                }
+//                    exoPlayer.setPlayWhenReady(false);
+               }
                 if (intent.getAction().equals(Constants.ACTIONS.PAUSE_TO_PLAY)) {
-                    // play
-                    Log.i("NotificationPlayer", "onReceive() PAUSE->PLAY");
+//                    // play
+//                    Log.i("NotificationPlayer", "onReceive() PAUSE->PLAY");
                     pauseBtn.setText(pauseBtnString);
                     utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PLAYING);
-                    exoPlayer.setPlayWhenReady(true);
+//                    exoPlayer.setPlayWhenReady(true);
                 }
-
-                if (intent.getAction().equals(Constants.ACTIONS.NEXT_ACTION)) {
-                    // next
-                    Log.i("NotificationPlayer", "onReceive() NEXT");
-                    onNextRequested();
-                }
-
-                if (intent.getAction().equals(Constants.ACTIONS.STOP_PLAYER)) {
-
-                    Log.i("NotificationPlayer", "onReceive() STOP");
-                    utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
-                    resetPlayer();
-
-                }
-            }
+////
+////                if (intent.getAction().equals(Constants.ACTIONS.NEXT_ACTION)) {
+////                    // next
+////                    Log.i("NotificationPlayer", "onReceive() NEXT");
+////                    onNextRequested();
+////                }
+////
+//                if (intent.getAction().equals(Constants.ACTIONS.STOP_PLAYER)) {
+////
+////                    Log.i("NotificationPlayer", "onReceive() STOP");
+//                    utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
+////                    resetPlayer();
+////
+//                }
+//            }
         }
     }
 
@@ -926,6 +944,15 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             }
 
         }
+    }
+
+    private class PrepareBottomPlayerBroadcastReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            prepareBottomPlayer();
+        }
+
     }
 
     private class SongActionBroadcastListener extends BroadcastReceiver {
@@ -969,17 +996,14 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private void registerReceivers() {
 
         streamProgressUpdpateReceiver = new StreamProgressUpdateBroadcastReceiver();
-        notificationPlayerStateReceiver = new NotificationPlayerStateBroadcastReceiver();
         streamUriReceiver = new StreamUriBroadcastReceiver();
         songActionReceiver = new SongActionBroadcastListener();
+        prepareBottomPlayerReceiver = new PrepareBottomPlayerBroadcastReceiver();
 
         registerReceiver(streamProgressUpdpateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
-        registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
-        registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
-        registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.NEXT_ACTION));
-        registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
         registerReceiver(streamUriReceiver, new IntentFilter(Constants.ACTION_STREAM_URL_FETCHED));
         registerReceiver(songActionReceiver, new IntentFilter(Constants.ACTIONS.AUDIO_OPTIONS));
+        registerReceiver(prepareBottomPlayerReceiver, new IntentFilter(Constants.ACTION_PREPARE_BOTTOM_PLAYER));
         receiverRegistered = true;
 
     }
@@ -987,10 +1011,35 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private void unRegisterReceivers() {
 
         unregisterReceiver(streamProgressUpdpateReceiver);
-        unregisterReceiver(notificationPlayerStateReceiver);
         unregisterReceiver(streamUriReceiver);
         unregisterReceiver(songActionReceiver);
+        unregisterReceiver(prepareBottomPlayerReceiver);
         receiverRegistered = false;
+
+    }
+
+
+    private void registerNotificationPlayerControlBR(){
+
+        if(!utils.isNotificationPlayerControlReceiverRegistered()) {
+            notificationPlayerStateReceiver = new NotificationPlayerStateBroadcastReceiver();
+            registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
+            registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
+            registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.NEXT_ACTION));
+            registerReceiver(notificationPlayerStateReceiver, new IntentFilter(Constants.ACTIONS.STOP_PLAYER));
+            Log.d("AnyAudio"," notification br registered");
+            utils.setNotificationPlayerControlReceiverRegistered(true);
+        }
+    }
+
+    private void unRegisterNotificationPlayerControlBR(){
+
+        //notificationPlayerStateReceiver = new NotificationPlayerStateBroadcastReceiver();
+        if(utils.isNotificationPlayerControlReceiverRegistered()){
+            unregisterReceiver(notificationPlayerStateReceiver);
+            Log.d("AnyAudio"," notification br de-registered");
+            utils.setNotificationPlayerControlReceiverRegistered(false);
+        }
 
     }
 
@@ -1155,7 +1204,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                     }
 
-                    sendPlayerStateToNotificationService(utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING);
+                    sendPlayerStateToStreamService(utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING);
                     exoPlayer.setPlayWhenReady((utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING));
 
                 } else {
@@ -1169,11 +1218,11 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private void sendPlayerStateToNotificationService(boolean streamerPlayState) {
+    private void sendPlayerStateToStreamService(boolean streamerPlayState) {
 
-        Intent notificationIntent = new Intent(this, NotificationPlayerService.class);
-        notificationIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
-        notificationIntent.putExtra(Constants.PLAYER.EXTRAA_PLAYER_STATE, streamerPlayState);
+        Intent notificationIntent = new Intent(this, AnyAudioStreamService.class);
+        notificationIntent.setAction(Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE);
+        notificationIntent.putExtra("play", streamerPlayState);
         startService(notificationIntent);
 
     }
@@ -1319,9 +1368,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         @Override
         public void run() {
-            Looper.prepare();
             useExoplayer();
-            Looper.loop();
         }
 
         private void resetExoPlayer() {
@@ -1363,6 +1410,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                     if (playbackState == 5) // 5 - > integer code for player end state
                     {
+                        unRegisterNotificationPlayerControlBR();
+                        Log.d("ExoPlayer"," player ends => unregistering Notification control");
                         utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
                     }
                 }
@@ -1457,82 +1506,88 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     private void onNextRequested() {
 
-        long diff;
-        if (exoPlayer != null) {
+        // send next action to stream service
 
-            exoPlayer.setPlayWhenReady(false);
-            exoPlayer.stop();
-            exoPlayer.release();
-            L.m("PlaylistTest", "Player Released");
+        Intent nextIntent = new Intent(this,AnyAudioStreamService.class);
+        nextIntent.setAction(Constants.ACTION_STREAM_TO_SERVICE_NEXT);
+        startService(nextIntent);
 
-            utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
-            PlaylistItem nxtItem = null;
-
-            if (utils.getAutoPlayMode()) {
-
-                nxtItem = PlaylistGenerator.getInstance(this).getUpNext();
-                // refresh the list w.r.t top item.
-                if (nxtItem == null) {
-                    Toast.makeText(this, "No Item To Play Next.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                PlaylistGenerator.getInstance(this).refreshPlaylist();
-
-            } else {
-                nxtItem = QueueManager.getInstance(this).getUpNext();
-                if (nxtItem == null) {
-                    Toast.makeText(this, "No Item To Play Next.", Toast.LENGTH_LONG).show();
-                    return;
-                }
-            }
-
-            String upNextVid = nxtItem.videoId;
-            String upNextTitle = nxtItem.title;
-            String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
-            String upNextArtist = nxtItem.uploader;
-
-            Log.d("PlaylistTest", "nextVid:=" + upNextVid + " nextTitle:=" + upNextTitle);
-
-
-            //todo: check for usage
-            utils.setNextVId(upNextVid);
-            utils.setNextStreamTitle(upNextTitle);
-
-            diff = exoPlayer.getDuration() - exoPlayer.getCurrentPosition();
-
-            if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
-                L.m("PlaylistTest", "diff : " + diff);
-                // means stream fetcher not in progress
-                utils.setCurrentItemStreamUrl(upNextVid);
-                utils.setCurrentItemThumbnailUrl(upNextThumbnailUrl);
-                utils.setCurrentItemArtist(upNextArtist);
-                utils.setCurrentItemTitle(upNextTitle);
-                Log.d("PlaylistTest", "starting normal stream..");
-                initStream(upNextVid, upNextTitle);
-
-            } else {
-
-                // means stream fetcher is in progress or has finished
-                boolean isFetcherInProgress = utils.isStreamUrlFetcherInProgress();
-                String nextStreamUrl = utils.getNextStreamUrl();
-
-                if (nextStreamUrl.length() > 0) {
-
-                    playNext(false);
-
-                } else {
-
-                    if (!isFetcherInProgress) {
-                        // some network issue caused the url fetcher to stop its fetching task
-                        initStream(upNextVid, upNextTitle);
-
-                    } else {
-                        // no cases possible
-                    }
-                }
-            }
-        }
+//
+//        long diff;
+////        if (exoPlayer != null) {
+////
+////            exoPlayer.setPlayWhenReady(false);
+////            exoPlayer.stop();
+////            exoPlayer.release();
+////            L.m("PlaylistTest", "Player Released");
+//
+//            utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
+//            PlaylistItem nxtItem = null;
+//
+//            if (utils.getAutoPlayMode()) {
+//
+//                nxtItem = PlaylistGenerator.getInstance(this).getUpNext();
+//                // refresh the list w.r.t top item.
+//                if (nxtItem == null) {
+//                    Toast.makeText(this, "No Item To Play Next.", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+//
+//                PlaylistGenerator.getInstance(this).refreshPlaylist();
+//
+//            } else {
+//                nxtItem = QueueManager.getInstance(this).getUpNext();
+//                if (nxtItem == null) {
+//                    Toast.makeText(this, "No Item To Play Next.", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+//            }
+//
+//            String upNextVid = nxtItem.videoId;
+//            String upNextTitle = nxtItem.title;
+//            String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
+//            String upNextArtist = nxtItem.uploader;
+//
+//            Log.d("PlaylistTest", "nextVid:=" + upNextVid + " nextTitle:=" + upNextTitle);
+//
+//
+//            //todo: check for usage
+//            utils.setNextVId(upNextVid);
+//            utils.setNextStreamTitle(upNextTitle);
+//
+//            diff = anyPlayer.getDuration() - anyPlayer.getCurrentPosition();
+//
+//            if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
+//                L.m("PlaylistTest", "diff : " + diff);
+//                // means stream fetcher not in progress
+//                utils.setCurrentItemStreamUrl(upNextVid);
+//                utils.setCurrentItemThumbnailUrl(upNextThumbnailUrl);
+//                utils.setCurrentItemArtist(upNextArtist);
+//                utils.setCurrentItemTitle(upNextTitle);
+//                Log.d("PlaylistTest", "starting normal stream..");
+//                initStream(upNextVid, upNextTitle);
+//
+//            } else {
+//
+//                // means stream fetcher is in progress or has finished
+//                boolean isFetcherInProgress = utils.isStreamUrlFetcherInProgress();
+//                String nextStreamUrl = utils.getNextStreamUrl();
+//
+//                if (nextStreamUrl.length() > 0) {
+//
+//                    playNext(false);
+//
+//                } else {
+//
+//                    if (!isFetcherInProgress) {
+//                        // some network issue caused the url fetcher to stop its fetching task
+//                        initStream(upNextVid, upNextTitle);
+//
+//                    } else {
+//                        // no cases possible
+//                    }
+//                }
+//            }
     }
 
     private void fetchNextUrl() {
@@ -1589,8 +1644,13 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         if (nextStreamUrl.length() > 0) {
 
-            mPlayerThread = new AnyAudioPlayer(AnyAudioActivity.this, nextStreamUrl);
-            mPlayerThread.start();
+            Intent intent =  new Intent(this, AnyAudioStreamService.class);
+            intent.putExtra("uri",nextStreamUrl);
+            intent.setAction(Constants.ACTION_STREAM_TO_SERVICE_START);
+            startService(intent);
+
+//            mPlayerThread = new AnyAudioPlayer(AnyAudioActivity.this, nextStreamUrl);
+//            mPlayerThread.start();
             utils.setNextStreamUrl("");
 
             if (refresh) {
