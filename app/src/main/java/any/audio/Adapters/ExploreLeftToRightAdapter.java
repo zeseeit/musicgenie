@@ -140,14 +140,21 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
             views = (TextView) itemView.findViewById(R.id.explore_item_views);
             duration = (TextView) itemView.findViewById(R.id.explore_item_duration);
             thumbnail = (SimpleDraweeView) itemView.findViewById(R.id.explore_item_thumbnail);
-
             //attach click listeners
 
             popUpBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
                     ExploreLeftToRightAdapter adapter = ExploreLeftToRightAdapter.getInstance(context);
-                    adapter.requestPopUp(view);
+                    int pos = getAdapterPosition();
+                    final String v_id = itemModels.get(pos).Video_id;
+                    final String t_url = itemModels.get(pos).Thumbnail_url.substring(26,itemModels.get(pos).Thumbnail_url.length()-6);
+                    final String artist = itemModels.get(pos).UploadedBy;
+                    final String file_name = FileNameReformatter.getInstance(context).getFormattedName(itemModels.get(pos).Title);
+
+                    adapter.requestPopUp(view,v_id,t_url,file_name,artist);
+
                 }
             });
 
@@ -198,8 +205,8 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
         }
     }
 
-    private void requestPopUp(View view) {
-        anyAudioActivityInstance.onPopUpMenuTap(view);
+    private void requestPopUp(View view,String video_id, String youtubeId, String title, String uploader) {
+        anyAudioActivityInstance.onPopUpMenuTap(view,video_id,youtubeId,title,uploader);
     }
 
     private void requestDownload(String v_id, String file_name,String t_url,String artist) {

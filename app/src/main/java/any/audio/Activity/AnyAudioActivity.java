@@ -51,6 +51,7 @@ import java.util.ArrayList;
 
 import any.audio.Adapters.PlaylistAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
+import any.audio.AnyAudioMains.AnyAudio;
 import any.audio.Config.AppConfig;
 import any.audio.Config.Constants;
 import any.audio.Fragments.DownloadedFragment;
@@ -314,15 +315,19 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private void showExploreItemPopUpMenu(View view) {
+    private void showExploreItemPopUpMenu(View view, final String v_id, final String youtubeId, final String title, final String artist) {
 
         PopupMenu popup = new PopupMenu(this, view);
         popup.getMenuInflater().inflate(R.menu.explore_card_popup, popup.getMenu());
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
-                ToastMaker.getInstance(AnyAudioActivity.this).toast("Clicked Add To Queue.");
-                return false;
+
+                onAddToQueue(v_id,youtubeId,title,artist);
+
+                ToastMaker.getInstance(AnyAudioActivity.this).toast("\""+title+ "\" Added To Queue");
+
+                return true;
             }
         });
         popup.show();
@@ -379,9 +384,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    public void onPopUpMenuTap(View view) {
+    public void onPopUpMenuTap(View view,String video_id,String youtubeId,String title,String uploader) {
         Log.d("ExploreCard"," pop tapped");
-        showExploreItemPopUpMenu(view);
+        showExploreItemPopUpMenu(view,video_id,youtubeId,title,uploader);
     }
 
     @Override
@@ -885,7 +890,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         @Override
         public void onReceive(Context context, Intent intent) {
 //
-//            Log.i("NotificationPlayer", " onReceive() ");
+            Log.i("NotificationPlayerState", " onReceive() action=:"+intent.getAction());
 //            if (exoPlayer != null) {
 //
                 if (intent.getAction().equals(Constants.ACTIONS.PLAY_TO_PAUSE)) {
@@ -999,10 +1004,13 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         streamUriReceiver = new StreamUriBroadcastReceiver();
         songActionReceiver = new SongActionBroadcastListener();
         prepareBottomPlayerReceiver = new PrepareBottomPlayerBroadcastReceiver();
+        notificationPlayerStateReceiver = new NotificationPlayerStateBroadcastReceiver();
 
         registerReceiver(streamProgressUpdpateReceiver, new IntentFilter(Constants.ACTION_STREAM_PROGRESS_UPDATE_BROADCAST));
         registerReceiver(streamUriReceiver, new IntentFilter(Constants.ACTION_STREAM_URL_FETCHED));
         registerReceiver(songActionReceiver, new IntentFilter(Constants.ACTIONS.AUDIO_OPTIONS));
+        registerReceiver(notificationPlayerStateReceiver,new IntentFilter(Constants.ACTIONS.PAUSE_TO_PLAY));
+        registerReceiver(notificationPlayerStateReceiver,new IntentFilter(Constants.ACTIONS.PLAY_TO_PAUSE));
         registerReceiver(prepareBottomPlayerReceiver, new IntentFilter(Constants.ACTION_PREPARE_BOTTOM_PLAYER));
         receiverRegistered = true;
 
@@ -1013,6 +1021,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         unregisterReceiver(streamProgressUpdpateReceiver);
         unregisterReceiver(streamUriReceiver);
         unregisterReceiver(songActionReceiver);
+        unregisterReceiver(notificationPlayerStateReceiver);
         unregisterReceiver(prepareBottomPlayerReceiver);
         receiverRegistered = false;
 
@@ -1152,12 +1161,10 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             @Override
             public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
 
-                if (fromUser) {
-                    if (mPlayerThread != null) {
+                if (fromUser && anyPlayer!=null) {
                         L.m("Home", "sending seek msg");
-                        if (exoPlayer.getBufferedPosition() > position)
-                            exoPlayer.seekTo(position);
-                    }
+                        if (anyPlayer.getBufferedPosition() > position)
+                            anyPlayer.seekTo(position);
                 }
 
             }
@@ -1177,7 +1184,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             @Override
             public void onClick(View view) {
 
-                if (exoPlayer != null) {
+                if (anyPlayer != null) {
 
                     switch (utils.getPlayerState()) {
                         case Constants.PLAYER.PLAYER_STATE_STOPPED:
@@ -1205,7 +1212,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                     }
 
                     sendPlayerStateToStreamService(utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING);
-                    exoPlayer.setPlayWhenReady((utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING));
+                    //exoPlayer.setPlayWhenReady((utils.getPlayerState() == Constants.PLAYER.PLAYER_STATE_PLAYING));
 
                 } else {
                     Log.i("Notification", "play tapped after stopped");
@@ -1223,6 +1230,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         Intent notificationIntent = new Intent(this, AnyAudioStreamService.class);
         notificationIntent.setAction(Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE);
         notificationIntent.putExtra("play", streamerPlayState);
+        notificationIntent.putExtra("imFromNotification",false);
         startService(notificationIntent);
 
     }

@@ -42,6 +42,7 @@ public class NotificationPlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if(intent!=null)
         switch (intent.getAction()) {
 
             case Constants.ACTIONS.START_FOREGROUND_ACTION:
@@ -59,6 +60,7 @@ public class NotificationPlayerService extends Service {
                 if (bundle == null) {
                     Log.d("NotificationService", " action from notification bar buttons");
                     if (PLAYING) {
+
                         PLAYING = false;
                     } else {
 
@@ -108,7 +110,7 @@ public class NotificationPlayerService extends Service {
 
     private void sendNextAction() {
 
-        String action = Constants.ACTIONS.NEXT_ACTION;
+        String action = Constants.ACTION_STREAM_TO_SERVICE_NEXT;
         Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
         Log.i("NotificationPlayer"," sending next action");
         stateIntent.setAction(action);
@@ -230,8 +232,8 @@ public class NotificationPlayerService extends Service {
 
         }
 
-        notification = new Notification.Builder(this).setOngoing(PLAYING).build();
 
+        notification = new Notification.Builder(this).setOngoing(PLAYING).build();
         notification.contentView = view;
         notification.bigContentView = bigView;
         notification.flags = Notification.FLAG_AUTO_CANCEL;
@@ -242,7 +244,16 @@ public class NotificationPlayerService extends Service {
 
         Picasso.with(this).load(streamThumbnailUrl).transform(new CircularImageTransformer()).into(view, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         Picasso.with(this).load(streamThumbnailUrl).into(bigView, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-        startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+
+        if(PLAYING) {
+            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+        }else {
+            //cancellable notification
+            ///
+            stopForeground(true);
+            ((NotificationManager) this.getSystemService(NOTIFICATION_SERVICE)).notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+
+        }
 
     }
 

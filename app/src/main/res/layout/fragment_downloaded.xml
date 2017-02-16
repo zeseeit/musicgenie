@@ -11,8 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="8dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:paddingRight="8dp"></ListView>
 
     <TextView

@@ -1,5 +1,6 @@
 package any.audio.Fragments;
 
+import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -14,7 +15,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 
@@ -49,6 +53,7 @@ public class DownloadsFragment extends Fragment {
     private ProgressUpdateBroadcastReceiver receiver;
     private boolean mReceiverRegistered;
     private int mScrollState;
+    private TextView emptyMessage;
 
     private void cancelItem(String taskID) {
 
@@ -88,6 +93,7 @@ public class DownloadsFragment extends Fragment {
 
         View fragmentView = inflater.inflate(R.layout.fragment_active_task, container, false);
         liveDownloadListView = (ListView) fragmentView.findViewById(R.id.liveDownloadListView);
+        emptyMessage = (TextView) fragmentView.findViewById(R.id.emptyDownloadingListMessage);
         liveDownloadListView.setOnScrollListener(new AbsListView.OnScrollListener() {
             @Override
             public void onScrollStateChanged(AbsListView absListView, int scrollState) {
@@ -139,6 +145,12 @@ public class DownloadsFragment extends Fragment {
             String artist = utils.getTaskArtist(t_id);
             String status = utils.getTaskStatus(t_id);
             list.add(new DownloadingItemModel(t_id,thumbnailUrl,title,artist,"0",status,"0"));
+        }
+
+        if(list.size()==0) {
+            emptyMessage.setVisibility(View.VISIBLE);
+        }else{
+            emptyMessage.setVisibility(View.GONE);
         }
 
         return list;

@@ -13,4 +13,14 @@
         android:paddingLeft="4dp"
         android:paddingRight="4dp"></ListView>
 
+    <TextView
+        android:visibility="gone"
+        android:id="@+id/emptyDownloadingListMessage"
+        android:padding="16dp"
+        android:textColor="@color/AnyAudioGrey224"
+        android:text="No Current Items To Download ! "
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

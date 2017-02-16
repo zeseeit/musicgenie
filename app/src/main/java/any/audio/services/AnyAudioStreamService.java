@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
@@ -27,6 +28,7 @@ import any.audio.helpers.L;
 import any.audio.helpers.PlaylistGenerator;
 import any.audio.helpers.QueueManager;
 import any.audio.helpers.StreamUrlFetcher;
+import any.audio.helpers.ToastMaker;
 
 /**
  * Created by Ankit on 2/13/2017.
@@ -61,11 +63,20 @@ public class AnyAudioStreamService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
+        if(intent!=null)
         switch (intent.getAction()) {
             case Constants.ACTION_STREAM_TO_SERVICE_START:
 
                 mUri = Uri.parse(intent.getExtras().getString("uri"));
-                useExoplayer();
+
+                new Thread() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        useExoplayer();
+                        Looper.loop();
+                    }
+                }.start();
 
                 break;
             case Constants.ACTION_STREAM_TO_SERVICE_RELEASE:
@@ -76,24 +87,28 @@ public class AnyAudioStreamService extends Service {
 
             case Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE:
 
-                boolean play = intent.getExtras().getBoolean("play");
+                boolean playStatus = intent.getExtras().getBoolean("play");
                 boolean fromNotificationControl = intent.getExtras().getBoolean("imFromNotification");
-                anyPlayer.setPlayWhenReady(play);
+                anyPlayer.setPlayWhenReady(playStatus);
+                int state = playStatus ? Constants.PLAYER.PLAYER_STATE_PLAYING : Constants.PLAYER.PLAYER_STATE_PAUSED;
 
-                if(fromNotificationControl) {
+                utils.setPlayerState(state);
 
-                    broadcastPlayerStateToBottomPlayer(play);
+                if (fromNotificationControl) {
+                    broadcastPlayerStateToBottomPlayer(playStatus);
 
-                }else {
+                } else {
                     // this is from bottom player control
                     // => update same to notification control
-                    notifyNotificationControl(play);
+                    notifyNotificationControl(playStatus);
                 }
 
 
                 break;
 
             case Constants.ACTION_STREAM_TO_SERVICE_NEXT:
+
+                Log.i("NotificationPlayer", " received next action");
 
                 onNextRequested();
 
@@ -112,9 +127,9 @@ public class AnyAudioStreamService extends Service {
 
     private void notifyNotificationControl(boolean play) {
 
-        Intent notificationIntent = new Intent(this,NotificationPlayerService.class);
+        Intent notificationIntent = new Intent(this, NotificationPlayerService.class);
         notificationIntent.setAction(Constants.ACTIONS.PLAY_ACTION);
-        notificationIntent.putExtra(Constants.PLAYER.EXTRAA_PLAYER_STATE,play);
+        notificationIntent.putExtra(Constants.PLAYER.EXTRAA_PLAYER_STATE, play);
         startService(notificationIntent);
 
     }
@@ -128,12 +143,14 @@ public class AnyAudioStreamService extends Service {
         } else {
             stateIntent.setAction(Constants.ACTIONS.PLAY_TO_PAUSE);
         }
-
+        Log.i("NotificationPlayerState", " sending action=:" + stateIntent.getAction());
         sendBroadcast(stateIntent);
 
     }
 
     private void useExoplayer() {
+
+        resetPlayer();
 
         anyPlayer = ExoPlayer.Factory.newInstance(1);
         Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
@@ -245,12 +262,6 @@ public class AnyAudioStreamService extends Service {
     private void onNextRequested() {
 
         long diff;
-//        if (exoPlayer != null) {
-//
-//            exoPlayer.setPlayWhenReady(false);
-//            exoPlayer.stop();
-//            exoPlayer.release();
-//            L.m("PlaylistTest", "Player Released");
 
         utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
         PlaylistItem nxtItem = null;
@@ -319,6 +330,7 @@ public class AnyAudioStreamService extends Service {
                 }
             }
         }
+
     }
 
     private void initStream(String video_id, String title) {
@@ -326,6 +338,9 @@ public class AnyAudioStreamService extends Service {
         if (ConnectivityUtils.getInstance(this).isConnectedToNet()) {
             resetPlayer();
             utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_PLAYING);
+
+            //update the notification player view
+            notifyNotificationControl(true);
             broadcastActionToPrepareBottomPlayer();
         } else {
             // re-init player
@@ -334,8 +349,27 @@ public class AnyAudioStreamService extends Service {
 
         StreamUrlFetcher
                 .getInstance(this)
-                .setBroadcastMode(true)
                 .setData(video_id, title)
+                .setBroadcastMode(false)
+                .setOnStreamUriFetchedListener(new StreamUrlFetcher.OnStreamUriFetchedListener() {
+                    @Override
+                    public void onUriAvailable(String uri) {
+                        Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);
+                        //this is first time stream url fetch
+
+                        utils.setStreamUrlFetchedStatus(true);
+                        utils.setStreamUrlFetcherInProgress(false);
+                        utils.setNextStreamUrl(uri);
+
+                        if (uri.equals(Constants.STREAM_PREPARE_FAILED_URL_FLAG)) {
+                            ToastMaker.getInstance(AnyAudioStreamService.this).toast("Something is Wrong !! Please Try Again.");
+                            return;
+                        }
+
+                        playNext(false);
+
+                    }
+                })
                 .initProcess();
 
     }

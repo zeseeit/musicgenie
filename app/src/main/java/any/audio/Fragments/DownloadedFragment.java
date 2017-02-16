@@ -24,6 +24,7 @@ import any.audio.Config.Constants;
 import any.audio.Models.DownloadedItemModel;
 import any.audio.R;
 import any.audio.helpers.TaskHandler;
+import any.audio.helpers.ToastMaker;
 
 /**
  * Created by Ankit on 2/10/2017.
@@ -49,7 +50,7 @@ public class DownloadedFragment extends Fragment {
         AlertDialog.Builder builderReDownloadAlert = new AlertDialog.Builder(context);
         builderReDownloadAlert.setTitle("Delete");
         builderReDownloadAlert.
-                setMessage(itemModels.get(index).title)
+                setMessage(itemModels.get(index).title.substring(itemModels.get(index).title.lastIndexOf('/') + 1))
                 .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -78,7 +79,7 @@ public class DownloadedFragment extends Fragment {
                             case DialogInterface.BUTTON_POSITIVE:
 
                                 deleteItem(index);
-                                Toast.makeText(context, "Deleted", Toast.LENGTH_LONG).show();
+
                                 break;
 
                             case DialogInterface.BUTTON_NEGATIVE:
@@ -96,11 +97,22 @@ public class DownloadedFragment extends Fragment {
     private void deleteItem(int index) {
 
         ArrayList<DownloadedItemModel> newList = getDownloadedItemList();
-        newList.remove(index);
-        downloadedAdapter.setDownloadingList(newList);
+        //deleting original files
+        Log.i("DeletingFile"," path to delete "+newList.get(index));
+        File _file_to_delete = new File(String.valueOf(newList.get(index).title));
 
-        if(newList.size()==0){
-            emptyMessage.setVisibility(View.VISIBLE);
+        if(_file_to_delete.delete()){
+
+            //local downloaded list
+            newList.remove(index);
+            downloadedAdapter.setDownloadingList(newList);
+            if(newList.size()==0){
+                emptyMessage.setVisibility(View.VISIBLE);
+            }
+            Toast.makeText(context, "Deleted ! ", Toast.LENGTH_SHORT).show();
+
+        }else {
+            Toast.makeText(context, "Cannot Delete ! ", Toast.LENGTH_SHORT).show();
         }
 
     }
