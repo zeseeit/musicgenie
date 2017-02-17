@@ -42,68 +42,68 @@ public class NotificationPlayerService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent!=null)
-        switch (intent.getAction()) {
+        if (intent != null)
+            switch (intent.getAction()) {
 
-            case Constants.ACTIONS.START_FOREGROUND_ACTION:
+                case Constants.ACTIONS.START_FOREGROUND_ACTION:
 
-                PLAYING = true;
-                showNotification();
-                Log.d(LOG, "started foreground");
+                    PLAYING = true;
+                    showNotification();
+                    Log.d(LOG, "started foreground");
 
-                break;
-            case Constants.ACTIONS.PLAY_ACTION:
-                Log.d(LOG, "clicked play/pause");
+                    break;
+                case Constants.ACTIONS.PLAY_ACTION:
+                    Log.d(LOG, "clicked play/pause");
 
-                Bundle bundle = intent.getExtras();
+                    Bundle bundle = intent.getExtras();
 
-                if (bundle == null) {
-                    Log.d("NotificationService", " action from notification bar buttons");
-                    if (PLAYING) {
+                    if (bundle == null) {
+                        Log.d("NotificationService", " action from notification bar buttons");
+                        if (PLAYING) {
 
-                        PLAYING = false;
+                            PLAYING = false;
+                        } else {
+
+                            PLAYING = true;
+                        }
+
+                        sendPlayerStateBroadcast();
+                        showNotification();
+
                     } else {
 
-                        PLAYING = true;
+                        Log.d("NotificationService", " action from bottom streamsheet");
+                        PLAYING = bundle.getBoolean(Constants.PLAYER.EXTRAA_PLAYER_STATE);
+                        showNotification();
+
                     }
+                    break;
 
-                    sendPlayerStateBroadcast();
-                    showNotification();
+                case Constants.ACTIONS.NEXT_ACTION:
 
-                } else {
+                    sendNextAction();
 
-                    Log.d("NotificationService", " action from bottom streamsheet");
-                    PLAYING = bundle.getBoolean(Constants.PLAYER.EXTRAA_PLAYER_STATE);
-                    showNotification();
+                    break;
 
-                }
-                break;
+                case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
+                    Log.i("NotificationPlayer", " Sending Stop Action");
+                    sendStopAction();
 
-            case Constants.ACTIONS.NEXT_ACTION:
+                    break;
+                case Constants.ACTIONS.SWIPE_TO_CANCEL:
+                    swipeCancel();
+                    break;
+                case Constants.ACTIONS.STOP_FOREGROUND_ACTION_BY_STREAMSHEET:
 
-                sendNextAction();
+                    Log.d(LOG, "stopped foreground service from user");
+                    stopForeground(true);
+                    stopSelf();
 
-                break;
+                    break;
 
-            case Constants.ACTIONS.STOP_FOREGROUND_ACTION:
-                Log.i("NotificationPlayer", " Sending Stop Action");
-                sendStopAction();
-
-                break;
-            case Constants.ACTIONS.SWIPE_TO_CANCEL:
-                swipeCancel();
-                break;
-            case Constants.ACTIONS.STOP_FOREGROUND_ACTION_BY_STREAMSHEET:
-
-                Log.d(LOG, "stopped foreground service from user");
-                stopForeground(true);
-                stopSelf();
-
-                break;
-
-            default:
-                break;
-        }
+                default:
+                    break;
+            }
 
         return START_STICKY;
     }
@@ -111,8 +111,8 @@ public class NotificationPlayerService extends Service {
     private void sendNextAction() {
 
         String action = Constants.ACTION_STREAM_TO_SERVICE_NEXT;
-        Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
-        Log.i("NotificationPlayer"," sending next action");
+        Intent stateIntent = new Intent(this, AnyAudioStreamService.class);
+        Log.i("NotificationPlayer", " sending next action");
         stateIntent.setAction(action);
         startService(stateIntent);
     }
@@ -121,18 +121,16 @@ public class NotificationPlayerService extends Service {
 
         Log.i("NotificationPlayer", "SwipeAction");
         sendStopAction();
-        stopForeground(false);
-        stopSelf();
 
     }
 
     private void sendPlayerStateBroadcast() {
 
-        Log.i("NotificationPlayer"," sending play pause action");
-        Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
+        Log.i("NotificationPlayer", " sending play pause action");
+        Intent stateIntent = new Intent(this, AnyAudioStreamService.class);
         stateIntent.setAction(Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE);
-        stateIntent.putExtra("play",PLAYING);
-        stateIntent.putExtra("imFromNotification",true);
+        stateIntent.putExtra("play", PLAYING);
+        stateIntent.putExtra("imFromNotification", true);
         startService(stateIntent);
 
     }
@@ -140,10 +138,11 @@ public class NotificationPlayerService extends Service {
     private void sendStopAction() {
 
         String action = Constants.ACTION_STREAM_TO_SERVICE_RELEASE;
-        Intent stateIntent = new Intent(this,AnyAudioStreamService.class);
+        Intent stateIntent = new Intent(this, AnyAudioStreamService.class);
         stateIntent.setAction(action);
-        Log.i("NotificationPlayer"," sending stop action");
+        Log.i("NotificationPlayer", " sending stop action");
         startService(stateIntent);
+        stopForeground(true);
 
     }
 
@@ -233,10 +232,10 @@ public class NotificationPlayerService extends Service {
         }
 
 
-        notification = new Notification.Builder(this).setOngoing(PLAYING).build();
+        notification = new Notification.Builder(this).build();
         notification.contentView = view;
         notification.bigContentView = bigView;
-        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        notification.flags = PLAYING ? Notification.FLAG_ONGOING_EVENT : Notification.FLAG_AUTO_CANCEL;
         notification.icon = R.drawable.notifications_bar_small;
         notification.tickerText = title;
         notification.deleteIntent = deletePedingIntent;
@@ -244,16 +243,8 @@ public class NotificationPlayerService extends Service {
 
         Picasso.with(this).load(streamThumbnailUrl).transform(new CircularImageTransformer()).into(view, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
         Picasso.with(this).load(streamThumbnailUrl).into(bigView, R.id.notification_player_thumbnail, Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
+        ((NotificationManager) this.getSystemService(NOTIFICATION_SERVICE)).notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
 
-        if(PLAYING) {
-            startForeground(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-        }else {
-            //cancellable notification
-            ///
-            stopForeground(true);
-            ((NotificationManager) this.getSystemService(NOTIFICATION_SERVICE)).notify(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE, notification);
-
-        }
 
     }
 

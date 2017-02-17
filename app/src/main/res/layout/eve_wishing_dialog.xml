@@ -13,7 +13,6 @@
         android:id="@+id/cancelEveDialog"
         android:textColor="@color/AnyAudioPrimaryColor"
         android:textSize="24sp" />
-
     <RelativeLayout
         android:id="@+id/updates_top_wrapper"
         android:layout_marginTop="36dp"
@@ -42,7 +41,6 @@
             android:background="@drawable/explore_text_under_tip"/>
 
     </RelativeLayout>
-
     <TextView
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
@@ -56,20 +54,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+
+    <android.support.v7.widget.GridLayout
+        android:id="@+id/eveSuggestionsGrid"
+        android:layout_below="@+id/eveMessage"
+        android:layout_above="@+id/eveAddToQueue"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
     <TextView
-        android:visibility="gone"
-        android:layout_marginTop="14dp"
-        android:text="MORE"
+        android:layout_margin="16dp"
+        android:text="Add To My Queue"
         android:textColor="@color/White"
-        android:id="@+id/updateBtn"
+        android:id="@+id/eveAddToQueue"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:paddingTop="6dp"
         android:paddingBottom="6dp"
         android:background="@drawable/terms_accept_btn"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@+id/newFeatures"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
 
 </RelativeLayout>

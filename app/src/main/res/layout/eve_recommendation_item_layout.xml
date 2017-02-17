@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="240dp"
+    android:layout_height="wrap_content"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:visibility="visible"
+    android:background="@drawable/explore_item_bg"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/cardWrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:id="@+id/explore_card_top_wrapper"
+            android:layout_width="match_parent"
+            android:layout_height="135dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/explore_item_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                fresco:placeholderImage="@drawable/ok_btn_bg"
+                />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:background="@drawable/explore_item_card_info_gradient_bg"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:layout_below="@+id/explore_card_top_wrapper">
+
+            <TextView
+                android:id="@+id/explore_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/explore_item_popup_btn"
+                android:maxLines="1"
+                android:paddingLeft="14dp"
+                android:paddingTop="14dp"
+                android:text="The Weekend - Party"
+                android:textColor="@color/AnyAudioGrey224"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/explore_item_uploader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/explore_item_title"
+                android:layout_toLeftOf="@+id/explore_item_download_btn"
+                android:maxLines="1"
+                android:paddingLeft="14dp"
+                android:paddingTop="2dp"
+                android:text="The Weekend - Party test"
+                android:textColor="@color/AnyAudioGrey189"
+                android:textSize="12sp" />
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

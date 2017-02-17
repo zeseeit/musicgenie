@@ -1,6 +1,10 @@
 package any.audio.services;
 
+import android.app.AlarmManager;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.IBinder;
@@ -17,6 +21,7 @@ import com.google.android.exoplayer.upstream.Allocator;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
+import com.google.android.exoplayer.util.SystemClock;
 import com.google.android.exoplayer.util.Util;
 
 import any.audio.Activity.AnyAudioActivity;
@@ -65,6 +70,7 @@ public class AnyAudioStreamService extends Service {
 
         if(intent!=null)
         switch (intent.getAction()) {
+
             case Constants.ACTION_STREAM_TO_SERVICE_START:
 
                 mUri = Uri.parse(intent.getExtras().getString("uri"));
@@ -91,9 +97,7 @@ public class AnyAudioStreamService extends Service {
                 boolean fromNotificationControl = intent.getExtras().getBoolean("imFromNotification");
                 anyPlayer.setPlayWhenReady(playStatus);
                 int state = playStatus ? Constants.PLAYER.PLAYER_STATE_PLAYING : Constants.PLAYER.PLAYER_STATE_PAUSED;
-
                 utils.setPlayerState(state);
-
                 if (fromNotificationControl) {
                     broadcastPlayerStateToBottomPlayer(playStatus);
 
@@ -123,6 +127,19 @@ public class AnyAudioStreamService extends Service {
         }
 
         return START_STICKY;
+    }
+
+    @Override
+    public void onTaskRemoved(Intent rootIntent) {
+
+        // stop music player if there
+        if(anyPlayer!=null){
+            resetPlayer();
+        }
+        // close the notification
+        closeNotification();
+        super.onTaskRemoved(rootIntent);
+
     }
 
     private void notifyNotificationControl(boolean play) {
@@ -404,6 +421,12 @@ public class AnyAudioStreamService extends Service {
         Intent notificationIntent = new Intent(this, NotificationPlayerService.class);
         notificationIntent.setAction(Constants.ACTIONS.START_FOREGROUND_ACTION);
         startService(notificationIntent);
+
+    }
+
+    private void closeNotification(){
+
+        ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE);
 
     }
 
