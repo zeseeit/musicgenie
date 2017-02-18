@@ -174,64 +174,58 @@ public class QueueManager {
 
     private int getNextIndex() {
 
-        int totalQueueLength = getQueue().size() - 1;
+        int totalQueueLength = getQueue().size();
         String repeatMode = utils.getRepeatMode();
         int currentIndex = utils.getCurrentQueueIndex();
+        int nextIndex = -1;
 
         switch (repeatMode) {
 
             case Constants.MODE_REPEAT_NONE:
 
-                Log.d("RepeatMode","[None] current Index "+currentIndex+" Queue Len "+(totalQueueLength+1));
+                Log.d("RepeatMode","[None] current Index "+currentIndex+" Queue Len "+ totalQueueLength);
 
-                if (currentIndex == totalQueueLength) {
-                    utils.setCurrentQueueIndex(0);
+                if (currentIndex == (totalQueueLength - 1)) {
+                    // Reset the queue index
+                    utils.setCurrentQueueIndex(nextIndex);
                     Log.d("RepeatMode","[None] last item reached ");
-                    return -1;
+                    return nextIndex;
+
                 } else {
 
-                    utils.setCurrentQueueIndex(currentIndex + 1);
-                    Log.d("RepeatMode","[None] next to play index "+(currentIndex+1));
-                    return currentIndex + 1;
+                    nextIndex = currentIndex + 1;
+                    utils.setCurrentQueueIndex(nextIndex);
+                    Log.d("RepeatMode","[None] next to play index "+nextIndex);
+                    return nextIndex;
 
                 }
 
             case Constants.MODE_REPEAT_ALL:
 
-                Log.d("RepeatMode","[All] current Index "+currentIndex+" Queue Len "+(totalQueueLength+1));
-
-                if (currentIndex == totalQueueLength) {
-                    utils.setCurrentQueueIndex(0);
-                    Log.d("RepeatMode","[All] next to play index 0");
-                    return 0;
-                } else {
-                    utils.setCurrentQueueIndex(currentIndex + 1);
-                    Log.d("RepeatMode","[All] next to play index "+(currentIndex+1));
-                    return currentIndex + 1;
-                }
+                Log.d("RepeatMode","[All] current Index "+currentIndex+" Queue Len "+ totalQueueLength);
+                // keep repeating between 0-len
+                nextIndex = (currentIndex+1)%totalQueueLength;
+                utils.setCurrentQueueIndex(nextIndex);
+                Log.d("RepeatMode","[All] next to play index "+nextIndex);
+                return nextIndex;
 
             case Constants.MODE_SUFFLE:
 
-                Log.d("RepeatMode","[Suffle] current Index "+currentIndex+" Queue Len "+(totalQueueLength+1));
+                Log.d("RepeatMode","[Suffle] current Index "+currentIndex+" Queue Len " + totalQueueLength);
 
-                int nextIndex = 0;
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                    nextIndex = ThreadLocalRandom.current().nextInt(0, totalQueueLength + 1);
+                    nextIndex = ThreadLocalRandom.current().nextInt(0, totalQueueLength);
                 } else {
-                    nextIndex = new Random().nextInt((totalQueueLength) + 1) + 0;
+                    nextIndex = new Random().nextInt(totalQueueLength) + 0;
                 }
 
-                if (nextIndex == currentIndex && totalQueueLength > 1) {
-                    int nd =  getNextIndex();
-                    Log.d("RepeatMode","[Suffle] next to play index "+nd);
-                    return nd;
-                }
                 Log.d("RepeatMode","[Suffle] next to play index "+nextIndex);
                 return nextIndex;
 
         }
 
-        return -1;
+        return nextIndex;
+
     }
 
     public interface QueueEventListener {

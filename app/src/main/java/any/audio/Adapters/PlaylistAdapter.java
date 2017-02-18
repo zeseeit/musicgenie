@@ -154,6 +154,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
     private void streamItem(int adapterPosition) {
 
+        utils.setCurrentQueueIndex(adapterPosition);
         if (playlistItemListener != null) {
             playlistItemListener.onPlaylistItemTapped(playlistItems.get(adapterPosition));
         }

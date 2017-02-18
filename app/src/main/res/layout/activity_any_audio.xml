@@ -10,8 +10,8 @@
     sothree:umanoPanelHeight="68dp"
     sothree:umanoShadowHeight="4dp"
     sothree:umanoParallaxOffset="100dp"
+    sothree:umanoDragView="@+id/playlistBtn"
     sothree:umanoScrollableView="@+id/autoplay_or_queue_recycler_view"
-    sothree:umanoDragView="@+id/dragView"
     sothree:umanoOverlay="true">
 
     <!--FRAGMENT PLACEHOLDER WITH TOOLBAR-->

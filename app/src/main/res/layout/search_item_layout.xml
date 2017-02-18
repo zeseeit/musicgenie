@@ -68,7 +68,6 @@
     <TextView
         android:layout_below="@+id/search_item_duration"
         android:id="@+id/search_item_title"
-        android:layout_toLeftOf="@+id/addToQueue"
         android:maxLines="1"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="Sanam Rdddddddddddjhbbbbbbbbbbbbbbbbbbbbbjhbddddddddddddddddddde..."

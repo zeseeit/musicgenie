@@ -94,7 +94,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     final String repeatAllBtnString = "\uE627";
     final String noRepeatBtnString = "\uE628";
     final String[] repeatModesList = {suffleBtnString, repeatAllBtnString, noRepeatBtnString};
-
+    final String[] repeatModesTexts = {"Suffle", "Repeat All", "No Repeat"};
     private CircleImageView thumbnail;
     private TextView nextBtn;
     private SwitchCompat autoplaySwitch;
@@ -137,6 +137,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private RelativeLayout playerPlaceHolderView;
     private boolean backPressedOnce  = false;
     private PrepareBottomPlayerBroadcastReceiver prepareBottomPlayerReceiver;
+    private TextView repeatModeText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -151,32 +152,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         ScreenDimension.getInstance(this).init();
         configureStorageDirectory(savedInstanceState);
         utils = SharedPrefrenceUtils.getInstance(this);
-        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
-        mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
-            @Override
-            public void onPanelSlide(View panel, float slideOffset) {
 
-                transformThumbnail(slideOffset);
-                transformControl(slideOffset);
-                transformInfo(slideOffset);
-                Log.d("SildePanel", "offset " + slideOffset);
-
-            }
-
-            @Override
-            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
-
-                Log.d("SlidePanel", " onPanelStateChanged " + newState);
-
-            }
-        });
-
-        mLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-            }
-        });
 
     }
 
@@ -212,6 +188,11 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             mLayout.setClickable(true);
             // prepare the player according to last items
             prepareBottomPlayer();
+        }else{
+            // user has not played any song so disable to scroll bottom view
+            mLayout.setEnabled(false);
+            mLayout.setClickable(false);
+
         }
 
         if (utils.getAutoPlayMode()) {
@@ -492,6 +473,35 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     private void initView() {
 
+        mLayout = (SlidingUpPanelLayout) findViewById(R.id.sliding_layout);
+        mLayout.setDragView(R.id.playlistBtn);
+
+        mLayout.addPanelSlideListener(new SlidingUpPanelLayout.PanelSlideListener() {
+            @Override
+            public void onPanelSlide(View panel, float slideOffset) {
+
+                transformThumbnail(slideOffset);
+                transformControl(slideOffset);
+                transformInfo(slideOffset);
+                Log.d("SildePanel", "offset " + slideOffset);
+
+            }
+
+            @Override
+            public void onPanelStateChanged(View panel, SlidingUpPanelLayout.PanelState previousState, SlidingUpPanelLayout.PanelState newState) {
+
+                Log.d("SlidePanel", " onPanelStateChanged " + newState);
+
+            }
+        });
+
+        mLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
         playlistGenerator = PlaylistGenerator.getInstance(AnyAudioActivity.this);
         playlistGenerator.setPlaylistGenerationListener(this);
 
@@ -502,6 +512,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         playerPlaceHolderView = (RelativeLayout) findViewById(R.id.welcome_placeholderView);
         homePanelTitle = (TextView) findViewById(R.id.homePanelTitle);
         repeatModeBtn = (TextView) findViewById(R.id.repeatModeBtn);
+        repeatModeText = (TextView) findViewById(R.id.repeatModeText);
         view = findViewById(R.id.welcome_placeholderView);
         repeatModeBtn.setTypeface(typeface);
         autoplaySwitch = (SwitchCompat) findViewById(R.id.autoplay_switch);
@@ -519,6 +530,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         playlistRecyclerView = (RecyclerView) findViewById(R.id.autoplay_or_queue_recycler_view);
         playlistRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         playlistRecyclerView.setHasFixedSize(true);
+
+
 
         //font face
         nextBtn.setTypeface(typeface);
@@ -549,6 +562,16 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             }
         });
 
+        playlistBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                if(mLayout.getPanelState()==SlidingUpPanelLayout.PanelState.COLLAPSED)
+                    mLayout.setPanelState(SlidingUpPanelLayout.PanelState.EXPANDED);
+
+            }
+        });
+
         pushDown.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -562,7 +585,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             @Override
             public void onClick(View view) {
 
-                repeatModeBtn.setText(repeatModesList[getNextRepeatModeIndex()]);
+                int nextMode = getNextRepeatModeIndex();
+                repeatModeBtn.setText(repeatModesList[nextMode]);
+                repeatModeText.setText(repeatModesTexts[nextMode]);
 
             }
         });
@@ -589,6 +614,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         // disable repeat modes while autoplay
         repeatModeBtn.setClickable(false);
+        repeatModeText.setVisibility(View.GONE);
         repeatModeBtn.setVisibility(View.GONE);
 
         // get auto Playlist
@@ -616,7 +642,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         // get Queued Items if no items present show the message to add queue
         ArrayList<PlaylistItem> queuedItems = queueManager.getQueue();
         repeatModeBtn.setVisibility(View.VISIBLE);
-        repeatModeBtn.setText(getCurrentRepeatModeText());
+        repeatModeText.setVisibility(View.VISIBLE);
+        repeatModeText.setText(getCurrentRepeatModeText());
+        repeatModeBtn.setText(getCurrentRepeatModeBtnText());
 
         if (queuedItems.size() == 0) {
             playlistMessagePanel.setVisibility(View.VISIBLE);
@@ -652,7 +680,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private String getCurrentRepeatModeText() {
+    private String getCurrentRepeatModeBtnText() {
 
         String mode = utils.getRepeatMode();
         if (mode.equals(Constants.MODE_REPEAT_ALL)) {
@@ -666,6 +694,24 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         } else {
 
             return repeatModesList[2];//repeat none
+
+        }
+    }
+
+    private String getCurrentRepeatModeText() {
+
+        String mode = utils.getRepeatMode();
+        if (mode.equals(Constants.MODE_REPEAT_ALL)) {
+
+            return repeatModesTexts[1];//repeat all
+
+        } else if (mode.equals(Constants.MODE_SUFFLE)) {
+
+            return repeatModesTexts[0];//suffle
+
+        } else {
+
+            return repeatModesTexts[2];//repeat none
 
         }
     }
@@ -1084,6 +1130,11 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     private void prepareBottomPlayer() {
 
+        mLayout.setEnabled(true);
+        mLayout.setClickable(true
+
+        );
+
         String streamUri = utils.getLastItemThumbnail();
         String streamTitle = utils.getLastItemTitle();
         String streamArtist = utils.getLastItemArtist();
@@ -1097,35 +1148,38 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                 pauseBtn.setVisibility(View.VISIBLE);
                 nextBtn.setVisibility(View.VISIBLE);
                 nextBtn.setEnabled(true);
-
                 break;
+
             case Constants.PLAYER.PLAYER_STATE_PAUSED:
 
                 Log.d("PlayerTest", " Paushed State");
                 pauseBtn.setText(playBtnString);
                 pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setEnabled(true);
-
                 break;
+
             case Constants.PLAYER.PLAYER_STATE_STOPPED:
                 Log.d("PlayerTest", " Stopped State");
                 pauseBtn.setText(playBtnString);
                 pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setEnabled(true);
                 nextBtn.setVisibility(View.GONE);
-
                 break;
+
         }
 
         if (utils.getAutoPlayMode()) {
 
             repeatModeBtn.setVisibility(View.GONE);
+            repeatModeText.setVisibility(View.GONE);
             autoplaySwitch.setChecked(true);
 
         } else {
 
-            repeatModeBtn.setText(getCurrentRepeatModeText());
+            repeatModeBtn.setText(getCurrentRepeatModeBtnText());
             repeatModeBtn.setVisibility(View.VISIBLE);
+            repeatModeText.setText(getCurrentRepeatModeText());
+            repeatModeText.setVisibility(View.VISIBLE);
             autoplaySwitch.setChecked(false);
 
         }

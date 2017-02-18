@@ -171,7 +171,7 @@ public class SettingsFragment extends Fragment {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
+                Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/html");
                 intent.putExtra(Intent.EXTRA_EMAIL, "anyaudio.in@gmail.com");
                 intent.putExtra(Intent.EXTRA_SUBJECT, "Issue/Report");

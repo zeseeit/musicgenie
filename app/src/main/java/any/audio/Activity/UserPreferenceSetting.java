@@ -12,11 +12,13 @@ import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.helpers.ToastMaker;
 
 public class UserPreferenceSetting extends AppCompatActivity {
 
@@ -100,28 +102,33 @@ public class UserPreferenceSetting extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                Intent intent = new Intent(Intent.ACTION_SENDTO);
-                intent.setType("text/html");
-                intent.putExtra(Intent.EXTRA_EMAIL, "anyaudio.in@gmail.com");
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Issue/Report");
-                intent.putExtra(Intent.EXTRA_TEXT, "");
-
-                startActivity(Intent.createChooser(intent, "Send Email"));
+                Toast.makeText(UserPreferenceSetting.this,"Working On!",Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(Intent.ACTION_SEND);
+//                intent.setType("text/html");
+//                intent.putExtra(Intent.EXTRA_EMAIL, "anyaudio.in@gmail.com");
+//                intent.putExtra(Intent.EXTRA_SUBJECT, "Issue/Report");
+//                intent.putExtra(Intent.EXTRA_TEXT, "");
+//                startActivity(Intent.createChooser(intent, "Send Email"));
+//
             }
         });
 
         updateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkForUpdate();
-                SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this).setDoNotRemindMeAgainForAppUpdate(false);
+
+                Toast.makeText(UserPreferenceSetting.this,"Working On!",Toast.LENGTH_SHORT).show();
+//                checkForUpdate();
+//                SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this).setDoNotRemindMeAgainForAppUpdate(false);
             }
         });
 
         suggestBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                suggestOther();
+
+                Toast.makeText(UserPreferenceSetting.this,"Working On!",Toast.LENGTH_SHORT).show();
+                //suggestOther();
             }
         });
 
@@ -140,7 +147,7 @@ public class UserPreferenceSetting extends AppCompatActivity {
 
     public void checkForUpdate() {
 
-        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(UserPreferenceSetting.this);
 
         if (utils.getNewVersionAvailibility() && !utils.donotRemindForAppUpdate()) {
 

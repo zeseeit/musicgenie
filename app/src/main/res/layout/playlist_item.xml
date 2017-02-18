@@ -41,7 +41,6 @@
         android:text="Santoshdfffffffffffffffffff Nanavathe"
         android:lines="1"
         android:maxLines="1"
-        android:layout_toLeftOf="@+id/playlist_item_cancel_btn_text"
         android:layout_width="match_parent"
         android:layout_height="32dp"
         android:layout_toEndOf="@+id/playlist_item_thumbnail_wrapper" />
@@ -55,7 +54,6 @@
         android:textColor="@color/AnyAudioGrey189"
         android:maxLines="1"
         android:text="T-Series"
-        android:layout_toLeftOf="@+id/playlist_item_cancel_btn_text"
         android:layout_width="match_parent"
         android:layout_height="36dp" />
     </RelativeLayout>
