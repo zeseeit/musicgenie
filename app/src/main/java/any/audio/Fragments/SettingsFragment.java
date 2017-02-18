@@ -2,6 +2,8 @@ package any.audio.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
@@ -55,6 +57,11 @@ public class SettingsFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         utils = SharedPrefrenceUtils.getInstance(context);
+
+        if(getCurrentAppVersionCode()==utils.getLatestVersionCode()){
+            utils.setNewVersionAvailibility(false);
+        }
+
     }
 
     @Nullable
@@ -223,11 +230,43 @@ public class SettingsFragment extends Fragment {
     public void checkForUpdate() {
 
         // start check service and change status
-        updateStatus.setText("Checkig.......");
-        updateProgress.setVisibility(View.VISIBLE);
-        context.startService(new Intent(context, UpdateCheckService.class));
+        if(!utils.getNewVersionAvailibility()) {
 
+            updateStatus.setText("Checking For Updates...");
+            updateProgress.setVisibility(View.VISIBLE);
+            Intent updateCheckServiceIntent = new Intent(context, UpdateCheckService.class);
+            updateCheckServiceIntent.setAction("ACTION_UPDATE");
+            context.startService(updateCheckServiceIntent);
 
+        }else {
+
+            download();
+
+        }
+
+    }
+
+    public void download() {
+
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(utils.getNewUpdateUrl()));
+        startActivity(intent);
+
+    }
+
+    private int getCurrentAppVersionCode() {
+
+        try {
+
+            PackageInfo _info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+            return _info.versionCode;
+
+        } catch (PackageManager.NameNotFoundException e) {
+
+            e.printStackTrace();
+            return -1;
+
+        }
     }
 
 }

@@ -656,10 +656,11 @@ public class SharedPrefrenceUtils {
     }
 
     public String getLatestVersionName(){
-        return preferences.getString("verionNm","");
+        return preferences.getString("versionNm","");
     }
 
     public void setNewVersionCode(int newVersion) {
+
         editor.putInt("versionCd", newVersion);
         editor.commit();
     }

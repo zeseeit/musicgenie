@@ -57,6 +57,17 @@ public class UpdateCheckService extends Service {
         utils = SharedPrefrenceUtils.getInstance(this);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+        if(intent!=null && intent.getAction()!=null)
+        if(intent.getAction().equals("ACTION_UPDATE")){
+            checkForUpdate();
+        }
+
+        return START_NOT_STICKY;
+    }
+
     private void checkForUpdate() {
 
         Log.d("UpdateServiceAnyAudio", " UpdateCheck....");
@@ -84,6 +95,7 @@ public class UpdateCheckService extends Service {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         VolleyUtils.getInstance().addToRequestQueue(updateCheckReq, "checkUpdateReq", getApplicationContext());
+
     }
 
     class RegularUpdateTimerTask extends TimerTask {
@@ -159,10 +171,13 @@ public class UpdateCheckService extends Service {
                 startActivity(updateIntent);
 
 
+            }else {
+                utils.setNewVersionAvailibility(false);
             }
 
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
+
 }
