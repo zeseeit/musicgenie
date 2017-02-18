@@ -35,10 +35,12 @@ public class AnyAudioPushHandler {
 
     private static Context context;
     private static AnyAudioPushHandler mInstance;
+    private SharedPrefrenceUtils utils;
     private RemoteMessage.Notification notificationPayload = null;
 
     public AnyAudioPushHandler(Context context) {
         this.context = context;
+        utils = SharedPrefrenceUtils.getInstance(context);
     }
 
     public static AnyAudioPushHandler getInstance(Context context) {
@@ -85,12 +87,17 @@ public class AnyAudioPushHandler {
             return;
         }
 
+        utils.setNewUpdateUrl(data.get("downloadUrl"));
+        utils.setNewVersionName(data.get("newVersionName"));
+        utils.setNewVersionDescription(data.get("newInThis"));
+        utils.setNewVersionAvailibility(true);
+        utils.setNewVersionCode(Integer.valueOf(data.get("versionCode")));
+
+
         updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, data.get("newInThis"));
         updateIntent.putExtra(Constants.KEY_NEW_UPDATE_URL, data.get("downloadUrl"));
         updateIntent.putExtra(Constants.KEY_NEW_ANYAUDIO_VERSION,data.get("newVersionName"));
         updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-
         showNotification("AnyAudio Update!!", "Newer Version of App is Available", updateIntent);
         SharedPrefrenceUtils.getInstance(context).setNotifiedForUpdate(true);
 

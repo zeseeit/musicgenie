@@ -27,6 +27,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import any.audio.Activity.UpdateThemedActivity;
+import any.audio.Config.Constants;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.Config.URLS;
 import any.audio.Network.VolleyUtils;
@@ -42,6 +43,7 @@ public class UpdateCheckService extends Service {
     private static final int SERVER_TIMEOUT_LIMIT = 10 * 1000; // 10 sec
     private static Timer mTimer;
     Handler mHandler = new Handler();
+    SharedPrefrenceUtils utils;
     private final String url = URLS.URL_LATEST_APP_VERSION;
 
     @Nullable
@@ -52,15 +54,7 @@ public class UpdateCheckService extends Service {
 
     @Override
     public void onCreate() {
-
-        if (mTimer != null) {
-            mTimer.cancel();
-        } else {
-            mTimer = new Timer();
-        }
-
-        mTimer.scheduleAtFixedRate(new RegularUpdateTimerTask(), 0, CHECK_UPDATE_INTERVAL);
-
+        utils = SharedPrefrenceUtils.getInstance(this);
     }
 
     private void checkForUpdate() {
@@ -136,21 +130,12 @@ public class UpdateCheckService extends Service {
     }
 
     public void handleNewUpdateResponse(String response) {
-        /*
-        * New Update Message Format
-        *
-        * {
-        *   "version":1.0,
-        *   "newInThisUpdate":"v1.0:  bug fixes",
-        *   "appDownloadUrl":"..."
-        * }
-        *
-        * */
 
         try {
 
             JSONObject updateResp = new JSONObject(response);
-            double newVersion = updateResp.getDouble("version");
+            int newVersion = updateResp.getInt("versionCode");
+            String newVersionName = updateResp.getString("versionName");
             String updateDescription = updateResp.getString("newInThisUpdate");
             String downloadUrl = updateResp.getString("appDownloadUrl");
             Log.d("UpdateServiceTest", " new Version " + newVersion + " old version " + getCurrentAppVersionCode() + " update Des " + updateDescription);
@@ -158,9 +143,21 @@ public class UpdateCheckService extends Service {
             if (newVersion > getCurrentAppVersionCode()) {
                 // write update to shared pref..
                 Log.d("UpdateService", " writing response to shared Pref..");
-                SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionAvailibility(true);
-                SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewVersionDescription(updateDescription);
-                SharedPrefrenceUtils.getInstance(getApplicationContext()).setNewUpdateUrl(downloadUrl);
+                utils.setNewVersionAvailibility(true);
+                utils.setNewVersionName(newVersionName);
+                utils.setNewVersionCode(newVersion);
+                utils.setNewVersionDescription(updateDescription);
+                utils.setNewUpdateUrl(downloadUrl);
+
+                //start update themed activity
+
+                Intent updateIntent = new Intent(this, UpdateThemedActivity.class);
+                updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
+                updateIntent.putExtra(Constants.KEY_NEW_UPDATE_URL, utils.getNewUpdateUrl());
+                updateIntent.putExtra(Constants.KEY_NEW_ANYAUDIO_VERSION,utils.getLatestVersionName());
+                updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(updateIntent);
+
 
             }
 

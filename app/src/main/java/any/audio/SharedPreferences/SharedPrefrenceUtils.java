@@ -207,13 +207,13 @@ public class SharedPrefrenceUtils {
         editor.commit();
     }
 
-    public void setFirstSearchDone(boolean firstSearchDone){
-        editor.putBoolean("firstSearchDone",firstSearchDone);
+    public void setFirstSearchDone(boolean firstSearchDone) {
+        editor.putBoolean("firstSearchDone", firstSearchDone);
         editor.commit();
     }
 
-    public boolean isFirstSearchDone(){
-        return preferences.getBoolean("firstSearchDone",false);
+    public boolean isFirstSearchDone() {
+        return preferences.getBoolean("firstSearchDone", false);
     }
 
     public boolean getOptionsForPushNotification() {
@@ -452,11 +452,11 @@ public class SharedPrefrenceUtils {
         editor.putString("lastItemStream", url);
         editor.commit();
 
-        Log.d("PrefCheck","setting Last Url : "+url);
+        Log.d("PrefCheck", "setting Last Url : " + url);
     }
 
     public String getLastItemStreamUrl() {
-        Log.d("PrefCheck"," returning Last Url : "+preferences.getString("lastItemStream",""));
+        Log.d("PrefCheck", " returning Last Url : " + preferences.getString("lastItemStream", ""));
         return preferences.getString("lastItemStream", "");
     }
 
@@ -493,7 +493,7 @@ public class SharedPrefrenceUtils {
         editor.putString("currentItemStream", url);
         editor.commit();
 
-        if(url.length()>0){
+        if (url.length() > 0) {
             setLastItemStreamUrl(url);
         }
 
@@ -508,7 +508,7 @@ public class SharedPrefrenceUtils {
         editor.commit();
 
         //only if there is new item
-        if(url.length()>0)
+        if (url.length() > 0)
             setLastItemThumbnailUrl(url);
 
     }
@@ -521,7 +521,7 @@ public class SharedPrefrenceUtils {
         editor.putString("currentItemTitle", title);
         editor.commit();
 
-        if(title.length()>0)
+        if (title.length() > 0)
             setLastItemTitle(title);
 
     }
@@ -534,7 +534,7 @@ public class SharedPrefrenceUtils {
         editor.putString("currentItemArtist", artist);
         editor.commit();
 
-        if(artist.length()>0)
+        if (artist.length() > 0)
             setLastItemArtist(artist);
 
     }
@@ -545,12 +545,12 @@ public class SharedPrefrenceUtils {
 
     // Player State
 
-    public void setPlayerState(int state){
+    public void setPlayerState(int state) {
 
-        editor.putInt("AnyAudioPlayerState",state);
+        editor.putInt("AnyAudioPlayerState", state);
         editor.commit();
 
-        if(state==Constants.PLAYER.PLAYER_STATE_STOPPED){
+        if (state == Constants.PLAYER.PLAYER_STATE_STOPPED) {
 
             setCurrentItemTitle("");
             setCurrentItemThumbnailUrl("");
@@ -560,93 +560,112 @@ public class SharedPrefrenceUtils {
 
     }
 
-    public int getPlayerState(){
-        return preferences.getInt("AnyAudioPlayerState",Constants.PLAYER.PLAYER_STATE_STOPPED);
+    public int getPlayerState() {
+        return preferences.getInt("AnyAudioPlayerState", Constants.PLAYER.PLAYER_STATE_STOPPED);
     }
 
 
     //Notification Tray Player
     public void setStreamContentLength(String trackLen) {
-        editor.putString("trackLen",trackLen);
+        editor.putString("trackLen", trackLen);
         editor.commit();
     }
 
-    public String getStreamContentLength(){
-        return preferences.getString("trackLen","00:00");
+    public String getStreamContentLength() {
+        return preferences.getString("trackLen", "00:00");
     }
 
     public void setStreamUrlFetchedStatus(boolean fetchedStatus) {
 
-        editor.putBoolean("fetchedStatus",fetchedStatus);
+        editor.putBoolean("fetchedStatus", fetchedStatus);
         editor.commit();
 
     }
 
-    public boolean getStreamUrlFetchedStatus(){
-        return preferences.getBoolean("fetchedStatus",false);
+    public boolean getStreamUrlFetchedStatus() {
+        return preferences.getBoolean("fetchedStatus", false);
     }
 
     public void setTaskThumbnail(String taskID, String thumbanil) {
-        editor.putString("taskThumbnail"+taskID,thumbanil);
+        editor.putString("taskThumbnail" + taskID, thumbanil);
         editor.commit();
     }
 
 
     public void setTaskArtist(String taskID, String artist) {
-        editor.putString("taskArtist"+taskID,artist);
+        editor.putString("taskArtist" + taskID, artist);
         editor.commit();
     }
 
-    public String getTaskThumbnail(String taskId){
-        return preferences.getString("taskThumbnail"+taskId,"");
+    public String getTaskThumbnail(String taskId) {
+        return preferences.getString("taskThumbnail" + taskId, "");
     }
 
-    public String getTaskArtist(String taskId){
-        return preferences.getString("taskArtist"+taskId,"");
+    public String getTaskArtist(String taskId) {
+        return preferences.getString("taskArtist" + taskId, "");
     }
 
     public void setTaskStatus(String taskID, String stateWaiting) {
-        editor.putString("taskStatus"+taskID,stateWaiting);
+        editor.putString("taskStatus" + taskID, stateWaiting);
         editor.commit();
     }
 
-    public String getTaskStatus(String taskId){
-        return preferences.getString("taskStatus"+taskId,Constants.DOWNLOAD.STATE_WAITING);
+    public String getTaskStatus(String taskId) {
+        return preferences.getString("taskStatus" + taskId, Constants.DOWNLOAD.STATE_WAITING);
     }
 
     public void setCurrentOngoingTask(String taskID) {
-        editor.putString("currentOngoingTask",taskID);
+        editor.putString("currentOngoingTask", taskID);
         editor.commit();
     }
 
-    public String getCurrentOngoingTask(){
-        return preferences.getString("currentOngoingTask","");
+    public String getCurrentOngoingTask() {
+        return preferences.getString("currentOngoingTask", "");
     }
 
     public void setMetadataDuration(String fileName, String duration) {
-        editor.putString("mtd"+fileName,duration);
+        editor.putString("mtd" + fileName, duration);
         editor.commit();
     }
 
-    public String getMetadataDuration(String fileName){
-        return preferences.getString("mtd"+fileName,"<Unknown>");
+    public String getMetadataDuration(String fileName) {
+        return preferences.getString("mtd" + fileName, "<Unknown>");
     }
 
     public void setMetadataArtist(String filename, String artist) {
-        editor.putString("mtar"+filename,artist);
+        editor.putString("mtar" + filename, artist);
         editor.commit();
     }
 
-    public String getMetadataArtist(String fileName){
-        return preferences.getString("mtar"+fileName,"<Unknown>");
+    public String getMetadataArtist(String fileName) {
+        return preferences.getString("mtar" + fileName, "<Unknown>");
     }
 
     public boolean isNotificationPlayerControlReceiverRegistered() {
-        return preferences.getBoolean("npcbr",false);
+        return preferences.getBoolean("npcbr", false);
     }
 
-    public void setNotificationPlayerControlReceiverRegistered(boolean registered){
-        editor.putBoolean("npcbr",registered);
+    public void setNotificationPlayerControlReceiverRegistered(boolean registered) {
+        editor.putBoolean("npcbr", registered);
         editor.commit();
     }
+
+    public void setNewVersionName(String newVersionName) {
+        editor.putString("versionNm", newVersionName);
+        editor.commit();
+    }
+
+    public String getLatestVersionName(){
+        return preferences.getString("verionNm","");
+    }
+
+    public void setNewVersionCode(int newVersion) {
+        editor.putInt("versionCd", newVersion);
+        editor.commit();
+    }
+
+    public int getLatestVersionCode(){
+        return preferences.getInt("versionCd",0);
+    }
+
 }

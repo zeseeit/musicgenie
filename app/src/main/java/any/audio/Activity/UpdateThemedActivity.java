@@ -61,6 +61,7 @@ public class UpdateThemedActivity extends AppCompatActivity {
         //Regular TypeFace
         btnCancel.setTypeface(tfMaterial);
         // data setters
+
         newInThisUpdateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
         newAppDownloadUrl = getIntent().getExtras().getString(Constants.KEY_NEW_UPDATE_URL);
         ov = getCurrentVersion();

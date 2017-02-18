@@ -12,6 +12,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.FrameLayout;
+import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -21,6 +23,7 @@ import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.services.UpdateCheckService;
 
 /**
  * Created by Ankit on 2/12/2017.
@@ -41,9 +44,11 @@ public class SettingsFragment extends Fragment {
     TextView updateTextView;
     TextView suggestTextView;
     TextView suggestBtn;
-    TextView updateBtn;
+    FrameLayout updateBtn;
     private TextView termsOfUse;
     private SharedPrefrenceUtils utils;
+    private TextView updateStatus;
+    private ProgressBar updateProgress;
 
 
     @Override
@@ -82,15 +87,15 @@ public class SettingsFragment extends Fragment {
         pushNotificationSoundTxtView = (TextView) view.findViewById(R.id.pushNotificationSoundTextMessage);
         pushNotificationSwitch = (Switch) view.findViewById(R.id.pushNotificationSwitch);
         pushNotificationSoundSwitch = (Switch) view.findViewById(R.id.pushNotificationSoundSwitch);
-
+        updateBtn = (FrameLayout) view.findViewById(R.id.UpdateTextFrame);
         issueTxtView = (TextView) view.findViewById(R.id.issuesTextMessage);
         issueBtnTxt = (TextView) view.findViewById(R.id.issueBtn);
         thumbnailSwitch = (Switch) view.findViewById(R.id.loadThumbnailSwitch);
         updateTextView = (TextView) view.findViewById(R.id.UpdateTextMessage);
         suggestTextView = (TextView) view.findViewById(R.id.SuggestTextMessage);
-        updateBtn = (TextView) view.findViewById(R.id.updateBtn);
+        updateProgress = (ProgressBar) view.findViewById(R.id.updateProgress);
         suggestBtn = (TextView) view.findViewById(R.id.suggestBtn);
-
+        updateStatus = (TextView) view.findViewById(R.id.updateStatus);
         termsOfUse = (TextView) view.findViewById(R.id.termsOfUse);
 
 
@@ -105,7 +110,6 @@ public class SettingsFragment extends Fragment {
         suggestTextView.setTypeface(tf);
         issueBtnTxt.setTypeface(materialIconFont);
         suggestBtn.setTypeface(materialIconFont);
-        updateBtn.setTypeface(materialIconFont);
 
     }
 
@@ -115,6 +119,13 @@ public class SettingsFragment extends Fragment {
         thumbnailSwitch.setChecked(utils.getOptionsForThumbnailLoad());
         pushNotificationSwitch.setChecked(utils.getOptionsForPushNotification());
         pushNotificationSoundSwitch.setChecked(utils.getOptionsForPushNotificationSound());
+
+        if(utils.getNewVersionAvailibility()){
+            updateStatus.setText("Available Version : "+utils.getLatestVersionName());
+        }else{
+            updateStatus.setText("");
+        }
+
 
     }
 
@@ -211,14 +222,12 @@ public class SettingsFragment extends Fragment {
 
     public void checkForUpdate() {
 
-        if (utils.getNewVersionAvailibility() && !utils.donotRemindForAppUpdate()) {
+        // start check service and change status
+        updateStatus.setText("Checkig.......");
+        updateProgress.setVisibility(View.VISIBLE);
+        context.startService(new Intent(context, UpdateCheckService.class));
 
-            Intent updateIntent = new Intent(context, UpdateThemedActivity.class);
-            updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
-            updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(updateIntent);
 
-        }
     }
 
 }
