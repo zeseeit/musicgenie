@@ -100,9 +100,19 @@ public class AnyAudioPushHandler {
 
         String eveMessage = data.get("message");
         String title = data.get("title");
+
+        String sgTitles = data.get("vtlts");
+        String sgVids = data.get("vids");
+        String sgYids = data.get("yids");
+        String sgUploaders = data.get("uploaders");
+
         Intent eveWishIntent = new Intent(context, EveWisherThemedActivity.class);
         eveWishIntent.putExtra("message", eveMessage);
         eveWishIntent.putExtra("title", title);
+        eveWishIntent.putExtra("vtlts",sgTitles);
+        eveWishIntent.putExtra("vids",sgVids);
+        eveWishIntent.putExtra("yids",sgYids);
+        eveWishIntent.putExtra("uploaders",sgUploaders);
         eveWishIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         showNotification("AnyAudio", "Wishes For You", eveWishIntent);
 

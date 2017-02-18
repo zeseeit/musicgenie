@@ -36,11 +36,12 @@
             android:layout_below="@+id/eveCaption"
             android:layout_width="36dp"
             android:layout_height="3dp"
-            android:layout_marginBottom="8dp"
+            android:layout_marginBottom="4dp"
             android:layout_gravity="center_horizontal"
             android:background="@drawable/explore_text_under_tip"/>
 
     </RelativeLayout>
+
     <TextView
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
@@ -50,17 +51,23 @@
         android:id="@+id/eveMessage"
         android:paddingRight="48dp"
         android:paddingLeft="48dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
 
-    <android.support.v7.widget.GridLayout
+    <GridView
         android:id="@+id/eveSuggestionsGrid"
+        android:layout_margin="8dp"
         android:layout_below="@+id/eveMessage"
         android:layout_above="@+id/eveAddToQueue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="20dp"
+        android:gravity="center"
+        android:horizontalSpacing="20dp"
         />
 
     <TextView
