@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@drawable/rectangle_ripple_views"
+    android:background="@drawable/test_card_bg"
     android:layout_height="72dp">
 
     <RelativeLayout
@@ -37,7 +37,7 @@
         android:id="@+id/playlist_item_title"
         android:textSize="18sp"
         android:layout_marginTop="8dp"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioBlack"
         android:text="Santoshdfffffffffffffffffff Nanavathe"
         android:lines="1"
         android:maxLines="1"
@@ -51,7 +51,7 @@
         android:id="@+id/playlist_item_artist"
         android:textSize="14sp"
         android:lines="1"
-        android:textColor="@color/AnyAudioGrey189"
+        android:textColor="@color/AnyAudioGrey"
         android:maxLines="1"
         android:text="T-Series"
         android:layout_width="match_parent"

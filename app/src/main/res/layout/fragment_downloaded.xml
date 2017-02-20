@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/AnyAudioPrimaryBackground">
+    android:background="#eeeeee">
 
     <ListView
         android:paddingTop="4dp"
@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="8dp"
-        android:paddingRight="8dp"></ListView>
+        android:paddingRight="8dp"/>
 
     <TextView
         android:visibility="gone"
         android:id="@+id/emptyDownloadedListMessage"
         android:padding="16dp"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioBlack"
         android:text="Empty Download Bucket, Download and Listen Offline ! "
         android:gravity="center"
         android:layout_width="match_parent"

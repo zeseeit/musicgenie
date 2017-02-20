@@ -5,17 +5,20 @@
     </style>
 
     <style name="HomeToolbarTheme" parent="ThemeOverlay.AppCompat.ActionBar">
-        <item name="android:textColorPrimary">@color/AnyAudioPrimaryBackground</item>
-        <item name="android:textColorSecondary">@color/AnyAudioGrey189</item>
-
+        <item name="android:textColorPrimary">@color/AnyAudioGrey</item>
+        <item name="android:textColorSecondary">@color/AnyAudioGrey</item>
     </style>
 
+    <style name="DrawerArrowStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="spinBars">true</item>
+        <item name="color">@color/AnyAudioGrey</item>
+    </style>
 
     <style name="AppTheme" parent="AppTheme.Base">
         <item name="colorPrimary">@color/AnyAudioPrimaryColor</item>
         <item name="colorPrimaryDark">@color/AnyAudioPrimaryColor</item>
         <item name="colorAccent">@color/AccentColor</item>
-
+        <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
 
         <!-- active thumb & track color (30% transparency) -->
@@ -61,5 +64,13 @@
 
     </style>
 
+    <style name="SelectableItemTheme">
+        <item name="colorControlHighlight">@color/AnyAudioLightGrey</item>
+    </style>
+
+    <style name="SelectableItemBackground">
+        <item name="android:theme">@style/SelectableItemTheme</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
 
 </resources>

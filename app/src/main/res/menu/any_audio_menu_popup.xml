@@ -5,23 +5,23 @@
 
     <item android:title="Trending"
         android:id="@+id/trending"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:orderInCategory="2"/>
 
     <item android:title="Downloading"
         android:id="@+id/downloading"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:orderInCategory="3"/>
 
     <item android:title="Downloaded"
         android:id="@+id/downloaded"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:orderInCategory="4"/>
 
 
     <item android:title="Settings"
         android:id="@+id/settings"
-        app:showAsAction="always"
+        app:showAsAction="never"
         android:orderInCategory="5"/>
 
 

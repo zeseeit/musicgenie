@@ -12,7 +12,7 @@
 
     <RelativeLayout
         android:padding="4dp"
-        android:background="@color/AnyAudioSearchItemBgColor"
+        android:background="@drawable/test_card_bg"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -52,7 +52,7 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text=""
-            android:textColor="@color/AnyAudioPrimaryColor"
+            android:textColor="@color/AnyAudioBlack"
             android:textSize="32sp" />
 
     </FrameLayout>
@@ -71,7 +71,7 @@
         android:maxLines="1"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="Sanam Rdddddddddddjhbbbbbbbbbbbbbbbbbbbbbjhbddddddddddddddddddde..."
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioBlack"
         android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -81,7 +81,7 @@
         android:id="@+id/search_item_artist"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="T-Series"
-        android:textColor="@color/AnyAudioGrey189"
+        android:textColor="@color/AnyAudioGrey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
     <TextView
@@ -90,7 +90,7 @@
         android:id="@+id/search_item_views"
         android:layout_toRightOf="@+id/search_item_thumbnail_wrapper"
         android:text="T-Series"
-        android:textColor="@color/AnyAudioGrey189"
+        android:textColor="@color/AnyAudioGrey"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

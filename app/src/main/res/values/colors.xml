@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <color name="AnyAudioBlack">#dd000000</color>
+    <color name="AnyAudioGrey">#89000000</color>
+    <color name="AnyAudioLightGrey">#1e000000</color>
+
     <color name="AnyAudioPrimaryColor">#ff6e2c</color>
     <color name="AnyAudioPrimaryGradietStart">#f44336</color>
     <color name="AnyAudioPrimaryGradientEnd">#ffa726</color>
@@ -31,9 +35,6 @@
     >> toolbar text color :  224
     >> autoplay :
     -->
-
-
-
 
 
 

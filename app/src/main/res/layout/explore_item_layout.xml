@@ -1,21 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:padding="16dp"
+    android:paddingTop="8dp"
+    android:paddingRight="4dp"
+    android:paddingLeft="4dp"
+    android:paddingBottom="4dp"
+    android:background="#eeeeee"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/DarkChocolate">
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:clickable="true"
+        android:background="?android:attr/selectableItemBackground"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:id="@+id/sectionContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
     <TextView
         android:id="@+id/explore_item_header"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="HOT"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textAllCaps="true"
+        android:textColor="@color/AnyAudioBlack"
         android:textSize="18sp" />
 
     <FrameLayout
         android:id="@+id/tip"
-        android:layout_marginTop="2dp"
+        android:layout_marginTop="4dp"
         android:layout_below="@+id/explore_item_header"
         android:layout_width="32dp"
         android:layout_height="3dp"
@@ -23,18 +36,23 @@
 
     <TextView
         android:layout_alignParentEnd="true"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioPrimaryColor"
         android:text="ShowAll"
+        android:textStyle="bold"
+        android:layout_centerVertical="true"
         android:id="@+id/explore_item_show_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/explore_left_to_right_recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tip"
-        android:layout_marginTop="4dp"
+        android:layout_below="@+id/sectionContainer"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="16dp"
         android:layout_centerHorizontal="true" />
 
 

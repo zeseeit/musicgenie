@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/AnyAudioPrimaryBackground">
+    android:background="#eeeeee">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -21,7 +21,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="16dp"
-                android:background="@color/AnyAudioSearchItemBgColor"
+                android:background="@drawable/test_card_bg"
                 android:elevation="2dp"
                 android:padding="10dp">
 
@@ -31,7 +31,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="Load Thumbnail\n(Slow Internet Connection)"
-                    android:textColor="@color/AnyAudioGrey224"
+                    android:textColor="@color/AnyAudioBlack"
                     android:textSize="16sp" />
 
                 <Switch
@@ -51,7 +51,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/AnyAudioSearchItemBgColor"
+                android:background="@drawable/test_card_bg"
                 android:elevation="2dp"
                 android:padding="10dp">
 
@@ -61,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="Have Issues With AnyAudio ? "
-                    android:textColor="@color/AnyAudioGrey224"
+                    android:textColor="@color/AnyAudioBlack"
                     android:textSize="16sp" />
 
                 <TextView
@@ -85,7 +85,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="2dp"
-                android:background="@color/AnyAudioSearchItemBgColor"
+                android:background="@drawable/test_card_bg"
                 android:elevation="2dp"
                 android:padding="10dp">
 
@@ -95,7 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text=" Update AnyAudio"
-                    android:textColor="@color/AnyAudioGrey224"
+                    android:textColor="@color/AnyAudioBlack"
                     android:textSize="16sp" />
 
                 <TextView
@@ -129,7 +129,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="2dp"
-                android:background="@color/AnyAudioSearchItemBgColor"
+                android:background="@drawable/test_card_bg"
                 android:elevation="2dp"
                 android:padding="10dp">
 
@@ -139,7 +139,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="Allow Notifications"
-                    android:textColor="@color/AnyAudioGrey224"
+                    android:textColor="@color/AnyAudioBlack"
                     android:textSize="16sp" />
 
                 <Switch
@@ -160,7 +160,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="4dp"
-                android:background="@color/AnyAudioSearchItemBgColor"
+                android:background="@drawable/test_card_bg"
                 android:elevation="2dp"
                 android:padding="10dp">
 
@@ -170,7 +170,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="Notification Sounds"
-                    android:textColor="@color/AnyAudioGrey224"
+                    android:textColor="@color/AnyAudioBlack"
                     android:textSize="16sp" />
 
                 <Switch
@@ -202,7 +202,7 @@
                 android:layout_marginLeft="0dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="2dp"
-                android:background="@color/AnyAudioSearchItemBgColor"
+                android:background="@drawable/test_card_bg"
                 android:elevation="2dp"
                 android:padding="10dp">
 
@@ -212,7 +212,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:text="Share AnyAudio Via Link"
-                    android:textColor="@color/AnyAudioGrey224"
+                    android:textColor="@color/AnyAudioBlack"
                     android:textSize="16sp" />
 
                 <TextView

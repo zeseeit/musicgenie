@@ -3,10 +3,7 @@
 
     <size android:height="10dp" android:width="10dp"/>
 
-    <gradient
-        android:startColor="@color/AnyAudioPrimaryGradientStart75"
-        android:endColor="@color/AnyAudioPrimaryGradientEnd75"
-        android:angle="0" />
+   <solid android:color="#ffffff"/>
 
 
 </shape>

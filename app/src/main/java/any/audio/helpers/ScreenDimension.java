@@ -64,7 +64,7 @@ public class ScreenDimension {
 
         Resources r = context.getResources();
         float card_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, screenWidthDP, r.getDisplayMetrics());
-        float space_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 18, r.getDisplayMetrics());
+        float space_px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 24, r.getDisplayMetrics());
         float songCardWidth = 0;
 
         if (cols == 2) {

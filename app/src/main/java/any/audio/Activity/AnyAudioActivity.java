@@ -5,12 +5,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.res.Configuration;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -99,6 +102,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private TextView nextBtn;
     private SwitchCompat autoplaySwitch;
     private TextView pauseBtn;
+    private TextView header;
     private TextView playlistBtn;
     private TextView pushDown;
     private TextView title;
@@ -110,6 +114,9 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private ImageView homeIcon;
     FrameLayout playerBg;
     SeekBar seekBar;
+
+    private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
 
     private Typeface typeface;
     public static AnyAudioActivity anyAudioActivityInstance;
@@ -138,12 +145,14 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private boolean backPressedOnce  = false;
     private PrepareBottomPlayerBroadcastReceiver prepareBottomPlayerReceiver;
     private TextView repeatModeText;
+    private Toolbar toolbar;
+    private TextView searchIcon;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_any_audio);
+        setContentView(R.layout.light_main_page);
         anyAudioActivityInstance = this;
         setSupportActionBar((Toolbar) findViewById(R.id.home_toolbar));
         getSupportActionBar().setTitle("");
@@ -212,7 +221,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             mLayout.setPanelState(SlidingUpPanelLayout.PanelState.COLLAPSED);
         }
 
-        if(homePanelTitle.getText().equals("SETTINGS") || homePanelTitle.getText().equals("DOWNLOADING") || homePanelTitle.getText().equals("DOWNLOADED")){
+        if(getSupportActionBar().getTitle().equals("SETTINGS") || getSupportActionBar().getTitle().equals("DOWNLOADING") || getSupportActionBar().getTitle().equals("DOWNLOADED")){
             // transact search or explore
             normalStart();
             return;
@@ -229,7 +238,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        getMenuInflater().inflate(R.menu.menu_anyaudio, menu);
+        getMenuInflater().inflate(R.menu.any_audio_menu_popup, menu);
 
         return super.onCreateOptionsMenu(menu);
     }
@@ -240,20 +249,40 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.home_search:
 
-                Intent search = new Intent(this, SearchActivity.class);
-                startActivity(search);
+            case R.id.trending:
+                transactFragment(FRAGMENT_EXPLORE, "EXPLORE");
+                return true;
 
-                break;
+            case R.id.downloading:
+                transactFragment(FRAGMENT_DOWNLOADING, "DOWNLOADING");
+                return true;
 
-            case R.id.home_popoup:
-                showHomePopUpMenu(findViewById(R.id.home_popoup));
-                break;
+            case R.id.downloaded:
+                transactFragment(FRAGMENT_DOWNLOADED, "DOWNLOADED");
+                return true;
+
+
+            case R.id.settings:
+                transactFragment(FRAGMENT_SETTINGS,"SETTINGS");
+                return true;
 
         }
 
         return true;
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        // Sync the toggle state after onRestoreInstanceState has occurred.
+        mDrawerToggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     private void showHomePopUpMenu(View view) {
@@ -459,7 +488,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private void normalStart() {
         String term = utils.getLastSearchTerm();
         if (utils.isFirstSearchDone()) {
-            homePanelTitle.setText(reformatHomeTitle(term));
+            setTitle(reformatHomeTitle(term));
             transactFragment(FRAGMENT_SEARCH, term);
         } else {
             transactFragment(FRAGMENT_EXPLORE, "EXPLORE");
@@ -469,6 +498,10 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private String reformatHomeTitle(String term) {
         String t = (term.length() > 21) ? term.substring(0, 18) + "..." : term;
         return t;
+    }
+
+    private void setTitle(String title){
+        header.setText(title);
     }
 
     private void initView() {
@@ -505,8 +538,42 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         playlistGenerator = PlaylistGenerator.getInstance(AnyAudioActivity.this);
         playlistGenerator.setPlaylistGenerationListener(this);
 
-        homeIcon = (ImageView) findViewById(R.id.homeIcon);
+       // homeIcon = (ImageView) findViewById(R.id.homeIcon);
         typeface = FontManager.getInstance(this).getTypeFace(FontManager.FONT_MATERIAL);
+        toolbar = (Toolbar) findViewById(R.id.home_toolbar);
+        setSupportActionBar(toolbar);
+        searchIcon = (TextView) findViewById(R.id.searchIconTxt);
+        searchIcon.setTypeface(typeface);
+
+        searchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                Intent search = new Intent(AnyAudioActivity.this, SearchActivity.class);
+                startActivity(search);
+
+            }
+        });
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,toolbar,
+                R.string.drawer_open, R.string.drawer_close) {
+
+            /** Called when a drawer has settled in a completely closed state. */
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+
+            /** Called when a drawer has settled in a completely open state. */
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                invalidateOptionsMenu(); // creates call to onPrepareOptionsMenu()
+            }
+        };
+
+        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
         progressBarStream = (ProgressBar) findViewById(R.id.progressBarStreamProgress);
         playlistMessagePanel = (TextView) findViewById(R.id.playlistMessagePanel);
         playerPlaceHolderView = (RelativeLayout) findViewById(R.id.welcome_placeholderView);
@@ -517,6 +584,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         repeatModeBtn.setTypeface(typeface);
         autoplaySwitch = (SwitchCompat) findViewById(R.id.autoplay_switch);
         playerBg = (FrameLayout) findViewById(R.id.playerBgFrame);
+        header = (TextView) findViewById(R.id.header);
         thumbnail = (CircleImageView) findViewById(R.id.thumbnail);
         nextBtn = (TextView) findViewById(R.id.nextBtn);
         pauseBtn = (TextView) findViewById(R.id.pauseBtn);
@@ -555,12 +623,12 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         infoParams.setMargins(0, (int) inPx(12), 0, 0);
         title.setLayoutParams(infoParams);
 
-        homeIcon.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                transactFragment(FRAGMENT_EXPLORE,"EXPLORE");
-            }
-        });
+//        homeIcon.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                transactFragment(FRAGMENT_EXPLORE,"EXPLORE");
+//            }
+//        });
 
         playlistBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -779,7 +847,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         FragmentManager manager = getSupportFragmentManager();
 
-        homePanelTitle.setText(extraa);
+        setTitle(extraa);
 
         switch (fragmentType) {
 
@@ -901,8 +969,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                         if (contentLen > 0 && buffered > 0) {
 
-                            pauseBtn.setVisibility(View.VISIBLE);
-                            nextBtn.setVisibility(View.VISIBLE);
+                            pauseBtn.setEnabled(true);
+                            nextBtn.setEnabled(true);
                             utils.setStreamContentLength(trackLen);
                             //startNotificationService();
 
@@ -1145,8 +1213,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             case Constants.PLAYER.PLAYER_STATE_PLAYING:
                 Log.d("PlayerTest", " Playing State");
                 pauseBtn.setText(pauseBtnString);
-                pauseBtn.setVisibility(View.VISIBLE);
-                nextBtn.setVisibility(View.VISIBLE);
+                pauseBtn.setEnabled(true);
                 nextBtn.setEnabled(true);
                 break;
 
@@ -1154,16 +1221,16 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                 Log.d("PlayerTest", " Paushed State");
                 pauseBtn.setText(playBtnString);
-                pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setEnabled(true);
+                nextBtn.setEnabled(false);
+
                 break;
 
             case Constants.PLAYER.PLAYER_STATE_STOPPED:
                 Log.d("PlayerTest", " Stopped State");
                 pauseBtn.setText(playBtnString);
-                pauseBtn.setVisibility(View.VISIBLE);
                 pauseBtn.setEnabled(true);
-                nextBtn.setVisibility(View.GONE);
+                nextBtn.setEnabled(false);
                 break;
 
         }
@@ -1207,6 +1274,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                nextBtn.setEnabled(false);
                 onNextRequested();
             }
         });

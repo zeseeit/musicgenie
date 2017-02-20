@@ -60,7 +60,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
     @Override
     public ExploreLeftToRightAdapter.ExploreItemCardViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view;
-        view = LayoutInflater.from(context).inflate(R.layout.explore_item,null,false);
+        view = LayoutInflater.from(context).inflate(R.layout.light_explore_card,null,false);
         return new ExploreItemCardViewHolder(view , itemModels);
 
     }

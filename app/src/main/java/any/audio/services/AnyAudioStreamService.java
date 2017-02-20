@@ -11,6 +11,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaMetadata;
 import android.media.session.MediaSession;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
@@ -59,13 +60,11 @@ public class AnyAudioStreamService extends Service {
     private int playerContentDuration = -1;
     public static ExoPlayer anyPlayer;
     private SharedPrefrenceUtils utils;
-    private MediaSession mSession;
 
     @Override
     public void onCreate() {
         super.onCreate();
         utils = SharedPrefrenceUtils.getInstance(this);
-        mSession = new MediaSession(this, "AnyAudio");
     }
 
     @Nullable
@@ -179,38 +178,6 @@ public class AnyAudioStreamService extends Service {
     }
 
     private void updateLockScreen(){
-
-        mSession.setActive(true);
-
-        new View(this).post(new Runnable() {
-            @Override
-            public void run() {
-                Picasso.with(AnyAudioStreamService.this).load(utils.getLastItemThumbnail()).into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-
-                        mSession.setMetadata(new MediaMetadata.Builder()
-                                .putBitmap(MediaMetadata.METADATA_KEY_ALBUM_ART, bitmap)
-                                .putBitmap(MediaMetadata.METADATA_KEY_DISPLAY_ICON, bitmap)
-                                .build()
-                        );
-
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });
-
-            }
-        });
-
     }
 
     private void useExoplayer() {
@@ -313,7 +280,6 @@ public class AnyAudioStreamService extends Service {
         //todo: option for collapsing the notification bar control
         //collapsePlayerNotificationControl();
         if (anyPlayer != null) {
-            mSession.setActive(false);
             anyPlayer.setPlayWhenReady(false);
             anyPlayer.stop();
             anyPlayer.release();

@@ -1,0 +1,22 @@
+
+<com.sothree.slidinguppanel.SlidingUpPanelLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:sothree="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/sliding_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="bottom"
+    sothree:umanoPanelHeight="68dp"
+    sothree:umanoShadowHeight="4dp"
+    sothree:umanoParallaxOffset="100dp"
+    sothree:umanoDragView="@+id/playerBgFrame"
+    sothree:umanoScrollableView="@+id/autoplay_or_queue_recycler_view"
+    sothree:umanoOverlay="true">
+
+    <!--FRAGMENT PLACEHOLDER WITH TOOLBAR-->
+    <include layout="@layout/ligt_sliding_top_content"/>
+    <!--BOTTOM PLAYER CONTENT WITH PLAYLIST-->
+    <include layout="@layout/light_sliding_bottom_pane"/>
+
+</com.sothree.slidinguppanel.SlidingUpPanelLayout>

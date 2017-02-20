@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fresco="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:paddingLeft="2.4dp"
+    android:paddingRight="2.4dp"
+    android:paddingTop="2.4dp"
+    android:background="@drawable/test_card_bg"
+    android:visibility="visible">
+
+    <LinearLayout
+        android:id="@+id/cardWrapper"
+        android:layout_width="180dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:padding="0dp"
+            android:id="@+id/explore_card_top_wrapper"
+            android:layout_width="wrap_content"
+            android:layout_height="135dp">
+
+            <com.facebook.drawee.view.SimpleDraweeView
+                android:id="@+id/explore_item_thumbnail"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:src="@drawable/hqdefault"
+                fresco:placeholderImage="@drawable/hqdefault" />
+
+            <TextView
+                android:id="@+id/play_btn_explore_card"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_centerInParent="true"
+                android:background="@drawable/play_btn_bg_card"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/AnyAudioPrimaryBackground"
+                android:textSize="28sp" />
+
+            <TextView
+                android:id="@+id/explore_item_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginBottom="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@color/White"
+                android:paddingBottom="1dp"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:paddingTop="1dp"
+                android:text="04:04"
+                android:textColor="@color/AnyAudioBlack"
+                android:textSize="10sp" />
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="72dp"
+            android:layout_below="@+id/explore_card_top_wrapper">
+
+            <TextView
+                android:id="@+id/explore_item_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toLeftOf="@+id/explore_item_popup_btn"
+                android:maxLines="1"
+                android:paddingLeft="8dp"
+                android:paddingTop="4dp"
+                android:text="The Weekend - Party"
+                android:textColor="@color/AnyAudioBlack"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/explore_item_uploader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/explore_item_title"
+                android:layout_toLeftOf="@+id/explore_item_download_btn"
+                android:maxLines="1"
+                android:paddingLeft="8dp"
+                android:paddingTop="2dp"
+                android:text="The Weekend - Party test"
+                android:textColor="@color/AnyAudioGrey"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/explore_item_views"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/explore_item_uploader"
+                android:layout_toLeftOf="@id/explore_item_download_btn"
+                android:maxLines="1"
+                android:paddingLeft="8dp"
+                android:paddingTop="2dp"
+                android:text="8,888,908"
+                android:textColor="@color/AnyAudioGrey"
+                android:textSize="12sp" />
+
+
+            <TextView
+                android:id="@+id/explore_item_download_btn"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_below="@+id/explore_item_popup_btn"
+                android:layout_alignParentEnd="true"
+                android:layout_marginRight="4dp"
+                android:background="@drawable/explore_item_download_btn_bg"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/AnyAudioBlack"
+                android:textSize="18sp" />
+
+
+            <TextView
+                android:id="@+id/explore_item_popup_btn"
+                android:layout_width="28dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:gravity="center"
+                android:text=""
+                android:textColor="@color/AnyAudioGrey"
+                android:textSize="24sp" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>

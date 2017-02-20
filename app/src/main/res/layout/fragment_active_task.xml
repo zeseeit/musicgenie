@@ -1,7 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/AnyAudioPrimaryBackground">
+    android:background="#eeeeee">
 
     <ListView
         android:paddingTop="4dp"
@@ -11,13 +11,13 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="4dp"
-        android:paddingRight="4dp"></ListView>
+        android:paddingRight="4dp"/>
 
     <TextView
         android:visibility="gone"
         android:id="@+id/emptyDownloadingListMessage"
         android:padding="16dp"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioBlack"
         android:text="No Current Items To Download ! "
         android:gravity="center"
         android:layout_width="match_parent"
