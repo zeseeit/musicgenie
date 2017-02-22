@@ -669,4 +669,22 @@ public class SharedPrefrenceUtils {
         return preferences.getInt("versionCd",0);
     }
 
+    public void newSearch(boolean equals) {
+        Log.d("SearchTest"," wrting sp "+equals);
+        editor.putBoolean("ns",equals);
+        editor.commit();
+    }
+
+    public boolean isNewSearch(){
+        return preferences.getBoolean("ns",false);
+    }
+
+    public int getSelectedNavIndex() {
+        return preferences.getInt("selectedNav",0);
+    }
+
+    public void setSelectedNavIndex(int index){
+        editor.putInt("selectedNav",index);
+        editor.commit();
+    }
 }

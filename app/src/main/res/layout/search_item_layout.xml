@@ -52,7 +52,7 @@
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text=""
-            android:textColor="@color/AnyAudioBlack"
+            android:textColor="@color/White"
             android:textSize="32sp" />
 
     </FrameLayout>

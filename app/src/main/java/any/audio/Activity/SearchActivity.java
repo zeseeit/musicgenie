@@ -255,9 +255,11 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void finilizeSearch(String term) {
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(this);
 
-        SharedPrefrenceUtils.getInstance(this).setFirstSearchDone(true);
-        SharedPrefrenceUtils.getInstance(this).setLastSearchTerm(term);
+        utils.setFirstSearchDone(true);
+        utils.newSearch(!utils.getLastSearchTerm().equals(term));
+        utils.setLastSearchTerm(term);
         finish();
 
     }

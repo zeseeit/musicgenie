@@ -35,12 +35,17 @@ public class CentralDataRepository {
      * Flag is refrenced refress is triggred
      */
     public static final int FLAG_REFRESS = 3;
+    /**
+     * Flag is refrenced show all is triggred
+     */
+    public static final int FLAG_SHOW_ALL = 4;
+
+
 
     /**
      * Result type
      */
     public static final int TYPE_TRENDING = 405;
-
     /**
      * Result type
      */
@@ -52,6 +57,7 @@ public class CentralDataRepository {
     private DbHelper mDBHelper;
     private CloudManager mCloudManager;
     private Handler mHandler;
+    private String sectionType = "";
     private int mLastLoadedType = TYPE_TRENDING;
     private String MESSAGE_TO_PASS = "";
     private SharedPrefrenceUtils sharedPrefrenceUtils;
@@ -115,6 +121,9 @@ public class CentralDataRepository {
                     case FLAG_REFRESS:
                         refressAndSubmit();
                         break;
+                    case FLAG_SHOW_ALL:
+                        getAllAndSubmit();
+                        break;
                     default:
                         break;              // do nothing
                 }
@@ -122,6 +131,30 @@ public class CentralDataRepository {
         }.start();
 
         L.m("CDR", "started thread for action");
+
+    }
+    /* get the group title and fetch it from the db and submit
+    * */
+
+    public void setSectionType(String type){
+        this.sectionType = type;
+    }
+
+    private void getAllAndSubmit() {
+
+        mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
+            @Override
+            public void onTrendingLoad(ExploreItemModel trendingItem) {
+
+                dispatchMessage(
+                        Constants.MESSAGE_STATUS_OK,
+                        MESSAGE_TO_PASS,
+                        trendingItem
+                );
+            }
+        });
+
+        mDBHelper.pokeForShowAll(sectionType);
 
     }
 
@@ -181,6 +214,9 @@ public class CentralDataRepository {
 
         SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
         String searchTerm = utils.getLastSearchTerm();
+
+        Log.i("SearchTest"," searching term .."+searchTerm);
+
         mCloudManager.requestSearch(searchTerm);
 
         sharedPrefrenceUtils.setLastLoadedType(TYPE_RESULT);
@@ -195,54 +231,25 @@ public class CentralDataRepository {
      */
     private void submitLastLoaded() {
 
-        // L.m("CDR ", " last loaded was " + mLastLoadedType);
-        mLastLoadedType = sharedPrefrenceUtils.getLastLoadedType();
-        if (mLastLoadedType == TYPE_TRENDING) {
+        Log.d("DBHelper", " last loaded result");
 
-            Log.d("DBHelper", " last loaded trending");
+        mDBHelper.setResultLoadListener(new DbHelper.ResultLoadListener() {
+            @Override
+            public void onResultLoadListener(ExploreItemModel result) {
 
-            mDBHelper.setTrendingLoadListener(new DbHelper.TrendingLoadListener() {
-                @Override
-                public void onTrendingLoad(ExploreItemModel trendingItem) {
+                dispatchMessage(
+                        Constants.MESSAGE_STATUS_OK,
+                        MESSAGE_TO_PASS,
+                        result
+                );
 
-                    dispatchMessage(
-                            Constants.MESSAGE_STATUS_OK,
-                            MESSAGE_TO_PASS,
-                            trendingItem
-                    );
+            }
+        });
 
-                }
-            });
-
-            mDBHelper.pokeForTrending();
-
-            sharedPrefrenceUtils.setLastLoadedType(TYPE_TRENDING);
-
-        } else {
-
-            Log.d("DBHelper", " last loaded result");
-
-            mDBHelper.setResultLoadListener(new DbHelper.ResultLoadListener() {
-                @Override
-                public void onResultLoadListener(ExploreItemModel result) {
-
-                    dispatchMessage(
-                            Constants.MESSAGE_STATUS_OK,
-                            MESSAGE_TO_PASS,
-                            result
-                    );
-
-                }
-            });
-
-            mDBHelper.pokeForResults();
-
-            sharedPrefrenceUtils.setLastLoadedType(TYPE_RESULT);
-
-        }
-
+        mDBHelper.pokeForResults();
 
     }
+
 
     /**
      * Checks DB for saved data
@@ -262,13 +269,11 @@ public class CentralDataRepository {
             @Override
             public void onTrendingLoad(ExploreItemModel trendingItem) {
 
-
                 dispatchMessage(
                         Constants.MESSAGE_STATUS_OK,
                         MESSAGE_TO_PASS,
                         trendingItem
                 );
-
             }
         });
 

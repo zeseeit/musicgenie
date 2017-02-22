@@ -158,6 +158,8 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                 }
             });
 
+
+
             downloadBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {

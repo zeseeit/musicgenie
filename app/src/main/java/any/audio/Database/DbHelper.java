@@ -369,7 +369,7 @@ public class DbHelper extends SQLiteOpenHelper {
         if (mTrendingLoadListener != null) {
             ArrayList<ExploreItemModel> tempTrendingList = getTrendingList();
             passFlagToReset();
-            for (int i = 0; i < tempTrendingList.size(); i++) {
+            for (int i = 0; i < 8; i++) {
                 mTrendingLoadListener.onTrendingLoad(tempTrendingList.get(i));
             }
 
@@ -388,6 +388,24 @@ public class DbHelper extends SQLiteOpenHelper {
 
     public void setResultLoadListener(ResultLoadListener mResultLoadListener) {
         this.mResultLoadListener = mResultLoadListener;
+    }
+
+    public void pokeForShowAll(String type) {
+
+        if (mTrendingLoadListener != null) {
+            ArrayList<ExploreItemModel> tempTrendingList = getTrendingList();
+            passFlagToReset();
+            for (int i = 0; i < tempTrendingList.size(); i++) {
+
+                ExploreItemModel item = tempTrendingList.get(i);
+                if(item.sectionTitle.toLowerCase().equals(type.toLowerCase())) {
+                    mTrendingLoadListener.onTrendingLoad(item);
+                }
+
+            }
+
+        }
+
     }
 
     public interface TrendingLoadListener {

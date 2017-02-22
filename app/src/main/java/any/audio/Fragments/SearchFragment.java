@@ -42,6 +42,7 @@ public class SearchFragment extends Fragment {
     private SearchResultsAdapter.SearchResultActionListener searchActionListener;
     private CentralDataRepository repository;
     private String extraa;
+    private String searchMode;
 
 
     @Nullable
@@ -71,7 +72,11 @@ public class SearchFragment extends Fragment {
 
 
         repository = CentralDataRepository.getInstance(context);
-        repository.submitAction(CentralDataRepository.FLAG_SEARCH,getHandlerInstance());
+
+        Log.d("SearchTest"," se mode "+searchMode);
+        int _action_to_invoke = searchMode.equals(Constants.SEARCH_MODE_SERVER)?CentralDataRepository.FLAG_SEARCH:CentralDataRepository.FLAG_RESTORE;
+
+        repository.submitAction(_action_to_invoke,getHandlerInstance());
 
         searchResultRecycler.setVisibility(RecyclerView.GONE);
         progressBar.setVisibility(View.VISIBLE);
@@ -162,5 +167,9 @@ public class SearchFragment extends Fragment {
 
     public void setExtraa(String extraa) {
         this.extraa = extraa;
+    }
+
+    public void setSearchMode(String mode) {
+        this.searchMode = mode;
     }
 }

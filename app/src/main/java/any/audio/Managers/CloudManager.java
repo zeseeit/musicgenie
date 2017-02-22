@@ -18,6 +18,7 @@ import java.util.ArrayList;
 
 import any.audio.Database.DbHelper;
 import any.audio.Models.ItemModel;
+import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.L;
 import any.audio.Models.ExploreItemModel;
 import any.audio.helpers.Segmentor;
@@ -63,7 +64,7 @@ public class CloudManager {
      * @param type section for trending e.g. pop , rock etc.
      */
     private void requestTrendingType(String type) {
-        int count = 8; // max 25
+        int count = 25; // max 25
         final String url = URLS.URL_TRENDING_API + "?type=" + type + "&number=" + count + "&offset=0";
 
         StringRequest trendingReq = new StringRequest(
@@ -265,6 +266,7 @@ public class CloudManager {
         }
 
         // database write test
+        SharedPrefrenceUtils.getInstance(context).newSearch(false);
         dbHelper.addResultsList(new ExploreItemModel("Results", songs));
 
     }

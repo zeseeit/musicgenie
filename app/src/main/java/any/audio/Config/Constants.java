@@ -80,6 +80,8 @@ public class Constants {
     public static final String ACTION_STREAM_TO_SERVICE_PLAY_PAUSE = "streamServicePlayPauseAction";
     public static final String ACTION_PREPARE_BOTTOM_PLAYER  = "prepare_bottom_player";
     public static final String ACTION_STREAM_TO_SERVICE_NEXT = "streamServicePlayNext";
+    public static final String SEARCH_MODE_SERVER = "searchModeServer";
+    public static final String SEARCH_MODE_DB = "searchModeDb";
 
     public interface DOWNLOAD{
 

@@ -20,7 +20,7 @@
         <item name="colorAccent">@color/AccentColor</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
-
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <!-- active thumb & track color (30% transparency) -->
         <item name="colorControlActivated">@color/AnyAudioPrimaryColor</item>
 
@@ -44,7 +44,7 @@
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:windowBackground">@drawable/splash_bg_w_logo</item>
 
     </style>
 

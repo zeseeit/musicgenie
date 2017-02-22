@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_tour"
-    android:background="@drawable/main_bg"
+    android:background="#fafafa"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="any.audio.Activity.TourActivity">
@@ -35,7 +35,7 @@
         android:layout_marginRight="8dp"
         android:text="NEXT"
         android:visibility="visible"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/AnyAudioPrimaryColor" />
 
     <Button
         android:id="@+id/back"
@@ -46,6 +46,6 @@
         android:layout_alignParentLeft="true"
         android:background="@drawable/btn_ripple_effect"
         android:text="BACK"
-        android:textColor="@android:color/white" />
+        android:textColor="@color/AnyAudioPrimaryColor" />
 
 </RelativeLayout>

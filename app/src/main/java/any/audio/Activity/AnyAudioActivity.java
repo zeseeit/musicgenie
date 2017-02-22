@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -54,14 +55,16 @@ import java.util.ArrayList;
 
 import any.audio.Adapters.PlaylistAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
-import any.audio.AnyAudioMains.AnyAudio;
 import any.audio.Config.AppConfig;
 import any.audio.Config.Constants;
 import any.audio.Fragments.DownloadedFragment;
+import any.audio.Fragments.DownloadingFragment;
 import any.audio.Fragments.DownloadsFragment;
 import any.audio.Fragments.ExploreFragment;
+import any.audio.Fragments.NavigationDrawerFragment;
 import any.audio.Fragments.SearchFragment;
 import any.audio.Fragments.SettingsFragment;
+import any.audio.Fragments.ShowAllFragment;
 import any.audio.Managers.FontManager;
 import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
@@ -84,12 +87,13 @@ import static any.audio.services.AnyAudioStreamService.anyPlayer;
 
 public class AnyAudioActivity extends AppCompatActivity implements PlaylistGenerator.PlaylistGenerateListener, SearchResultsAdapter.SearchResultActionListener, PlaylistAdapter.PlaylistItemListener, QueueEventListener {
 
-    private static final int FRAGMENT_EXPLORE = 1;
-    private static final int FRAGMENT_SEARCH = 2;
-    private static final int FRAGMENT_DOWNLOADING = 3;
-    private static final int FRAGMENT_DOWNLOADED = 4;
-    private static final int FRAGMENT_SETTINGS = 5;
-    private static final int FRAGMENT_ABOUT_US = 6;
+    public static final int FRAGMENT_EXPLORE = 1;
+    public static final int FRAGMENT_SEARCH = 2;
+    public static final int FRAGMENT_DOWNLOADS = 3;
+    public static final int FRAGMENT_SETTINGS = 5;
+    public static final int FRAGMENT_ABOUT_US = 6;
+    public static final int FRAGMENT_SHOW_ALL = 7;
+    public static final int FRAGMENT_UPDATES = 8;
 
     final String playBtnString = "\uE039";
     final String pauseBtnString = "\uE036";
@@ -147,6 +151,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private TextView repeatModeText;
     private Toolbar toolbar;
     private TextView searchIcon;
+    private FrameLayout navFrag;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -210,6 +216,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             triggerQueueMode();
         }
 
+        prepareNavigationDrawer();
 
     }
 
@@ -250,21 +257,19 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
         switch (id) {
 
-            case R.id.trending:
-                transactFragment(FRAGMENT_EXPLORE, "EXPLORE");
+            case R.id.feedback:
+
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/html");
+                intent.putExtra(Intent.EXTRA_EMAIL, "anyaudio.in@gmail.com");
+                intent.putExtra(Intent.EXTRA_SUBJECT, "Feedback");
+                intent.putExtra(Intent.EXTRA_TEXT, "");
+                startActivity(Intent.createChooser(intent, "Send Email"));
+
                 return true;
 
-            case R.id.downloading:
-                transactFragment(FRAGMENT_DOWNLOADING, "DOWNLOADING");
-                return true;
-
-            case R.id.downloaded:
-                transactFragment(FRAGMENT_DOWNLOADED, "DOWNLOADED");
-                return true;
-
-
-            case R.id.settings:
-                transactFragment(FRAGMENT_SETTINGS,"SETTINGS");
+            case R.id.exit:
+                    finish();
                 return true;
 
         }
@@ -285,46 +290,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
-    private void showHomePopUpMenu(View view) {
-
-        PopupMenu popup = new PopupMenu(this, view);
-        popup.getMenuInflater().inflate(R.menu.any_audio_menu_popup, popup.getMenu());
-        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-
-                int id = item.getItemId();
-                switch (id) {
-
-                    case R.id.trending:
-                        transactFragment(FRAGMENT_EXPLORE, "EXPLORE");
-                        return true;
-
-                    case R.id.downloading:
-                        transactFragment(FRAGMENT_DOWNLOADING, "DOWNLOADING");
-                        return true;
-
-                    case R.id.downloaded:
-                        transactFragment(FRAGMENT_DOWNLOADED, "DOWNLOADED");
-                        return true;
-
-
-                    case R.id.settings:
-                        transactFragment(FRAGMENT_SETTINGS,"SETTINGS");
-                        return true;
-
-                    default:
-                        break;
-
-                }
-
-                return false;
-            }
-        });
-        popup.show();
-
-    }
-
     private void showExploreItemPopUpMenu(View view, final String v_id, final String youtubeId, final String title, final String artist) {
 
         PopupMenu popup = new PopupMenu(this, view);
@@ -343,7 +308,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         popup.show();
 
     }
-
 
     @Override
     public void onStart() {
@@ -391,6 +355,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     }
 
     public void onShowAll(String type) {
+
+        transactFragment(FRAGMENT_SHOW_ALL,type,"<mode>");
 
     }
 
@@ -474,7 +440,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                     SharedPrefrenceUtils.getInstance(this).setLastSearchTerm(term);
                     L.m("AnyAudioHome", " invoking action search");
                     homePanelTitle.setText(reformatHomeTitle(term));
-                    transactFragment(FRAGMENT_SEARCH, term);
+                    transactFragment(FRAGMENT_SEARCH, term,Constants.SEARCH_MODE_SERVER);
                 }
 
             } else {
@@ -489,9 +455,12 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         String term = utils.getLastSearchTerm();
         if (utils.isFirstSearchDone()) {
             setTitle(reformatHomeTitle(term));
-            transactFragment(FRAGMENT_SEARCH, term);
+            //todo: remove the mode dependency since it is not feasible for every func.
+            Log.d("SearchTest"," is new "+utils.isNewSearch());
+            String mode = utils.isNewSearch()?Constants.SEARCH_MODE_SERVER:Constants.SEARCH_MODE_DB;
+            transactFragment(FRAGMENT_SEARCH, term,mode);
         } else {
-            transactFragment(FRAGMENT_EXPLORE, "EXPLORE");
+            transactFragment(FRAGMENT_EXPLORE, "EXPLORE","<not required>");
         }
     }
 
@@ -579,6 +548,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         playerPlaceHolderView = (RelativeLayout) findViewById(R.id.welcome_placeholderView);
         homePanelTitle = (TextView) findViewById(R.id.homePanelTitle);
         repeatModeBtn = (TextView) findViewById(R.id.repeatModeBtn);
+        navFrag = (FrameLayout) findViewById(R.id.left_drawer);
         repeatModeText = (TextView) findViewById(R.id.repeatModeText);
         view = findViewById(R.id.welcome_placeholderView);
         repeatModeBtn.setTypeface(typeface);
@@ -675,6 +645,22 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
             }
         });
+
+    }
+
+    public void onNavItemSelected(int fragmentToTransact,String title){
+        transactFragment(fragmentToTransact,title,"<mode>");
+        mDrawerLayout.closeDrawers();
+    }
+
+    private void prepareNavigationDrawer(){
+
+        //transact fragment
+        NavigationDrawerFragment navigationDrawerFragment = new NavigationDrawerFragment();
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.left_drawer, navigationDrawerFragment)
+                .commitAllowingStateLoss();
 
     }
 
@@ -843,7 +829,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
     }
 
-    private void transactFragment(int fragmentType, String extraa) {
+    private void transactFragment(int fragmentType, String extraa , String mode) {
 
         FragmentManager manager = getSupportFragmentManager();
 
@@ -863,10 +849,26 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                 break;
 
+            case FRAGMENT_SHOW_ALL:
+
+                ShowAllFragment showAllFragment = new ShowAllFragment();
+                showAllFragment.setExtraa(extraa);
+                manager
+                        .beginTransaction()
+                        .replace(R.id.fragmentPlaceHolder, showAllFragment)
+                        .commitAllowingStateLoss();
+
+
+                break;
+
+
+
             case FRAGMENT_SEARCH:
 
                 SearchFragment searchFragment = new SearchFragment();
                 searchFragment.setExtraa(extraa);
+                Log.d("SearchTest"," setting mode "+mode);
+                searchFragment.setSearchMode(mode);
                 searchFragment.setActionListener(this);
 
                 manager
@@ -877,24 +879,13 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                 break;
 
-            case FRAGMENT_DOWNLOADING:
+            case FRAGMENT_DOWNLOADS:
 
                 DownloadsFragment downloadsFragmentFragment = new DownloadsFragment();
 
                 manager
                         .beginTransaction()
                         .replace(R.id.fragmentPlaceHolder, downloadsFragmentFragment)
-                        .commit();
-
-                break;
-
-            case FRAGMENT_DOWNLOADED:
-
-                DownloadedFragment downloadedFragment = new DownloadedFragment();
-
-                manager
-                        .beginTransaction()
-                        .replace(R.id.fragmentPlaceHolder, downloadedFragment)
                         .commit();
 
                 break;
@@ -1140,7 +1131,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
         receiverRegistered = false;
 
     }
-
 
     private void registerNotificationPlayerControlBR(){
 

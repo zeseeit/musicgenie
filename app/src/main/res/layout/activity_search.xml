@@ -14,10 +14,10 @@
         contentInsetStart="72dp"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/AnyAudioPrimaryBackground"
+        android:background="#fafafa"
         android:elevation="4dp"
         android:minHeight="?attr/actionBarSize"
-        android:theme="@style/SuggestionToolbarTheme"
+        android:theme="@style/AppTheme"
         app:contentInsetLeft="72dp"
         app:contentInsetStart="72dp"
         >
@@ -42,15 +42,15 @@
                 android:maxLines="1"
                 android:paddingLeft="2dp"
                 android:singleLine="true"
-                android:textColor="#ffffff"
-                android:textColorHint="#b3ffffff" />
+                android:textColor="@color/AnyAudioGrey"
+                android:textColorHint="@color/AnyAudioGrey" />
 
             <TextView
                 android:id="@+id/search_clear"
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                android:gravity="center"
-                android:textColor="#ffffff"
+                android:textColor="@color/AnyAudioGrey"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:textSize="20sp"
@@ -71,5 +71,10 @@
         android:divider="@null"
         android:layout_below="@+id/search_toolbar" />
 
+    <FrameLayout
+        android:background="@drawable/toolbar_drop_shadow"
+        android:layout_below="@+id/search_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="4dp"/>
 
 </RelativeLayout>

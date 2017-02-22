@@ -25,6 +25,8 @@ import any.audio.Fragments.ExploreFragment;
 import any.audio.Models.ExploreItemModel;
 import any.audio.R;
 
+import static any.audio.Activity.AnyAudioActivity.anyAudioActivityInstance;
+
 /**
  * Created by Ankit on 1/25/2017.
  */
@@ -143,8 +145,22 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
                 }
             });
 
+            showAll.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ExploreTopDownAdapter adapter = ExploreTopDownAdapter.getInstance(context);
+                    int pos = getAdapterPosition();
+                    String type = adapter.exploreItemModels.get(pos).sectionTitle;
+                    adapter.onShowAll(type);
+                }
+            });
+
         }
 
+    }
+
+    private void onShowAll(String type) {
+        anyAudioActivityInstance.onShowAll(type);
     }
 
 

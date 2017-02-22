@@ -3,19 +3,12 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-    <ImageView
-        android:src="@drawable/main_bg"
-        android:scaleType="centerCrop"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
     <TextView
         android:id="@+id/termsHeader"
         android:layout_marginTop="42dp"
         android:gravity="center_horizontal"
         android:textSize="24sp"
-        android:textColor="@color/Gray"
+        android:textColor="@color/AnyAudioGrey"
         android:text="Terms &amp; Conditions"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
@@ -39,7 +32,7 @@
         <TextView
             android:id="@+id/termsContent"
             android:padding="12dp"
-            android:textColor="@color/Gray"
+            android:textColor="@color/AnyAudioGrey"
             android:text="@string/terms"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />

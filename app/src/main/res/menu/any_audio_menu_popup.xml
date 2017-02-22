@@ -3,26 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
-    <item android:title="Trending"
-        android:id="@+id/trending"
+    <item android:title="Feedback"
+        android:id="@+id/feedback"
         app:showAsAction="never"
         android:orderInCategory="2"/>
 
-    <item android:title="Downloading"
-        android:id="@+id/downloading"
+
+    <item android:title="Share App Link"
+        android:id="@+id/share"
         app:showAsAction="never"
         android:orderInCategory="3"/>
 
-    <item android:title="Downloaded"
-        android:id="@+id/downloaded"
+
+    <item android:title="Exit"
+        android:id="@+id/exit"
         app:showAsAction="never"
         android:orderInCategory="4"/>
-
-
-    <item android:title="Settings"
-        android:id="@+id/settings"
-        app:showAsAction="never"
-        android:orderInCategory="5"/>
 
 
 </menu>
