@@ -95,8 +95,8 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     public static final int FRAGMENT_SHOW_ALL = 7;
     public static final int FRAGMENT_UPDATES = 8;
 
-    final String playBtnString = "\uE039";
-    final String pauseBtnString = "\uE036";
+    final String playBtnString = "\uE037";
+    final String pauseBtnString = "\uE034";
     final String suffleBtnString = "\uE043";
     final String repeatAllBtnString = "\uE627";
     final String noRepeatBtnString = "\uE628";

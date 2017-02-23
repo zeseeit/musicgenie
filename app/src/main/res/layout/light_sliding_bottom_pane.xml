@@ -34,8 +34,7 @@
             android:padding="8dp"
             android:src="@color/AnyAudioGrey189"
             app:civ_border_overlay="true"
-            app:civ_border_width="2dp"
-            app:civ_border_color="@color/AnyAudioPrimaryColor"
+            app:civ_border_width="0dp"
             android:layout_width="64dp"
             android:layout_height="64dp" />
 

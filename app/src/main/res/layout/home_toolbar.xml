@@ -19,7 +19,7 @@
         android:id="@+id/header"
         android:layout_toLeftOf="@+id/searchIconTxt"
         android:textColor="@color/AnyAudioGrey"
-        android:textSize="24sp"
+        android:textSize="22sp"
         android:gravity="center"
         android:text="EXPLORE"
         android:maxLines="1"

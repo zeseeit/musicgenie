@@ -7,11 +7,12 @@
 
     <ImageView
         android:scaleType="centerCrop"
-        android:src="@drawable/connnectivity_error_bg"
+        android:src="@drawable/error_connectivity"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
     <TextView
+        android:visibility="gone"
         android:id="@+id/continueBtn"
         android:layout_marginBottom="24dp"
         android:paddingTop="8dp"

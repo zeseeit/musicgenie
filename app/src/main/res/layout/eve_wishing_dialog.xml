@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_bg">
+    android:background="#ffffff">
 
     <TextView
         android:layout_width="wrap_content"
@@ -45,8 +45,9 @@
     <TextView
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"
+        android:textSize="16sp"
         android:layout_below="@+id/updates_top_wrapper"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioGrey"
         android:text="Celebrate Your Valentine with some of lovely songs that we reccoment"
         android:id="@+id/eveMessage"
         android:paddingRight="48dp"
@@ -57,10 +58,24 @@
         android:layout_height="wrap_content" />
 
 
+    <TextView
+        android:layout_margin="16dp"
+        android:text="ADD TO QUEUE"
+        android:textColor="@color/White"
+        android:id="@+id/eveAddToQueue"
+        android:paddingLeft="16dp"
+        android:elevation="4dp"
+        android:paddingRight="16dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:background="@drawable/terms_accept_btn"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <GridView
         android:id="@+id/eveSuggestionsGrid"
-        android:layout_margin="8dp"
-        android:layout_below="@+id/eveMessage"
         android:layout_above="@+id/eveAddToQueue"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -68,22 +83,10 @@
         android:verticalSpacing="20dp"
         android:gravity="center"
         android:horizontalSpacing="20dp"
-        />
-
-    <TextView
-        android:layout_margin="16dp"
-        android:text="Add To My Queue"
-        android:textColor="@color/White"
-        android:id="@+id/eveAddToQueue"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="6dp"
-        android:paddingBottom="6dp"
-        android:background="@drawable/terms_accept_btn"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_below="@+id/eveMessage"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>

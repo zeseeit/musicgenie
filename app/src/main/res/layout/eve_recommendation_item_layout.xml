@@ -3,7 +3,7 @@
     android:layout_height="wrap_content"
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:visibility="visible"
-    android:background="@drawable/explore_item_bg"
+    android:background="@drawable/explore_card_drop_shadow_bg"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <LinearLayout
@@ -28,7 +28,6 @@
         </RelativeLayout>
 
         <RelativeLayout
-            android:background="@drawable/explore_item_card_info_gradient_bg"
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_below="@+id/explore_card_top_wrapper">
@@ -44,7 +43,7 @@
                 android:paddingTop="10dp"
                 android:ellipsize="end"
                 android:text="The Weekend - Party"
-                android:textColor="@color/AnyAudioGrey224"
+                android:textColor="@color/AnyAudioBlack"
                 android:textSize="14sp"
                 android:textStyle="bold" />
 
@@ -58,9 +57,9 @@
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
                 android:ellipsize="end"
-                android:paddingTop="2dp"
+                android:paddingTop="0dp"
                 android:text="Artist"
-                android:textColor="@color/AnyAudioGrey189"
+                android:textColor="@color/AnyAudioGrey"
                 android:textSize="12sp" />
 
         </RelativeLayout>

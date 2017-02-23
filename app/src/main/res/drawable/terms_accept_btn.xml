@@ -11,7 +11,7 @@
             android:angle="0"
             android:startColor="@color/Orange"
             android:endColor="@color/PrimaryColor" />
-        <corners android:radius="4dp" />
+        <corners android:radius="2dp" />
 
     </shape>
     </item>
@@ -26,8 +26,9 @@
                 android:angle="0"
                 android:endColor="@color/Orange"
                 android:startColor="@color/PrimaryColor" />
-            <corners android:radius="4dp" />
+            <corners android:radius="2dp" />
 
         </shape>
     </item>
+
 </selector>

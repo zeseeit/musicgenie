@@ -30,7 +30,7 @@ public class RecommendationThemed extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.activity_recommendation_themed);
+        setContentView(R.layout.light_recommendation_themed_layout);
         getWindow().setBackgroundDrawable(new ColorDrawable(0));
 
         Bundle bundle = getIntent().getExtras();

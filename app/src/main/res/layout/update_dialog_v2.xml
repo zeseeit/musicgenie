@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/main_bg">
+    android:layout_height="match_parent">
 
     <TextView
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/updates_top_wrapper"
         android:gravity="center_horizontal"
-        android:textColor="@color/AnyAudioGrey224"
+        android:textColor="@color/AnyAudioGrey"
         android:text="Better Performance "
         android:id="@+id/newFeatures"
         android:paddingRight="48dp"
@@ -19,6 +18,7 @@
     <TextView
         android:layout_marginTop="14dp"
         android:text="UPDATE"
+        android:elevation="4dp"
         android:textColor="@color/White"
         android:id="@+id/updateBtn"
         android:paddingLeft="14dp"
@@ -72,7 +72,7 @@
 
             <TextView
                 android:layout_below="@+id/tip"
-                android:textColor="@color/AnyAudioGrey224"
+                android:textColor="@color/AnyAudioBlack"
                 android:textSize="16sp"
                 android:layout_margin="4dp"
                 android:id="@+id/newVersionText"
@@ -93,7 +93,7 @@
         <TextView
             android:layout_below="@+id/tip"
             android:layout_toRightOf="@+id/verticalbar"
-            android:textColor="@color/AnyAudioGrey189"
+            android:textColor="@color/AnyAudioGrey"
             android:textSize="12sp"
             android:layout_margin="6dp"
             android:id="@+id/oldVersionText"

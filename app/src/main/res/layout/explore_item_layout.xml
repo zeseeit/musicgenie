@@ -4,7 +4,7 @@
     android:paddingRight="4dp"
     android:paddingLeft="4dp"
     android:paddingBottom="4dp"
-    android:background="#eeeeee"
+    android:background="#ffffff"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 

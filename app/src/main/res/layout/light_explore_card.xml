@@ -3,10 +3,8 @@
     xmlns:fresco="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:paddingLeft="2.4dp"
-    android:paddingRight="2.4dp"
-    android:paddingTop="2.4dp"
-    android:background="@drawable/test_card_bg"
+    android:padding="6dp"
+    android:background="@drawable/explore_card_drop_shadow_bg"
     android:visibility="visible">
 
     <LinearLayout
@@ -85,7 +83,7 @@
                 android:layout_toLeftOf="@+id/explore_item_download_btn"
                 android:maxLines="1"
                 android:paddingLeft="8dp"
-                android:paddingTop="2dp"
+                android:paddingTop="0dp"
                 android:text="The Weekend - Party test"
                 android:textColor="@color/AnyAudioGrey"
                 android:textSize="12sp" />
@@ -98,7 +96,7 @@
                 android:layout_toLeftOf="@id/explore_item_download_btn"
                 android:maxLines="1"
                 android:paddingLeft="8dp"
-                android:paddingTop="2dp"
+                android:paddingTop="0dp"
                 android:text="8,888,908"
                 android:textColor="@color/AnyAudioGrey"
                 android:textSize="12sp" />
@@ -106,12 +104,12 @@
 
             <TextView
                 android:id="@+id/explore_item_download_btn"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
                 android:layout_below="@+id/explore_item_popup_btn"
                 android:layout_alignParentEnd="true"
-                android:layout_marginRight="4dp"
-                android:background="@drawable/explore_item_download_btn_bg"
+
+                android:background="@drawable/round_btn_background_drop_shadow"
                 android:gravity="center"
                 android:text=""
                 android:textColor="@color/AnyAudioBlack"
