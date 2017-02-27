@@ -9,16 +9,12 @@ import android.util.Log;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import any.audio.Config.Constants;
 import any.audio.Models.ItemModel;
-import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.helpers.L;
 import any.audio.Models.ExploreItemModel;
-
-import static any.audio.Centrals.CentralDataRepository.TYPE_RESULT;
 
 
 /**
@@ -29,6 +25,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final java.lang.String SECTION_TYPE_RESULTS = "Results";
     private static final String TIME_SINCE_UPLOADED_LEFT_VACCANT = "";
     private static final int DB_VERSION = 1;
+    private static final int MX_DB_EXPLORE_ITEM_COUNT = 25;
     private static final String DB_NAME = "musicegenieDB";
     private static final String TABLE_TRENDING = "trendingTable";
     private static final String TABLE_RESULTS = "resultsTable";
@@ -40,6 +37,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static final String COL_TIME_SINCE_UPLOADED = "TIME_SINCE_UPLOADED";
     private static final String COL_USER_VIEWS = "USER_VIEWS";
     private static final String COL_TYPE = "TYPE";
+
     private static final String CREATE_TRENDING_TABLE = "CREATE TABLE IF NOT EXISTS " + TABLE_TRENDING + "( " +
 
             COL_TITLE + " TEXT , " +
@@ -71,6 +69,7 @@ public class DbHelper extends SQLiteOpenHelper {
     private static DbHelper mInstance;
     TrendingLoadListener mTrendingLoadListener;
     ResultLoadListener mResultLoadListener;
+
 
     private DbHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
@@ -142,6 +141,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         hasStoredTrending = cr.getCount() > 0;
         L.m("DBHelper", " isTrendingCached() " + hasStoredTrending);
+        cr.close();
         return hasStoredTrending;
     }
 
@@ -172,8 +172,8 @@ public class DbHelper extends SQLiteOpenHelper {
 
         if (mTrendingLoadListener != null) {
             // must-pass flag for data reset
-            if (doReset) passFlagToReset();
-            mTrendingLoadListener.onTrendingLoad(list);
+            if (doReset) passFlagToResetExplore();
+              mTrendingLoadListener.onTrendingLoad(list);
         }
 
     }
@@ -182,22 +182,18 @@ public class DbHelper extends SQLiteOpenHelper {
     //                  Results Operation Section
     ///////////////////////////////////////////////////////////////////////////
 
-    private void passFlagToReset() {
+    private void passFlagToResetExplore() {
 
         ExploreItemModel tModel = new ExploreItemModel(Constants.FLAG_RESET_ADAPTER_DATA, null);
-
-//        if (SharedPrefrenceUtils.getInstance(context).getLastLoadedType() == TYPE_RESULT) {
-//            mResultLoadListener.onResultLoadListener(tModel);
-//        } else {
-//            mTrendingLoadListener.onTrendingLoad(tModel);
-//        }
+        mTrendingLoadListener.onTrendingLoad(tModel);
 
     }
+
 
     /**
      * @return Read Trending From database
      */
-    private ArrayList<ExploreItemModel> getTrendingList() {
+    private ArrayList<ExploreItemModel> getTrendingList(int limitSize) {
 
         ArrayList<ExploreItemModel> trendingFromDbList = new ArrayList<>();
 
@@ -218,8 +214,10 @@ public class DbHelper extends SQLiteOpenHelper {
         cr.moveToFirst();
         //  L.m("DBHT"," cursor size "+cr.getCount());
 
+        ArrayList<ItemModel> mapList;
         HashMap<String, ArrayList<ItemModel>> trendingMap = new HashMap<>();
         boolean hasNext = cr.getCount() > 0;
+
         while (hasNext) {
             // get type of song from cursor
             ItemModel itemModelObj;
@@ -233,7 +231,7 @@ public class DbHelper extends SQLiteOpenHelper {
                     cr.getString(cr.getColumnIndex(COL_USER_VIEWS)),
                     cr.getString(cr.getColumnIndex(COL_TYPE)));
 
-            ArrayList<ItemModel> mapList = trendingMap.get(type);
+            mapList = trendingMap.get(type);
             //L.m("DBH","mapList type - "+type);
             if (mapList == null) {       // accessing list from map for first time
                 mapList = new ArrayList<>();
@@ -242,22 +240,23 @@ public class DbHelper extends SQLiteOpenHelper {
                 mapList.add(itemModelObj);
             } else {
                 //        L.m("DBH","mapList type - "+type);
-                mapList.add(itemModelObj);
+                if(mapList.size()<=limitSize)
+                    mapList.add(itemModelObj);
             }
             hasNext = cr.moveToNext();
         }
 
         // get each item from map and get list and add
 
-        Iterator iterator = trendingMap.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry pair = (Map.Entry) iterator.next();
+        for (Object o : trendingMap.entrySet()) {
+            Map.Entry pair = (Map.Entry) o;
             //L.m("DBHelper", " Iterator " + pair.getKey().toString());
             //  L.m("DBH","type - >"+pair.getKey().toString()+" size - "+trendingMap.get(pair.getKey()).size());
             trendingFromDbList.add(new ExploreItemModel(pair.getKey().toString(), trendingMap.get(pair.getKey())));
         }
 
         L.m("DBHelper", " collected total " + trendingFromDbList.size());
+        cr.close();
         return trendingFromDbList;
     }
 
@@ -272,6 +271,7 @@ public class DbHelper extends SQLiteOpenHelper {
 
         cr.moveToFirst();
         hasStoredResult = cr.getCount() > 0;
+        cr.close();
         return hasStoredResult;
     }
 
@@ -312,7 +312,6 @@ public class DbHelper extends SQLiteOpenHelper {
 
 
         if (mResultLoadListener != null) {
-            passFlagToReset();
             mResultLoadListener.onResultLoadListener(modelItem);
         }
 
@@ -357,6 +356,7 @@ public class DbHelper extends SQLiteOpenHelper {
         }
         returnExploreItemModel = new ExploreItemModel(SECTION_TYPE_RESULTS, itemModelArrayList);
         Log.d("DBHelper", " returning Results " + itemModelArrayList.size());
+        cr.close();
         return returnExploreItemModel;
     }
 
@@ -367,9 +367,9 @@ public class DbHelper extends SQLiteOpenHelper {
     public void pokeForTrending() {
 
         if (mTrendingLoadListener != null) {
-            ArrayList<ExploreItemModel> tempTrendingList = getTrendingList();
-            passFlagToReset();
-            for (int i = 0; i < 8; i++) {
+            ArrayList<ExploreItemModel> tempTrendingList = getTrendingList(7);
+            passFlagToResetExplore();
+            for (int i = 0; i < tempTrendingList.size(); i++) {
                 mTrendingLoadListener.onTrendingLoad(tempTrendingList.get(i));
             }
 
@@ -379,8 +379,6 @@ public class DbHelper extends SQLiteOpenHelper {
     public void pokeForResults() {
 
         if (mResultLoadListener != null) {
-
-            passFlagToReset();
 
             mResultLoadListener.onResultLoadListener(getResultList());
         }
@@ -393,8 +391,7 @@ public class DbHelper extends SQLiteOpenHelper {
     public void pokeForShowAll(String type) {
 
         if (mTrendingLoadListener != null) {
-            ArrayList<ExploreItemModel> tempTrendingList = getTrendingList();
-            passFlagToReset();
+            ArrayList<ExploreItemModel> tempTrendingList = getTrendingList(MX_DB_EXPLORE_ITEM_COUNT);
             for (int i = 0; i < tempTrendingList.size(); i++) {
 
                 ExploreItemModel item = tempTrendingList.get(i);

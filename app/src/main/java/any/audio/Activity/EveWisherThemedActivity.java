@@ -3,16 +3,12 @@ package any.audio.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayout;
 import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.GridView;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -36,7 +32,6 @@ public class EveWisherThemedActivity extends AppCompatActivity {
     TextView eveSuggestionAddToQueueBtn;
     GridView gridLayout;
     TextView cancelEveDialog;
-    private EveRecommendationGridAdapter gridLayoutAdapter;
     private ArrayList<PlaylistItem> items;
 
 
@@ -79,7 +74,7 @@ public class EveWisherThemedActivity extends AppCompatActivity {
             }
         });
 
-        gridLayoutAdapter = EveRecommendationGridAdapter.getInstance(this);
+        EveRecommendationGridAdapter gridLayoutAdapter = EveRecommendationGridAdapter.getInstance(this);
         gridLayoutAdapter.setSuggestionsList(items);
         gridLayout.setAdapter(gridLayoutAdapter);
 

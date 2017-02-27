@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/availableVersion"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:layout_toLeftOf="@+id/updateCheckProgress"
+        android:text="Availble Version : 1.0.0.1"
+        android:textColor="@color/AnyAudioBlack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_toLeftOf="@+id/updateCheckProgress"
+        android:id="@+id/currentVersion"
+        android:layout_below="@+id/availableVersion"
+        android:textSize="16sp"
+        android:padding="16dp"
+        android:text="Your Version : 1.0"
+        android:textColor="@color/AnyAudioBlack"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+
+    <TextView
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:padding="16dp"
+        android:layout_below="@+id/currentVersion"
+        android:id="@+id/checkUpdateBtn"
+        android:text="CHECK FOR UPDATES"
+        android:background="@drawable/terms_accept_btn"
+        android:textColor="@color/White"
+        android:textSize="20sp"
+        android:alpha="0.9"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ProgressBar
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:layout_above="@+id/checkUpdateBtn"
+        android:id="@+id/updateCheckProgress" />
+
+
+</RelativeLayout>

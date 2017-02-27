@@ -10,9 +10,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-
 import any.audio.Managers.FontManager;
 import any.audio.Models.NavItem;
 import any.audio.R;

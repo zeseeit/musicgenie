@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -36,8 +37,6 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
     private ArrayList<DownloadingItemModel> downloadingList;
     private DownloadCancelListener downloadCancelListener;
     private Typeface tfIcon;
-    private String toStartDownloadText = "\uE037";
-    private String toStopDownloadText = "\uE047";
     private SharedPrefrenceUtils utils;
 
     public DownloadingAdapter(Context context) {
@@ -113,43 +112,59 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
         ));
         viewHolder.taskArtist.setText(data.artist);
 
-        if(data.downloadingState.equals(Constants.DOWNLOAD.STATE_STOPPED)){
-            //stopped state
+        String toStopDownloadText = "\uE047";
+        switch (data.downloadingState) {
+            case Constants.DOWNLOAD.STATE_STOPPED: {
+                //stopped state
 
-            viewHolder.progressBar.setVisibility(View.GONE);
-            viewHolder.progressText.setVisibility(View.GONE);
+                viewHolder.progressBar.setVisibility(View.GONE);
+                viewHolder.progressText.setVisibility(View.GONE);
 
-            viewHolder.statusMessage.setVisibility(View.VISIBLE);
-            String msg = "Stopped Downloading";
-            viewHolder.statusMessage.setText(msg);
-            viewHolder.stopStartBtn.setText(toStartDownloadText);
+                viewHolder.statusMessage.setVisibility(View.VISIBLE);
+                String msg = "Stopped Downloading";
+                viewHolder.statusMessage.setText(msg);
+                String toStartDownloadText = "\uE037";
+                viewHolder.stopStartBtn.setText(toStartDownloadText);
 
-        }else if(data.downloadingState.equals(Constants.DOWNLOAD.STATE_WAITING)){
-            // waiting item
-
-
-            viewHolder.progressBar.setVisibility(View.GONE);
-            viewHolder.progressText.setVisibility(View.GONE);
-
-            viewHolder.statusMessage.setVisibility(View.VISIBLE);
-            String msg = "Waiting To Start";
-            viewHolder.statusMessage.setText(msg);
-            viewHolder.stopStartBtn.setText(toStopDownloadText);
+                break;
+            }
+            case Constants.DOWNLOAD.STATE_WAITING: {
+                // waiting item
 
 
-        }else{
+                viewHolder.progressBar.setVisibility(View.GONE);
+                viewHolder.progressText.setVisibility(View.GONE);
 
-            //downloading state
-            viewHolder.progressBar.setVisibility(View.VISIBLE);
-            viewHolder.progressText.setVisibility(View.VISIBLE);
-            viewHolder.progressBar.setProgress(Integer.parseInt(data.progress));
+                viewHolder.statusMessage.setVisibility(View.VISIBLE);
+                String msg = "Waiting To Start";
+                viewHolder.statusMessage.setText(msg);
+                viewHolder.stopStartBtn.setText(toStopDownloadText);
 
-            viewHolder.progressText.setText(data.progress+" %");
-            viewHolder.contentSizeMB.setText(data.contentSize);
-            viewHolder.statusMessage.setVisibility(View.GONE);
-            viewHolder.stopStartBtn.setText(toStopDownloadText);
 
+                break;
+            }
+            default:
+
+                //downloading state
+                viewHolder.progressBar.setVisibility(View.VISIBLE);
+                viewHolder.progressText.setVisibility(View.VISIBLE);
+                viewHolder.progressBar.setProgress(Integer.parseInt(data.progress));
+
+                viewHolder.progressText.setText(data.progress + " %");
+                viewHolder.contentSizeMB.setText(data.contentSize);
+                viewHolder.statusMessage.setVisibility(View.GONE);
+                viewHolder.stopStartBtn.setText(toStopDownloadText);
+
+                break;
         }
+
+        viewHolder.stopStartBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                return false;
+            }
+        });
 
         viewHolder.stopStartBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +183,14 @@ public class DownloadingAdapter extends ArrayAdapter<String> {
                     TaskHandler.getInstance(context).stopTask(data.taskId);
                 }
 
+            }
+        });
+
+        viewHolder.cancelBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                return false;
             }
         });
 

@@ -2,19 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
-    <item android:title="Feedback"
-        android:id="@+id/feedback"
-        app:showAsAction="never"
-        android:orderInCategory="2"/>
-
-
-    <item android:title="Share App Link"
-        android:id="@+id/share"
-        app:showAsAction="never"
-        android:orderInCategory="3"/>
-
-
     <item android:title="Exit"
         android:id="@+id/exit"
         app:showAsAction="never"

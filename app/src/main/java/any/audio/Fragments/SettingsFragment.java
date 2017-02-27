@@ -2,30 +2,22 @@ package any.audio.Fragments;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.FrameLayout;
-import android.widget.ProgressBar;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import any.audio.Activity.UpdateThemedActivity;
-import any.audio.Activity.UserPreferenceSetting;
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
-import any.audio.services.UpdateCheckService;
 
 /**
  * Created by Ankit on 2/12/2017.
@@ -39,28 +31,15 @@ public class SettingsFragment extends Fragment {
     TextView pushNotificationSoundTxtView;
     Switch pushNotificationSwitch;
     Switch pushNotificationSoundSwitch;
-    TextView issueTxtView;
-    TextView issueBtnTxt;
     Switch thumbnailSwitch;
-    Toolbar toolbar;
-    TextView updateTextView;
-    TextView suggestTextView;
-    TextView suggestBtn;
-    FrameLayout updateBtn;
     private TextView termsOfUse;
     private SharedPrefrenceUtils utils;
-    private TextView updateStatus;
-    private ProgressBar updateProgress;
 
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         utils = SharedPrefrenceUtils.getInstance(context);
-
-        if(getCurrentAppVersionCode()==utils.getLatestVersionCode()){
-            utils.setNewVersionAvailibility(false);
-        }
 
     }
 
@@ -94,29 +73,14 @@ public class SettingsFragment extends Fragment {
         pushNotificationSoundTxtView = (TextView) view.findViewById(R.id.pushNotificationSoundTextMessage);
         pushNotificationSwitch = (Switch) view.findViewById(R.id.pushNotificationSwitch);
         pushNotificationSoundSwitch = (Switch) view.findViewById(R.id.pushNotificationSoundSwitch);
-        updateBtn = (FrameLayout) view.findViewById(R.id.UpdateTextFrame);
-        issueTxtView = (TextView) view.findViewById(R.id.issuesTextMessage);
-        issueBtnTxt = (TextView) view.findViewById(R.id.issueBtn);
         thumbnailSwitch = (Switch) view.findViewById(R.id.loadThumbnailSwitch);
-        updateTextView = (TextView) view.findViewById(R.id.UpdateTextMessage);
-        suggestTextView = (TextView) view.findViewById(R.id.SuggestTextMessage);
-        updateProgress = (ProgressBar) view.findViewById(R.id.updateProgress);
-        suggestBtn = (TextView) view.findViewById(R.id.suggestBtn);
-        updateStatus = (TextView) view.findViewById(R.id.updateStatus);
         termsOfUse = (TextView) view.findViewById(R.id.termsOfUse);
 
-
         Typeface tf = FontManager.getInstance(context).getTypeFace(FontManager.FONT_RALEWAY_REGULAR);
-        Typeface materialIconFont = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
         thumbnailTxtView.setTypeface(tf);
         pushNotificationSoundTxtView.setTypeface(tf);
         pushNotificationTxtView.setTypeface(tf);
-        issueTxtView.setTypeface(tf);
         termsOfUse.setTypeface(tf);
-        updateTextView.setTypeface(tf);
-        suggestTextView.setTypeface(tf);
-        issueBtnTxt.setTypeface(materialIconFont);
-        suggestBtn.setTypeface(materialIconFont);
 
     }
 
@@ -127,24 +91,6 @@ public class SettingsFragment extends Fragment {
         pushNotificationSwitch.setChecked(utils.getOptionsForPushNotification());
         pushNotificationSoundSwitch.setChecked(utils.getOptionsForPushNotificationSound());
 
-        if(utils.getNewVersionAvailibility()){
-            updateStatus.setText("Available Version : "+utils.getLatestVersionName());
-        }else{
-            updateStatus.setText("");
-        }
-
-
-    }
-
-    private void suggestOther() {
-
-        String dndUrl = utils.getNewUpdateUrl();
-        String textToShare = "AnyAudio a tool to download/stream Any Audio from Internet. You Can Download it from "+dndUrl;
-
-        Intent share = new Intent(Intent.ACTION_SEND);
-        share.setType("text/plain");
-        share.putExtra(Intent.EXTRA_TEXT, textToShare);
-        startActivity(share);
 
     }
 
@@ -185,35 +131,6 @@ public class SettingsFragment extends Fragment {
             }
         });
 
-        issueBtnTxt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                Intent intent = new Intent(Intent.ACTION_SEND);
-                intent.setType("text/html");
-                intent.putExtra(Intent.EXTRA_EMAIL, "anyaudio.in@gmail.com");
-                intent.putExtra(Intent.EXTRA_SUBJECT, "Issue/Report");
-                intent.putExtra(Intent.EXTRA_TEXT, "");
-
-                startActivity(Intent.createChooser(intent, "Send Email"));
-            }
-        });
-
-        updateBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                checkForUpdate();
-                utils.setDoNotRemindMeAgainForAppUpdate(false);
-            }
-        });
-
-        suggestBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                suggestOther();
-            }
-        });
-
 
         termsOfUse.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -227,46 +144,5 @@ public class SettingsFragment extends Fragment {
 
     }
 
-    public void checkForUpdate() {
-
-        // start check service and change status
-        if(!utils.getNewVersionAvailibility()) {
-
-            updateStatus.setText("Checking For Updates...");
-            updateProgress.setVisibility(View.VISIBLE);
-            Intent updateCheckServiceIntent = new Intent(context, UpdateCheckService.class);
-            updateCheckServiceIntent.setAction("ACTION_UPDATE");
-            context.startService(updateCheckServiceIntent);
-
-        }else {
-
-            download();
-
-        }
-
-    }
-
-    public void download() {
-
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(utils.getNewUpdateUrl()));
-        startActivity(intent);
-
-    }
-
-    private int getCurrentAppVersionCode() {
-
-        try {
-
-            PackageInfo _info = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
-            return _info.versionCode;
-
-        } catch (PackageManager.NameNotFoundException e) {
-
-            e.printStackTrace();
-            return -1;
-
-        }
-    }
 
 }

@@ -17,14 +17,10 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
-import any.audio.Activity.AnyAudioActivity;
 import any.audio.Adapters.DownloadedItemsAdapter;
-import any.audio.Adapters.DownloadingAdapter;
 import any.audio.Config.Constants;
 import any.audio.Models.DownloadedItemModel;
 import any.audio.R;
-import any.audio.helpers.TaskHandler;
-import any.audio.helpers.ToastMaker;
 
 /**
  * Created by Ankit on 2/10/2017.
@@ -34,7 +30,6 @@ public class DownloadedFragment extends Fragment {
 
     private Context context;
     private TextView emptyMessage;
-    private ListView downloadedListView;
     private DownloadedItemsAdapter downloadedAdapter;
     private DownloadedItemsAdapter.DownloadedItemDeleteListener downloadedItemDeleteListener = new DownloadedItemsAdapter.DownloadedItemDeleteListener() {
         @Override
@@ -128,7 +123,7 @@ public class DownloadedFragment extends Fragment {
 
         View fragmentView = inflater.inflate(R.layout.fragment_downloaded, container, false);
         emptyMessage = (TextView) fragmentView.findViewById(R.id.emptyDownloadedListMessage);
-        downloadedListView = (ListView) fragmentView.findViewById(R.id.DownloadedListView);
+        ListView downloadedListView = (ListView) fragmentView.findViewById(R.id.DownloadedListView);
         downloadedAdapter = DownloadedItemsAdapter.getInstance(getActivity());
         downloadedAdapter.setOnDownloadCancelListener(downloadedItemDeleteListener);
         downloadedAdapter.setDownloadingList(getDownloadedItemList());
@@ -140,10 +135,10 @@ public class DownloadedFragment extends Fragment {
     private ArrayList<DownloadedItemModel> getDownloadedItemList() {
         ArrayList<DownloadedItemModel> downloadedItemModels = new ArrayList<>();
         File dir = new File(Constants.DOWNLOAD_FILE_DIR);
-        File[] _files = dir.listFiles();
-        for (File f : _files) {
+        if(dir!=null)
+        for (File f : dir.listFiles()) {
             String path = f.toString();
-            Log.d("Downloaded", "" + path.toString());
+            Log.d("Downloaded", "" + path);
             downloadedItemModels.add(0, new DownloadedItemModel(path));
         }
 

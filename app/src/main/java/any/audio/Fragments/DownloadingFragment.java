@@ -1,6 +1,5 @@
 package any.audio.Fragments;
 
-import android.app.Notification;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,8 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 import any.audio.Adapters.DownloadingAdapter;
@@ -36,10 +33,8 @@ import any.audio.helpers.TaskHandler;
 
 public class DownloadingFragment extends Fragment {
 
-    private Context context;
     private ListView liveDownloadListView;
     private DownloadingAdapter adapter;
-    private ActiveTaskFragment.NewDownloadItemArrivalListener newDownloadItemArrivalListener;
 
 
     DownloadCancelListener downloadCancelListener = new DownloadCancelListener() {
@@ -66,10 +61,6 @@ public class DownloadingFragment extends Fragment {
         liveDownloadListView.setAdapter(adapter);
 
 
-    }
-
-    public void setNewDownloadItemArrivalListener(ActiveTaskFragment.NewDownloadItemArrivalListener newDownloadItemArrivalListener) {
-        this.newDownloadItemArrivalListener = newDownloadItemArrivalListener;
     }
 
     public static double roundOf(double value, int places) {
@@ -117,7 +108,7 @@ public class DownloadingFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        this.context = context;
+        Context context1 = context;
         SharedPrefrenceUtils.getInstance(context).setActiveFragmentAttachedState(true);
         if (!mReceiverRegistered)
             registerForBroadcastListen(context);
@@ -196,9 +187,6 @@ public class DownloadingFragment extends Fragment {
             // refressing the tasks list
             adapter.setDownloadingList(getTasksList());
             liveDownloadListView.setAdapter(adapter);
-
-            if (newDownloadItemArrivalListener != null)
-                newDownloadItemArrivalListener.onNewItemAdded();
         }
     }
 
@@ -310,8 +298,6 @@ public class DownloadingFragment extends Fragment {
             adapter.setDownloadingList(getTasksList());
             liveDownloadListView.setAdapter(adapter);
 
-            if (newDownloadItemArrivalListener != null)
-                newDownloadItemArrivalListener.onNewItemAdded();
         }
     }
 
@@ -344,9 +330,6 @@ public class DownloadingFragment extends Fragment {
             // refressing the tasks list
             adapter.setDownloadingList(getTasksList());
             liveDownloadListView.setAdapter(adapter);
-
-            if (newDownloadItemArrivalListener != null)
-                newDownloadItemArrivalListener.onNewItemAdded();
         }
     }
 

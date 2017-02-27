@@ -7,18 +7,11 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
+import android.view.View;;
 import android.widget.TextView;
-
 import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.R;
-import any.audio.SharedPreferences.SharedPrefrenceUtils;
-
 public class UpdateThemedActivity extends AppCompatActivity {
 
     TextView tvUpdateDescription;
@@ -27,10 +20,7 @@ public class UpdateThemedActivity extends AppCompatActivity {
     Typeface tfMaterial;
     TextView newVersion;
     TextView previousVersion;
-    private String newInThisUpdateDescription;
     private String newAppDownloadUrl;
-    private String ov;
-    private String nv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +52,14 @@ public class UpdateThemedActivity extends AppCompatActivity {
         btnCancel.setTypeface(tfMaterial);
         // data setters
 
-        newInThisUpdateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
+        String newInThisUpdateDescription = getIntent().getExtras().getString(Constants.EXTRAA_NEW_UPDATE_DESC);
         newAppDownloadUrl = getIntent().getExtras().getString(Constants.KEY_NEW_UPDATE_URL);
-        ov = getCurrentVersion();
-        nv = getIntent().getExtras().getString(Constants.KEY_NEW_ANYAUDIO_VERSION);
+        String ov = getCurrentVersion();
+        String nv = getIntent().getExtras().getString(Constants.KEY_NEW_ANYAUDIO_VERSION);
 
         tvUpdateDescription.setText(newInThisUpdateDescription);
-        previousVersion.setText("Your Version "+ov);
-        newVersion.setText("New Version "+nv);
+        previousVersion.setText("Your Version "+ ov);
+        newVersion.setText("New Version "+ nv);
 
         btnCancel.setOnClickListener(new View.OnClickListener() {
             @Override

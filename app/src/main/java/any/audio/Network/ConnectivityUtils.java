@@ -1,13 +1,7 @@
 package any.audio.Network;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
 import android.net.ConnectivityManager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import any.audio.Activity.ErrorSplash;
 
 /**
  * Created by Ankit on 8/5/2016.
@@ -50,8 +44,7 @@ public class ConnectivityUtils {
         try {
             Process p1 = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
             int returnVal = p1.waitFor();
-            boolean reachable = (returnVal==0);
-            return reachable;
+            return (returnVal==0);
         } catch (Exception e) {
             e.printStackTrace();
         }

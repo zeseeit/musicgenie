@@ -1,13 +1,11 @@
 package any.audio.Adapters;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.Typeface;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -15,19 +13,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.util.ArrayList;
 
+import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.Models.ItemModel;
-import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
 import any.audio.SharedPreferences.StreamSharedPref;
 import any.audio.helpers.CircularImageTransformer;
 import any.audio.helpers.FileNameReformatter;
-import any.audio.helpers.MetaDataHelper;
 import any.audio.helpers.PlaylistGenerator;
 import any.audio.helpers.ToastMaker;
 
@@ -42,10 +38,13 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
     private static Context context;
     private static SearchResultsAdapter mInstance;
     private SearchResultActionListener searchActionListener;
+    private int COUNT = 0;
+    private Typeface materialFace;
 
     public SearchResultsAdapter(Context context) {
         this.context = context;
         itemModels = new ArrayList<>();
+        materialFace = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
     }
 
     public static SearchResultsAdapter getInstance(Context context) {
@@ -60,6 +59,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
         if(itemList!=null)
         {
             this.itemModels = itemList;
+            COUNT = itemList.size();
         }
         notifyDataSetChanged();
     }
@@ -82,34 +82,9 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
         Log.d("SearchAdapter"," binding ");
         final ItemModel model = itemModels.get(position);
+        Log.d("Optimization","Search Url Thumbnail "+itemModels.get(position).Thumbnail_url);
+        Picasso.with(context).load(model.Thumbnail_url).transform(new CircularImageTransformer()).into(holder.thumbnail);
 
-        if(ConnectivityUtils.isConnectedToNet()){
-
-            Picasso.with(context).load(model.Thumbnail_url).transform(new CircularImageTransformer()).into(holder.thumbnail);
-            Picasso.with(context).load(model.Thumbnail_url).into(new Target() {
-                @Override
-                public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                    holder.thumbnail.setImageBitmap(bitmap);
-                    MetaDataHelper.getInstance(context).storeImage(bitmap,model.Title);
-                }
-
-                @Override
-                public void onBitmapFailed(Drawable errorDrawable) {
-
-                }
-
-                @Override
-                public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                }
-            });
-
-            MetaDataHelper.getInstance(context).setDuration(model.Title,model.TrackDuration);
-            MetaDataHelper.getInstance(context).setArtist(model.Title,model.UploadedBy);
-
-        }
-
-        Typeface materialFace = FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL);
         holder.duration.setText(model.TrackDuration);
         holder.title.setText(model.Title);
         holder.uploader.setText(model.UploadedBy);
@@ -123,7 +98,7 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
     @Override
     public int getItemCount() {
-        return itemModels.size();
+        return COUNT;
     }
 
     public static class SearchItemCardViewHolder extends RecyclerView.ViewHolder{
@@ -153,6 +128,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
 
             //attach click listeners
 
+            addbtn.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                    return false;
+                }
+            });
+
             addbtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -161,12 +144,20 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     int pos = getAdapterPosition();
                     String v_id = adapter.itemModels.get(pos).Video_id;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.itemModels.get(pos).Title);
-                    String youtubId = adapter.itemModels.get(pos).Thumbnail_url.substring(26,adapter.itemModels.get(pos).Thumbnail_url.length()-6);
+                    String youtubId = adapter.itemModels.get(pos).Thumbnail_url.substring(26,adapter.itemModels.get(pos).Thumbnail_url.length()- Constants.THUMBNAIL_VERSION_MEDIUM.length());
                     String uploader = adapter.itemModels.get(pos).UploadedBy;
                     adapter.addItemToQueue(v_id,youtubId,file_name,uploader);
 
                     ToastMaker.getInstance(context).toast("\""+adapter.itemModels.get(pos).Title+ "\" Added To Queue");
 
+                }
+            });
+
+            downloadBtn.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                    return false;
                 }
             });
 
@@ -182,6 +173,14 @@ public class SearchResultsAdapter extends RecyclerView.Adapter<SearchResultsAdap
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(adapter.itemModels.get(pos).Title);
                     adapter.requestDownload(v_id, file_name,thumb_uri,subTitle);
 
+                }
+            });
+
+            infoWrapper.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                    return false;
                 }
             });
 

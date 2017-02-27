@@ -1,12 +1,10 @@
 package any.audio.Adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.MediaMetadataRetriever;
-import android.net.Uri;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -14,16 +12,10 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 
-import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.Models.DownloadedItemModel;
-import any.audio.Models.DownloadingItemModel;
 import any.audio.R;
 import any.audio.helpers.AnyAudioMediaPlayer;
 import any.audio.helpers.MetaDataHelper;
@@ -114,6 +106,24 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
         viewHolder.artist.setText(artist);
 
         //attach listeners
+
+        viewHolder.playBtnTv.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                return false;
+            }
+        });
+
+
+        viewHolder.deleteBtn.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                return false;
+            }
+        });
+
         viewHolder.deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

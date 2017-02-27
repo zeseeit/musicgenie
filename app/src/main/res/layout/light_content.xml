@@ -1,7 +1,4 @@
-
-<com.sothree.slidinguppanel.SlidingUpPanelLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<com.sothree.slidinguppanel.SlidingUpPanelLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:sothree="http://schemas.android.com/apk/res-auto"
     android:id="@+id/sliding_layout"
     android:layout_width="match_parent"
@@ -10,7 +7,7 @@
     sothree:umanoPanelHeight="68dp"
     sothree:umanoShadowHeight="4dp"
     sothree:umanoParallaxOffset="100dp"
-    sothree:umanoDragView="@+id/playerBgFrame"
+    sothree:umanoDragView="@+id/draggerView"
     sothree:umanoScrollableView="@+id/autoplay_or_queue_recycler_view"
     sothree:umanoOverlay="true">
 

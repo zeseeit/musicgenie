@@ -16,7 +16,6 @@ import org.json.JSONObject;
 import any.audio.Config.Constants;
 import any.audio.Config.URLS;
 import any.audio.Network.VolleyUtils;
-import any.audio.services.NotificationPlayerService;
 
 /**
  * Created by Ankit on 8/26/2016.
@@ -24,13 +23,13 @@ import any.audio.services.NotificationPlayerService;
 public class StreamUrlFetcher {
 
     private static final String TAG = "MusicStreamer";
-    private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000; // 1 min
+    private static final int SOCKET_CONNECT_TIMEOUT = 60 * 1000; // 1 min
     private static Context context;
     private static StreamUrlFetcher mInstance;
     private String vid;
     private String file;
     private OnStreamUriFetchedListener onStreamUriFetchedListener;
-    private int SERVER_TIMEOUT_LIMIT = 1 * 60 * 1000;       // 1 min
+    private int SERVER_TIMEOUT_LIMIT = 60 * 1000;       // 1 min
     private String STREAM_URL_REQUEST_TAG_VOLLEY = "volley_request_tag";
     private boolean doBroadcast = false;
 
@@ -95,9 +94,8 @@ public class StreamUrlFetcher {
             Log.d("MusicStreamer", " Attempt To Cancel NoRequests");
         }
 
-        final String t_v_id = v_id;
         final String streaming_url_pref = URLS.URL_SERVER_ROOT;
-        String url = URLS.URL_SERVER_ROOT + "api/v1/stream?url=" + t_v_id;
+        String url = URLS.URL_SERVER_ROOT + "api/v1/stream?url=" + v_id;
         Log.d("MusicStream"," requesting url for stream on:"+url) ;
         StringRequest updateCheckReq = new StringRequest(
                 Request.Method.GET,
@@ -108,7 +106,7 @@ public class StreamUrlFetcher {
 
                         JSONObject obj = null;
                         try {
-                            obj = new JSONObject(result.toString());
+                            obj = new JSONObject(result);
                             if (obj.getInt("status") == 200) {
 
                                 if(onStreamUriFetchedListener!=null){   // For Auto-next

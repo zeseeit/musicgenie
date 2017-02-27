@@ -4,7 +4,7 @@
     <item android:id="@android:id/background">
         <shape>
             <corners android:radius="0dip" />
-            <solid android:color="@color/AnyAudioPrimaryColor40"/>
+            <solid android:color="@color/AnyAudioLightGrey"/>
         </shape>
     </item>
 

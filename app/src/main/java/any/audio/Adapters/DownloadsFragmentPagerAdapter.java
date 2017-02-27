@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.util.Log;
 
 import any.audio.Fragments.DownloadedFragment;
 import any.audio.Fragments.DownloadingFragment;
@@ -12,7 +14,7 @@ import any.audio.Fragments.DownloadingFragment;
  * Created by Ankit on 2/22/2017.
  */
 
-public class DownloadsFragmentPagerAdapter extends FragmentPagerAdapter {
+public class DownloadsFragmentPagerAdapter extends FragmentStatePagerAdapter {
 
     Context mContext;
 
@@ -32,7 +34,7 @@ public class DownloadsFragmentPagerAdapter extends FragmentPagerAdapter {
         }else {
             fragment = new DownloadedFragment();
         }
-
+        Log.d("Downloads",position+ " returning fragment  pos - "+fragment);
         return fragment;
     }
 
@@ -43,8 +45,7 @@ public class DownloadsFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public CharSequence getPageTitle(int position) {
-        String title = (position==0)?"DOWNLOADING":"DOWNLOADED";
-        return title;
+        return (position==0)?"DOWNLOADING":"DOWNLOADED";
     }
 
 }

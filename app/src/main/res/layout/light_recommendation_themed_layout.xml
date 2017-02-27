@@ -1,86 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/activity_recommendation_themed"
+    android:id="@+id/recommendation_item_thumbnail_wrapper"
     android:layout_width="280dp"
-    android:background="@drawable/light_recommendation_layer_bg"
     android:layout_height="280dp"
     android:layout_gravity="center"
-    android:elevation="4dp"
-    tools:context="any.audio.Activity.RecommendationThemed">
+    android:background="@drawable/light_recommendation_layer_bg">
 
-    <RelativeLayout
-        android:id="@+id/recommendation_item_thumbnail_wrapper"
+
+    <TextView
+        android:id="@+id/fixedText"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:maxLength="32"
+        android:maxLines="1"
+        android:paddingLeft="48dp"
+        android:paddingRight="48dp"
+        android:text="Enjoy the latest"
+        android:textColor="@color/AnyAudioBlack"
+        android:textSize="14sp" />
 
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/recommndation_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="80dp"
+        android:src="@drawable/hqdefault" />
 
+    <TextView
+        android:id="@+id/search_item_play_btn"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:background="@drawable/play_btn_bg_card"
+        android:gravity="center"
+        android:text=""
+        android:textColor="@color/AnyAudioBlack"
+        android:textSize="32sp" />
 
-        <TextView
-            android:layout_marginTop="48dp"
-            android:paddingRight="48dp"
-            android:paddingLeft="48dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:id="@+id/fixedText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Enjoy the latest"
-            android:ellipsize="marquee"
-            android:maxLength="32"
-            android:textColor="@color/AnyAudioBlack"
-            android:textSize="14sp" />
+    <TextView
+        android:id="@+id/recommendationTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:maxLength="20"
+        android:maxLines="1"
+        android:padding="50dp"
+        android:text="Sanam Re"
+        android:textColor="@color/AnyAudioGrey" />
 
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_margin="80dp"
-            android:id="@+id/recommndation_thumbnail"
-            android:src="@drawable/hqdefault"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <TextView
-            android:layout_gravity="center"
-            android:background="@drawable/play_btn_bg_card"
-            android:id="@+id/search_item_play_btn"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:text=""
-            android:textColor="@color/AnyAudioBlack"
-            android:textSize="32sp" />
-
-        <TextView
-            android:id="@+id/recommendationTitle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:gravity="center"
-            android:padding="50dp"
-            android:ellipsize="marquee"
-            android:maxLength="20"
-            android:text="Sanam Re"
-            android:layout_alignParentBottom="true"
-            android:textColor="@color/AnyAudioGrey"
-            />
-
-        <TextView
-            android:id="@+id/recommendationArtist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:maxLength="8"
-            android:gravity="center"
-            android:padding="36dp"
-            android:textSize="10sp"
-            android:text="T-Series"
-            android:textColor="@color/AnyAudioGrey"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
-
-
-    </RelativeLayout>
+    <TextView
+        android:id="@+id/recommendationArtist"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:gravity="center"
+        android:maxLength="8"
+        android:maxLines="1"
+        android:padding="36dp"
+        android:text="T-Series"
+        android:textColor="@color/AnyAudioGrey"
+        android:textSize="10sp" />
 
 
 </RelativeLayout>

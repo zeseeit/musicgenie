@@ -2,9 +2,10 @@
 
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:padding="6dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@drawable/rectangle_ripple_views"
-    android:layout_height="88dp">
+    android:background="@drawable/downloading_item_background_card"
+    android:layout_height="100dp">
 
     <RelativeLayout
         android:padding="4dp"
@@ -27,16 +28,8 @@
                 android:layout_width="76dp"
                 android:layout_height="76dp">
 
-
-                <FrameLayout
-                    android:padding="4dp"
-                    android:layout_gravity="center"
-                    android:background="@drawable/bottom_player_thumbnail_border"
-                    android:layout_width="68dp"
-                    android:layout_height="68dp" />
-
                 <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_margin="6dp"
+                    android:layout_margin="4dp"
                     android:id="@+id/downloading_item_thumbnail"
                     app:civ_border_width="0dp"
                     android:src="@drawable/hqdefault"
@@ -48,33 +41,47 @@
             </FrameLayout>
 
             <TextView
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="0dp"
                 android:id="@+id/downloading_item_title"
                 android:gravity="bottom"
                 android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
                 android:text="Sorry Sorry Hot Song \nfor The Year OF the"
-                android:textColor="@color/AnyAudioGrey224"
+                android:textColor="@color/AnyAudioBlack"
                 android:textStyle="bold"
                 android:maxLines="1"
                 android:ellipsize="marquee"
                 android:layout_width="match_parent"
-                android:layout_height="28dp" />
+                android:layout_height="24dp" />
 
             <TextView
                 android:textSize="10sp"
                 android:layout_below="@+id/downloading_item_title"
                 android:id="@+id/downloading_item_artist"
                 android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
-                android:text=""
+                android:text="Artist"
                 android:gravity="center_vertical"
-                android:textColor="@color/AnyAudioGrey189"
+                android:textColor="@color/AnyAudioGrey"
                 android:layout_width="match_parent"
-                android:layout_height="24dp" />
+                android:layout_height="18dp" />
+
+
+            <TextView
+                android:padding="2dp"
+                android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
+                android:layout_below="@+id/downloading_item_artist"
+                android:id="@+id/content_size_MB"
+                android:gravity="center"
+                android:layout_marginRight="8dp"
+                android:text="--- MB"
+                android:textSize="10sp"
+                android:textColor="@color/AnyAudioGrey"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
             <TextView
                 android:visibility="invisible"
                 android:textSize="12sp"
-                android:layout_below="@+id/downloading_item_artist"
+                android:layout_below="@+id/content_size_MB"
                 android:id="@+id/downloading_item_status"
                 android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
                 android:text="Waiting To Start"
@@ -86,7 +93,7 @@
                 android:progressDrawable="@drawable/progress_bar_bg"
                 android:layout_marginTop="6dp"
                 android:layout_toRightOf="@+id/downloading_item_thumbnail_wrapper"
-                android:layout_below="@+id/downloading_item_artist"
+                android:layout_below="@+id/content_size_MB"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_width="match_parent"
                 android:layout_marginRight="36dp"
@@ -97,27 +104,29 @@
 
             <TextView
                 android:id="@+id/downloading_item_progressText"
-                android:textColor="@color/AnyAudioGrey189"
+                android:textColor="@color/AnyAudioGrey"
                 android:textSize="12sp"
-                android:paddingTop="6dp"
-                android:gravity="center_horizontal"
+                android:gravity="center"
                 android:text="70%"
-                android:layout_alignParentBottom="true"
                 android:layout_alignParentEnd="true"
-                android:layout_width="36dp"
-                android:layout_height="36dp" />
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginRight="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
 
         </RelativeLayout>
 
         <TextView
             android:layout_centerVertical="true"
             android:id="@+id/downloading_item_startStopBtn"
-            android:background="@drawable/btn_ripple_effect"
+            android:background="?selectableItemBackgroundBorderless"
             android:layout_toLeftOf="@+id/downloading_item_cancel_btn"
             android:textColor="@color/AnyAudioPrimaryColor"
             android:gravity="center"
             android:text=""
-            android:textSize="28dp"
+            android:textSize="28sp"
             android:layout_width="36dp"
             android:layout_height="36dp" />
 
@@ -125,7 +134,7 @@
             android:id="@+id/downloading_item_cancel_btn"
             android:layout_width="36dp"
             android:layout_height="36dp"
-            android:background="@drawable/btn_ripple_effect"
+            android:background="?selectableItemBackgroundBorderless"
             android:text=""
             android:textSize="28sp"
             android:textColor="@color/AnyAudioPrimaryColor"
@@ -134,19 +143,6 @@
             android:layout_marginRight="8dp"
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true" />
-
-        <TextView
-            android:id="@+id/content_size_MB"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentBottom="true"
-            android:gravity="center"
-            android:layout_marginRight="8dp"
-            android:text="--"
-            android:textSize="10sp"
-            android:textColor="@color/AnyAudioPrimaryColor"
-            android:layout_width="36dp"
-            android:layout_height="wrap_content" />
-
 
     </RelativeLayout>
 

@@ -15,7 +15,6 @@ import any.audio.Activity.AnyAudioActivity;
 import any.audio.Adapters.NavigationListAdapter;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
-import any.audio.helpers.ToastMaker;
 
 import static any.audio.Activity.AnyAudioActivity.anyAudioActivityInstance;
 
@@ -27,7 +26,7 @@ public class NavigationDrawerFragment extends Fragment {
 
     private Context context;
     private ListView listView;
-    private NavigationListAdapter navigationListAdapter;
+    public static NavigationListAdapter navigationListAdapter;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -79,13 +78,13 @@ public class NavigationDrawerFragment extends Fragment {
                     case 4:
 
                         fragment = AnyAudioActivity.FRAGMENT_ABOUT_US;
-                        title = "About Us";
+                        title = "ABOUT US";
                         break;
 
                     case 5:
 
                         fragment = AnyAudioActivity.FRAGMENT_UPDATES;
-                        title = "Updates";
+                        title = "UPDATES";
 
                         break;
                 }

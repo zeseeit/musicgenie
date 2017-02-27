@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
@@ -101,11 +102,25 @@ public class TourActivity extends AppCompatActivity {
 
     private void attachListeners(){
 
+        btnBack.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getBackground().setHotspot(motionEvent.getX(), motionEvent.getY());
+                return false;
+            }
+        });
+
+        btnNext.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                view.getBackground().setHotspot(motionEvent.getX(), motionEvent.getY());
+                return false;
+            }
+        });
+
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-
                 Log.i("TourPage","clicked Next currentNo -"+viewPager.getCurrentItem());
                 if(viewPager.getCurrentItem()==3){
                     SharedPrefrenceUtils.getInstance(TourActivity.this).setTermsAccepted(true);

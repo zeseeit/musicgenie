@@ -2,7 +2,6 @@
 
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -34,7 +33,7 @@
             android:id="@+id/dropShadow"
             android:background="@drawable/streaming_bottom_strip_elevation_drawable"
             android:layout_width="match_parent"
-            android:layout_height="2dp"></FrameLayout>
+            android:layout_height="2dp"/>
 
         <RelativeLayout
             android:layout_below="@+id/dropShadow"

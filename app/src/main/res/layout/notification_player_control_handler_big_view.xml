@@ -1,30 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="@color/AnyAudioPrimaryBackground"
+    android:background="#fafafa"
     android:layout_height="108dp"
     android:orientation="vertical">
 
     <ImageView
-        android:src="@drawable/hqdefault"
         android:scaleType="centerCrop"
         android:id="@+id/notification_player_thumbnail"
         android:layout_width="108dp"
         android:layout_height="108dp" />
 
-    <ImageView
-        android:layout_alignParentEnd="true"
-        android:src="@drawable/notification_cancel"
-        android:id="@+id/notification_player_cancel"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:padding="4dp"
-        />
-
-
     <LinearLayout
         android:layout_toRightOf="@+id/notification_player_thumbnail"
-        android:layout_toLeftOf="@+id/notification_player_cancel"
         android:orientation="vertical"
         android:gravity="center_vertical"
         android:layout_width="match_parent"
@@ -32,7 +20,7 @@
 
         <TextView
             android:id="@+id/notification_player_title"
-            android:textColor="@color/AnyAudioGrey224"
+            android:textColor="@color/AnyAudioBlack"
             android:textSize="20sp"
             android:text="Sanam Re tu Mera Sanam Hua re"
             android:maxLines="1"
@@ -45,10 +33,9 @@
 
         <TextView
             android:id="@+id/notification_player_subtitle"
-            android:textColor="@color/AnyAudioGrey189"
+            android:textColor="@color/AnyAudioGrey"
             android:textSize="16sp"
             android:text="T-Series"
-            android:layout_toRightOf="@+id/notification_player_thumbnail"
             android:maxLines="1"
             android:paddingLeft="16dp"
             android:paddingRight="16dp"
@@ -67,8 +54,7 @@
                 android:id="@+id/notification_player_play_pauseBtn"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginRight="16dp"
-                />
+                android:layout_marginRight="16dp" />
 
 
             <ImageView

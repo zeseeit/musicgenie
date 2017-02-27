@@ -5,7 +5,6 @@ import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.android.volley.AuthFailureError;
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -16,24 +15,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ThreadFactory;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import any.audio.Config.Constants;
 import any.audio.Config.URLS;
-import any.audio.Models.ItemModel;
 import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.Network.VolleyUtils;

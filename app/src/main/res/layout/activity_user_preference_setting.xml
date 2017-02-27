@@ -1,29 +1,26 @@
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#eeeeee">
-
     <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:fillViewport="true"
+        android:background="#ffffff"
         android:layout_height="match_parent">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
+
+
 
             <FrameLayout
                 android:id="@+id/thumbnailChoiceFrame"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
-                android:layout_below="@+id/toolbar"
                 android:layout_marginBottom="2dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:layout_marginTop="16dp"
-                android:background="@drawable/test_card_bg"
-                android:elevation="2dp"
-                android:padding="10dp">
+                android:background="@drawable/downloading_item_background_card"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/loadThumbnailTextMessage"
@@ -41,97 +38,17 @@
                     android:layout_gravity="right|center_vertical" />
 
             </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/IssuesTextFrame"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_below="@+id/notification_soundChoiceFrame"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="4dp"
-                android:background="@drawable/test_card_bg"
-                android:elevation="2dp"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/issuesTextMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Have Issues With AnyAudio ? "
-                    android:textColor="@color/AnyAudioBlack"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/issueBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="8dp"
-                    android:text=""
-                    android:textColor="@color/AnyAudioPrimaryColor"
-                    android:textSize="25sp" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/UpdateTextFrame"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_below="@+id/IssuesTextFrame"
-                android:layout_marginBottom="2dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/test_card_bg"
-                android:elevation="2dp"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/UpdateTextMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text=" Update AnyAudio"
-                    android:textColor="@color/AnyAudioBlack"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/updateStatus"
-                    android:layout_gravity="bottom"
-                    android:textSize="10sp"
-                    android:text="Available : 1.1"
-                    android:layout_marginLeft="4dp"
-                    android:textColor="@color/AnyAudioPrimaryColor"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
-
-                <ProgressBar
-                    android:visibility="invisible"
-                    style="?android:attr/progressBarStyleSmall"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:padding="4dp"
-                    android:layout_gravity="center_vertical|end"
-                    android:id="@+id/updateProgress" />
-
-
-            </FrameLayout>
-
             <FrameLayout
                 android:id="@+id/push_notificationChoiceFrame"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:layout_below="@+id/thumbnailChoiceFrame"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:layout_marginTop="2dp"
-                android:background="@drawable/test_card_bg"
-                android:elevation="2dp"
-                android:padding="10dp">
+                android:background="@drawable/downloading_item_background_card"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/pushNotificationTextMessage"
@@ -150,19 +67,17 @@
                     android:checked="true" />
 
             </FrameLayout>
-
             <FrameLayout
                 android:id="@+id/notification_soundChoiceFrame"
                 android:layout_width="match_parent"
                 android:layout_height="72dp"
                 android:layout_below="@+id/push_notificationChoiceFrame"
                 android:layout_centerHorizontal="true"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
                 android:layout_marginTop="4dp"
-                android:background="@drawable/test_card_bg"
-                android:elevation="2dp"
-                android:padding="10dp">
+                android:background="@drawable/downloading_item_background_card"
+                android:padding="12dp">
 
                 <TextView
                     android:id="@+id/pushNotificationSoundTextMessage"
@@ -181,7 +96,6 @@
                     android:checked="true" />
 
             </FrameLayout>
-
             <TextView
                 android:id="@+id/termsOfUse"
                 android:layout_width="match_parent"
@@ -193,41 +107,6 @@
                 android:textColor="@color/AnyAudioPrimaryColor"
                 android:textSize="14sp" />
 
-            <FrameLayout
-                android:id="@+id/suggestAppTextFrame"
-                android:layout_width="match_parent"
-                android:layout_height="72dp"
-                android:layout_alignStart="@+id/UpdateTextFrame"
-                android:layout_below="@+id/UpdateTextFrame"
-                android:layout_marginLeft="0dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginTop="2dp"
-                android:background="@drawable/test_card_bg"
-                android:elevation="2dp"
-                android:padding="10dp">
-
-                <TextView
-                    android:id="@+id/SuggestTextMessage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="Share AnyAudio Via Link"
-                    android:textColor="@color/AnyAudioBlack"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/suggestBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right|center_vertical"
-                    android:layout_marginRight="8dp"
-                    android:text=""
-                    android:textColor="@color/AnyAudioPrimaryColor"
-                    android:textSize="25sp" />
-
-            </FrameLayout>
-
         </RelativeLayout>
 
     </ScrollView>
-</RelativeLayout>

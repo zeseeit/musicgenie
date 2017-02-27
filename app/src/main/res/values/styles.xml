@@ -17,7 +17,7 @@
     <style name="AppTheme" parent="AppTheme.Base">
         <item name="colorPrimary">@color/AnyAudioPrimaryColor</item>
         <item name="colorPrimaryDark">@color/AnyAudioPrimaryColor</item>
-        <item name="colorAccent">@color/AccentColor</item>
+        <item name="colorAccent">@color/AnyAudioPrimaryColor</item>
         <item name="drawerArrowStyle">@style/DrawerArrowStyle</item>
         <item name="android:windowActionBarOverlay">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>

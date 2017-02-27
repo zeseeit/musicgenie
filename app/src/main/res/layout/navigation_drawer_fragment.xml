@@ -8,16 +8,7 @@
        android:id="@+id/header"
        android:background="@drawable/drawer_header_opt"
        android:layout_width="match_parent"
-       android:layout_height="220dp" />
-
-    <ListView
-        android:layout_marginLeft="24dp"
-        android:divider="@null"
-        android:layout_above="@+id/bottomBar"
-        android:id="@+id/navigationListView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/header" />
+       android:layout_height="240dp" />
 
     <ImageView
         android:layout_marginRight="96dp"
@@ -27,5 +18,14 @@
         android:src="@drawable/navigation_bottom_icon"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
+
+    <ListView
+        android:divider="@null"
+        android:id="@+id/navigationListView"
+        android:scrollbars="none"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/header"
+        android:layout_alignParentStart="true" />
 
 </RelativeLayout>

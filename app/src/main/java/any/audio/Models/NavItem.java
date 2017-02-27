@@ -7,7 +7,7 @@ package any.audio.Models;
 public class NavItem {
 
     private static String TRENDING_TEXT = "\uE80E";
-    private static String SEARCH_TEXT = "\uE880";
+    private static String SEARCH_TEXT = "\uE8B6";
     private static String DOWNLOADS_TEXT = "\uE884";
     private static String ABOUT_TEXT = "\uE88E";
     private static String SETTINGS_TEXT = "\uE8B8";

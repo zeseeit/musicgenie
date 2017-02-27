@@ -1,7 +1,6 @@
 package any.audio.Activity;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -17,7 +16,6 @@ import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,9 +31,7 @@ import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
-import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
-import any.audio.Models.SearchSuggestion;
 import any.audio.Network.VolleyUtils;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;

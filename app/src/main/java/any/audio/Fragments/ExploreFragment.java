@@ -1,35 +1,27 @@
 package any.audio.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import any.audio.Activity.ErrorSplash;
-import any.audio.Adapters.ExploreLeftToRightAdapter;
 import any.audio.Adapters.ExploreTopDownAdapter;
 import any.audio.Centrals.CentralDataRepository;
 import any.audio.Config.Constants;
-import any.audio.Managers.AnyAudioLinearLayoutManager;
 import any.audio.Models.ExploreItemModel;
 import any.audio.Models.ResultMessageObjectModel;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
-import any.audio.Views.AnyAudioRecyclerView;
 
 /**
  * Created by Ankit on 1/24/2017.
@@ -42,7 +34,6 @@ public class ExploreFragment extends Fragment {
     ProgressBar progressBar;
     ExploreTopDownAdapter topDownAdapter;
     private TextView progressBarMsgPanel;
-    private CentralDataRepository repository;
 
 
     public ExploreFragment() {
@@ -52,8 +43,7 @@ public class ExploreFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View fragmentView = inflater.inflate(R.layout.explore_fragment,null,false);
-        return fragmentView;
+        return inflater.inflate(R.layout.explore_fragment,null,false);
 
     }
 
@@ -93,8 +83,7 @@ public class ExploreFragment extends Fragment {
         progressBar.setVisibility(View.VISIBLE);
         progressBarMsgPanel.setVisibility(View.VISIBLE);
 
-        repository = CentralDataRepository.getInstance(context);
-
+        CentralDataRepository repository = CentralDataRepository.getInstance(context);
 
         if (!ConnectivityUtils.getInstance(context).isConnectedToNet()) {
             exploreTopDownRecyler.setVisibility(RecyclerView.GONE);
@@ -109,7 +98,7 @@ public class ExploreFragment extends Fragment {
 
     private Handler getHandlerInstance(){
 
-        Handler exporeHandler = new Handler(){
+        return new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 //WID: sets the main view adapter with data and disables progress bar
@@ -148,8 +137,6 @@ public class ExploreFragment extends Fragment {
 
             }
         };
-
-        return exporeHandler;
     }
 
 }

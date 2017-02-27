@@ -10,7 +10,6 @@ android {
         targetSdkVersion 25
         versionCode 8
         versionName "1.0"
-        generatedDensities = []
 
     }
     aaptOptions {

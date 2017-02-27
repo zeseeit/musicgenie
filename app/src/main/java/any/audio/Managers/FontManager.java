@@ -24,8 +24,7 @@ package any.audio.Managers;
             }
 
             public Typeface getTypeFace(String type){
-                Typeface typeface = Typeface.createFromAsset(context.getAssets(),type);
-                return typeface;
+                return Typeface.createFromAsset(context.getAssets(),type);
             }
 
         }

@@ -13,7 +13,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import any.audio.AnyAudioMains.AnyAudio;
 import any.audio.Managers.FontManager;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;
@@ -23,7 +22,6 @@ public class ErrorSplash extends AppCompatActivity {
     private static Context mContext;
     private NetworkChangeReceiver receiver;
     private boolean mReceiverRegistered = false;
-    private TextView contBtn;
 
     private static void redirectIfConnected() {
 
@@ -81,7 +79,7 @@ public class ErrorSplash extends AppCompatActivity {
     private void setUpWarningPage() {
 
         // xml -> java objects
-        contBtn = (TextView) findViewById(R.id.continueBtn);
+        TextView contBtn = (TextView) findViewById(R.id.continueBtn);
 
          contBtn.setTypeface(FontManager.getInstance(this).getTypeFace(FontManager.FONT_RALEWAY_REGULAR));
 

@@ -7,7 +7,6 @@ import android.support.v7.widget.LinearSmoothScroller;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
-import android.widget.LinearLayout;
 
 /**
  * Created by Ankit on 2/3/2017.
@@ -15,9 +14,11 @@ import android.widget.LinearLayout;
 
 public class AnyAudioLinearLayoutManager extends LinearLayoutManager {
 
-    public AnyAudioLinearLayoutManager(Context context) {
-        super(context);
-    }
+// --Commented out by Inspection START (2/25/2017 3:18 PM):
+//    public AnyAudioLinearLayoutManager(Context context) {
+//        super(context);
+//    }
+// --Commented out by Inspection STOP (2/25/2017 3:18 PM)
 
         private static final float MILLISECONDS_PER_INCH = 5f; //default is 25f (bigger = slower)
 

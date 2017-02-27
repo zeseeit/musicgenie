@@ -2,6 +2,7 @@ package any.audio.Managers;
 
 
 import android.content.Context;
+import android.util.Log;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -16,6 +17,7 @@ import org.json.JSONObject;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 
+import any.audio.Config.Constants;
 import any.audio.Database.DbHelper;
 import any.audio.Models.ItemModel;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
@@ -103,9 +105,6 @@ public class CloudManager {
         try {
 
             JSONObject resObj = new JSONObject(response);
-
-            int count = Integer.parseInt(resObj.getJSONObject("metadata").getString("count"));
-
             String sections = resObj.getJSONObject("metadata").getString("type");
             ArrayList<String> playlists = new Segmentor().getParts(sections, ',');
             ArrayList<ItemModel> itemModelArrayList = new ArrayList<>();
@@ -123,13 +122,14 @@ public class CloudManager {
 
                     JSONObject songObj = (JSONObject) typeArray.get(j);
                     String enc_v_id = songObj.getString("get_url").substring(14);
-
+                    String _t_url = songObj.getString("thumb");
+                    _t_url = _t_url.substring(0,_t_url.length()-6)+Constants.THUMBNAIL_VERSION_MEDIUM;
                     String title = TextFormatter.getInstance(context).reformat(songObj.getString("title"));
                     item = new ItemModel(
                             title,
                             songObj.getString("length"),
                             songObj.getString("uploader"),
-                            songObj.getString("thumb"),
+                            _t_url,
                             enc_v_id,
                             TIME_SINCE_UPLOADED_LEFT_VACCANT,
                             songObj.getString("views"),
@@ -240,7 +240,7 @@ public class CloudManager {
 
     private void handleResultResponse(String response) {
 
-        L.m("CM", "got result " + response);
+       // L.m("CM", "got result " + response);
         ArrayList<ItemModel> songs = new ArrayList<>();
 
         try {
@@ -250,12 +250,13 @@ public class CloudManager {
             JSONArray results = rootObj.getJSONArray("results");
             for (int i = 0; i < results_count; i++) {
                 String enc_v_id = results.getJSONObject(i).getString("get_url").substring(14);
-                // L.m("CM", " video id " + enc_v_id);
+                String _t_url = results.getJSONObject(i).getString("thumb");
+                _t_url = _t_url.substring(0,_t_url.length()-6)+ Constants.THUMBNAIL_VERSION_MEDIUM;
                 String title = TextFormatter.getInstance(context).reformat(results.getJSONObject(i).getString("title"));
                 songs.add(new ItemModel(title,
                         results.getJSONObject(i).getString("length"),
                         results.getJSONObject(i).getString("uploader"),
-                        results.getJSONObject(i).getString("thumb"),
+                        _t_url,
                         enc_v_id,
                         results.getJSONObject(i).getString("time"),
                         results.getJSONObject(i).getString("views")

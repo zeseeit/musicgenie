@@ -1,13 +1,11 @@
 package any.audio.Fragments;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,9 +15,6 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import any.audio.Activity.ErrorSplash;
-import any.audio.Adapters.ExploreLeftToRightAdapter;
-import any.audio.Adapters.ExploreTopDownAdapter;
 import any.audio.Adapters.SearchResultsAdapter;
 import any.audio.Centrals.CentralDataRepository;
 import any.audio.Config.Constants;
@@ -49,9 +44,7 @@ public class SearchFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.search_fragment,null,false);
-
-        return view;
+        return inflater.inflate(R.layout.search_fragment,null,false);
     }
 
     @Override
@@ -115,7 +108,7 @@ public class SearchFragment extends Fragment {
 
     private Handler getHandlerInstance(){
 
-        Handler searchHandler = new Handler(){
+        return new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 //WID: sets the main view adapter with data and disables progress bar
@@ -154,8 +147,6 @@ public class SearchFragment extends Fragment {
 
             }
         };
-
-        return searchHandler;
     }
 
 

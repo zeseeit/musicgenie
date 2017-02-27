@@ -2,12 +2,9 @@ package any.audio.Adapters;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.support.v7.widget.DividerItemDecoration;
-import android.support.v7.widget.DrawableUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -21,7 +18,6 @@ import com.arlib.floatingsearchview.util.Util;
 import java.util.ArrayList;
 
 import any.audio.Config.Constants;
-import any.audio.Fragments.ExploreFragment;
 import any.audio.Models.ExploreItemModel;
 import any.audio.R;
 
@@ -86,7 +82,7 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
     @Override
     public void onBindViewHolder(ExploreItemRowViewHolder holder, int position) {
 
-        ExploreItemModel exploreItem = exploreItemModels.get(position);
+        ExploreItemModel exploreItem = exploreItemModels.get(holder.getAdapterPosition());
 
         //bind values : [header] [recyclerView <--> ]
 

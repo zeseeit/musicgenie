@@ -2,10 +2,14 @@
 <RelativeLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="#ffffff"
     android:id="@+id/dragView"
+    android:background="#fafafa"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <FrameLayout
+        android:id="@+id/draggerView"
+        android:layout_width="match_parent"
+        android:layout_height="64dp"/>
 
     <FrameLayout
         android:id="@+id/playerBgFrame"
@@ -115,7 +119,7 @@
     <FrameLayout
         android:id="@+id/pauseWrapper"
         android:layout_toLeftOf="@+id/nextWrapper"
-        android:padding="10dp"
+        android:padding="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content">
 
@@ -125,12 +129,11 @@
             android:gravity="center"
             android:id="@+id/pauseBtn"
             android:text=""
-            android:layout_margin="2dp"
-            android:background="@drawable/btn_ripple_effect"
+            android:layout_margin="0dp"
             android:textSize="28sp"
             android:textColor="@color/playpause"
-            android:layout_width="36dp"
-            android:layout_height="36dp" />
+            android:layout_width="56dp"
+            android:layout_height="56dp" />
 
     </FrameLayout>
 
@@ -146,7 +149,6 @@
         <TextView
             android:gravity="center"
             android:id="@+id/playlistBtn"
-            android:background="@drawable/btn_ripple_effect"
             android:textColor="@color/AnyAudioBlack"
             android:text=""
             android:textSize="28sp"
@@ -165,7 +167,6 @@
         <TextView
             android:id="@+id/pushDown"
             android:text=""
-            android:background="@drawable/btn_ripple_effect"
             android:alpha="0"
             android:gravity="center"
             android:textSize="36sp"
@@ -186,7 +187,9 @@
         android:id="@+id/seekBar" />
 
     <RelativeLayout
-        android:layout_margin="16dp"
+        android:layout_marginLeft="14dp"
+        android:layout_marginRight="14dp"
+        android:layout_marginTop="8dp"
         android:id="@+id/autoplay_switch_wrapper"
         android:layout_below="@+id/seekBar"
         android:layout_width="match_parent"
@@ -195,6 +198,7 @@
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/autoplay_switch"
             android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
             android:layout_height="wrap_content"
             android:checked="false"/>
 
@@ -212,14 +216,15 @@
             android:id="@+id/repeatModeBtn"
             android:paddingLeft="12dp"
             android:paddingRight="12dp"
-            android:background="@drawable/rectangle_ripple_views"
-            android:textSize="20sp"
+            android:textSize="24sp"
             android:textColor="@color/AnyAudioBlack"
             android:text=""
+            android:background="?android:selectableItemBackgroundBorderless"
             android:layout_toLeftOf="@+id/repeatModeText"
             android:layout_centerVertical="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48sp"
+            android:gravity="center"
+            android:layout_height="48sp"
             />
 
         <TextView
@@ -227,9 +232,10 @@
             android:text="Autoplay"
             android:textColor="@color/AnyAudioBlack"
             android:textSize="12sp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_centerVertical="true"
+            android:gravity="center"
             android:layout_toEndOf="@+id/autoplay_switch"
             android:id="@+id/textView" />
 
@@ -238,7 +244,7 @@
 
     <FrameLayout
         android:id="@+id/nextWrapper"
-        android:padding="10dp"
+        android:padding="6dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -254,8 +260,8 @@
             android:background="@drawable/btn_ripple_effect"
             android:textSize="28sp"
             android:textColor="@color/playpause"
-            android:layout_width="36dp"
-            android:layout_height="36dp" />
+            android:layout_width="56dp"
+            android:layout_height="56dp" />
 
     </FrameLayout>
 
@@ -264,14 +270,14 @@
         android:layout_height="64dp"
         android:layout_width="match_parent"
         android:id="@+id/welcome_placeholderView"
-        layout="@layout/initial_player_placeholder_welocme_layout"/>
+        layout="@layout/initial_player_placeholder_welocme_layout"
+        android:layout_below="@+id/progressBarStreamProgress"
+        android:layout_alignParentStart="true" />
 
     <FrameLayout
-        android:padding="0dp"
-        android:layout_below="@+id/autoplay_switch_wrapper"
-        android:background="@color/AnyAudioSearchItemBgColor"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_below="@+id/autoplay_switch_wrapper"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true">
 
@@ -279,8 +285,7 @@
         <android.support.v7.widget.RecyclerView
             android:visibility="gone"
             android:id="@+id/autoplay_or_queue_recycler_view"
-            android:padding="8dp"
-            android:layout_below="@+id/autoplay_switch_wrapper"
+            android:padding="2dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             />
@@ -288,9 +293,9 @@
         <TextView
             android:id="@+id/playlistMessagePanel"
             android:textSize="14sp"
-            android:layout_gravity="center"
             android:visibility="gone"
-            android:textColor="#ffffff"
+            android:layout_gravity="center"
+            android:textColor="@color/AnyAudioBlack"
             android:text="No Item In Queue.Add and Enjoy !"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />
@@ -303,5 +308,7 @@
             android:id="@+id/auto_play_or_queue_progress_bar" />
 
     </FrameLayout>
+
+
 
 </RelativeLayout>

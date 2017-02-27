@@ -4,7 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -59,14 +58,7 @@ public class NotificationPlayerService extends Service {
 
                     if (bundle == null) {
                         Log.d("NotificationService", " action from notification bar buttons");
-                        if (PLAYING) {
-
-                            PLAYING = false;
-                        } else {
-
-                            PLAYING = true;
-                        }
-
+                        PLAYING = !PLAYING;
                         sendPlayerStateBroadcast();
                         showNotification();
 
@@ -196,11 +188,9 @@ public class NotificationPlayerService extends Service {
 
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent_dull);
             bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn, nextPendingIntent);
 
             bigView.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_pause);
-            bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.null_view);
             bigView.setImageViewResource(R.id.notification_player_nextBtn, R.drawable.ic_action_next);
 
             bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);
@@ -219,11 +209,9 @@ public class NotificationPlayerService extends Service {
 
             //big view
             bigView.setOnClickPendingIntent(R.id.notification_player_play_pauseBtn, pplayIntent);
-            bigView.setOnClickPendingIntent(R.id.notification_player_cancel, pcloseIntent);
             bigView.setOnClickPendingIntent(R.id.notification_player_nextBtn, nextPendingIntent);
 
             bigView.setImageViewResource(R.id.notification_player_play_pauseBtn, R.drawable.ic_action_play);
-            bigView.setImageViewResource(R.id.notification_player_cancel, R.drawable.notification_cancel);
             bigView.setImageViewResource(R.id.notification_player_nextBtn, R.drawable.ic_action_next);
 
             bigView.setTextViewText(R.id.notification_player_subtitle, subtitle);

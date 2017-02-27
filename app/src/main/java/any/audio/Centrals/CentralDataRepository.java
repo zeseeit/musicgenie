@@ -58,7 +58,6 @@ public class CentralDataRepository {
     private CloudManager mCloudManager;
     private Handler mHandler;
     private String sectionType = "";
-    private int mLastLoadedType = TYPE_TRENDING;
     private String MESSAGE_TO_PASS = "";
     private SharedPrefrenceUtils sharedPrefrenceUtils;
 
@@ -165,7 +164,7 @@ public class CentralDataRepository {
      */
     private void refressAndSubmit() {
 
-        mLastLoadedType = sharedPrefrenceUtils.getLastLoadedType();
+        int mLastLoadedType = sharedPrefrenceUtils.getLastLoadedType();
 
         if (mLastLoadedType == TYPE_TRENDING) {
 

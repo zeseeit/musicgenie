@@ -2,7 +2,6 @@
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:background="#ffffff"
     android:layout_height="match_parent">
 
     <RelativeLayout
@@ -20,7 +19,7 @@
 
         <TextView
             android:visibility="invisible"
-            android:textColor="@color/AnyAudioGrey224"
+            android:textColor="@color/AnyAudioBlack"
             android:textSize="20sp"
             android:layout_centerHorizontal="true"
             android:layout_below="@+id/explore_progressBar"

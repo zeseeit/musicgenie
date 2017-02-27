@@ -51,7 +51,7 @@ public class TaskHandler {
     private ProgressDialog progressDialog;
     public static boolean isCanceled = false;
     private String dwnd_url;
-    private static final int SOCKET_CONNECT_TIMEOUT = 1 * 60 * 1000; // 1 min
+    private static final int SOCKET_CONNECT_TIMEOUT = 60 * 1000; // 1 min
     private DownloadItemInvalidatedListener itemInvalidatedListener;
     private SharedPrefrenceUtils utils;
 
@@ -488,11 +488,7 @@ public class TaskHandler {
                         return;
                     }
 
-                } catch (JSONException e) {
-                    downloadListener.onError(taskID);
-                    e.printStackTrace();
-                    return;
-                } catch (IOException e) {
+                } catch (JSONException | IOException e) {
                     downloadListener.onError(taskID);
                     e.printStackTrace();
                     return;
@@ -558,7 +554,7 @@ public class TaskHandler {
                     L.m("TaskHandler", " URL exception");
                 } catch (IOException e) {
                     downloadListener.onError(taskID);
-                    L.m("TaskHandler", " IO exception " + e.toString());
+                    L.m("TaskHandler", " IO exception " + e.getMessage());
                 }
 
             }

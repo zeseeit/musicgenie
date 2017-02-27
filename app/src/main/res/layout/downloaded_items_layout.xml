@@ -4,14 +4,10 @@
     android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#ffffff"
-    android:paddingLeft="8dp"
-    android:paddingRight="8dp"
-    android:paddingTop="2dp"
-    android:paddingBottom="2dp"
     android:layout_height="88dp">
 
     <RelativeLayout
-        android:padding="4dp"
+        android:padding="6dp"
         android:background="@drawable/downloading_item_background_card"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -46,7 +42,6 @@
                     android:id="@+id/downloaded_item_play_btn"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_centerInParent="true"
                     android:gravity="center"
                     android:text=""
                     android:textColor="@color/AnyAudioPrimaryColor"
@@ -96,26 +91,26 @@
             android:layout_centerVertical="true"
             android:id="@+id/deleteDownloadedItem"
             android:layout_toLeftOf="@+id/playDownloadedItem"
-            android:background="@drawable/btn_ripple_effect"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:textColor="@color/AnyAudioPrimaryColor"
             android:gravity="center"
             android:text=""
-            android:textSize="24dp"
-            android:layout_width="36dp"
-            android:layout_height="36dp" />
+            android:textSize="24sp"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
 
         <TextView
             android:layout_centerVertical="true"
             android:id="@+id/playDownloadedItem"
             android:layout_alignParentEnd="true"
-            android:background="@drawable/btn_ripple_effect"
+            android:background="?android:attr/selectableItemBackgroundBorderless"
             android:textColor="@color/AnyAudioPrimaryColor"
             android:gravity="center"
             android:text=""
-            android:textSize="24dp"
-            android:layout_width="36dp"
-            android:layout_height="36dp" />
+            android:textSize="24sp"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
     </RelativeLayout>
 

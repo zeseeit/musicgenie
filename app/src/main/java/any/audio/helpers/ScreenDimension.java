@@ -1,6 +1,5 @@
 package any.audio.helpers;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 import android.support.v7.app.AppCompatActivity;

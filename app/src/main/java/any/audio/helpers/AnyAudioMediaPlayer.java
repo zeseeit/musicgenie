@@ -5,8 +5,6 @@ import android.media.MediaPlayer;
 import android.util.Log;
 import android.widget.TextView;
 
-import any.audio.AnyAudioMains.AnyAudio;
-
 import static any.audio.Adapters.DownloadedItemsAdapter.isPlaying;
 
 /**
@@ -15,7 +13,6 @@ import static any.audio.Adapters.DownloadedItemsAdapter.isPlaying;
 
 public class AnyAudioMediaPlayer {
 
-    private static Context context;
     private static AnyAudioMediaPlayer mInstance;
     private static TextView btn;
     private String playBtnString = "\uE039";
@@ -23,7 +20,6 @@ public class AnyAudioMediaPlayer {
     private static MediaPlayer mp;
 
     public AnyAudioMediaPlayer(Context context) {
-        this.context = context;
         mp = new MediaPlayer();
     }
 
@@ -40,7 +36,7 @@ public class AnyAudioMediaPlayer {
     }
 
     public AnyAudioMediaPlayer setViewCallback(TextView viewCallback){
-        this.btn = viewCallback;
+        btn = viewCallback;
         return this;
     }
 

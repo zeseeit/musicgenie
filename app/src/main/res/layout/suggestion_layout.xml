@@ -16,8 +16,8 @@
             android:layout_height="56dp"
             android:layout_weight="1.5"
             android:gravity="center"
-            android:textColor="@color/AnyAudioGrey189"
-            android:text=""
+            android:textColor="@color/AnyAudioGrey"
+            android:text=""
             android:textSize="24sp" />
 
         <TextView
@@ -30,7 +30,7 @@
             android:maxLines="1"
             android:padding="8dp"
             android:text="TextView"
-            android:textColor="@color/AnyAudioPrimaryBackground"
+            android:textColor="@color/AnyAudioBlack"
             android:textSize="18sp" />
 
         <TextView
@@ -40,7 +40,7 @@
             android:layout_height="56dp"
             android:layout_weight="1.5"
             android:gravity="center"
-            android:textColor="@color/AnyAudioGrey189"
+            android:textColor="@color/AnyAudioGrey"
             android:text=""
             android:textSize="24sp" />
 

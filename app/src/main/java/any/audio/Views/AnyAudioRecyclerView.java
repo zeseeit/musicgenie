@@ -12,7 +12,6 @@ import any.audio.Config.Constants;
 public class AnyAudioRecyclerView extends RecyclerView {
 
     int direction = Constants.DIRECTION.VERTICAL;
-    private double FLING_SCALE_DOWN_FACTOR = 0.8;
 
     public AnyAudioRecyclerView(Context context,int direction) {
         super(context);
@@ -22,6 +21,7 @@ public class AnyAudioRecyclerView extends RecyclerView {
     @Override
     public boolean fling(int velocityX, int velocityY) {
 
+        double FLING_SCALE_DOWN_FACTOR = 0.8;
         if(direction==Constants.DIRECTION.VERTICAL){
             velocityY *= FLING_SCALE_DOWN_FACTOR;
         }else{

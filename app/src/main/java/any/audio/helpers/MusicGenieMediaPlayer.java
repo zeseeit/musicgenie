@@ -29,9 +29,7 @@ public class MusicGenieMediaPlayer extends Thread {
     private ExoPlayer exoPlayer;
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
-    private MediaCodecAudioTrackRenderer audioRenderer;
     private Uri mUri;
-    private Handler mHandler;
     private Handler mUIHandler;
 
     public MusicGenieMediaPlayer(Context context,String uri , Handler handler) {
@@ -44,19 +42,18 @@ public class MusicGenieMediaPlayer extends Thread {
     @Override
     public void run() {
         Looper.prepare();
-        mHandler = new Handler(){
+        Handler mHandler = new Handler() {
             @Override
             public void handleMessage(Message msg) {
 
-                if(msg.arg1== Constants.FLAG_STOP_MEDIA_PLAYER) {
+                if (msg.arg1 == Constants.FLAG_STOP_MEDIA_PLAYER) {
                     L.m("ExoPlayer", "flag to cancel stream");
                     stopPlayer();
-                }
-                else if (msg.arg1==Constants.FLAG_CANCEL_STREAM) {
+                } else if (msg.arg1 == Constants.FLAG_CANCEL_STREAM) {
                     L.m("ExoPlayer", "flag to cancel stream");
-                }else{
-                    L.m("ExoPlayer","seek Order to "+msg.arg1);
-                        seekTo((long) msg.arg1);
+                } else {
+                    L.m("ExoPlayer", "seek Order to " + msg.arg1);
+                    seekTo((long) msg.arg1);
                 }
 
             }
@@ -109,7 +106,7 @@ public class MusicGenieMediaPlayer extends Thread {
                 allocator,
                 BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
 
-        audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+        MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
         // Prepare ExoPlayer
         exoPlayer.prepare(audioRenderer);
         exoPlayer.setPlayWhenReady(true);

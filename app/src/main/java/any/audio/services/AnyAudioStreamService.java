@@ -1,22 +1,13 @@
 package any.audio.services;
 
-import android.app.AlarmManager;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.media.MediaMetadata;
-import android.media.session.MediaSession;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.exoplayer.ExoPlaybackException;
@@ -27,12 +18,7 @@ import com.google.android.exoplayer.upstream.Allocator;
 import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
-import com.google.android.exoplayer.util.SystemClock;
 import com.google.android.exoplayer.util.Util;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import any.audio.Activity.AnyAudioActivity;
 import any.audio.Config.Constants;
 import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
@@ -53,17 +39,14 @@ public class AnyAudioStreamService extends Service {
     private static final int BUFFER_SEGMENT_SIZE = 64 * 1024;
     private static final int BUFFER_SEGMENT_COUNT = 256;
     private int UP_NEXT_PREPARE_TIME_OFFSET = 50000;
-    private AnyAudioActivity.AnyAudioPlayer mInstance;
-    private MediaCodecAudioTrackRenderer audioRenderer;
     private Uri mUri;
-    private int playerCurrentPositon = -1;
-    private int playerContentDuration = -1;
     public static ExoPlayer anyPlayer;
     private SharedPrefrenceUtils utils;
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.d("AnyAudioStreamTest"," onCreate");
         utils = SharedPrefrenceUtils.getInstance(this);
     }
 
@@ -125,7 +108,9 @@ public class AnyAudioStreamService extends Service {
             case Constants.ACTION_STREAM_TO_SERVICE_NEXT:
 
                 Log.i("NotificationPlayer", " received next action");
-
+                if(anyPlayer!=null){
+                    resetPlayer();
+                }
                 onNextRequested();
 
                 break;
@@ -138,7 +123,8 @@ public class AnyAudioStreamService extends Service {
                 break;
         }
 
-        return START_STICKY;
+        return START_NOT_STICKY;
+
     }
 
     @Override
@@ -177,13 +163,10 @@ public class AnyAudioStreamService extends Service {
 
     }
 
-    private void updateLockScreen(){
-    }
 
     private void useExoplayer() {
 
         resetPlayer();
-        updateLockScreen();
         anyPlayer = ExoPlayer.Factory.newInstance(1);
         Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
         String userAgent = Util.getUserAgent(this, "AnyAudio");
@@ -195,7 +178,7 @@ public class AnyAudioStreamService extends Service {
                 allocator,
                 BUFFER_SEGMENT_SIZE * BUFFER_SEGMENT_COUNT);
 
-        audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
+        MediaCodecAudioTrackRenderer audioRenderer = new MediaCodecAudioTrackRenderer(sampleSource);
 
         anyPlayer.prepare(audioRenderer);
         anyPlayer.setPlayWhenReady(true);
@@ -229,8 +212,8 @@ public class AnyAudioStreamService extends Service {
 
         while (anyPlayer != null) {
 
-            playerCurrentPositon = (int) anyPlayer.getCurrentPosition();
-            playerContentDuration = (int) anyPlayer.getDuration();
+            int playerCurrentPositon = (int) anyPlayer.getCurrentPosition();
+            int playerContentDuration = (int) anyPlayer.getDuration();
 
 
             if (playerContentDuration != -1) {
@@ -293,7 +276,7 @@ public class AnyAudioStreamService extends Service {
 
     private void onNextRequested() {
 
-        long diff;
+        long diff = 9999;
 
         utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
         PlaylistItem nxtItem = null;
@@ -329,8 +312,9 @@ public class AnyAudioStreamService extends Service {
         utils.setNextVId(upNextVid);
         utils.setNextStreamTitle(upNextTitle);
 
-        diff = anyPlayer.getDuration() - anyPlayer.getCurrentPosition();
-
+        if(anyPlayer!=null)
+            diff = anyPlayer.getDuration() - anyPlayer.getCurrentPosition();
+        resetPlayer();
         if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
             L.m("PlaylistTest", "diff : " + diff);
             // means stream fetcher not in progress
@@ -340,6 +324,7 @@ public class AnyAudioStreamService extends Service {
             utils.setCurrentItemTitle(upNextTitle);
             Log.d("PlaylistTest", "starting normal stream..");
             initStream(upNextVid, upNextTitle);
+
 
         } else {
 

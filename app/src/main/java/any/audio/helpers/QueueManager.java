@@ -216,7 +216,7 @@ public class QueueManager {
                 if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                     nextIndex = ThreadLocalRandom.current().nextInt(0, totalQueueLength);
                 } else {
-                    nextIndex = new Random().nextInt(totalQueueLength) + 0;
+                    nextIndex = new Random().nextInt(totalQueueLength);
                 }
 
                 Log.d("RepeatMode","[Suffle] next to play index "+nextIndex);

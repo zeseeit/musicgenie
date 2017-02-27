@@ -68,11 +68,8 @@ public class FullAdActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        return id == R.id.action_settings || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
     private InterstitialAd newInterstitialAd() {

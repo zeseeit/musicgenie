@@ -13,7 +13,6 @@ import any.audio.R;
  */
 public class TourPagerAdapter extends PagerAdapter {
 
-    private LayoutInflater layoutInflater;
     private Context context;
     private int[] layouts;
 
@@ -31,7 +30,7 @@ public class TourPagerAdapter extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, int position) {
 
-        layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View view = layoutInflater.inflate(layouts[position], container, false);
         container.addView(view);
 

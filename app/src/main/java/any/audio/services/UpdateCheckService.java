@@ -2,30 +2,22 @@ package any.audio.services;
 
 import android.app.ActivityManager;
 import android.app.Service;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 import android.util.Log;
-
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.util.Timer;
-import java.util.TimerTask;
-
 import any.audio.Activity.UpdateThemedActivity;
 import any.audio.Config.Constants;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
@@ -98,13 +90,13 @@ public class UpdateCheckService extends Service {
 
     }
 
-    class RegularUpdateTimerTask extends TimerTask {
-
-        @Override
-        public void run() {
-            checkForUpdate();
-        }
-    }
+//    class RegularUpdateTimerTask extends TimerTask {
+//
+//        @Override
+//        public void run() {
+//            checkForUpdate();
+//        }
+//    }
 
     public boolean isForeground(String myPackage) {
 
@@ -172,6 +164,10 @@ public class UpdateCheckService extends Service {
 
 
             }else {
+                Intent intent = new Intent();
+                intent.setAction("ACTION_UPDATE_CHECK");
+                intent.putExtra("msg","You have Updated Version");
+                sendBroadcast(intent);
                 utils.setNewVersionAvailibility(false);
             }
 

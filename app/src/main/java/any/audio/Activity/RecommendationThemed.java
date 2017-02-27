@@ -11,7 +11,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.Network.ConnectivityUtils;
 import any.audio.R;

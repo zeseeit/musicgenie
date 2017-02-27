@@ -27,7 +27,5 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true" />
-    w
-
 
 </RelativeLayout>

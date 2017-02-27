@@ -5,23 +5,11 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
-
-import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
 import java.io.File;
 
 import any.audio.Managers.PermissionManager;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
-import any.audio.Network.VolleyUtils;
-
 /**
  * Created by Ankit on 9/13/2016.
  */
@@ -67,7 +55,7 @@ public class AppConfig extends Application {
 
         File dir = new File(Constants.DOWNLOAD_FILE_DIR);
         boolean s = false;
-        if (dir.exists() == false) {
+        if (!dir.exists()) {
             s = dir.mkdirs();
         }
 

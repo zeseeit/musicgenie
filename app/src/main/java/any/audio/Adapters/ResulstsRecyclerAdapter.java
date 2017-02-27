@@ -211,8 +211,7 @@ public class ResulstsRecyclerAdapter extends RecyclerView.Adapter<RecyclerView.V
 
     private int getHeaderViewToInflate() {
 
-        int _temp_header_viewID = R.layout.section_header_layout;
-        return _temp_header_viewID;
+        return R.layout.section_header_layout;
 
     }
 

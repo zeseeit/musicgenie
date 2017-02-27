@@ -50,7 +50,7 @@
         android:paddingRight="16dp"
         android:paddingTop="8dp"
         android:paddingBottom="8dp"
-        android:textSize="18dp"
+        android:textSize="18sp"
         android:layout_centerInParent="true"
         android:layout_below="@+id/termsScrollView"
         android:textColor="@color/White"

@@ -29,14 +29,12 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:layout_below="@+id/explore_card_top_wrapper">
+            android:layout_height="64dp">
 
             <TextView
                 android:id="@+id/eve_suggestion_item_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_toLeftOf="@+id/explore_item_popup_btn"
                 android:maxLines="1"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"
@@ -52,7 +50,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/eve_suggestion_item_title"
-                android:layout_toLeftOf="@+id/explore_item_download_btn"
                 android:maxLines="1"
                 android:paddingLeft="14dp"
                 android:paddingRight="14dp"

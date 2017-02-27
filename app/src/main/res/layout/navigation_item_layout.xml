@@ -1,19 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    android:paddingLeft="24dp"
     android:background="@drawable/rectangle_ripple_views"
     android:layout_height="48dp">
 
-
     <TextView
         android:id="@+id/item_icon"
-        android:textSize="26sp"
+        android:textSize="24sp"
         android:gravity="center"
         android:text="T"
+        android:textColor="@color/AnyAudioGrey"
         android:layout_width="48dp"
         android:layout_height="48dp" />
-
-
     <TextView
         android:layout_marginLeft="8dp"
         android:textSize="14sp"
@@ -21,7 +20,7 @@
         android:layout_toRightOf="@+id/item_icon"
         android:id="@+id/item_title"
         android:text="Trending"
-        android:textColor="@color/AnyAudioGrey"
+        android:textColor="@color/AnyAudioBlack"
         android:layout_width="match_parent"
         android:layout_height="48dp" />
 

@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_tour"
-    android:background="#fafafa"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="any.audio.Activity.TourActivity">
@@ -20,7 +19,6 @@
             android:max="400"
             android:id="@+id/progressBarStreamProgress"
             android:layout_above="@+id/btn_next"
-            android:layout_weight="1"
             android:progressDrawable="@drawable/tour_progressbar_color"
             />
 
@@ -31,7 +29,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:background="@drawable/btn_ripple_effect"
+        android:background="@drawable/rectangle_ripple_views"
         android:layout_marginRight="8dp"
         android:text="NEXT"
         android:visibility="visible"
@@ -44,7 +42,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentLeft="true"
-        android:background="@drawable/btn_ripple_effect"
+        android:background="@drawable/rectangle_ripple_views"
         android:text="BACK"
         android:textColor="@color/AnyAudioPrimaryColor" />
 

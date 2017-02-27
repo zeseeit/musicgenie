@@ -3,7 +3,9 @@ package any.audio.Adapters;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
@@ -90,7 +92,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
 
     private String getImageUrl(String vid) {
         //return "https://i.ytimg.com/vi/23 kVgKfScL5yk 35/hqdefault.jpg";
-        return "https://i.ytimg.com/vi/" + vid + "/0.jpg";  // additional query params => ?custom=true&w=240&h=256
+        Log.d("PlaylistImageTest"," url :" +"https://i.ytimg.com/vi/" + vid + Constants.THUMBNAIL_VERSION_MEDIUM);
+        return "https://i.ytimg.com/vi/" + vid + Constants.THUMBNAIL_VERSION_MEDIUM;  // additional query params => ?custom=true&w=240&h=256
     }
 
     public void popItem() {
@@ -127,6 +130,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
                     PlaylistAdapter adapter = PlaylistAdapter.getInstance(context);
                     adapter.streamItem(getAdapterPosition());
 
+                }
+            });
+
+
+            removeBtn.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                    return false;
                 }
             });
 
