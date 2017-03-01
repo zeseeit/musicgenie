@@ -1021,23 +1021,19 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                         String trackLen = getTimeFromMillisecond(contentLen);
 
                         if (contentLen > 0 && buffered > 0) {
-
                             pauseBtn.setEnabled(true);
                             nextBtn.setEnabled(true);
                             utils.setStreamContentLength(trackLen);
-                            //startNotificationService();
-
                         }
 
                         pauseBtn.setEnabled(true);
                         nextBtn.setEnabled(true);
                         seekBar.setMax(contentLen);
                         progressBarStream.setMax(contentLen);
+                        streamDuration.setText(getTimeFromMillisecond(progress) + "/" + trackLen);
 
                         seekBar.setProgress(progress);
                         progressBarStream.setProgress(progress);
-                        streamDuration.setText(getTimeFromMillisecond(progress) + "/" + trackLen);
-
                         if (mBuffered < buffered) {
                             seekBar.setSecondaryProgress(buffered);
                             mBuffered = buffered;

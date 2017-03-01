@@ -16,13 +16,13 @@
         android:name=".AnyAudioMains.AnyAudio"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
-        android:icon="@mipmap/ic_launcher_rnd"
+        android:icon="@mipmap/ic_launcher_app"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/ic_launcher_rnd" />
+            android:resource="@drawable/notification" />
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/PrimaryColorDark" />
@@ -100,6 +100,7 @@
         <activity android:name=".Activity.AnyAudioActivity"
             android:screenOrientation="portrait">
         </activity>
+
     </application>
 
 </manifest>

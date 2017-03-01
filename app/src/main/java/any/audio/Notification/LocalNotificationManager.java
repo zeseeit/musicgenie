@@ -39,9 +39,9 @@ public class LocalNotificationManager {
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         mBuilder.setContentTitle("AnyAudio");
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_rnd);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_app);
         mBuilder.setLargeIcon(bitmap);
-        mBuilder.setSmallIcon(R.drawable.ic_launcher_rnd);
+        mBuilder.setSmallIcon(R.drawable.notification);
         mBuilder.setContentText(msg);
         mBuilder.setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
         this.mNotificationId +=1;
@@ -58,10 +58,10 @@ public class LocalNotificationManager {
         Intent intent = new Intent(context, AnyAudioActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentTitle("AnyAudio");
-        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_rnd);
+        Bitmap bitmap = BitmapFactory.decodeResource(context.getResources(),R.mipmap.ic_launcher_app);
         mBuilder.setLargeIcon(bitmap);
         mBuilder.setContentIntent(pendingIntent);
-        mBuilder.setSmallIcon(R.mipmap.ic_launcher_rnd);
+        mBuilder.setSmallIcon(R.drawable.notification);
         mBuilder.setContentText(item_name);
         mNotificationId = 0; // single notificationId is enough as there is single downoad at a time
 

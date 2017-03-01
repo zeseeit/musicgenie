@@ -79,7 +79,7 @@ public class AnyAudioPushHandler {
     private void handleNewUpdate(Map<String, String> data) {
 
         Intent updateIntent = new Intent(context, UpdateThemedActivity.class);
-        String newVersionCode = data.get("versionCode");
+        String newVersionCode = data.get("newVersionCode");
         if(!((Integer.valueOf(newVersionCode)>getCurrentVersion()))) {
             Log.d("PushHandler"," Updated Version");
             return;
@@ -88,7 +88,7 @@ public class AnyAudioPushHandler {
         utils.setNewVersionName(data.get("newVersionName"));
         utils.setNewVersionDescription(data.get("newInThis"));
         utils.setNewVersionAvailibility(true);
-        utils.setNewVersionCode(Integer.valueOf(data.get("versionCode")));
+        utils.setNewVersionCode(Integer.valueOf(data.get("newVersionCode")));
         updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, data.get("newInThis"));
         updateIntent.putExtra(Constants.KEY_NEW_UPDATE_URL, data.get("downloadUrl"));
         updateIntent.putExtra(Constants.KEY_NEW_ANYAUDIO_VERSION,data.get("newVersionName"));
@@ -162,7 +162,7 @@ public class AnyAudioPushHandler {
                 .setAutoCancel(true)
                 .setContentTitle(title)
                 .setContentIntent(resultPendingIntent)
-                .setSmallIcon(R.drawable.notifications_bar_small)
+                .setSmallIcon(R.drawable.notification)
                 .setLargeIcon(BitmapFactory.decodeResource(context.getResources(), icon))
                 .setContentText(message)
                 .build();
@@ -203,7 +203,7 @@ public class AnyAudioPushHandler {
         final Uri alarmSound = Uri.parse(ContentResolver.SCHEME_ANDROID_RESOURCE
                 + "://" + context.getPackageName() + "/raw/notification");
 
-        final int icon = R.mipmap.ic_launcher_rnd;
+        final int icon = R.drawable.notification;
 
         showSmallNotification(mBuilder, icon, title, message, getDateTime(), resultPendingIntent, alarmSound);
         playNotificationSound();

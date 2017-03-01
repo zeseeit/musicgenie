@@ -18,9 +18,11 @@ import java.io.File;
 import java.util.ArrayList;
 
 import any.audio.Adapters.DownloadedItemsAdapter;
+import any.audio.Config.AppConfig;
 import any.audio.Config.Constants;
 import any.audio.Models.DownloadedItemModel;
 import any.audio.R;
+import any.audio.helpers.AnyAudioMediaPlayer;
 
 /**
  * Created by Ankit on 2/10/2017.
@@ -93,20 +95,20 @@ public class DownloadedFragment extends Fragment {
 
         ArrayList<DownloadedItemModel> newList = getDownloadedItemList();
         //deleting original files
-        Log.i("DeletingFile"," path to delete "+newList.get(index));
+        Log.i("DeletingFile", " path to delete " + newList.get(index));
         File _file_to_delete = new File(String.valueOf(newList.get(index).title));
 
-        if(_file_to_delete.delete()){
+        if (_file_to_delete.delete()) {
 
             //local downloaded list
             newList.remove(index);
             downloadedAdapter.setDownloadingList(newList);
-            if(newList.size()==0){
+            if (newList.size() == 0) {
                 emptyMessage.setVisibility(View.VISIBLE);
             }
             Toast.makeText(context, "Deleted ! ", Toast.LENGTH_SHORT).show();
 
-        }else {
+        } else {
             Toast.makeText(context, "Cannot Delete ! ", Toast.LENGTH_SHORT).show();
         }
 
@@ -132,22 +134,35 @@ public class DownloadedFragment extends Fragment {
 
     }
 
+
     private ArrayList<DownloadedItemModel> getDownloadedItemList() {
         ArrayList<DownloadedItemModel> downloadedItemModels = new ArrayList<>();
         File dir = new File(Constants.DOWNLOAD_FILE_DIR);
-        if(dir!=null)
-        for (File f : dir.listFiles()) {
-            String path = f.toString();
-            Log.d("Downloaded", "" + path);
-            downloadedItemModels.add(0, new DownloadedItemModel(path));
-        }
+        try {
+            if (dir != null) {
+                for (File f : dir.listFiles()) {
+                    String path = f.toString();
+                    Log.d("Downloaded", "" + path);
+                    downloadedItemModels.add(0, new DownloadedItemModel(path));
+                }
+            }
+        } catch (Exception e) {
 
-        if(downloadedItemModels.size()==0) {
-            emptyMessage.setVisibility(View.VISIBLE);
-        }else{
-            emptyMessage.setVisibility(View.GONE);
+            AppConfig.getInstance(context).configureDevice();
+            dir = new File(Constants.DOWNLOAD_FILE_DIR);
+            for (File f : dir.listFiles()) {
+                String path = f.toString();
+                Log.d("Downloaded", "" + path);
+                downloadedItemModels.add(0, new DownloadedItemModel(path));
+            }
         }
-
+        finally {
+            if (downloadedItemModels.size() == 0) {
+                emptyMessage.setVisibility(View.VISIBLE);
+            } else {
+                emptyMessage.setVisibility(View.GONE);
+            }
+        }
         return downloadedItemModels;
     }
 
@@ -158,8 +173,14 @@ public class DownloadedFragment extends Fragment {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+    }
+
+    @Override
     public void onDetach() {
         super.onDetach();
+
     }
 
 }

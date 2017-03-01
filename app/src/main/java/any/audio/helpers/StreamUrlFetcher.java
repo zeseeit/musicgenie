@@ -22,7 +22,7 @@ import any.audio.Network.VolleyUtils;
  */
 public class StreamUrlFetcher {
 
-    private static final String TAG = "MusicStreamer";
+    private static final String TAG = "StreamUrlFetcherer";
     private static final int SOCKET_CONNECT_TIMEOUT = 60 * 1000; // 1 min
     private static Context context;
     private static StreamUrlFetcher mInstance;
@@ -59,7 +59,7 @@ public class StreamUrlFetcher {
     public void initProcess() {
         //new StreamThread(this.vid, this.file).start();
         requestStreamUrlUsingVolley(this.vid);
-        L.m("MusicStream", " Thread Started: stream uri fetch");
+        L.m("StreamUrlFetcher", " Thread Started: stream uri fetch");
     }
 
     private void broadcastURI(String t_url, String file) {
@@ -88,21 +88,23 @@ public class StreamUrlFetcher {
 
         try {
             VolleyUtils.getInstance().cancelPendingRequests(STREAM_URL_REQUEST_TAG_VOLLEY);
-            Log.d("MusicStreamer", " Cancellig Pending Volley Requests For Stream Url");
+            Log.d("StreamUrlFetcher", " Cancellig Pending Volley Requests For Stream Url");
 
         } catch (Exception e) {
-            Log.d("MusicStreamer", " Attempt To Cancel NoRequests");
+            Log.d("StreamUrlFetcher", " Attempt To Cancel NoRequests");
         }
 
         final String streaming_url_pref = URLS.URL_SERVER_ROOT;
         String url = URLS.URL_SERVER_ROOT + "api/v1/stream?url=" + v_id;
-        Log.d("MusicStream"," requesting url for stream on:"+url) ;
+        Log.d("StreamUrlFetcher"," requesting url for stream on:"+url) ;
         StringRequest updateCheckReq = new StringRequest(
                 Request.Method.GET,
                 url,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String result) {
+
+                        Log.d("StreamUrlFetcher"," response "+result) ;
 
                         JSONObject obj = null;
                         try {
@@ -128,7 +130,7 @@ public class StreamUrlFetcher {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("MusicStreamer", " VolleyError " + volleyError);
+                        Log.d("StreamUrlFetcher", " VolleyError " + volleyError);
                         broadcastURI(Constants.STREAM_PREPARE_FAILED_URL_FLAG, file);
                     }
                 });

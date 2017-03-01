@@ -9,7 +9,7 @@
         </shape>
     </item>
 
-    <item android:top="12dp" android:right="12dp" android:bottom="12dp" android:left="12dp">
+    <item android:top="16dp" android:right="16dp" android:bottom="16dp" android:left="16dp">
         <shape android:shape="oval">
             <size android:height="40dp" android:width="40dp"/>
             <solid android:color="#ffffff"/>

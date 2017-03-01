@@ -224,7 +224,7 @@ public class NotificationPlayerService extends Service {
         notification.contentView = view;
         notification.bigContentView = bigView;
         notification.flags = PLAYING ? Notification.FLAG_ONGOING_EVENT : Notification.FLAG_AUTO_CANCEL;
-        notification.icon = R.drawable.notifications_bar_small;
+        notification.icon = R.mipmap.inotify;
         notification.tickerText = title;
         notification.deleteIntent = deletePedingIntent;
         notification.contentIntent = pendingIntent;

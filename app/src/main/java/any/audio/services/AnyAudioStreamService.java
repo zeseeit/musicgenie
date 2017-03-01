@@ -2,7 +2,10 @@ package any.audio.services;
 
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.net.Uri;
 import android.os.IBinder;
 import android.os.Looper;
@@ -42,12 +45,16 @@ public class AnyAudioStreamService extends Service {
     private Uri mUri;
     public static ExoPlayer anyPlayer;
     private SharedPrefrenceUtils utils;
+    private PhoneStateReceiver phoneReceiver;
 
     @Override
     public void onCreate() {
         super.onCreate();
         Log.d("AnyAudioStreamTest"," onCreate");
         utils = SharedPrefrenceUtils.getInstance(this);
+        phoneReceiver = new PhoneStateReceiver();
+        registerReceiver(phoneReceiver,new IntentFilter("android.intent.action.PHONE_STATE"));
+
     }
 
     @Nullable
@@ -131,6 +138,8 @@ public class AnyAudioStreamService extends Service {
     public void onTaskRemoved(Intent rootIntent) {
 
         // stop music player if there
+        unregisterReceiver(phoneReceiver);
+
         if(anyPlayer!=null){
             resetPlayer();
         }
@@ -497,6 +506,19 @@ public class AnyAudioStreamService extends Service {
     private String getImageUrl(String vid) {
         //return "https://i.ytimg.com/vi/kVgKfScL5yk/hqdefault.jpg";
         return "https://i.ytimg.com/vi/" + vid + "/hqdefault.jpg";  // additional query params => ?custom=true&w=240&h=256
+    }
+
+    public class PhoneStateReceiver extends BroadcastReceiver{
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(anyPlayer!=null && anyPlayer.getPlayWhenReady()){
+                anyPlayer.setPlayWhenReady(false);
+                broadcastPlayerStateToBottomPlayer(false);
+            }
+
+        }
     }
 
 }

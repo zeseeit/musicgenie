@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.TextView;
 
+import com.facebook.drawee.view.SimpleDraweeView;
 import com.squareup.picasso.Picasso;
 
 import any.audio.Managers.FontManager;
@@ -22,14 +23,14 @@ public class RecommendationThemed extends Activity {
     TextView recommendationText;
     TextView okBtn;
     Typeface typeface;
-    CircleImageView thumbnaill;
+    SimpleDraweeView view;
     private TextView recommendationArtistTv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.light_recommendation_themed_layout);
+        setContentView(R.layout.activity_recommendation_themed_light);
         getWindow().setBackgroundDrawable(new ColorDrawable(0));
 
         Bundle bundle = getIntent().getExtras();
@@ -44,15 +45,14 @@ public class RecommendationThemed extends Activity {
         okBtn = (TextView) findViewById(R.id.search_item_play_btn);
         recommendationText = (TextView) findViewById(R.id.recommendationTitle);
         recommendationArtistTv = (TextView) findViewById(R.id.recommendationArtist);
-        thumbnaill = (CircleImageView) findViewById(R.id.recommndation_thumbnail);
+        view = (SimpleDraweeView) findViewById(R.id.recommndation_thumbnail);
 
         okBtn.setTypeface(typeface);
         fixedTextView.setText(fixedTxt);
         recommendationText.setText(title);
         recommendationArtistTv.setText(recom_artist);
 
-        if(ConnectivityUtils.getInstance(this).isConnectedToNet())
-            Picasso.with(this).load(urlThumb).into(thumbnaill);
+        view.setImageURI(urlThumb);
 
         okBtn.setOnClickListener(new View.OnClickListener() {
             @Override

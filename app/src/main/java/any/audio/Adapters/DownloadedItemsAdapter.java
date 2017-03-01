@@ -1,8 +1,10 @@
 package any.audio.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Typeface;
 import android.media.MediaMetadataRetriever;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,6 +16,7 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import any.audio.Config.Constants;
 import any.audio.Managers.FontManager;
 import any.audio.Models.DownloadedItemModel;
 import any.audio.R;
@@ -163,24 +166,9 @@ public class DownloadedItemsAdapter extends ArrayAdapter<String> {
                 }
             }
         });
-//
-//        viewHolder.infoWrapper.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//
-//                // send Intent to Music Handle capable
-//                Intent audioIntent = new Intent();
-//                audioIntent.setAction(Intent.ACTION_VIEW);
-//                audioIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                File f = new File(downloadedListItems.get(position).title);
-//                Uri uri = Uri.fromFile(f);
-//                audioIntent.setDataAndType(uri, "audio/*");
-//                context.startActivity(audioIntent);
-//
-//            }
-//        });
 
     }
+
 
     @Override
     public int getCount() {

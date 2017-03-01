@@ -68,7 +68,7 @@
                 android:ellipsize="marquee"
                 android:layout_toRightOf="@+id/downloaded_item_thumbnail_wrapper"
                 android:text=""
-                android:textColor="@color/AnyAudioGrey224"
+                android:textColor="@color/AnyAudioBlack"
                 android:textStyle="bold"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
