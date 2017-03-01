@@ -21,7 +21,7 @@ public class AnyAudioInstanceIdService extends FirebaseInstanceIdService {
 
         String newToken = FirebaseInstanceId.getInstance().getToken();
         if (newToken != null) {
-            Log.d(TAG, "Refreshed token :" + newToken);
+            Log.e(TAG, "Refreshed token :" + newToken);
             setupFirebasePushNotification(newToken);
         }
     }

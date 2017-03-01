@@ -94,7 +94,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     public static final int FRAGMENT_SETTINGS = 5;
     public static final int FRAGMENT_ABOUT_US = 6;
     public static final int FRAGMENT_SHOW_ALL = 7;
-    public static final int FRAGMENT_UPDATES = 8;
 
     final String playBtnString = "\uE037";
     final String pauseBtnString = "\uE034";
@@ -959,20 +958,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                         .commit();
 
                 break;
-
-            case FRAGMENT_UPDATES:
-                dropShadowView.setVisibility(View.VISIBLE);
-                setTitle(extraa);
-                currentIndex = 5;
-                UpdatesFragment updatesFragment = new UpdatesFragment();
-
-                manager
-                        .beginTransaction()
-                        .replace(R.id.fragmentPlaceHolder, updatesFragment)
-                        .commit();
-
-                break;
-
 
             default:
                 break;

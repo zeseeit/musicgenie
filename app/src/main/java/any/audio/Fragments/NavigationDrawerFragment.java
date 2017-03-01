@@ -1,9 +1,13 @@
 package any.audio.Fragments;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +16,12 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import any.audio.Activity.AnyAudioActivity;
+import any.audio.Activity.UpdateThemedActivity;
 import any.audio.Adapters.NavigationListAdapter;
+import any.audio.Config.Constants;
 import any.audio.R;
 import any.audio.SharedPreferences.SharedPrefrenceUtils;
+import any.audio.services.UpdateCheckService;
 
 import static any.audio.Activity.AnyAudioActivity.anyAudioActivityInstance;
 
@@ -83,9 +90,12 @@ public class NavigationDrawerFragment extends Fragment {
 
                     case 5:
 
-                        fragment = AnyAudioActivity.FRAGMENT_UPDATES;
-                        title = "UPDATES";
-
+                        if(SharedPrefrenceUtils.getInstance(context).getNewVersionAvailibility()){
+                               launchUpdateDialog();
+                        }else{
+                            Toast.makeText(context,"Checking For Updates.... We Will Inform You Once Available ",Toast.LENGTH_LONG).show();
+                            checkForUpdate();
+                        }
                         break;
                 }
 
@@ -103,11 +113,42 @@ public class NavigationDrawerFragment extends Fragment {
 
     }
 
+    private void checkForUpdate() {
+        Intent i = new Intent(context,UpdateCheckService.class);
+        i.setAction("ACTION_UPDATE");
+        context.startService(i);
+    }
+
+    private void launchUpdateDialog(){
+
+        //Collect updates info from SP
+        SharedPrefrenceUtils utils = SharedPrefrenceUtils.getInstance(context);
+        Intent updateIntent = new Intent(context, UpdateThemedActivity.class);
+        updateIntent.putExtra(Constants.EXTRAA_NEW_UPDATE_DESC, utils.getNewVersionDescription());
+        updateIntent.putExtra(Constants.KEY_NEW_UPDATE_URL, utils.getNewUpdateUrl());
+        updateIntent.putExtra(Constants.KEY_NEW_ANYAUDIO_VERSION,utils.getLatestVersionName());
+        updateIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(updateIntent);
+
+    }
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
     }
+
+
+    private int getCurrentVersion(){
+        PackageInfo pInfo = null;
+        try {
+            pInfo = context.getPackageManager().getPackageInfo(context.getPackageName(), 0);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return pInfo.versionCode;
+    }
+
 
     @Override
     public void onDetach() {

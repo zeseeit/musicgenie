@@ -30,11 +30,7 @@ import any.audio.helpers.L;
  */
 public class UpdateCheckService extends Service {
 
-    private static final long CHECK_UPDATE_INTERVAL = 6 * 60 * 60 * 1000;     // 6 hrs interval
-    //private static final long CHECK_UPDATE_INTERVAL = 20 * 1000;     // 20 sec interval
     private static final int SERVER_TIMEOUT_LIMIT = 10 * 1000; // 10 sec
-    private static Timer mTimer;
-    Handler mHandler = new Handler();
     SharedPrefrenceUtils utils;
     private final String url = URLS.URL_LATEST_APP_VERSION;
 
@@ -90,34 +86,6 @@ public class UpdateCheckService extends Service {
 
     }
 
-//    class RegularUpdateTimerTask extends TimerTask {
-//
-//        @Override
-//        public void run() {
-//            checkForUpdate();
-//        }
-//    }
-
-    public boolean isForeground(String myPackage) {
-
-        ActivityManager mActivityManager = (ActivityManager) this.getSystemService(ACTIVITY_SERVICE);
-        String mpackageName = "";
-
-        if (Build.VERSION.SDK_INT > 20) {
-
-            mpackageName = String.valueOf(mActivityManager.getRunningAppProcesses().get(0).processName);
-
-        } else {
-
-            mpackageName = String.valueOf(mActivityManager.getRunningTasks(1).get(0).topActivity.getClassName());
-
-        }
-
-        L.m("UpdateService", "found " + mpackageName);
-        return mpackageName.equals(myPackage);
-
-    }
-
     private int getCurrentAppVersionCode() {
 
         try {
@@ -134,6 +102,8 @@ public class UpdateCheckService extends Service {
     }
 
     public void handleNewUpdateResponse(String response) {
+
+        Log.d("UpdateService"," response "+response);
 
         try {
 

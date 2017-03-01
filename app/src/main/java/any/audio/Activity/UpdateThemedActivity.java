@@ -35,19 +35,6 @@ public class UpdateThemedActivity extends AppCompatActivity {
         previousVersion = (TextView) findViewById(R.id.oldVersionText);
 
 
-//        mUpdateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//            @Override
-//            public void onCheckedChanged(CompoundButton compoundButton, boolean byUser) {
-//                if (byUser) {
-//                    if (compoundButton.isChecked()) {
-//                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(true);
-//                    } else {
-//                        SharedPrefrenceUtils.getInstance(UpdateThemedActivity.this).setDoNotRemindMeAgainForAppUpdate(false);
-//                    }
-//                }
-//            }
-//        });
-
         //Regular TypeFace
         btnCancel.setTypeface(tfMaterial);
         // data setters
