@@ -25,6 +25,8 @@ import any.audio.helpers.QueueManager;
 import any.audio.helpers.ToastMaker;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import static any.audio.Activity.AnyAudioActivity.anyAudioActivityInstance;
+
 /**
  * Created by Ankit on 1/31/2017.
  */
@@ -73,15 +75,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         holder.artist.setText(currentItem.getUploader());
 
         if (utils.getAutoPlayMode()) {
-            holder.removeBtn.setVisibility(View.GONE);
+            holder.popUp.setVisibility(View.VISIBLE);
+            holder.removeBtn.setVisibility(View.INVISIBLE);
         } else {
+            holder.popUp.setVisibility(View.INVISIBLE);
             holder.removeBtn.setVisibility(View.VISIBLE);
             holder.removeBtn.setTypeface(typeface);
         }
 
-        if (ConnectivityUtils.getInstance(context).isConnectedToNet()) {
-            Picasso.with(context).load(getImageUrl(currentItem.getYoutubeId())).into(holder.thumbnail);
-        }
+        Picasso.with(context).load(getImageUrl(currentItem.getYoutubeId())).into(holder.thumbnail);
 
     }
 
@@ -91,8 +93,6 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
     }
 
     private String getImageUrl(String vid) {
-        //return "https://i.ytimg.com/vi/23 kVgKfScL5yk 35/hqdefault.jpg";
-        Log.d("PlaylistImageTest"," url :" +"https://i.ytimg.com/vi/" + vid + Constants.THUMBNAIL_VERSION_MEDIUM);
         return "https://i.ytimg.com/vi/" + vid + Constants.THUMBNAIL_VERSION_MEDIUM;  // additional query params => ?custom=true&w=240&h=256
     }
 
@@ -112,6 +112,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
         TextView title;
         TextView artist;
         TextView removeBtn;
+        TextView popUp;
         RelativeLayout infoWrapper;
 
         public PlaylistItemHolder(View itemView) {
@@ -121,7 +122,18 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
             title = (TextView) itemView.findViewById(R.id.playlist_item_title);
             artist = (TextView) itemView.findViewById(R.id.playlist_item_artist);
             removeBtn = (TextView) itemView.findViewById(R.id.playlist_item_cancel_btn_text);
+            popUp = (TextView) itemView.findViewById(R.id.playlist_item_popup_btn);
             infoWrapper = (RelativeLayout) itemView.findViewById(R.id.playlist_item_info_wrapper);
+            popUp.setTypeface(FontManager.getInstance(context).getTypeFace(FontManager.FONT_MATERIAL));
+
+
+            infoWrapper.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                    return false;
+                }
+            });
 
             infoWrapper.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -133,6 +145,25 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Playli
                 }
             });
 
+
+            popUp.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                    view.getBackground().setHotspot(motionEvent.getX(),motionEvent.getY());
+                    return false;
+                }
+            });
+
+            popUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    PlaylistAdapter adapter = PlaylistAdapter.getInstance(context);
+                    int pos = getAdapterPosition();
+                    // show pop for download + add To Queue
+                    anyAudioActivityInstance.showAutoPlayItemPopUp(view,adapter.playlistItems.get(pos).videoId,adapter.playlistItems.get(pos).youtubeId,adapter.playlistItems.get(pos).title,adapter.playlistItems.get(pos).getUploader());
+
+                }
+            });
 
             removeBtn.setOnTouchListener(new View.OnTouchListener() {
                 @Override

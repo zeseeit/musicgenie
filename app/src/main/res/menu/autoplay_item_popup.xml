@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:orderInCategory="1"
+        android:id="@+id/addAutoPlayToQueue"
+        android:title="Add To Queue"
+        />
+
+    <item
+        android:orderInCategory="2"
+        android:id="@+id/AutoplayDownload"
+        android:title="Download"
+        />
+
+
+</menu>
