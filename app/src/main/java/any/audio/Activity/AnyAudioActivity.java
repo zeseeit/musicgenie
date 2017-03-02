@@ -147,6 +147,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private TextView repeatModeText;
     private boolean AVAILABLE_FOR_UPDATE_PROGRESS = true;
     private RelativeLayout dropShadowView;
+    private boolean ONE_TIME_SETUP_DONE = false;
 
 
     @Override
@@ -1013,30 +1014,35 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                 int contentLen = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_CONTENT_LEN));
                 int buffered = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS));
                 int progress = Integer.parseInt(intent.getStringExtra(Constants.EXTRAA_STREAM_PROGRESS));
+                String trackText = intent.getStringExtra("formatted_time");
 
                 if (contentLen > 0) {
-
                     try {
 
-                        String trackLen = getTimeFromMillisecond(contentLen);
-
-                        if (contentLen > 0 && buffered > 0) {
+                        if (contentLen > 0 && buffered > 0 && !ONE_TIME_SETUP_DONE) {
+                            Log.d("StreamUITest"," one time setup");
                             pauseBtn.setEnabled(true);
                             nextBtn.setEnabled(true);
-                            utils.setStreamContentLength(trackLen);
+                            utils.setStreamContentLength(trackText);
+                            seekBar.setMax(contentLen);
+                            progressBarStream.setMax(contentLen);
+                            pauseBtn.setText(pauseBtnString);
+                            ONE_TIME_SETUP_DONE = true;
                         }
 
-                        pauseBtn.setEnabled(true);
-                        nextBtn.setEnabled(true);
-                        seekBar.setMax(contentLen);
-                        progressBarStream.setMax(contentLen);
-                        streamDuration.setText(getTimeFromMillisecond(progress) + "/" + trackLen);
-
+                        Log.d("StreamUITest"," updating progress "+progress);
+                        streamDuration.setText(getTimeFromMillisecond(progress) + "/" + trackText);
                         seekBar.setProgress(progress);
                         progressBarStream.setProgress(progress);
                         if (mBuffered < buffered) {
                             seekBar.setSecondaryProgress(buffered);
                             mBuffered = buffered;
+                        }
+
+                        Log.d("StreamTest"," progress "+progress+" contentLen"+contentLen+" are same "+(progress==contentLen));
+                        if((progress + 1000 ) >contentLen){
+                            Log.d("StreamUITest"," resetting one time setup");
+                            ONE_TIME_SETUP_DONE = false;
                         }
 
                     } catch (Exception e) {

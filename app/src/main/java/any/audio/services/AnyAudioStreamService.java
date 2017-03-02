@@ -176,6 +176,7 @@ public class AnyAudioStreamService extends Service {
     private void useExoplayer() {
 
         resetPlayer();
+        int lastProgress = -1;
         anyPlayer = ExoPlayer.Factory.newInstance(1);
         Allocator allocator = new DefaultAllocator(BUFFER_SEGMENT_SIZE);
         String userAgent = Util.getUserAgent(this, "AnyAudio");
@@ -251,11 +252,16 @@ public class AnyAudioStreamService extends Service {
                     }
                 }
 
-                broadcastStreamProgresUpdate(
-                        String.valueOf(playerCurrentPositon),
-                        String.valueOf(playerContentDuration),
-                        String.valueOf(anyPlayer.getBufferedPosition())
-                );
+                if(playerCurrentPositon>lastProgress) {
+
+                    broadcastStreamProgresUpdate(
+                            String.valueOf(playerCurrentPositon),
+                            String.valueOf(playerContentDuration),
+                            String.valueOf(anyPlayer.getBufferedPosition())
+                    );
+
+                    lastProgress = playerCurrentPositon;
+                }
             }
 
             try {
@@ -445,9 +451,40 @@ public class AnyAudioStreamService extends Service {
         intent.putExtra(Constants.EXTRAA_STREAM_PROGRESS, playingAt);
         intent.putExtra(Constants.EXTRAA_STREAM_CONTENT_LEN, contentLen);
         intent.putExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS, bufferedProgress);
+        String trackLen = getTimeFromMillisecond(Integer.valueOf(contentLen));
+        intent.putExtra("formatted_time",trackLen);
         sendBroadcast(intent);
 
     }
+
+    private String getTimeFromMillisecond(int millis) {
+
+        String hr;
+        String min;
+        String sec;
+        String time;
+        int i_hr = (millis / 1000) / 3600;
+        int i_min = (millis / 1000) / 60;
+        int i_sec = (millis / 1000) % 60;
+
+        if (i_hr == 0) {
+            min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+            sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+            time = min + " : " + sec;
+        } else {
+            hr = (String.valueOf(i_hr).length() < 2) ? "0" + i_hr : String.valueOf(i_hr);
+            min = (String.valueOf(i_min).length() < 2) ? "0" + i_min : String.valueOf(i_min);
+            sec = (String.valueOf(i_sec).length() < 2) ? "0" + i_sec : String.valueOf(i_sec);
+            time = hr + " : " + min + " : " + sec;
+        }
+
+        // Log.d("StreamingHome"," time returned "+time);
+
+        return time;
+
+
+    }
+
 
     public void broadcastActionToPrepareBottomPlayer() {
 
