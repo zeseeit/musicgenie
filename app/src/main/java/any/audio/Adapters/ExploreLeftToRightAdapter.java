@@ -89,7 +89,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
 
     @Override
     public int getItemCount() {
-        lt(">>>>getCount");
+        //lt(">>>>getCount");
         return COUNT;
     }
 
@@ -162,7 +162,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                     String t_url = itemModels.get(pos).Thumbnail_url;
                     String artist = itemModels.get(pos).UploadedBy;
                     String file_name = FileNameReformatter.getInstance(context).getFormattedName(itemModels.get(pos).Title);
-                    Log.d("ExploreCard", " >  dnd tapped");
+                //    Log.d("ExploreCard", " >  dnd tapped");
                     adapter.requestDownload(v_id, file_name, t_url, artist);
 
                 }
@@ -174,7 +174,7 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
 
                     ExploreLeftToRightAdapter adapter = ExploreLeftToRightAdapter.getInstance(context);
                     int pos = getAdapterPosition();
-                    Log.d("ResultListAdapter", "stream req for index " + pos);
+              //      Log.d("ResultListAdapter", "stream req for index " + pos);
                     String v_id = itemModels.get(pos).Video_id;
 
                     PlaylistGenerator.getInstance(context).preparePlaylist(v_id);
@@ -183,8 +183,8 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
                     String thumb_uri = itemModels.get(pos).Thumbnail_url;
                     String subTitle = itemModels.get(pos).UploadedBy;
                     StreamSharedPref.getInstance(context).setStreamTitle(file_name);
-                    Log.d("StreamHome", "v_id " + v_id);
-                    Log.d("StreamingHome", " setting thumb uri " + thumb_uri);
+          //          Log.d("StreamHome", "v_id " + v_id);
+            //        Log.d("StreamingHome", " setting thumb uri " + thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamThumbnailUrl(thumb_uri);
                     StreamSharedPref.getInstance(context).setStreamSubTitle(subTitle);
                     //todo: remove streamshared pref infos

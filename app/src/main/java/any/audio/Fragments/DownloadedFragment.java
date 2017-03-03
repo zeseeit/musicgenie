@@ -41,6 +41,8 @@ public class DownloadedFragment extends Fragment {
             showConfirmationDiaoge(index);
         }
     };
+    private String PERMISSION_READ ="android.permission.READ_EXTERNAL_STORAGE";
+    private ListView downloadedListView;
 
     private void showConfirmationDiaoge(final int index) {
 
@@ -127,13 +129,45 @@ public class DownloadedFragment extends Fragment {
 
         View fragmentView = inflater.inflate(R.layout.fragment_downloaded, container, false);
         emptyMessage = (TextView) fragmentView.findViewById(R.id.emptyDownloadedListMessage);
-        ListView downloadedListView = (ListView) fragmentView.findViewById(R.id.DownloadedListView);
+        downloadedListView = (ListView) fragmentView.findViewById(R.id.DownloadedListView);
         downloadedAdapter = DownloadedItemsAdapter.getInstance(getActivity());
         downloadedAdapter.setOnDownloadCancelListener(downloadedItemDeleteListener);
-        downloadedAdapter.setDownloadingList(getDownloadedItemList());
+
+        if((Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)){
+            if(!(context.checkSelfPermission(PERMISSION_READ) == PackageManager.PERMISSION_GRANTED)){
+                requestPermissions(new String[]{PERMISSION_READ}, 200);
+            }else{
+                downloadedAdapter.setDownloadingList(getDownloadedItemList());
+            }
+        }else{
+            downloadedAdapter.setDownloadingList(getDownloadedItemList());
+        }
+
         downloadedListView.setAdapter(downloadedAdapter);
         return fragmentView;
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case 200: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    downloadedAdapter.setDownloadingList(getDownloadedItemList());
+                    downloadedListView.setAdapter(downloadedAdapter);
+
+                } else {
+                    Toast.makeText(context,"No Permission To Read/Write",Toast.LENGTH_LONG).show();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 
     private ArrayList<DownloadedItemModel> getDownloadedItemList() {
@@ -150,19 +184,6 @@ public class DownloadedFragment extends Fragment {
             }
         } catch (Exception e) {
 
-            AppConfig.getInstance(context).configureDevice();
-            dir = new File(Constants.DOWNLOAD_FILE_DIR);
-            for (File f : dir.listFiles()) {
-                String path = f.toString();
-                Log.d("Downloaded", "" + path);
-                downloadedItemModels.add(0, new DownloadedItemModel(path));
-            }
-        } finally {
-            if (downloadedItemModels.size() == 0) {
-                emptyMessage.setVisibility(View.VISIBLE);
-            } else {
-                emptyMessage.setVisibility(View.GONE);
-            }
         }
         return downloadedItemModels;
     }

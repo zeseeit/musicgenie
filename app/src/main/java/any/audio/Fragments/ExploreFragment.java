@@ -51,9 +51,11 @@ public class ExploreFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         exploreTopDownRecyler = (RecyclerView) view.findViewById(R.id.explore_recycler_view);
+        exploreTopDownRecyler.setDrawingCacheEnabled(true);
+        exploreTopDownRecyler.setHasFixedSize(true);
+        exploreTopDownRecyler.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_AUTO);
         progressBar = (ProgressBar) view.findViewById(R.id.explore_progressBar);
         progressBarMsgPanel = (TextView) view.findViewById(R.id.exploreMessage);
-
         exploreTopDownRecyler.setLayoutManager(new LinearLayoutManager(context));
         exploreTopDownRecyler.setAdapter(ExploreTopDownAdapter.getInstance(context));
 
@@ -102,9 +104,10 @@ public class ExploreFragment extends Fragment {
             @Override
             public void handleMessage(Message msg) {
                 //WID: sets the main view adapter with data and disables progress bar
+                progressBar.setVisibility(View.GONE);
+                progressBarMsgPanel.setVisibility(View.GONE);
 
                 Log.d("Explore"," Receiving Message");
-
                 progressBar.setVisibility(View.INVISIBLE);
                 ResultMessageObjectModel object = (ResultMessageObjectModel) msg.obj;
                 ExploreItemModel item = object.data;

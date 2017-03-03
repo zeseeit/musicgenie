@@ -74,10 +74,6 @@ public class NavigationDrawerFragment extends Fragment {
 
                     case 2:
 
-                        if(!isGrantedPerms()){
-                            return;
-                        }
-
                         fragment = AnyAudioActivity.FRAGMENT_DOWNLOADS;
                         title = "AnyAudio";
                         break;
@@ -123,22 +119,6 @@ public class NavigationDrawerFragment extends Fragment {
 
         return (Build.VERSION.SDK_INT > Build.VERSION_CODES.M);
 
-    }
-
-    private boolean isGrantedPerms(){
-
-        // Check Permission
-        String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
-        int permsRequestCode = 200;
-        if (canMakeSmores()) {
-            if (!(context.checkSelfPermission(perms[0]) == PackageManager.PERMISSION_GRANTED)) {
-                requestPermissions(perms, permsRequestCode);
-            }else{
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private void checkForUpdate() {

@@ -92,15 +92,16 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
         ExploreLeftToRightAdapter adapter = new ExploreLeftToRightAdapter(context);
         adapter.setItemList(exploreItem.getList());
         holder.recyclerViewLeftToRight.setHasFixedSize(true);
+        holder.recyclerViewLeftToRight.setDrawingCacheEnabled(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(context);
         linearLayoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         holder.recyclerViewLeftToRight.setLayoutManager(linearLayoutManager);
         holder.recyclerViewLeftToRight.setAdapter(adapter);
 
-        if (mLastAnimatedItemPosition < position) {
-            animateItem(holder.itemView);
-            mLastAnimatedItemPosition = position;
-        }
+//        if (mLastAnimatedItemPosition < position) {
+//            animateItem(holder.itemView);
+//            mLastAnimatedItemPosition = position;
+//        }
 
     }
 
