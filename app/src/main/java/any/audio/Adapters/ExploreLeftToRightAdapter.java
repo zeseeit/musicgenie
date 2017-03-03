@@ -6,6 +6,7 @@ import android.graphics.Typeface;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -116,7 +117,8 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
 
             int widthPx = (int) SharedPrefrenceUtils.getInstance(context).getScreenWidthPx();
             int thumbnailHeight = (int) (0.5 * widthPx);
-            LinearLayout.LayoutParams thumbnailParams = new LinearLayout.LayoutParams(widthPx-25, thumbnailHeight);
+            int thumbnail_shift = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12, context.getResources().getDisplayMetrics());
+            LinearLayout.LayoutParams thumbnailParams = new LinearLayout.LayoutParams(widthPx-thumbnail_shift, thumbnailHeight);
 
             thumbnailWrapper.setLayoutParams(thumbnailParams);
             cardWrapper.setLayoutParams(new RelativeLayout.LayoutParams(widthPx, ViewGroup.LayoutParams.WRAP_CONTENT));

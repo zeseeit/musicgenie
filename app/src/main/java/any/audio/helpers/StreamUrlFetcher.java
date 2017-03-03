@@ -57,9 +57,10 @@ public class StreamUrlFetcher {
     }
 
     public void initProcess() {
-        //new StreamThread(this.vid, this.file).start();
+
         requestStreamUrlUsingVolley(this.vid);
-        L.m("StreamUrlFetcher", " Thread Started: stream uri fetch");
+        L.m("DuplicateTest", " Thread Started: stream uri fetch");
+
     }
 
     private void broadcastURI(String t_url, String file) {
@@ -88,15 +89,15 @@ public class StreamUrlFetcher {
 
         try {
             VolleyUtils.getInstance().cancelPendingRequests(STREAM_URL_REQUEST_TAG_VOLLEY);
-            Log.d("StreamUrlFetcher", " Cancellig Pending Volley Requests For Stream Url");
+            Log.d("DuplicateTest", " Cancellig Pending Volley Requests For Stream Url");
 
         } catch (Exception e) {
-            Log.d("StreamUrlFetcher", " Attempt To Cancel NoRequests");
+            Log.d("DuplicateTest", " Attempt To Cancel NoRequests");
         }
 
         final String streaming_url_pref = URLS.URL_SERVER_ROOT;
         String url = URLS.URL_SERVER_ROOT + "api/v1/stream?url=" + v_id;
-        Log.d("StreamUrlFetcher"," requesting url for stream on:"+url) ;
+        Log.d("DuplicateTest"," requesting url for stream on:"+url) ;
         StringRequest updateCheckReq = new StringRequest(
                 Request.Method.GET,
                 url,
@@ -104,7 +105,7 @@ public class StreamUrlFetcher {
                     @Override
                     public void onResponse(String result) {
 
-                        Log.d("StreamUrlFetcher"," response "+result) ;
+                        Log.d("DuplicateTest"," response "+result) ;
 
                         JSONObject obj = null;
                         try {
@@ -130,7 +131,7 @@ public class StreamUrlFetcher {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError volleyError) {
-                        Log.d("StreamUrlFetcher", " VolleyError " + volleyError);
+                        Log.d("DuplicateTest", " VolleyError " + volleyError);
                         broadcastURI(Constants.STREAM_PREPARE_FAILED_URL_FLAG, file);
                     }
                 });
@@ -141,6 +142,7 @@ public class StreamUrlFetcher {
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
 
         VolleyUtils.getInstance().addToRequestQueue(updateCheckReq, STREAM_URL_REQUEST_TAG_VOLLEY, context);
+
     }
 
 }

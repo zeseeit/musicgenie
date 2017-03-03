@@ -22,6 +22,7 @@ import com.google.android.exoplayer.upstream.DataSource;
 import com.google.android.exoplayer.upstream.DefaultAllocator;
 import com.google.android.exoplayer.upstream.DefaultUriDataSource;
 import com.google.android.exoplayer.util.Util;
+
 import any.audio.Config.Constants;
 import any.audio.Models.PlaylistItem;
 import any.audio.Network.ConnectivityUtils;
@@ -50,10 +51,10 @@ public class AnyAudioStreamService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Log.d("AnyAudioStreamTest"," onCreate");
+        Log.d("AnyAudioStreamTest", " onCreate");
         utils = SharedPrefrenceUtils.getInstance(this);
         phoneReceiver = new PhoneStateReceiver();
-        registerReceiver(phoneReceiver,new IntentFilter("android.intent.action.PHONE_STATE"));
+        registerReceiver(phoneReceiver, new IntentFilter("android.intent.action.PHONE_STATE"));
 
     }
 
@@ -66,69 +67,69 @@ public class AnyAudioStreamService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        if(intent!=null)
-        switch (intent.getAction()) {
+        if (intent != null)
+            switch (intent.getAction()) {
 
-            case Constants.ACTION_STREAM_TO_SERVICE_START:
+                case Constants.ACTION_STREAM_TO_SERVICE_START:
 
-                mUri = Uri.parse(intent.getExtras().getString("uri"));
+                    mUri = Uri.parse(intent.getExtras().getString("uri"));
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        Looper.prepare();
-                        useExoplayer();
-                        Looper.loop();
-                    }
-                }.start();
+                    new Thread() {
+                        @Override
+                        public void run() {
+                            Looper.prepare();
+                            useExoplayer();
+                            Looper.loop();
+                        }
+                    }.start();
 
-                break;
-            case Constants.ACTION_STREAM_TO_SERVICE_RELEASE:
+                    break;
+                case Constants.ACTION_STREAM_TO_SERVICE_RELEASE:
 
-                resetPlayer();
-
-                break;
-
-            case Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE:
-
-                boolean playStatus = intent.getExtras().getBoolean("play");
-                boolean fromNotificationControl = intent.getExtras().getBoolean("imFromNotification");
-                int state = playStatus ? Constants.PLAYER.PLAYER_STATE_PLAYING : Constants.PLAYER.PLAYER_STATE_PAUSED;
-                utils.setPlayerState(state);
-
-                if(anyPlayer!=null){
-                    anyPlayer.setPlayWhenReady(playStatus);
-                }
-
-                if (fromNotificationControl) {
-                    broadcastPlayerStateToBottomPlayer(playStatus);
-
-                } else {
-                    // this is from bottom player control
-                    // => update same to notification control
-                    notifyNotificationControl(playStatus);
-                }
-
-
-                break;
-
-            case Constants.ACTION_STREAM_TO_SERVICE_NEXT:
-
-                Log.i("NotificationPlayer", " received next action");
-                if(anyPlayer!=null){
                     resetPlayer();
-                }
-                onNextRequested();
 
-                break;
+                    break;
 
-            case Constants.ACTION_STREAM_TO_SERVICE_SEEK_TO:
+                case Constants.ACTION_STREAM_TO_SERVICE_PLAY_PAUSE:
 
-                int seekToPosition = intent.getExtras().getInt("seekTo");
-                anyPlayer.seekTo(seekToPosition);
+                    boolean playStatus = intent.getExtras().getBoolean("play");
+                    boolean fromNotificationControl = intent.getExtras().getBoolean("imFromNotification");
+                    int state = playStatus ? Constants.PLAYER.PLAYER_STATE_PLAYING : Constants.PLAYER.PLAYER_STATE_PAUSED;
+                    utils.setPlayerState(state);
 
-                break;
-        }
+                    if (anyPlayer != null) {
+                        anyPlayer.setPlayWhenReady(playStatus);
+                    }
+
+                    if (fromNotificationControl) {
+                        broadcastPlayerStateToBottomPlayer(playStatus);
+
+                    } else {
+                        // this is from bottom player control
+                        // => update same to notification control
+                        notifyNotificationControl(playStatus);
+                    }
+
+
+                    break;
+
+                case Constants.ACTION_STREAM_TO_SERVICE_NEXT:
+
+                    Log.i("NotificationPlayer", " received next action");
+                    if (anyPlayer != null) {
+                        resetPlayer();
+                    }
+                    onNextRequested();
+
+                    break;
+
+                case Constants.ACTION_STREAM_TO_SERVICE_SEEK_TO:
+
+                    int seekToPosition = intent.getExtras().getInt("seekTo");
+                    anyPlayer.seekTo(seekToPosition);
+
+                    break;
+            }
 
         return START_NOT_STICKY;
 
@@ -140,7 +141,7 @@ public class AnyAudioStreamService extends Service {
         // stop music player if there
         unregisterReceiver(phoneReceiver);
 
-        if(anyPlayer!=null){
+        if (anyPlayer != null) {
             resetPlayer();
         }
         // close the notification
@@ -174,6 +175,8 @@ public class AnyAudioStreamService extends Service {
 
 
     private void useExoplayer() {
+
+        L.getInstance(this).dumpLog("Thread -  " + Thread.currentThread().getName() + " starting stream....");
 
         resetPlayer();
         int lastProgress = -1;
@@ -246,13 +249,14 @@ public class AnyAudioStreamService extends Service {
 
                     if (utils.getNextStreamUrl().length() == 0 && !utils.isStreamUrlFetcherInProgress() && (playerContentDuration - playerCurrentPositon) < UP_NEXT_PREPARE_TIME_OFFSET) {
 
-                        Log.d("PlaylistTest", " fetching Next Url");
+                        L.getInstance(this).dumpLog("Thread -  " + Thread.currentThread().getName() + " play next [cmd] from player");
+                        Log.d("DuplicateTest", " fetching Next Url");
                         fetchNextUrl();
 
                     }
                 }
 
-                if(playerCurrentPositon>lastProgress) {
+                if (playerCurrentPositon > lastProgress) {
 
                     broadcastStreamProgresUpdate(
                             String.valueOf(playerCurrentPositon),
@@ -277,12 +281,12 @@ public class AnyAudioStreamService extends Service {
 
         //todo: option for collapsing the notification bar control
         //collapsePlayerNotificationControl();
+        L.getInstance(this).dumpLog("Thread -  " + Thread.currentThread().getName() + "input to realease player");
         if (anyPlayer != null) {
+            L.getInstance(this).dumpLog("Thread -  " + Thread.currentThread().getName() + " player released");
             anyPlayer.setPlayWhenReady(false);
             anyPlayer.stop();
             anyPlayer.release();
-            L.m("StreamingHome", "Player Reset Done");
-
         }
 
         utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
@@ -295,6 +299,8 @@ public class AnyAudioStreamService extends Service {
 
         utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
         PlaylistItem nxtItem = null;
+
+        L.getInstance(this).dumpLog("Thread -  " + Thread.currentThread().getName() + " next Requested");
 
         if (utils.getAutoPlayMode()) {
 
@@ -320,40 +326,47 @@ public class AnyAudioStreamService extends Service {
         String upNextThumbnailUrl = getImageUrl(nxtItem.youtubeId);
         String upNextArtist = nxtItem.uploader;
 
-        Log.d("PlaylistTest", "nextVid:=" + upNextVid + " nextTitle:=" + upNextTitle);
+        Log.d("DuplicateTest", "nextVid:=" + upNextVid + " nextTitle:=" + upNextTitle);
 
 
         //todo: check for usage
         utils.setNextVId(upNextVid);
         utils.setNextStreamTitle(upNextTitle);
 
-        if(anyPlayer!=null)
+        if (anyPlayer != null)
             diff = anyPlayer.getDuration() - anyPlayer.getCurrentPosition();
         resetPlayer();
+
+        L.getInstance(this).dumpLog("Thread -  "+Thread.currentThread().getName()+" onNext[AnyAudioService] calculating time diff ");
+
         if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
-            L.m("PlaylistTest", "diff : " + diff);
+
+            L.getInstance(this).dumpLog("Thread -  "+Thread.currentThread().getName()+"[AnyAudioService] already fetched url");
             // means stream fetcher not in progress
             utils.setCurrentItemStreamUrl(upNextVid);
             utils.setCurrentItemThumbnailUrl(upNextThumbnailUrl);
             utils.setCurrentItemArtist(upNextArtist);
             utils.setCurrentItemTitle(upNextTitle);
-            Log.d("PlaylistTest", "starting normal stream..");
+            L.getInstance(this).dumpLog("Thread -  "+Thread.currentThread().getName()+" initStream[AnyAudioService]");
+            Log.d("DuplicateTest", "starting normal stream..");
             initStream(upNextVid, upNextTitle);
 
 
         } else {
 
+            L.getInstance(this).dumpLog("Thread -  "+Thread.currentThread().getName()+" uri not fetched : ");
             // means stream fetcher is in progress or has finished
             boolean isFetcherInProgress = utils.isStreamUrlFetcherInProgress();
             String nextStreamUrl = utils.getNextStreamUrl();
 
             if (nextStreamUrl.length() > 0) {
-
+                L.getInstance(this).dumpLog("Thread -  "+Thread.currentThread().getName()+" play next [AnyAudioService] with no refresh");
                 playNext(false);
 
             } else {
 
                 if (!isFetcherInProgress) {
+                    L.getInstance(this).dumpLog("Thread -  "+Thread.currentThread().getName()+" init Stream [AnyAudioStream] : re-fetching the uri");
                     // some network issue caused the url fetcher to stop its fetching task
                     initStream(upNextVid, upNextTitle);
 
@@ -386,7 +399,8 @@ public class AnyAudioStreamService extends Service {
                 .setOnStreamUriFetchedListener(new StreamUrlFetcher.OnStreamUriFetchedListener() {
                     @Override
                     public void onUriAvailable(String uri) {
-                        Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);
+                        L.getInstance(AnyAudioStreamService.this).dumpLog("Thread -  "+Thread.currentThread().getName()+" fetched url :"+uri);
+                        Log.d("DuplicateTest", "pre-ready:>next uri available " + uri);
                         //this is first time stream url fetch
 
                         utils.setStreamUrlFetchedStatus(true);
@@ -439,7 +453,7 @@ public class AnyAudioStreamService extends Service {
 
     }
 
-    private void closeNotification(){
+    private void closeNotification() {
 
         ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(Constants.NOTIFICATION_ID.FOREGROUND_SERVICE);
 
@@ -452,7 +466,7 @@ public class AnyAudioStreamService extends Service {
         intent.putExtra(Constants.EXTRAA_STREAM_CONTENT_LEN, contentLen);
         intent.putExtra(Constants.EXTRAA_STREAM_BUFFERED_PROGRESS, bufferedProgress);
         String trackLen = getTimeFromMillisecond(Integer.valueOf(contentLen));
-        intent.putExtra("formatted_time",trackLen);
+        intent.putExtra("formatted_time", trackLen);
         sendBroadcast(intent);
 
     }
@@ -495,7 +509,7 @@ public class AnyAudioStreamService extends Service {
 
     private void fetchNextUrl() {
 
-        Log.d("PlaylistTest", "fetchNextUrl() - > ");
+        Log.d("DuplicateTest", "fetchNextUrl() - > ");
         utils.setStreamUrlFetcherInProgress(true);
         // get next play details
         PlaylistItem nxtItem = null;
@@ -530,7 +544,7 @@ public class AnyAudioStreamService extends Service {
                 .setOnStreamUriFetchedListener(new StreamUrlFetcher.OnStreamUriFetchedListener() {
                     @Override
                     public void onUriAvailable(String uri) {
-                        Log.d("PlaylistTest", "pre-ready:>next uri available " + uri);
+                        Log.d("DuplicateTest", "pre-ready:>next uri available " + uri);
                         //this is first time stream url fetch
                         utils.setStreamUrlFetcherInProgress(false);
                         utils.setNextStreamUrl(uri);
@@ -545,12 +559,12 @@ public class AnyAudioStreamService extends Service {
         return "https://i.ytimg.com/vi/" + vid + "/hqdefault.jpg";  // additional query params => ?custom=true&w=240&h=256
     }
 
-    public class PhoneStateReceiver extends BroadcastReceiver{
+    public class PhoneStateReceiver extends BroadcastReceiver {
 
         @Override
         public void onReceive(Context context, Intent intent) {
 
-            if(anyPlayer!=null && anyPlayer.getPlayWhenReady()){
+            if (anyPlayer != null && anyPlayer.getPlayWhenReady()) {
                 anyPlayer.setPlayWhenReady(false);
                 broadcastPlayerStateToBottomPlayer(false);
             }

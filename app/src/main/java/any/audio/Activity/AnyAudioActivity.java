@@ -169,7 +169,6 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
     private void configureStorageDirectory(Bundle savedInstance) {
 
         if (savedInstance == null) {
-            L.m("Home configureStorageDirectory()", "making dirs");
             AppConfig.getInstance(this).configureDevice();
         }
     }
@@ -482,7 +481,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
                 if (type.equals("search")) {
                     SharedPrefrenceUtils.getInstance(this).setLastSearchTerm(term);
-                    L.m("AnyAudioHome", " invoking action search");
+                    //L.m(("AnyAudioHome", " invoking action search");
                     homePanelTitle.setText(reformatHomeTitle(term));
                     transactFragment(FRAGMENT_SEARCH, term, Constants.SEARCH_MODE_SERVER);
                 }
@@ -1126,7 +1125,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 
             if (intent.getAction().equals(Constants.ACTION_STREAM_URL_FETCHED)) {
 
-                L.m("PlaylistTest", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
+                //L.m(("PlaylistTest", "update via broadcast: streaming uri " + intent.getStringExtra(Constants.EXTRAA_URI));
 
                 utils.setStreamUrlFetchedStatus(true);
                 String uri = intent.getStringExtra(Constants.EXTRAA_URI);
@@ -1333,7 +1332,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             public void onProgressChanged(SeekBar seekBar, int position, boolean fromUser) {
 
                 if (fromUser && anyPlayer != null) {
-                    L.m("Home", "sending seek msg");
+                    //L.m(("Home", "sending seek msg");
                     if (anyPlayer.getBufferedPosition() > position)
                         anyPlayer.seekTo(position);
                 }
@@ -1413,7 +1412,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
             anyPlayer.setPlayWhenReady(false);
             anyPlayer.stop();
             anyPlayer.release();
-            L.m("StreamingHome", "Player Reset Done");
+            //L.m(("StreamingHome", "Player Reset Done");
 
         }
         utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
@@ -1540,7 +1539,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 ////            exoPlayer.setPlayWhenReady(false);
 ////            exoPlayer.stop();
 ////            exoPlayer.release();
-////            L.m("PlaylistTest", "Player Released");
+////            //L.m(("PlaylistTest", "Player Released");
 //
 //            utils.setPlayerState(Constants.PLAYER.PLAYER_STATE_STOPPED);
 //            PlaylistItem nxtItem = null;
@@ -1579,7 +1578,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
 //            diff = anyPlayer.getDuration() - anyPlayer.getCurrentPosition();
 //
 //            if (diff > UP_NEXT_PREPARE_TIME_OFFSET) {
-//                L.m("PlaylistTest", "diff : " + diff);
+//                //L.m(("PlaylistTest", "diff : " + diff);
 //                // means stream fetcher not in progress
 //                utils.setCurrentItemStreamUrl(upNextVid);
 //                utils.setCurrentItemThumbnailUrl(upNextThumbnailUrl);

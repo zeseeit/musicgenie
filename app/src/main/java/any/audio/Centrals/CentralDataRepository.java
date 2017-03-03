@@ -98,7 +98,7 @@ public class CentralDataRepository {
      */
     public void submitAction(final int type, Handler handler) {
 
-        L.m("CDR", "Action Invoke Type:" + type);
+       //L.m(("CDR", "Action Invoke Type:" + type);
 
         this.mHandler = handler;
 
@@ -129,7 +129,7 @@ public class CentralDataRepository {
             }
         }.start();
 
-        L.m("CDR", "started thread for action");
+       //L.m(("CDR", "started thread for action");
 
     }
     /* get the group title and fetch it from the db and submit
@@ -291,7 +291,7 @@ public class CentralDataRepository {
 
     private void dispatchMessage(int status, String message, ExploreItemModel data) {
 
-        L.m("CDR", "dispatching Message");
+       //L.m(("CDR", "dispatching Message");
         Message msg = Message.obtain();
         msg.obj = new ResultMessageObjectModel(
                 status,

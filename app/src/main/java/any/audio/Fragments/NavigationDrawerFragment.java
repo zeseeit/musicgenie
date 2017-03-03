@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -73,6 +74,10 @@ public class NavigationDrawerFragment extends Fragment {
 
                     case 2:
 
+                        if(!isGrantedPerms()){
+                            return;
+                        }
+
                         fragment = AnyAudioActivity.FRAGMENT_DOWNLOADS;
                         title = "AnyAudio";
                         break;
@@ -112,6 +117,28 @@ public class NavigationDrawerFragment extends Fragment {
         return v;
 
 
+    }
+
+    private boolean canMakeSmores() {
+
+        return (Build.VERSION.SDK_INT > Build.VERSION_CODES.M);
+
+    }
+
+    private boolean isGrantedPerms(){
+
+        // Check Permission
+        String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE", "android.permission.READ_EXTERNAL_STORAGE"};
+        int permsRequestCode = 200;
+        if (canMakeSmores()) {
+            if (!(context.checkSelfPermission(perms[0]) == PackageManager.PERMISSION_GRANTED)) {
+                requestPermissions(perms, permsRequestCode);
+            }else{
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void checkForUpdate() {

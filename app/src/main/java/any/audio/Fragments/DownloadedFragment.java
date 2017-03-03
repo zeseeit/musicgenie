@@ -2,6 +2,8 @@ package any.audio.Fragments;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -134,8 +136,8 @@ public class DownloadedFragment extends Fragment {
 
     }
 
-
     private ArrayList<DownloadedItemModel> getDownloadedItemList() {
+
         ArrayList<DownloadedItemModel> downloadedItemModels = new ArrayList<>();
         File dir = new File(Constants.DOWNLOAD_FILE_DIR);
         try {
@@ -155,8 +157,7 @@ public class DownloadedFragment extends Fragment {
                 Log.d("Downloaded", "" + path);
                 downloadedItemModels.add(0, new DownloadedItemModel(path));
             }
-        }
-        finally {
+        } finally {
             if (downloadedItemModels.size() == 0) {
                 emptyMessage.setVisibility(View.VISIBLE);
             } else {

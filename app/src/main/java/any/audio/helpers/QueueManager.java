@@ -133,11 +133,14 @@ public class QueueManager {
 
         ArrayList<PlaylistItem> playlistItems = new ArrayList<>();
 
+
         PlaylistItem upNextItem = null;
         videoTitles = new Segmentor().getParts(utils.getQueueTitles(), '#');
         videoIds = new Segmentor().getParts(utils.getQueueVideoId(), '#');
         youtubeIds = new Segmentor().getParts(utils.getQueueYoutubeIds(), '#');
         uploadersList = new Segmentor().getParts(utils.getQueueUploaders(), '#');
+
+        // Add the last played item as the first item of the queue
 
         for (int i = 0; i < videoIds.size(); i++) {
             upNextItem = new PlaylistItem(videoIds.get(i), youtubeIds.get(i), videoTitles.get(i), uploadersList.get(i));

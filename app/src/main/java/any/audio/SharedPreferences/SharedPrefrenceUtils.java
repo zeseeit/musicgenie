@@ -13,7 +13,7 @@ import static any.audio.Centrals.CentralDataRepository.TYPE_TRENDING;
  */
 public class SharedPrefrenceUtils {
 
-    private static final String PREF_NAME = "musicgenie_tasks";
+    private static final String PREF_NAME = "anyaudio_tasks";
     private static SharedPrefrenceUtils mInstance;
     private static int MODE = 0;
     private Context context;
