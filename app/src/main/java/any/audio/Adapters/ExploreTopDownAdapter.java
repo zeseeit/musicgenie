@@ -123,7 +123,7 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
         public ExploreItemRowViewHolder(View itemView) {
             super(itemView);
 
-            wrapper = (RelativeLayout) itemView.findViewById(R.id.sectionContainer);
+            ///wrapper = (RelativeLayout) itemView.findViewById(R.id.sectionContainer);
             sectionTitle = (TextView) itemView.findViewById(R.id.explore_item_header);
             showAll = (TextView) itemView.findViewById(R.id.explore_item_show_all);
             recyclerViewLeftToRight = (RecyclerView) itemView.findViewById(R.id.explore_left_to_right_recyclerView);
@@ -132,15 +132,6 @@ public class ExploreTopDownAdapter extends RecyclerView.Adapter<ExploreTopDownAd
             dividerItemDecoration.setDrawable(context.getResources().getDrawable(R.drawable.vertical_divider));
             recyclerViewLeftToRight.addItemDecoration(dividerItemDecoration);
 
-            wrapper.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View view, MotionEvent motionEvent) {
-
-                    view.getBackground().setHotspot(motionEvent.getX(), motionEvent.getY());
-
-                    return false;
-                }
-            });
 
             showAll.setOnClickListener(new View.OnClickListener() {
                 @Override
