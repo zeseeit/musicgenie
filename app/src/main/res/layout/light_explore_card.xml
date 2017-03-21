@@ -42,7 +42,6 @@
             android:layout_alignParentEnd="true"
             android:layout_marginBottom="4dp"
             android:layout_marginEnd="4dp"
-            android:background="@color/White"
             android:paddingBottom="1dp"
             android:paddingLeft="2dp"
             android:paddingRight="2dp"

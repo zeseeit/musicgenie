@@ -9,7 +9,7 @@
         android:textSize="20sp"
         android:gravity="center"
         android:textColor="@color/AnyAudioBlack"
-        android:text="Listen To Your Favorites Songs"
+        android:text="Listen To Your Favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

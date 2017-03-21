@@ -919,6 +919,7 @@ public class AnyAudioActivity extends AppCompatActivity implements PlaylistGener
                 setTitle(extraa);
                 ShowAllFragment showAllFragment = new ShowAllFragment();
                 showAllFragment.setExtraa(extraa);
+                showAllFragment.setActionListener(this);
                 manager
                         .beginTransaction()
                         .replace(R.id.fragmentPlaceHolder, showAllFragment)

@@ -128,15 +128,9 @@ public class TaskHandler {
     * */
 
     private void dispatch(final String taskID) {
-//
-//        if (!utils.getTaskStatus(taskID).equals(Constants.DOWNLOAD.STATE_WAITING)) {
-//            return;
-//        }
-
 
         String v_id = utils.getTaskVideoID(taskID);
         String file_name = utils.getTaskTitle(taskID);
-
         DownloadListener listener = new DownloadListener() {
 
             @Override
@@ -177,18 +171,14 @@ public class TaskHandler {
                 utils.setCurrentDownloadCount(0);
             }
         };
-
         setCancelled(false);
         DownloadThread thread = new DownloadThread(taskID, v_id, file_name, listener);
         thread.start();
 
         try {
-            //log(Thread.currentThread().getId() + " waiting thread to join");
             isHandlerRunning = true;
             thread.join();
             isHandlerRunning = false;
-            //  last-round check up for any residue task taken-in in beetween
-            //initiate();
             L.m("TaskHandler", "Thread Joined");
 
         } catch (InterruptedException e) {

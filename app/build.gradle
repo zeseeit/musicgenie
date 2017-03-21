@@ -8,8 +8,8 @@ android {
         applicationId "any.audio"
         minSdkVersion 21
         targetSdkVersion 25
-        versionCode 8
-        versionName "0.5"
+        versionCode 9
+        versionName "0.5.2"
 
     }
     aaptOptions {

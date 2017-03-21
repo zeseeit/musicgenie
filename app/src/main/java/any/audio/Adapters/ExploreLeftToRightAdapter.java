@@ -94,7 +94,6 @@ public class ExploreLeftToRightAdapter extends RecyclerView.Adapter<ExploreLeftT
     }
 
     public static class ExploreItemCardViewHolder extends RecyclerView.ViewHolder {
-
         TextView playBtn;
         TextView downloadBtn;
         TextView popUpBtn;

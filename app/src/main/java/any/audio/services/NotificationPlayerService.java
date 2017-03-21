@@ -97,7 +97,7 @@ public class NotificationPlayerService extends Service {
                     break;
             }
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     private void sendNextAction() {
