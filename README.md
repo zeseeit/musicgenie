@@ -1,3 +1,4 @@
+[![Gitter chat](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/Any-Audio/anyaudio-android-app?utm_source=share-link&utm_medium=link&utm_campaign=share-link) 
 # AnyAudio
 A Instant Music App
 
