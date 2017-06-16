@@ -13,93 +13,12 @@
     <uses-permission android:name="android.permission.GET_TASKS" />
 
     <application
-        android:name=".AnyAudioMains.AnyAudio"
         android:allowBackup="true"
         android:hardwareAccelerated="false"
         android:icon="@mipmap/ic_launcher_app"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:theme="@style/AppTheme">
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@drawable/notification" />
-        <meta-data
-            android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/PrimaryColorDark" />
-
-        <service android:name=".services.UpdateCheckService" />
-        <service android:name=".services.NotificationPlayerService" />
-        <service android:name=".services.AnyAudioStreamService"/>
-
-        <service
-            android:name=".services.AnyAudioFirebaseMessageService"
-            android:enabled="true"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-            </intent-filter>
-        </service>
-        <service android:name=".services.AnyAudioInstanceIdService">
-            <intent-filter>
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
-
-        <activity
-            android:name=".Activity.ErrorSplash"
-            android:label="AnyAudio"
-            android:screenOrientation="portrait" />
-
-        <activity
-            android:name=".Activity.UpdateThemedActivity"
-            android:label="@string/title_activity_update_themed"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-
-        <activity
-            android:name=".Activity.EveWisherThemedActivity"
-            android:label="@string/title_activity_update_themed"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-
-        <activity
-            android:name=".Activity.RecommendationThemed"
-            android:screenOrientation="portrait"
-            android:theme="@android:style/Theme.Holo.Dialog" />
-
-        <activity
-            android:name=".Activity.AnyAudioSplash"
-            android:screenOrientation="portrait"
-            android:theme="@style/SplashTheme">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <activity android:name=".Activity.TourActivity" />
-        <!-- This meta-data tag is required to use Google Play Services. -->
-        <meta-data
-            android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
-
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
-
-        <activity android:name=".Activity.UnknownErrorActivity" />
-
-        <activity
-           android:screenOrientation="portrait"
-            android:name=".Activity.SearchActivity"
-            android:parentActivityName=".Activity.AnyAudioActivity" />
-
-        <activity android:name=".Activity.AnyAudioActivity"
-            android:screenOrientation="portrait">
-        </activity>
 
     </application>
 
