@@ -44,7 +44,6 @@
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.NoActionBar">
 
-        <item name="android:windowBackground">@drawable/splash_bg_w_logo</item>
 
     </style>
 
